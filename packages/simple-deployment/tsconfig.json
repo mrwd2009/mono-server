@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "sourceMap": true
+  },
+  "extends": "@tsconfig/node14/tsconfig.json",
+  "include": ["./src/**/*"]
+}

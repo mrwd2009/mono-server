@@ -5,14 +5,18 @@
   "main": "index.js",
   "scripts": {
     "test": "test",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "build": "tsc",
+    "dev": "nodemon"
   },
   "author": "di@gridx.cn",
   "license": "MIT",
   "devDependencies": {
+    "@tsconfig/node14": "^1.0.0",
     "@typescript-eslint/eslint-plugin": "^4.24.0",
     "@typescript-eslint/parser": "^4.24.0",
     "eslint": "^7.26.0",
+    "nodemon": "^2.0.7",
     "typescript": "^4.2.4"
   },
   "dependencies": {
