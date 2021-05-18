@@ -1,0 +1,12 @@
+{
+  "name": "mono-server",
+  "version": "1.0.0",
+  "description": "host for api services",
+  "main": "index.js",
+  "repository": "https://github.com/mrwd2009/mono-server.git",
+  "author": "Di Wu <di@gridx.cn>",
+  "license": "MIT",
+  "dependencies": {
+    "lerna": "^4.0.0"
+  }
+}

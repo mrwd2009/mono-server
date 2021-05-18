@@ -1,0 +1,5 @@
+node_modules
+# editor
+.vscode
+.history
+.idea
