@@ -1,0 +1,3 @@
+set password "12323232"
+puts $password
+send_user "$password\n"

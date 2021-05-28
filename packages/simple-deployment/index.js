@@ -1,1 +1,2 @@
-console.log('nodemon');
+/* eslint-disable no-undef */
+require('./dist/index');
