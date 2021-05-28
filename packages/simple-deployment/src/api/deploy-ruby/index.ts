@@ -1,11 +1,12 @@
 import Router from '@koa/router';
+import { Context } from 'koa';
 
 const router = new Router({
   prefix: '/deploy-ruby',
 });
 
-router.post('/', (context) => {
-  console.log(context.URL);
+router.get('/', async(context: Context): Promise<void> => {
+  context.body = 'test';
 });
 
 export default router;
