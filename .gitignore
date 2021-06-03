@@ -4,3 +4,5 @@ node_modules
 .history
 .idea
 dist
+.env
+.DS_Store

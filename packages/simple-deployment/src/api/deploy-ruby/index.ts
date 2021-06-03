@@ -1,11 +1,11 @@
-import Router from '@koa/router';
-import { Context } from 'koa';
+import Router, { RouterContext } from '@koa/router';
+import passport from 'koa-passport';
 
 const router = new Router({
   prefix: '/deploy-ruby',
 });
 
-router.get('/', async(context: Context): Promise<void> => {
+router.get('/', passport.authenticate('jwt', { session: false }), async (context: RouterContext): Promise<void> => {
   context.body = 'test';
 });
 
