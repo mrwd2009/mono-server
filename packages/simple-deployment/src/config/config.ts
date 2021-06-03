@@ -6,6 +6,8 @@ const envObj: GatewayConfig = process.env;
 const env = envObj.NODE_ENV || 'development';
 
 const config = {
+  env,
+  isDev: env === 'development',
   jwt: {
     cookieKey: `simple-deployment-${env}`,
     issuer: 'di@gridx.cn',

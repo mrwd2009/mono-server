@@ -9,9 +9,7 @@ export const login: GatewayController = async (context) => {
     httpOnly: true,
     maxAge: config.jwt.expireHour * 3600 * 1000,
   });
-  context.body = {
-    username,
-  };
+  context.gateway!.sendJSON!({ username });
 };
 
 export const logout: Middleware = async (context) => {
