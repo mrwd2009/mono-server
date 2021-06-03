@@ -1,4 +1,5 @@
 import Koa from 'koa';
+import _ from 'lodash';
 import { GatewayRouterContext, GatewayMiddleware } from '../../type';
 import config from '../../config';
 
@@ -7,7 +8,16 @@ export const handleError: GatewayMiddleware = async (context: GatewayRouterConte
     await next();
   } catch (error) {
     if (config.isDev) {
-      console.error(error);
+      console.error(`\x1b[38;2;255;77;79mError occurred at request: ${context.method} ${context.originalUrl}\x1b[0m\n`);
+      if (!_.isEmpty(context.query)) {
+        console.error(`\x1b[38;2;0;204;204mQuery Parameters:\x1b[0m\n`);
+        console.error(`\x1b[38;2;82;196;26m${JSON.stringify(context.query, null, 2)}\x1b[0m\n`);
+      }
+      if (!_.isEmpty(context.request.body)) {
+        console.error(`\x1b[38;2;0;204;204mPost Body:\x1b[0m\n`);
+        console.error(`\x1b[38;2;82;196;26m${JSON.stringify(context.request.body, null, 2)}\x1b[0m\n`);
+      }
+      console.error(`\x1b[38;2;255;77;79m${error.stack}\x1b[0m`);
     }
     switch (error.code) {
       case 'AuthError': {
