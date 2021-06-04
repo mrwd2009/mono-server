@@ -1,10 +1,10 @@
 import Koa from 'koa';
 import dayjs from 'dayjs';
 import { v4 as uuidV4 } from 'uuid';
-import { GatewayRouterContext, GatewayMiddleware } from '../../type';
+import { GatewayMiddleware } from '../../type';
 import config from '../../config';
 
-export const measure: GatewayMiddleware = async (context: GatewayRouterContext, next) => {
+export const measure: GatewayMiddleware = async (context, next) => {
   const start = dayjs().valueOf();
   context.state.requestId = uuidV4();
   // const profileTag = `${context.state.requestId} ${context.method}:${context.originalUrl}`;

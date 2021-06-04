@@ -2,6 +2,13 @@ import jwt from 'jsonwebtoken';
 import dayjs from 'dayjs';
 import config from '../../../config';
 import { userHelper } from '../helper';
+import * as lib from '../../../lib';
+
+const {
+  error: {
+    BackendError,
+  }
+} = lib;
 
 type UserParams = {
   username: string,
