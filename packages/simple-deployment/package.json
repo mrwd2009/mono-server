@@ -4,7 +4,7 @@
   "description": "tool to deploy service",
   "main": "index.js",
   "scripts": {
-    "test": "test",
+    "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "build": "tsc",
     "dev": "nodemon"
@@ -12,9 +12,13 @@
   "author": "di@gridx.cn",
   "license": "MIT",
   "devDependencies": {
+    "@babel/core": "^7.14.5",
+    "@babel/preset-env": "^7.14.5",
+    "@babel/preset-typescript": "^7.14.5",
     "@tsconfig/node14": "^1.0.0",
     "@types/cookie": "^0.4.0",
     "@types/ioredis": "^4.26.4",
+    "@types/jest": "^26.0.23",
     "@types/koa": "^2.13.1",
     "@types/koa-bodyparser": "^4.3.0",
     "@types/koa-passport": "^4.0.2",
@@ -25,7 +29,9 @@
     "@types/uuid": "^8.3.0",
     "@typescript-eslint/eslint-plugin": "^4.24.0",
     "@typescript-eslint/parser": "^4.24.0",
+    "babel-jest": "^27.0.2",
     "eslint": "^7.26.0",
+    "jest": "^27.0.4",
     "nodemon": "^2.0.7",
     "typescript": "^4.2.4"
   },

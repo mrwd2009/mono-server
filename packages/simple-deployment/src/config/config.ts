@@ -21,7 +21,7 @@ const config = {
   redis: {
     main: {
       url: envObj.MAIN_REDIS_URL,
-      prefix: `simple-deployment-${env}`,
+      prefix: `simple-deployment-${env}-`,
       expired: 3600,
     },
   },

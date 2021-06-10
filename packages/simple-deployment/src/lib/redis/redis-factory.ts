@@ -112,6 +112,12 @@ export class RedisFactory {
       get,
     };
   }
+
+  async close(): Promise<void> {
+    if (this.redisClient) {
+      await this.redisClient.quit();
+    }
+  }
 }
 
 export default RedisFactory;
