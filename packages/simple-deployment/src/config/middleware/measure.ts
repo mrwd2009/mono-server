@@ -30,9 +30,9 @@ export const measure: GatewayMiddleware = async (context, next) => {
       let url = '';
       // hilight error request
       if (hasError) {
-        url = `\x1b[38;2;255;77;79m${context.method}:${context.originalUrl} ${durationStr}\x1b[0m`
+        url = `\x1b[38;2;255;77;79m${context.method} ${context.originalUrl} ${durationStr}\x1b[0m`
       } else {
-        url = `\x1b[38;2;82;196;26m${context.method}:${context.originalUrl} ${durationStr}\x1b[0m`;
+        url = `\x1b[38;2;82;196;26m${context.method} ${context.originalUrl} ${durationStr}\x1b[0m`;
       }
       console.info(`\x1b[38;2;0;204;204mResponse Time(${context.state.requestId}): \x1b[0m ${url}`);
     }

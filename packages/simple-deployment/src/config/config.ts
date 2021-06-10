@@ -1,6 +1,7 @@
 export type GatewayConfig = NodeJS.ProcessEnv & {
   JWT_SECRET?: string,
   TRACE_KNOWN_ERROR_IN_DEV?: string,
+  MAIN_REDIS_URL?: string,
 }
 
 const envObj: GatewayConfig = process.env;
@@ -16,6 +17,13 @@ const config = {
     audience: 'gridx.cn',
     secret: envObj.JWT_SECRET,
     expireHour: 3,
+  },
+  redis: {
+    main: {
+      url: envObj.MAIN_REDIS_URL,
+      prefix: `simple-deployment-${env}`,
+      expired: 3600,
+    },
   },
 };
 

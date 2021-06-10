@@ -10,6 +10,7 @@ export {
   passport,
   formatResponse,
   handleError,
+  measure,
 };
 
 export const initialize = async (app: Koa): Promise<void> => {

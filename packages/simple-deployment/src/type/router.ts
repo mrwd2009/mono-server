@@ -3,7 +3,8 @@ import { Middleware, RouterContext } from '@koa/router';
 interface _GatewayRouterState {
   requestId?: string,
 }
-export type GatewayRouterState = _GatewayRouterState & Record<string, unknown>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type GatewayRouterState = _GatewayRouterState & Record<string, any>;
 
 interface _GatewayRouterContext {
   gateway?: {
@@ -14,4 +15,4 @@ interface _GatewayRouterContext {
 export type GatewayRouterContext = _GatewayRouterContext & RouterContext<GatewayRouterState> ;
 
 // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
-export type GatewayController = Middleware<_GatewayRouterState & Record<string, unknown>, _GatewayRouterContext & {}>;
+export type GatewayController = Middleware<_GatewayRouterState & Record<string, any>, _GatewayRouterContext & {}>;
