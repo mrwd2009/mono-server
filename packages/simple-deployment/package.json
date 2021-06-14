@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "build": "tsc",
+    "build": "rm -rf ./dist/* && tsc -p tsconfig.build.json",
     "dev": "nodemon"
   },
   "author": "di@gridx.cn",
