@@ -35,15 +35,10 @@ export class WorkerTransport extends Transport {
 }
 
 export class EnhancedConsole extends Transport {
-  private colorFormat: Colorizer;
+  private colorFormat: Colorizer = colorize();
 
   constructor(opt: TransportStreamOptions = {}) {
-    const format = colorize({ all: true });
-    super({
-      ...opt,
-      format,
-    });
-    this.colorFormat = format;
+    super(opt);
   }
 
   log(info: any, callback: () => void = noop): void {
@@ -51,12 +46,12 @@ export class EnhancedConsole extends Transport {
       this.emit('logged', info);
     });
     const print = (type: 'error' | 'log'): void => {
-      let msg = `level: ${info.level}`;
       const color = (str: string) => this.colorFormat.colorize(info[LEVEL], str);
+      let msg = `level: ${color(info.level)}`;
       if (info.timestamp) {
         msg = `${msg}\ntimestamp: ${color(info.timestamp)}`;
       }
-      msg = `${msg}\nmessage: ${info.message}`;
+      msg = `${msg}\nmessage: ${color(info.message)}`;
       if (info.response) {
         const {
           message,
