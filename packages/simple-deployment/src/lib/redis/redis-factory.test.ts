@@ -17,7 +17,7 @@ afterAll(() => {
 
 test('Simple get set del operation', async () => {
   const RedisFactory = require('./redis-factory').default;
-  const config = require('../../config').default;
+  const config = require('../../config/config').default;
   const {
     redis: {
       main: {
@@ -47,7 +47,7 @@ test('Simple get set del operation', async () => {
 
 test('Test memoized data', async () => {
   const RedisFactory = require('./redis-factory').default;
-  const config = require('../../config').default;
+  const config = require('../../config/config').default;
   const {
     redis: {
       main: {
@@ -87,7 +87,7 @@ test('Dev simple get set del operation', async () => {
     NODE_ENV: 'development',
   };
   const RedisFactory = require('./redis-factory').default;
-  const config = require('../../config').default;
+  const config = require('../../config/config').default;
   const {
     redis: {
       main: {
@@ -120,7 +120,7 @@ test('Dev test memoized data', async () => {
     NODE_ENV: 'development',
   };
   const RedisFactory = require('./redis-factory').default;
-  const config = require('../../config').default;
+  const config = require('../../config/config').default;
   const {
     redis: {
       main: {

@@ -1,5 +1,5 @@
 import RedisFactory from './redis-factory';
-import config from '../../config';
+import config from '../../config/config';
 
 const {
   redis: {

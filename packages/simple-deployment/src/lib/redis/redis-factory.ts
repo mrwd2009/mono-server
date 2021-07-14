@@ -1,6 +1,6 @@
 import RedisClient, { Redis } from 'ioredis';
 import { createHash } from 'crypto';
-import config from '../../config';
+import config from '../../config/config';
 import { DataError } from '../error';
 
 export interface MemoizedDataProvider {
