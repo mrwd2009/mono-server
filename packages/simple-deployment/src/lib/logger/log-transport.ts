@@ -2,26 +2,49 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { format } from 'winston';
 import Transport, { TransportStreamOptions } from 'winston-transport';
+import { createSocket, Socket } from 'dgram';
 import { isWorker, worker } from 'cluster';
 import { noop } from 'lodash';
 import { Colorizer } from 'logform';
 import { LEVEL } from 'triple-beam';
+import config from '../../config/config';
+
+const {
+  logger: {
+    server: {
+      enabled,
+      host,
+      port,
+    },
+  },
+} = config;
 
 const { colorize } = format;
 
 export class WorkerTransport extends Transport {
+  private enableLogServer = enabled;
+  private logServer?: Socket;
+
   constructor(opt?: TransportStreamOptions) {
     super(opt);
     if (!isWorker) {
       throw new Error("WorkerTransport must be used in a cluster worker.");
     }
+    if (this.enableLogServer) {
+      this.logServer = createSocket('udp4');
+      this.logServer.on('error', (error) => {
+        console.error(error);
+        throw error;
+      });
+    }
   }
 
   log(info: any, callback: () => void = noop): void {
-    worker.send({
+    const postMsg = {
       type: 'log',
       payload: info,
-    }, undefined, (error: Error | null): void => {
+    };
+    const done = (error: Error | null): void => {
       if (error) {
         console.error(error);
         return;
@@ -30,7 +53,12 @@ export class WorkerTransport extends Transport {
       setImmediate(() => {
         this.emit('logged', info);
       });
-    });
+    };
+    if (this.enableLogServer) {
+      this.logServer!.send(Buffer.from(JSON.stringify(postMsg)), port, host, done);
+      return;
+    }
+    worker.send(postMsg, undefined, done);
   }
 }
 
@@ -46,7 +74,7 @@ export class EnhancedConsole extends Transport {
       this.emit('logged', info);
     });
     const print = (type: 'error' | 'log'): void => {
-      const color = (str: string) => this.colorFormat.colorize(info[LEVEL], str);
+      const color = (str: string) => process.stdout.isTTY ? this.colorFormat.colorize(info[LEVEL], str) : str;
       let msg = `level: ${color(info.level)}`;
       if (info.timestamp) {
         msg = `${msg}\ntimestamp: ${color(info.timestamp)}`;

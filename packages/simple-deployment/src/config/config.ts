@@ -2,6 +2,8 @@ export type GatewayConfig = NodeJS.ProcessEnv & {
   JWT_SECRET?: string,
   TRACE_KNOWN_ERROR_IN_DEV?: string,
   MAIN_REDIS_URL?: string,
+  APP_LOG_SEVER_PORT?: string,
+  ENABLE_APP_LOG_SERVER?: string,
 }
 
 const envObj: GatewayConfig = process.env;
@@ -25,6 +27,13 @@ const config = {
       expired: 3600,
     },
   },
+  logger: {
+    server: {
+      enabled: !!envObj.ENABLE_APP_LOG_SERVER,
+      host: '127.0.0.1',
+      port: parseInt(envObj.APP_LOG_SEVER_PORT || '2448'),
+    },
+  }
 };
 
 export default config;

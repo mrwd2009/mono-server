@@ -15,7 +15,8 @@ const logger = createLogger({
   ...baseOpts,
   format: fullFormats,
 });
-const pureLogger = createLogger(baseOpts);
+// used by primary process or log server
+export const pureLogger = createLogger(baseOpts);
 
 cluster.on('message', (worker, event) => {
   // redirect worker log into primary log

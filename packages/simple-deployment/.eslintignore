@@ -3,3 +3,5 @@ dist
 .eslintrc.js
 index.js
 babel.config.js
+pm2.config.js
+log-server.js
