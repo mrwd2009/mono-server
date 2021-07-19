@@ -1,9 +1,15 @@
+import path from 'path';
+
 export type GatewayConfig = NodeJS.ProcessEnv & {
   JWT_SECRET?: string,
   TRACE_KNOWN_ERROR_IN_DEV?: string,
   MAIN_REDIS_URL?: string,
   APP_LOG_SEVER_PORT?: string,
   ENABLE_APP_LOG_SERVER?: string,
+  WINSTON_LOG_DIR?: string,
+  WINSTON_LOG_FILENAME?: string,
+  WINSTON_LOG_ERROR_FILENAME?: string,
+  WINSTON_LOG_EXCEPTION_FILENAME?: string,
 }
 
 const envObj: GatewayConfig = process.env;
@@ -28,6 +34,14 @@ const config = {
     },
   },
   logger: {
+    rotateOptions: {
+      fileDir: path.join(__dirname, envObj.WINSTON_LOG_DIR || '../../log/winston'),
+      maxSize: '30m',
+      maxFiles: '90d',
+      logInfoFileName: envObj.WINSTON_LOG_FILENAME || `info-${env}-%DATE%.log`,
+      logErrorFileName: envObj.WINSTON_LOG_ERROR_FILENAME || `error-${env}-%DATE%.log`,
+      logExceptionFileName: envObj.WINSTON_LOG_EXCEPTION_FILENAME || `exception-${env}-%DATE%.log`,
+    },
     server: {
       enabled: !!envObj.ENABLE_APP_LOG_SERVER,
       host: '127.0.0.1',

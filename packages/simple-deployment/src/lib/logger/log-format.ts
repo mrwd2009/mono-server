@@ -5,6 +5,7 @@ import { TransformableInfo, FormatWrap } from 'logform';
 const {
   timestamp,
   combine,
+  json,
 } = format;
 
 export const errorReponse: FormatWrap = format((info: TransformableInfo): TransformableInfo | boolean => {
@@ -25,5 +26,6 @@ export const errorReponse: FormatWrap = format((info: TransformableInfo): Transf
 export const fullFormats = combine(
   timestamp(),
   errorReponse(),
+  json(),
 );
 

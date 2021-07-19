@@ -1,23 +1,36 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { format } from 'winston';
+import { format, transports } from 'winston';
+import 'winston-daily-rotate-file';
+import path from 'path';
 import Transport, { TransportStreamOptions } from 'winston-transport';
 import { createSocket, Socket } from 'dgram';
 import { isWorker, worker } from 'cluster';
 import { noop } from 'lodash';
 import { Colorizer } from 'logform';
 import { LEVEL } from 'triple-beam';
+
 import config from '../../config/config';
 
 const {
+  isDev,
   logger: {
     server: {
       enabled,
       host,
       port,
     },
+    rotateOptions: {
+      fileDir,
+      maxSize,
+      maxFiles,
+      logInfoFileName,
+      logErrorFileName,
+      logExceptionFileName,
+    }
   },
 } = config;
+const { DailyRotateFile } = transports;
 
 const { colorize } = format;
 
@@ -121,8 +134,20 @@ let exceptionTransports: Array<Transport> = [];
 export const getExceptionTransports = (): Array<Transport> => {
   if (!exceptionTransports.length) {
     exceptionTransports = [
-      new EnhancedConsole(),
+      new DailyRotateFile({
+        level: 'error',
+        filename: path.join(fileDir, 'exception', logExceptionFileName),
+        maxSize,
+        maxFiles,
+      }),
     ];
+    if (isDev) {
+      exceptionTransports.push(
+        new EnhancedConsole({
+          level: 'debug',
+        }),
+      );
+    }
   }
   return exceptionTransports;
 };
@@ -131,8 +156,26 @@ let primaryTransports: Array<Transport> = [];
 export const getPrimaryTransports = (): Array<Transport> => {
   if (!primaryTransports.length) {
     primaryTransports = [
-      new EnhancedConsole(),
+      new DailyRotateFile({
+        level: 'info',
+        filename: path.join(fileDir, 'info', logInfoFileName),
+        maxSize,
+        maxFiles,
+      }),
+      new DailyRotateFile({
+        level: 'error',
+        filename: path.join(fileDir, 'error', logErrorFileName),
+        maxSize,
+        maxFiles,
+      }),
     ];
+    if (isDev) {
+      primaryTransports.push(
+        new EnhancedConsole({
+          level: 'debug',
+        }),
+      );
+    }
   }
   return primaryTransports;
 };

@@ -5,15 +5,16 @@ import Transport from 'winston-transport';
 import { getPrimaryTransports, getExceptionTransports } from './log-transport';
 import { fullFormats } from './log-format';
 
-const baseOpts: LoggerOptions & { rejectionHandlers: Array<Transport> } = {
+const baseOpts: LoggerOptions & { rejectionHandlers?: Array<Transport> } = {
   transports: getPrimaryTransports(),
-  exceptionHandlers: getExceptionTransports(),
-  rejectionHandlers: getExceptionTransports(),
-  exitOnError: true,
 };
+// only set exception log for main logger to avoid duplicated error information.
 const logger = createLogger({
   ...baseOpts,
   format: fullFormats,
+  exceptionHandlers: getExceptionTransports(),
+   // rejectionHandlers: getExceptionTransports(),
+  exitOnError: true,
 });
 // used by primary process or log server
 export const pureLogger = createLogger(baseOpts);
