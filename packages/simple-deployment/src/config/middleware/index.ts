@@ -4,6 +4,7 @@ import * as passport from './passport';
 import * as formatResponse from './format-response';
 import * as handleError from './handle-error';
 import * as measure from './measure';
+import * as mergedParams from './merged-params';
 
 export {
   bodyParser,
@@ -11,6 +12,7 @@ export {
   formatResponse,
   handleError,
   measure,
+  mergedParams,
 };
 
 export const initialize = async (app: Koa): Promise<void> => {
@@ -19,6 +21,7 @@ export const initialize = async (app: Koa): Promise<void> => {
   await formatResponse.initialize(app);
   await handleError.initialize(app);
   await measure.initialize(app);
+  await mergedParams.initialize(app);
 };
 
 export default initialize;

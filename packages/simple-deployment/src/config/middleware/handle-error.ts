@@ -3,6 +3,7 @@ import _ from 'lodash';
 import { GatewayMiddleware } from '../../type';
 import config from '../../config';
 import * as lib from '../../lib';
+import logger from '../../lib/logger';
 
 const {
   error: {
@@ -25,9 +26,23 @@ export const handleError: GatewayMiddleware = async (context, next) => {
           console.error(`\x1b[38;2;0;204;204mPost Body:\x1b[0m`);
           console.error(`\x1b[38;2;82;196;26m${JSON.stringify(context.request.body, null, 2)}\x1b[0m`);
         }
-        console.error(`\x1b[38;2;255;77;79m${error.stack}\x1b[0m`);
+        if (error.httpResponse?.data) {
+          console.error(`\x1b[38;2;0;204;204mResponse:\x1b[0m`);
+          console.error(`\x1b[38;2;82;196;26m${JSON.stringify(error.httpResponse.data, null, 2)}\x1b[0m`);
+        }
+        console.error(`\x1b[38;2;255;77;79m${error.stack}\x1b[0m\n`);
       }
+    } else {
+      // log error in production mode.
+      if (!_.isEmpty(context.query)) {
+        error.query = context.query;
+      }
+      if (!_.isEmpty(context.request.body)) {
+        error.body = context.request.body;
+      }
+      logger.error(error.message, { response: error, user: context.state.user || 'ananymity' });
     }
+    
     switch (error.code) {
       case 'AuthError': {
         context.status = 401;
@@ -45,7 +60,7 @@ export const handleError: GatewayMiddleware = async (context, next) => {
         context.body = {
           meta: {
             code: 500,
-            message: config.isDev ? error.message : error.publicMessage,
+            message: config.isDev ? (error.message || error.publicMessage) : error.publicMessage,
           },
           data: null,
         };

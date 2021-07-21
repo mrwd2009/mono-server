@@ -3,13 +3,17 @@ import dayjs from 'dayjs';
 import { v4 as uuidV4 } from 'uuid';
 import { GatewayMiddleware } from '../../type';
 import config from '../../config';
+import logger from '../../lib/logger';
 
 export const measure: GatewayMiddleware = async (context, next) => {
   const start = dayjs().valueOf();
   context.state.requestId = uuidV4();
-  // const profileTag = `${context.state.requestId} ${context.method}:${context.originalUrl}`;
+  const profileTag = `${context.state.requestId} ${context.method}:${context.originalUrl}`;
   let hasError = false;
   try {
+    if (config.isDev) {
+      logger.profile(profileTag);
+    }
     await next();
   } catch (error) {
     hasError = true;
@@ -34,7 +38,10 @@ export const measure: GatewayMiddleware = async (context, next) => {
       } else {
         url = `\x1b[38;2;82;196;26m${context.method} ${context.originalUrl} ${durationStr}\x1b[0m`;
       }
-      console.info(`\x1b[38;2;0;204;204mResponse Time(${context.state.requestId}): \x1b[0m ${url}`);
+      console.info(`\x1b[38;2;0;204;204mResponse Time(${context.state.requestId}): \x1b[0m ${url}\n`);
+    } else {
+      // why we must add 'message' and 'level' fields, it's so stupid according to winston type.
+      logger.profile(profileTag, { level: 'info', message: profileTag, user: context.state.user || 'ananymity' });
     }
   }
 };

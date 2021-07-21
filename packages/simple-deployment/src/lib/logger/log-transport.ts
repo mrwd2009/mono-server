@@ -92,6 +92,12 @@ export class EnhancedConsole extends Transport {
       if (info.timestamp) {
         msg = `${msg}\ntimestamp: ${color(info.timestamp)}`;
       }
+      if (info.durationMs) {
+        msg = `${msg}\ndurationMs: ${color(info.durationMs)}`;
+      }
+      if (info.user) {
+        msg = `${msg}\nuser: ${color(info.user)}`;
+      }
       msg = `${msg}\nmessage: ${color(info.message)}`;
       if (info.response) {
         const {

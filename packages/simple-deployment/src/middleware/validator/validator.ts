@@ -12,7 +12,7 @@ export type SchemaGroup = _SchemaGroup | Schema;
 
 export type SchemaConstructor = (schema: typeof Joi) => SchemaGroup;
 
-const validator = (schemaC: SchemaConstructor, opts: AsyncValidationOptions = {}): Middleware => {
+export const validator = (schemaC: SchemaConstructor, opts: AsyncValidationOptions = {}): Middleware => {
   const schema: SchemaGroup = schemaC(Joi);
   const options: AsyncValidationOptions = {
     allowUnknown: true,

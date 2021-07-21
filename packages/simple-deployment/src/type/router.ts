@@ -9,7 +9,8 @@ export type GatewayRouterState = _GatewayRouterState & Record<string, any>;
 interface _GatewayRouterContext {
   gateway?: {
     sendJSON?: (result: unknown) => void,
-  }
+  },
+  mergedParams?: any,
 }
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type GatewayRouterContext = _GatewayRouterContext & RouterContext<GatewayRouterState> ;

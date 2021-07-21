@@ -1,13 +1,24 @@
 import Router, { RouterContext } from '@koa/router';
-import passport from 'koa-passport';
+import { middleware } from '../../config';
+import {
+  showRubyServices,
+} from './controller';
+const {
+  passport: {
+    jwtAuth,
+  },
+} = middleware;
 
 const router = new Router({
   prefix: '/deploy-ruby',
 });
 
-router.get('/', passport.authenticate('jwt', { session: false }), async (context: RouterContext): Promise<void> => {
+router.get('/', jwtAuth, async (context: RouterContext): Promise<void> => {
   context.body = 'test';
 });
+
+router.get('/service/list', ...showRubyServices)
+router.post('/service/list', ...showRubyServices)
 
 export default router;
 
