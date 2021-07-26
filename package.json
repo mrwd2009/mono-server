@@ -8,5 +8,12 @@
   "license": "MIT",
   "dependencies": {
     "lerna": "^4.0.0"
+  },
+  "scripts": {
+    "sd-dev": "cd ./packages/simple-deployment && yarn dev",
+    "sd-lint": "cd ./packages/simple-deployment && yarn lint",
+    "sd-test": "cd ./packages/simple-deployment && yarn test",
+    "sd-add": "cd ./packages/simple-deployment && yarn add",
+    "sd-remove": "cd ./packages/simple-deployment && yarn remove"
   }
 }

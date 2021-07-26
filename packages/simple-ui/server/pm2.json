@@ -1,0 +1,102 @@
+{
+  "apps" : [{
+    "name"        : "somah_dev",
+    "script"      : "./index.js",
+    "max_memory_restart": "450M",
+    "log_date_format": "YYYY-MM-DD HH:mm Z",
+    "error_file": "/data/somah/logs/dev/pm2/error/error.log",
+    "out_file": "/data/somah/logs/dev/pm2/out/out.log",
+    "env": {
+      "NODE_ENV": "production",
+      "PORT": "8017"
+    }
+  },{
+    "name"        : "somah_test",
+    "script"      : "./index.js",
+    "max_memory_restart": "450M",
+    "log_date_format": "YYYY-MM-DD HH:mm Z",
+    "error_file": "/data/somah/logs/test/pm2/error/error.log",
+    "out_file": "/data/somah/logs/test/pm2/out/out.log",
+    "env": {
+      "NODE_ENV": "production",
+      "PORT": "8018"
+    }
+  },{
+    "name"        : "somah_qa",
+    "script"      : "./index.js",
+    "max_memory_restart": "450M",
+    "log_date_format": "YYYY-MM-DD HH:mm Z",
+    "error_file": "/data/somah/logs/qa/pm2/error/error.log",
+    "out_file": "/data/somah/logs/qa/pm2/out/out.log",
+    "env": {
+      "NODE_ENV": "production",
+      "PORT": "8011"
+    }
+  },{
+    "name"        : "somah_stage",
+    "script"      : "./index.js",
+    "max_memory_restart": "450M",
+    "log_date_format": "YYYY-MM-DD HH:mm Z",
+    "error_file": "/data/somah/logs/stage/pm2/error/error.log",
+    "out_file": "/data/somah/logs/stage/pm2/out/out.log",
+    "env": {
+      "NODE_ENV": "production",
+      "PORT": "8013"
+    }
+  },{
+    "name"        : "somah_prod",
+    "script"      : "./index.js",
+    "max_memory_restart": "450M",
+    "log_date_format": "YYYY-MM-DD HH:mm Z",
+    "error_file": "/data/somah/logs/prod/pm2/error/error.log",
+    "out_file": "/data/somah/logs/prod/pm2/out/out.log",
+    "env": {
+      "NODE_ENV": "production",
+      "PORT": "8018"
+    }
+  },{
+    "name"        : "uab",
+    "script"      : "./index.js",
+    "max_memory_restart": "450M",
+    "log_date_format": "YYYY-MM-DD HH:mm Z",
+    "error_file": "/data/uab/logs/prod/pm2/error/error.log",
+    "out_file": "/data/uab/logs/prod/pm2/out/out.log",
+    "env": {
+      "NODE_ENV": "production",
+      "PORT": "8019"
+    }
+  },{
+    "name"        : "somah_internal",
+    "script"      : "./index.js",
+    "max_memory_restart": "450M",
+    "log_date_format": "YYYY-MM-DD HH:mm Z",
+    "error_file": "/data/somah/logs/internal/pm2/error/error.log",
+    "out_file": "/data/somah/logs/internal/pm2/out/out.log",
+    "env": {
+      "NODE_ENV": "production",
+      "PORT": "8020"
+    }
+  },{
+    "name"        : "pseg_billing_qa",
+    "script"      : "./index.js",
+    "max_memory_restart": "450M",
+    "log_date_format": "YYYY-MM-DD HH:mm Z",
+    "error_file": "/data/pseg_billing_qa/logs/prod/pm2/error/error.log",
+    "out_file": "/data/pseg_billing_qa/logs/prod/pm2/out/out.log",
+    "env": {
+      "NODE_ENV": "production",
+      "PORT": "8020"
+    }
+  },{
+    "name"        : "pseg_billing_dev",
+    "script"      : "./index.js",
+    "max_memory_restart": "450M",
+    "log_date_format": "YYYY-MM-DD HH:mm Z",
+    "error_file": "/data/pseg_billing_dev/logs/prod/pm2/error/error.log",
+    "out_file": "/data/pseg_billing_dev/logs/prod/pm2/out/out.log",
+    "env": {
+      "NODE_ENV": "production",
+      "PORT": "8021"
+    }
+  }]
+}

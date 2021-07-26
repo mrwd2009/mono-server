@@ -1,0 +1,35 @@
+.event-usage-handler {
+  td,th {
+    padding: 4px !important;
+  }
+  tr.total-row > td {
+    background-color: #fafafa;
+    color: rgba(0, 0, 0, 0.85);
+    font-weight: 500;
+  }
+  // .usage-exception-input {
+  //   table {
+  //     table-layout: fixed !important;
+  //   }
+  // }
+  .usage-exception-edit-cell {
+    position: relative;
+    padding-right: 10px;
+    .anticon {
+      position: absolute;
+      top: 2px;
+      right: -2px;
+      color: @primary-color;
+    }
+  }
+}
+
+html[data-theme='theme-dark'] {
+  .event-usage-handler {
+    tr.total-row > td {
+      background-color: transparent;
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 500;
+    }
+  }
+}

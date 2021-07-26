@@ -1,0 +1,106 @@
+// -------- Table Additions Light Thtme -----------
+html[data-theme='theme-light'] {
+    .ant-table--listing {
+        .ant-table-row {
+            &.is-resolved {
+                background-color: rgba(
+                    106,
+                    158,
+                    44,
+                    0.1
+                ); // TODO use color variables
+
+                .handler-status {
+                    color: @success-color;
+                    cursor: pointer;
+                }
+            }
+            &.is-archived {
+                background-color: rgba(
+                    78,
+                    79,
+                    86,
+                    0.05
+                ); // TODO use color variables
+            }
+        }
+        td.ant-table-cell {
+            &:empty {
+                color: rgba(#4e4f56, 0.4); // TODO use color variables
+                &:before {
+                    content: '-';
+                }
+            }
+        }
+
+        td.ant-table-column-sort {
+            background: rgba(255, 151, 36, 0.15);
+        }
+    }
+}
+
+// -------- Table Additions Dark Theme -----------
+html[data-theme='theme-dark'] {
+    .ant-table--listing {
+        .ant-table-row {
+            &.is-resolved {
+                background-color: rgba(
+                    @success-color,
+                    0.2
+                ); // TODO use color variables
+
+                .handler-status {
+                    color: @success-color;
+                    cursor: pointer;
+                }
+            }
+            &.is-archived {
+                background-color: rgba(
+                    78,
+                    79,
+                    86,
+                    0.2
+                ); // TODO use color variables
+            }
+        }
+        td.ant-table-cell {
+            &:empty {
+                color: rgba(#70717b, 0.4); // TODO use color variables
+                &:before {
+                    content: '-';
+                }
+            }
+        }
+
+        td.ant-table-column-sort {
+            background: rgba(78, 79, 86, 0.2); // TODO use color variables
+        }
+    }
+}
+
+// -------- Table Additions -----------
+// .ant-table-thead {
+//     .ant-table-cell.is-marked {
+//         background-color: rgba(@success-color, 0.1);
+//     }
+// }
+.ant-table-cell {
+    &.no-wrap {
+        white-space: nowrap;
+    }
+    // &.is-marked {
+    //     background-color: rgba(@success-color, 0.05);
+    // }
+}
+
+//TODO Refactor
+// .ant-table-row.is-deleted {
+//     .ant-table-cell {
+//        color: rgba(@text-color, 0.3);
+//     }
+// }
+
+.ant-table-filter-trigger.active {
+    background-color: @primary-color;
+    color: @white-color;
+}

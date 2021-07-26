@@ -1,0 +1,41 @@
+// -------- GridX Main Navigation -----------
+.ant-menu-gridx-wrapper {
+    background-color: @gridx-menu-wrapper-background-color;
+    box-shadow: inset 0 10px 20px -20px rgba(0, 0, 0, 0.2);
+    padding: 0 24px/4;
+    line-height: 40px;
+}
+
+.ant-menu-gridx {
+    background-color: transparent;
+    font-weight: 500;
+    border: none;
+    &.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-selected,
+    &.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-selected {
+        border-bottom-color: transparent;
+    }
+}
+.has-no-hover-border {
+    &.ant-menu-horizontal.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-active,
+    &.ant-menu-horizontal.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-active:hover {
+        border-bottom-color: transparent;
+    }
+    &.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item,
+    &.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu {
+        margin: 0;
+        min-width: 45px;
+        text-align: center;
+    }
+}
+.ant-menu-item:active {
+    background: transparent;
+}
+.ant-menu-gridx__badge {
+    .ant-badge-count {
+        right: -8px; 
+    }
+}
+
+.active .ant-menu-gridx__badge {
+    color: @primary-color;
+}
