@@ -7,6 +7,7 @@ import useMounted from './useMounted';
 const defaultState = {
   loading: false,
   systemErrorCount: 0,
+  systemInfo: {},
 };
 
 const useGlobalInfo = () => {
@@ -36,17 +37,12 @@ const useGlobalInfo = () => {
     setGlobalInfo({
       loading: true
     });
-    axios.post(api.event.systemError, {
-      pagination: {
-        page: 1,
-        pageSize: 1,
-      },
-    })
+    axios.get(api.system.info)
       .then(data => {
         if (isMounted.current) {
           setGlobalInfo({
             loading: false,
-            systemErrorCount: data.total,
+            systemInfo: data,
           });
         }
       })

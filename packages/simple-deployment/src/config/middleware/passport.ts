@@ -11,7 +11,7 @@ const getToken: JwtFromRequestFunction = (req) => {
 
 const options: StrategyOptions = {
   jwtFromRequest: ExtractJwt.fromExtractors([getToken]),
-  secretOrKey: process.env.JWT_SECRET,
+  secretOrKey: config.jwt.secret,
   issuer: config.jwt.issuer,
   audience: config.jwt.audience,
 };

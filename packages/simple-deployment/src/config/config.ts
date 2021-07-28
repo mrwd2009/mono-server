@@ -1,6 +1,8 @@
 import path from 'path';
+import fs from 'fs';
+import _ from 'lodash';
 
-export type GatewayConfig = NodeJS.ProcessEnv & {
+export type GatewayENV = NodeJS.ProcessEnv & {
   JWT_SECRET?: string,
   TRACE_KNOWN_ERROR_IN_DEV?: string,
   MAIN_REDIS_URL?: string,
@@ -10,17 +12,35 @@ export type GatewayConfig = NodeJS.ProcessEnv & {
   WINSTON_LOG_FILENAME?: string,
   WINSTON_LOG_ERROR_FILENAME?: string,
   WINSTON_LOG_EXCEPTION_FILENAME?: string,
+  APP_ENV?: string,
+  MAIN_DB_USER?: string,
+  MAIN_DB_PASS?: string,
+  MAIN_DB_HOST?: string,
 }
 
-const envObj: GatewayConfig = process.env;
-const env = envObj.NODE_ENV || 'development';
-const isDev = env === 'development';
+export interface GatewayConfig {
+  address: string,
+}
+
+const envObj: GatewayENV = process.env;
+const nodeEnv = envObj.NODE_ENV || 'development';
+const appEnv = envObj.APP_ENV || 'dev';
+const isDev = nodeEnv === 'development';
+
+const appConfigFiles = fs.readdirSync(path.join(__dirname, 'env'));
+let appConfig: GatewayConfig;
+if (_.find(appConfigFiles, item => item.includes(appEnv))) {
+  appConfig = require(path.join(__dirname, 'env', appEnv)).default;
+} else {
+  appConfig = require('./env/dev').default;
+}
+
 const config = {
-  env,
+  appEnv,
   isDev,
   traceKnownErrorInDev: isDev ? (envObj.TRACE_KNOWN_ERROR_IN_DEV === 'true') : false,
   jwt: {
-    cookieKey: `simple-deployment-${env}`,
+    cookieKey: `simple-deployment-${nodeEnv}`,
     issuer: 'di@gridx.cn',
     audience: 'gridx.cn',
     secret: envObj.JWT_SECRET,
@@ -29,7 +49,7 @@ const config = {
   redis: {
     main: {
       url: envObj.MAIN_REDIS_URL,
-      prefix: `simple-deployment-${env}-`,
+      prefix: `simple-deployment-${nodeEnv}-`,
       expired: 3600,
     },
   },
@@ -38,16 +58,27 @@ const config = {
       fileDir: path.join(__dirname, envObj.WINSTON_LOG_DIR || '../../log/winston'),
       maxSize: '30m',
       maxFiles: '90d',
-      logInfoFileName: envObj.WINSTON_LOG_FILENAME || `info-${env}-%DATE%.log`,
-      logErrorFileName: envObj.WINSTON_LOG_ERROR_FILENAME || `error-${env}-%DATE%.log`,
-      logExceptionFileName: envObj.WINSTON_LOG_EXCEPTION_FILENAME || `exception-${env}-%DATE%.log`,
+      logInfoFileName: envObj.WINSTON_LOG_FILENAME || `info-${nodeEnv}-%DATE%.log`,
+      logErrorFileName: envObj.WINSTON_LOG_ERROR_FILENAME || `error-${nodeEnv}-%DATE%.log`,
+      logExceptionFileName: envObj.WINSTON_LOG_EXCEPTION_FILENAME || `exception-${nodeEnv}-%DATE%.log`,
     },
     server: {
       enabled: !!envObj.ENABLE_APP_LOG_SERVER,
       host: '127.0.0.1',
       port: parseInt(envObj.APP_LOG_SEVER_PORT || '2448'),
     },
-  }
+  },
+  database: {
+    main: {
+      username: envObj.MAIN_DB_USER!,
+      password: envObj.MAIN_DB_PASS!,
+      host: envObj.MAIN_DB_HOST!,
+    },
+  },
+  cors: {
+    allowedDomain: [],
+  },
+  ...appConfig
 };
 
 export default config;

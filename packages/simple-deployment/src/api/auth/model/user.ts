@@ -1,25 +1,45 @@
-import jwt from 'jsonwebtoken';
-import dayjs from 'dayjs';
-import config from '../../../config';
 import { userHelper } from '../helper';
 import * as lib from '../../../lib';
+import appDBs, { UserDef } from '../../../config/model/app';
 
 const {
   error: {
-    BackendError,
-  }
+    AuthError,
+  },
+  util,
+  logger,
 } = lib;
+const {
+  main: {
+    models,
+  },
+} = appDBs;
+
+const UserModel = models.User as UserDef;
 
 type UserParams = {
-  username: string,
-  password: string,
+  Email: string,
+  Password: string,
 };
 
-const login = async (params: UserParams): Promise<{token: string, username: string}> => {
-  const token = await userHelper.createJwtToken(params.username);
+const login = async (params: UserParams): Promise<{token: string, user: string}> => {
+  const {
+    Email,
+    Password,
+  } = params;
+  const user = await UserModel.findByPk(Email);
+  if (!user) {
+    logger.error(`User(${Email}) is not found.`)
+    throw new AuthError('Incorrect username or password');
+  }
+  if (!util.password.isPasswordEqual(Password, user.Password)) {
+    logger.error(`Incorrect password(${Password}) of User(${Email}).`)
+    throw new AuthError('Incorrect username or password');
+  }
+  const token = await userHelper.createJwtToken(params.Email);
   return {
     token,
-    username: params.username,
+    user: params.Email,
   };
 };
 

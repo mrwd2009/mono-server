@@ -29,6 +29,6 @@ export const createJwtToken = async (email: string): Promise<string> => {
     }, config.jwt.secret, {
       issuer: config.jwt.issuer,
       audience: config.jwt.audience,
-    },callback);
+    }, callback);
   });
 };

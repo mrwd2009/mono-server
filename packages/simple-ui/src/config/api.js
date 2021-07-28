@@ -1,5 +1,6 @@
 const api = {
-  common: {
+  system: {
+    info: '/api/system/info',
   },
   auth: {
     login: '/api/auth/login',

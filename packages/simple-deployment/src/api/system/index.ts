@@ -8,10 +8,9 @@ const {
 } = middleware;
 
 const router = new Router({
-  prefix: '/auth',
+  prefix: '/system',
 });
 
-router.post('/login', ...ctrl.login);
-router.get('/logout', jwtAuth, ctrl.logout);
+router.get('/info', jwtAuth, ctrl.getInfoCtrl);
 
 export default router;

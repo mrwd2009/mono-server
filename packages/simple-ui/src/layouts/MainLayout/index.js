@@ -25,19 +25,20 @@ const MainLayout = ({ children }) => {
   // auto refresh global information
   const fetchRef = useRef(fetchGlobalInfo);
   fetchRef.current = fetchGlobalInfo;
-  // useEffect(() => {
-  //   const callback = () => {
-  //     if (process.env.NODE_ENV === 'development') {
-  //       return;
-  //     }
-  //     fetchRef.current && fetchRef.current();
-  //   };
-  //   callback();
-  //   const timer = setInterval(callback, 20000);
-  //   return () => {
-  //     clearInterval(timer);
-  //   };
-  // }, [fetchRef]);
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      fetchRef.current && fetchRef.current();
+      return;
+    }
+    const callback = () => {
+      fetchRef.current && fetchRef.current();
+    };
+    callback();
+    const timer = setInterval(callback, 20000);
+    return () => {
+      clearInterval(timer);
+    };
+  }, [fetchRef]);
   
   // for breakcrumb
   const [bc, setBC] = useState([]);
