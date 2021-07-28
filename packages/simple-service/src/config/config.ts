@@ -40,7 +40,7 @@ const config = {
   isDev,
   traceKnownErrorInDev: isDev ? (envObj.TRACE_KNOWN_ERROR_IN_DEV === 'true') : false,
   jwt: {
-    cookieKey: `simple-deployment-${nodeEnv}`,
+    cookieKey: `simple-service-${nodeEnv}`,
     issuer: 'di@gridx.cn',
     audience: 'gridx.cn',
     secret: envObj.JWT_SECRET,
@@ -49,7 +49,7 @@ const config = {
   redis: {
     main: {
       url: envObj.MAIN_REDIS_URL,
-      prefix: `simple-deployment-${nodeEnv}-`,
+      prefix: `simple-service-${nodeEnv}-`,
       expired: 3600,
     },
   },

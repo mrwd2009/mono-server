@@ -1,7 +1,7 @@
 import { Middleware } from '@koa/router';
 import { userModel } from '../model';
 import config from '../../../config';
-import { GatewayRouterContext } from '../../../type';
+import { GatewayRouterContext, GatewayRouterReturn } from '../../../type';
 import { validator } from '../../../middleware';
 
 export const login = [
@@ -9,7 +9,7 @@ export const login = [
     Email: Schema.string(),
     Password: Schema.string(),
   })),
-  async (context: GatewayRouterContext): Promise<void> => {
+  async (context: GatewayRouterContext): GatewayRouterReturn => {
     const { token, user } = await userModel.login(context.request.body);
     context.cookies.set(config.jwt.cookieKey, token, {
       httpOnly: true,

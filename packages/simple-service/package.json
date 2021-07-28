@@ -1,7 +1,7 @@
 {
-  "name": "simple-deployment",
+  "name": "simple-service",
   "version": "1.0.0",
-  "description": "tool to deploy service",
+  "description": "simple service",
   "main": "index.js",
   "scripts": {
     "test": "jest",

@@ -17,3 +17,5 @@ export type GatewayRouterContext = _GatewayRouterContext & RouterContext<Gateway
 
 // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
 export type GatewayController = Middleware<_GatewayRouterState & Record<string, any>, _GatewayRouterContext & {}>;
+
+export type GatewayRouterReturn = Promise<void>;
