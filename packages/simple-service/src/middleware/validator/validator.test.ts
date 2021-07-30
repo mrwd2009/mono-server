@@ -1,4 +1,9 @@
+import Joi from 'joi';
 import validator from './validator';
+
+test('plain object is not schema', async () => {
+  expect(Joi.isSchema({ type: Joi.number() })).toBeFalsy();
+})
 
 test('test with a schema object', async () => {
   const fn = validator(Schema => Schema.object({
