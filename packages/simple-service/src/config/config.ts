@@ -16,6 +16,8 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   MAIN_DB_USER?: string,
   MAIN_DB_PASS?: string,
   MAIN_DB_HOST?: string,
+  QUEUE_REDIS_URL?: string,
+  QUEUE_ENABLE_DASHBOARD?: string,
 }
 
 export interface GatewayConfig {
@@ -35,12 +37,15 @@ if (_.find(appConfigFiles, item => item.includes(appEnv))) {
   appConfig = require('./env/dev').default;
 }
 
+const defaultRedisUrl = 'redis://localhost:6379';
+const commonPrefix = `simple-service-${nodeEnv}-${appEnv}`;
+
 const config = {
   appEnv,
   isDev,
   traceKnownErrorInDev: isDev ? (envObj.TRACE_KNOWN_ERROR_IN_DEV === 'true') : false,
   jwt: {
-    cookieKey: `simple-service-${nodeEnv}`,
+    cookieKey: commonPrefix,
     issuer: 'di@gridx.cn',
     audience: 'gridx.cn',
     secret: envObj.JWT_SECRET,
@@ -48,8 +53,8 @@ const config = {
   },
   redis: {
     main: {
-      url: envObj.MAIN_REDIS_URL,
-      prefix: `simple-service-${nodeEnv}-`,
+      url: envObj.MAIN_REDIS_URL || defaultRedisUrl,
+      prefix: `${commonPrefix}-main-`,
       expired: 3600,
     },
   },
@@ -77,6 +82,18 @@ const config = {
   },
   cors: {
     allowedDomain: [],
+  },
+  queue: {
+    redis: {
+      url: envObj.QUEUE_REDIS_URL || defaultRedisUrl,
+    },
+    options: {
+      prefix: `${commonPrefix}-queue-`
+    },
+    dashboard: {
+      enabled: envObj.QUEUE_ENABLE_DASHBOARD === 'true',
+      basePath: '/admin/queues'
+    }
   },
   ...appConfig
 };

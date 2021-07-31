@@ -2,6 +2,7 @@ import React, { memo, useMemo } from 'react';
 import { Table, Input, InputNumber, AutoComplete, Select, Row, Col, Button, Divider } from 'antd';
 // import { SearchOutlined } from '@ant-design/icons';
 import map from 'lodash/map';
+import isEmpty from 'lodash/isEmpty';
 import isObject from 'lodash/isObject';
 import useServerTable from './hooks/useServerTable';
 import './index.less';
@@ -149,6 +150,10 @@ let ServerTable = ({table, rowKey = 'key', scroll = {}, className = '', columns,
     pageProps.hideOnSinglePage = true;
   }
 
+  if (!isEmpty(scroll)) {
+    rest.scroll = scroll;
+  }
+
   return (
     <Table
       className={`server-table nowrap-table ${className}`}
@@ -160,7 +165,6 @@ let ServerTable = ({table, rowKey = 'key', scroll = {}, className = '', columns,
       dataSource={list}
       pagination={pageProps}
       onChange={onChange}
-      scroll={scroll}
       {...rest}
     />
   );
