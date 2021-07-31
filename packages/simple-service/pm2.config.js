@@ -8,7 +8,7 @@ const logFile = file => path.join(logPath, file);
 module.exports = {
   apps: [
     {
-      name: 'simple-deployment-log-server',
+      name: 'simple-service-log-server',
       script: './log-server.js',
       env: {
         NODE_ENV: 'production',
@@ -20,7 +20,7 @@ module.exports = {
       out_file: logFile('log-server-out.log')
     },
     {
-      name: 'simple-deployment',
+      name: 'simple-service',
       script: './index.js',
       exec_mode: 'cluster',
       instances: 2,
@@ -36,6 +36,18 @@ module.exports = {
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
       error_file: logFile('simple-deployment-error.log'),
       out_file: logFile('simple-deployment-out.log')
+    },
+    {
+      name: 'simple-service-queue',
+      script: './queue-starter.js',
+      env: {
+        APP_ENV: 'queue',
+        NODE_ENV: 'production',
+      },
+      max_memory_restart: '500M',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      error_file: logFile('simple-deployment-queue-error.log'),
+      out_file: logFile('simple-deployment-queue-out.log')
     }
   ]
 };

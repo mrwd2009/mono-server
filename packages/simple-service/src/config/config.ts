@@ -8,6 +8,7 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   MAIN_REDIS_URL?: string,
   APP_LOG_SEVER_PORT?: string,
   ENABLE_APP_LOG_SERVER?: string,
+  ENABLE_APP_LOG_IPC?: string,
   WINSTON_LOG_DIR?: string,
   WINSTON_LOG_FILENAME?: string,
   WINSTON_LOG_ERROR_FILENAME?: string,
@@ -39,7 +40,7 @@ if (_.find(appConfigFiles, item => item.includes(appEnv))) {
 
 const defaultRedisUrl = 'redis://localhost:6379';
 const commonPrefix = `simple-service-${nodeEnv}-${appEnv}`;
-
+const logFileDir = path.join(__dirname, envObj.WINSTON_LOG_DIR || '../../log/winston', `${nodeEnv}/${appEnv}`);
 const config = {
   appEnv,
   isDev,
@@ -60,7 +61,7 @@ const config = {
   },
   logger: {
     rotateOptions: {
-      fileDir: path.join(__dirname, envObj.WINSTON_LOG_DIR || '../../log/winston'),
+      fileDir: logFileDir,
       maxSize: '30m',
       maxFiles: '90d',
       logInfoFileName: envObj.WINSTON_LOG_FILENAME || `info-${nodeEnv}-%DATE%.log`,
@@ -68,9 +69,13 @@ const config = {
       logExceptionFileName: envObj.WINSTON_LOG_EXCEPTION_FILENAME || `exception-${nodeEnv}-%DATE%.log`,
     },
     server: {
-      enabled: !!envObj.ENABLE_APP_LOG_SERVER,
+      enabled: envObj.ENABLE_APP_LOG_SERVER === 'true',
       host: '127.0.0.1',
       port: parseInt(envObj.APP_LOG_SEVER_PORT || '2448'),
+    },
+    ipc: {
+      enabled: envObj.ENABLE_APP_LOG_IPC === 'true',
+      path: path.join(logFileDir, 'log.socket'),
     },
   },
   database: {
