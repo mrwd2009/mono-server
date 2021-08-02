@@ -4,4 +4,6 @@ dist
 index.js
 babel.config.js
 pm2.config.js
-log-server.js
+log-server-ipc.js
+log-server-udp.js
+queue-starter.js

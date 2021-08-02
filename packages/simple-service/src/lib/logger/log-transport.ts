@@ -3,6 +3,7 @@
 import { format, transports } from 'winston';
 import 'winston-daily-rotate-file';
 import path from 'path';
+import net from 'net';
 import Transport, { TransportStreamOptions } from 'winston-transport';
 import { createSocket, Socket } from 'dgram';
 import { isWorker, worker } from 'cluster';
@@ -20,6 +21,7 @@ const {
       host,
       port,
     },
+    ipc,
     rotateOptions: {
       fileDir,
       maxSize,
@@ -37,6 +39,9 @@ const { colorize } = format;
 export class WorkerTransport extends Transport {
   private enableLogServer = enabled;
   private logServer?: Socket;
+  private ipcClient?: net.Socket;
+  private ipcReady = false;
+  private ipcQueue: Array<any> = [];
 
   constructor(opt?: TransportStreamOptions) {
     super(opt);
@@ -49,6 +54,24 @@ export class WorkerTransport extends Transport {
         console.error(error);
         throw error;
       });
+    } else if (ipc.enabled) {
+      this.ipcClient = net.createConnection(ipc.path);
+      this.ipcClient.setNoDelay();
+      this.ipcClient
+        .on('ready', () => {
+          this.ipcReady = true;
+          if (this.ipcQueue.length) {
+            this.ipcQueue.forEach((item: any) => {
+              this.ipcClient?.write(`${JSON.stringify(item.message)}\n`, () => {
+                item.done();
+              });
+            });
+          }
+        })
+        .on('error', (error) => {
+          console.error(error);
+          throw error;
+        });
     }
   }
 
@@ -69,6 +92,19 @@ export class WorkerTransport extends Transport {
     };
     if (this.enableLogServer) {
       this.logServer!.send(Buffer.from(JSON.stringify(postMsg)), port, host, done);
+      return;
+    }
+    if (ipc.enabled) {
+      if (!this.ipcReady) {
+        this.ipcQueue.push({
+          message: postMsg,
+          done,
+        });
+        return;
+      }
+      this.ipcClient?.write(`${JSON.stringify(postMsg)}\n`, () => {
+        done(null);
+      });
       return;
     }
     worker.send(postMsg, undefined, done);

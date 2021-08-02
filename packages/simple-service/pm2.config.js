@@ -8,16 +8,30 @@ const logFile = file => path.join(logPath, file);
 module.exports = {
   apps: [
     {
-      name: 'simple-service-log-server',
-      script: './log-server.js',
+      name: 'log-server-udp',
+      script: './log-server-udp.js',
       env: {
+        APP_ENV: 'prod',
         NODE_ENV: 'production',
         APP_LOG_SEVER_PORT: '2000', // used by logger in pm2 cluster mode
       },
       max_memory_restart: '200M',
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
-      error_file: logFile('log-server-error.log'),
-      out_file: logFile('log-server-out.log')
+      error_file: logFile('log-server-udp-error.log'),
+      out_file: logFile('log-server-udp-out.log')
+    },
+    {
+      name: 'log-server-ipc',
+      script: './log-server-ipc.js',
+      env: {
+        NODE_ENV: 'production',
+        APP_ENV: 'prod',
+        ENABLE_APP_LOG_IPC: 'true',
+      },
+      max_memory_restart: '200M',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      error_file: logFile('log-server-ipc-error.log'),
+      out_file: logFile('log-server-ipc-out.log')
     },
     {
       name: 'simple-service',
@@ -25,6 +39,7 @@ module.exports = {
       exec_mode: 'cluster',
       instances: 2,
       env: {
+        APP_ENV: 'prod',
         NODE_ENV: 'production',
         ENABLE_APP_LOG_SERVER: 'true',
         APP_LOG_SEVER_PORT: '2000', // used by logger in pm2 cluster mode
@@ -34,8 +49,23 @@ module.exports = {
       },
       max_memory_restart: '500M',
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
-      error_file: logFile('simple-deployment-error.log'),
-      out_file: logFile('simple-deployment-out.log')
+      error_file: logFile('simple-service-error.log'),
+      out_file: logFile('simple-service-out.log')
+    },
+    {
+      name: 'simple-service-with-ipc-log',
+      script: './index.js',
+      exec_mode: 'cluster',
+      instances: 2,
+      env: {
+        APP_ENV: 'prod',
+        NODE_ENV: 'production',
+        ENABLE_APP_LOG_IPC: 'true',
+      },
+      max_memory_restart: '500M',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      error_file: logFile('simple-service-with-ipc-log-error.log'),
+      out_file: logFile('simple-service-with-ipc-log-out.log')
     },
     {
       name: 'simple-service-queue',
