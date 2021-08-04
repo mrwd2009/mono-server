@@ -5,6 +5,7 @@ import { getRouter } from './config/router';
 import PrivateRoute from './routes/PrivateRoute';
 import { Login, Register, ForgotPassword, ResetPassword } from './views/UserAuth';
 import NotFound from './views/Common/404';
+import Dashboard from './views/Dashboard';
 
 const authRender = (Comp) => {
   return <SimpleLayout><Comp /></SimpleLayout>;
@@ -17,7 +18,7 @@ const mainRender = () => {
       <MainLayout>
         <Switch>
           <Redirect from="/" exact to={dashPathname} />
-          {/* <Route path={dashPathname} exact component={Dashboard} /> */}
+          <Route path={dashPathname} exact component={Dashboard} />
           <Route component={NotFound} />
         </Switch>
       </MainLayout>

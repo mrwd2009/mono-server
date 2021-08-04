@@ -5,9 +5,9 @@ import filter from 'lodash/filter';
 
 const routerList = [
   {
-    title: 'Dashboard(todo)',
+    title: 'Dashboard',
     key: 'dashboard',
-    pathname: '/todo/dashboard',
+    pathname: '/dashboard',
     rbacCode: '',
     menu: true, // display on top navigation
   },
@@ -63,5 +63,7 @@ export const getRouter = (routerKey) => {
 
 // items for navigation
 export const menuList = filter(routerList, 'menu');
+
+export const homePath = getRouter('dashboard').pathname;
 
 export default routerList;

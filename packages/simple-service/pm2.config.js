@@ -43,6 +43,7 @@ module.exports = {
         NODE_ENV: 'production',
         ENABLE_APP_LOG_SERVER: 'true',
         APP_LOG_SEVER_PORT: '2000', // used by logger in pm2 cluster mode
+        PORT: '4100',
       },
       env_development: {
         NODE_ENV: 'development'
@@ -61,6 +62,7 @@ module.exports = {
         APP_ENV: 'prod',
         NODE_ENV: 'production',
         ENABLE_APP_LOG_IPC: 'true',
+        PORT: '4100',
       },
       max_memory_restart: '500M',
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',

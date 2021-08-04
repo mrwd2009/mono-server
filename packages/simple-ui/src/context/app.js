@@ -1,7 +1,9 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { Spin } from 'antd';
 import forEach from 'lodash/forEach';
+import concat from 'lodash/concat';
 import useTheme from '../hooks/useTheme';
+import { homePath } from '../config/router';
 
 let AppContext, BcContext, GlobalInfoContext, GlobalSearchContext;
 const { Provider } = AppContext =  createContext();
@@ -44,11 +46,15 @@ export const useGlobalInfo = () => {
   return { globalInfo, setGlobalInfo, fetchGlobalInfo };
 };
 
-export const useBC = (initBC) => {
+export const useBC = (initBC, includeHome = true) => {
   const { bc, setBC } = useContext(BcContext);
   useEffect(() => {
     if (initBC) {
-      setBC(initBC);
+      let items = initBC;
+      if (includeHome) {
+        items = concat([{ title: 'Home', pathname: homePath }], items)
+      }
+      setBC(items);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
