@@ -2,9 +2,9 @@ import Router from '@koa/router';
 import * as ctrl from './controller';
 
 const router = new Router({
-  prefix: '/system',
+  prefix: '/public',
 });
 
-router.get('/info', ctrl.getInfoCtrl);
+router.get('/health-checking', ctrl.healthCheckingCtrl);
 
 export default router;

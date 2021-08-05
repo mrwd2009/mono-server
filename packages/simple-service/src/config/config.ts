@@ -19,6 +19,9 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   MAIN_DB_HOST?: string,
   QUEUE_REDIS_URL?: string,
   QUEUE_ENABLE_DASHBOARD?: string,
+  GATEWAY_DB_USER?: string,
+  GATEWAY_DB_PASS?: string,
+  GATEWAY_DB_HOST?: string,
 }
 
 export interface GatewayConfig {
@@ -83,6 +86,11 @@ const config = {
       username: envObj.MAIN_DB_USER!,
       password: envObj.MAIN_DB_PASS!,
       host: envObj.MAIN_DB_HOST!,
+    },
+    gateway: {
+      username: envObj.GATEWAY_DB_USER!,
+      password: envObj.GATEWAY_DB_PASS!,
+      host: envObj.GATEWAY_DB_HOST!,
     },
   },
   cors: {

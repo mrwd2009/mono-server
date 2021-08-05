@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Middleware, RouterContext } from '@koa/router';
 
 interface _GatewayRouterState {
@@ -12,6 +13,8 @@ interface _GatewayRouterContext {
   },
   mergedParams?: any,
 }
+
+export type MergedParams = any;
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type GatewayRouterContext = _GatewayRouterContext & RouterContext<GatewayRouterState> ;
 

@@ -1,18 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import fs from 'fs';
-import SequelizeNameSpace, { Sequelize, Model, DataTypes } from 'sequelize';
+import SequelizeNameSpace, { Sequelize, DataTypes } from 'sequelize';
 import path from 'path';
 import _ from 'lodash';
 import config from '../config';
-import { UserDef } from '../../model/main/User';
+import {
+  UserDef,
+  AgentDef,
+  AgentServiceDef,
+  DeploymentLogDef,
+  ServiceDef,
+} from './type';
 
-class Model2 extends Model {
-
-}
-
-type Model2Def = typeof Model2;
-
-type ModelDefs = UserDef | Model2Def ;
+type ModelDefs = (UserDef
+  | AgentDef
+  | AgentServiceDef
+  | DeploymentLogDef
+  | ServiceDef
+) ;
 
 export interface Database {
   sequelize: Sequelize,

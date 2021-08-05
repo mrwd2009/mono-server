@@ -8,7 +8,7 @@ const hashPasword = async (user: any) => {
   }
 }
 
-class User extends Model {
+export class User extends Model {
   // static associate = (models: { [name: string]: Model }) => {
   //   console.log(models);
   // }
