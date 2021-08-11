@@ -31,7 +31,7 @@ export interface GatewayConfig {
 const envObj: GatewayENV = process.env;
 const nodeEnv = envObj.NODE_ENV || 'development';
 const appEnv = envObj.APP_ENV || 'dev';
-const isDev = nodeEnv === 'development';
+const isDev = nodeEnv !== 'production';
 
 const appConfigFiles = fs.readdirSync(path.join(__dirname, 'env'));
 let appConfig: GatewayConfig;

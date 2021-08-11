@@ -1,6 +1,5 @@
-import { getServiceList, assignAgent } from './deployment';
+import { getServiceList, assignAgent, getAgentList, createService, getLogList } from './deployment';
 import appDB from '../../../config/model/app';
-import { Agent } from 'http';
 
 const {
   gateway: {
@@ -8,9 +7,25 @@ const {
     models: {
       Service,
       AgentService,
+      Agent,
+      DeploymentLog,
     },
   }
 } = appDB;
+
+test('create service', async () => {
+  let val;
+  const spy = jest.spyOn(Service, 'create').mockImplementation((valIn) => {
+    val = valIn;
+  });
+  await createService({
+    name: 'test name',
+    category: 'category',
+  });
+  expect(val.name).toBe('test name');
+  expect(val.category).toBe('category');
+  spy.mockRestore();
+});
 
 test('return service list', async () => {
   const result = {
@@ -93,4 +108,91 @@ test('assign agent', async () => {
   spyTran.mockRestore();
   spyDes.mockRestore();
   spyBulk.mockRestore();
+});
+
+test('return agent list', async () => {
+  const result = {
+    rows: [ new Agent({
+      id: 1,
+      name: 'test name',
+      ip: '10.100.10.1',
+      status: 'active',
+    })],
+    count: 1,
+  };
+  let inputOpt: any;
+  const spy = jest.spyOn(Agent, 'findAndCountAll').mockImplementation( async (opt) => {
+    inputOpt = opt;
+    return result;
+  });
+  const params = {
+    sorter: {
+      field: 'name',
+      direction: 'asc'
+    },
+    filter: {
+      ip: '10',
+    },
+    pagination: {
+      current: 1,
+      pageSize: 10,
+    },
+  };
+  const {
+    total,
+    list,
+  } = await getAgentList(params);
+  expect(total).toBe(1);
+  expect(list.length).toBe(1);
+  expect(list[0].name).toBe('test name');
+  expect(inputOpt.order[0][0]).toBe('name');
+  expect(inputOpt.where.ip).toBe('%10%');
+  spy.mockRestore();
+});
+
+test('return log list', async () => {
+  const result = {
+    rows: [ {
+      id: 1,
+      agent_id: 2,
+      Agent: {
+        name: 'agent',
+      },
+      service_id: 2,
+      Service: {
+        name: 'service',
+      },
+      status: 'active',
+    }],
+    count: 1,
+  };
+  let inputOpt: any;
+  const spy = jest.spyOn(DeploymentLog, 'findAndCountAll').mockImplementation( async (opt) => {
+    inputOpt = opt;
+    return result;
+  });
+  const params = {
+    sorter: {
+      field: 'agent_id',
+      direction: 'asc'
+    },
+    filter: {
+      agent_id: 2,
+    },
+    pagination: {
+      current: 1,
+      pageSize: 10,
+    },
+  };
+  const {
+    total,
+    list,
+  } = await getLogList(params);
+  expect(total).toBe(1);
+  expect(list.length).toBe(1);
+  expect(list[0].agent_id).toBe(2);
+  expect(list[0].service_name).toBe('service');
+  expect(inputOpt.order[0][0]).toBe('agent_id');
+  expect(inputOpt.where.agent_id).toBe(2);
+  spy.mockRestore();
 });

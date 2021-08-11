@@ -1,9 +1,10 @@
-import { Sequelize, DataTypes, Model } from 'sequelize';
+import { Sequelize, DataTypes, Model, ModelStatic, HasOneGetAssociationMixin } from 'sequelize';
 
 export class DeploymentLog extends Model {
-  // static associate = (models: { [name: string]: Model }) => {
-  //   console.log(models);
-  // }
+  static associate = (models: { [name: string]: ModelStatic<Model> }) => {
+    DeploymentLog.hasOne(models.Agent, { foreignKey: 'agent_id', constraints: false });
+    DeploymentLog.hasOne(models.Service, { foreignKey: 'service_id', constraints: false });
+  }
   public id!: number;
   public agent_id!: number;
   public service_id!: number;
@@ -14,6 +15,8 @@ export class DeploymentLog extends Model {
   public stderr!: string;
   public created_at!: Date;
   public updated_at!: Date;
+  public Agent!: Model;
+  public Service!: Model;
 }
 
 export type DeploymentLogDef = typeof DeploymentLog;

@@ -1,0 +1,15 @@
+{
+  "name": "rabbit-mq",
+  "version": "1.0.0",
+  "description": "rabbit-mq project",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "nodejs",
+    "rabbit-mq"
+  ],
+  "author": "di@gridx.cn",
+  "license": "MIT"
+}

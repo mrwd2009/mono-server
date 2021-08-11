@@ -1,14 +1,15 @@
 import Router from '@koa/router';
+import * as ctrl from './controller';
 
 const router = new Router({
   prefix: '/deployment-server',
 });
 
-router.post('/service/list');
-router.post('service/assign');
-router.get('service/agent-list');
-router.post('/agent');
-router.post('/agent/list');
-router.post('/log/list');
+router.post('/service', ...ctrl.createServiceHandler);
+router.post('/service/list', ...ctrl.getServiceListHandler);
+router.post('service/assign', ...ctrl.assignAgentHandler);
+router.post('/agent', ...ctrl.createAgentHandler);
+router.post('/agent/list', ...ctrl.getAgentListHandler);
+router.post('/log/list', ...ctrl.getLogListHandler);
 
 export default router;

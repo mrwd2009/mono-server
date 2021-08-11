@@ -4,6 +4,6 @@ const router = new Router({
   prefix: '/deployment-client',
 });
 
-router.post('service/run')
+router.post('/service/run')
 
 export default router;

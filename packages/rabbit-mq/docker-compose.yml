@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  rabbitmq-try:
+    image: rabbitmq:3.8-management-alpine
+    container_name: 'rabbitmq-try'
+    ports:
+      - 5673:5672
+      - 15673:15672
+    volumes:
+      - ~/docker-hd/rabbitmq-try/data/:/var/lib/rabbitmq/
+      - ~/docker-hd/rabbitmq-try/log/:/var/log/rabbitmq/
+    networks:
+      - rabbitmq-try-net
+networks:
+  rabbitmq-try-net:
+    driver: bridge
