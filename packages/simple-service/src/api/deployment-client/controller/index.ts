@@ -1,14 +1,12 @@
-import { GatewayRouterContext } from '../../../type';
+import { GatewayCtrlArray } from '../../../type';
 import { validator } from '../../../middleware';
+import { runnerModel } from '../model';
 
-export const showRubyServices = [
+export const runServiceHandler: GatewayCtrlArray = [
   validator(Schema => Schema.object({
-    name: Schema.string(),
+    serviceId: Schema.number().integer().min(0),
   })),
-  async (context: GatewayRouterContext): Promise<void> => {
-    await Promise.resolve();
-    context.gateway?.sendJSON?.({
-      message: 'hello',
-    });
-  },
+  async (context) => {
+    context.gateway?.sendJSON?.(await runnerModel.runService(context.mergedParams));
+  }
 ];

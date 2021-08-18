@@ -9,7 +9,6 @@ import {
   AgentDef,
   Agent as AgentIns,
   DeploymentLogDef,
-  DeploymentLog as DeploymentLogIns,
 } from '../../../config/model/type';
 import { LogicError } from '../../../lib/error';
 
