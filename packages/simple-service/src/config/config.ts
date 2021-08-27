@@ -22,6 +22,8 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   GATEWAY_DB_USER?: string,
   GATEWAY_DB_PASS?: string,
   GATEWAY_DB_HOST?: string,
+  GITHUB_USERNAME?: string,
+  GITHUB_PASSWORD?: string,
 }
 
 export interface GatewayConfig {
@@ -107,6 +109,10 @@ const config = {
       enabled: envObj.QUEUE_ENABLE_DASHBOARD === 'true',
       basePath: '/admin/queues'
     }
+  },
+  github:{
+    username: envObj.GITHUB_USERNAME || '',
+    password: envObj.GITHUB_PASSWORD || '',
   },
   ...appConfig
 };

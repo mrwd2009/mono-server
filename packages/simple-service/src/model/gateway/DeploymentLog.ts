@@ -1,4 +1,4 @@
-import { Sequelize, DataTypes, Model, ModelStatic, HasOneGetAssociationMixin } from 'sequelize';
+import { Sequelize, DataTypes, Model, ModelStatic } from 'sequelize';
 
 export class DeploymentLog extends Model {
   static associate = (models: { [name: string]: ModelStatic<Model> }) => {
@@ -11,8 +11,7 @@ export class DeploymentLog extends Model {
   public email!: string;
   public status!: string;
   public percentage!: number;
-  public stdout!: string;
-  public stderr!: string;
+  public output!: string;
   public created_at!: Date;
   public updated_at!: Date;
   public Agent!: Model;
@@ -33,8 +32,7 @@ export default (sequelize: Sequelize, types: typeof DataTypes): typeof Model => 
     email: types.STRING,
     status: types.STRING,
     percentage: types.INTEGER,
-    stdout: types.STRING,
-    stderr: types.STRING,
+    output: types.STRING,
     created_at: types.DATE,
     updated_at: types.DATE,
   }, {
