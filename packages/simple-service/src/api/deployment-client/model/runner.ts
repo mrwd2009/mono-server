@@ -21,10 +21,6 @@ const DeploymentLog = models.DeploymentLog as DeploymentLogDef;
 const Service = models.Service as ServiceDef;
 const Agent = models.Agent as AgentDef;
 
-const {
-  BashRunner,
-} = bashRunner;
-
 interface Command {
   type: string,
   value: string,
@@ -60,14 +56,13 @@ export async function running() {
       ],
     });
     if (!log) {
-      processing = false;
       return;
     }
     await log.update({
       status: 'in progress',
     });
     const commands: Array<Command> = JSON.parse((log.Service as ServiceIns).command);
-    runner = new BashRunner();
+    runner = new bashRunner.BashRunner();
     const { github: { username, password } } = config;
     let output = '';
     for (let i = 0; i < commands.length; i++) {
@@ -79,7 +74,7 @@ export async function running() {
         } else if (command.type === 'bash') {
           result = await runner.exec(command.value);
         }
-        output = `${output}\n${command.value}\n${result}`;
+        output = `${output}${output ? '\n' : ''}${command.value}\n${result}`;
         if (i >= commands.length - 1) {
           await log.update({
             output,
@@ -95,7 +90,7 @@ export async function running() {
       } catch (error) {
         // stderr output
         if (_.isString(error)) {
-          output = `${output}\n${command.value}\n${result}`;
+          output = `${output}${output ? '\n' : ''}${command.value}\n${error}`;
           await log.update({
             output,
             percentage: Math.floor((i + 1) / commands.length * 100),
@@ -105,7 +100,7 @@ export async function running() {
         }
         await log.update({
           status: 'failed',
-          output: `${output}\n${error.message}`
+          output: `${output}${output ? '\n' : ''}${command.value}\n${error.message}`
         });
         logger.error(error.message, { response: error });
         break;
