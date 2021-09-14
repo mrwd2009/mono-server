@@ -1,5 +1,12 @@
 const http = require('http');
-
+/**
+ * Simple reverse http proxy.
+ * @param {Object} params - Input parameters
+ * @param {string} params.header - Http header, its value is used as key to fetch port from 'portMap'
+ * @param {Object} params.portMap - Store mapping for different port like '{ headerValue1: 3001, headerValue2: 3002 }`
+ * @param {(req, res) => void} params.defaultRouter - Default server handler if we don't find port to redirect.
+ * @returns {(req, res) => void} Handler for http server
+ */
 const reverse = ({ header, portMap, defaultRouter }) => {
   const redirect = ({ path, port, method, headers, rawReq, rawRes }) => {
     let newReq, newRes;
