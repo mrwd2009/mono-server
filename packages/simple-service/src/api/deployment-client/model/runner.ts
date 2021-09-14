@@ -26,7 +26,6 @@ interface Command {
   value: string,
 }
 
-
 let processing = false;
 export async function running() {
   if (processing) {
