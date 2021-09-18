@@ -17,7 +17,7 @@ export type AgentServiceDef = typeof AgentService;
 export default (sequelize: Sequelize, types: typeof DataTypes): typeof Model => {
   AgentService.init({
     id: {
-      type: types.INET,
+      type: types.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },

@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import dayjs from 'dayjs';
-import config from '../../../config';
+import config from '../../../config/config';
 import * as lib from '../../../lib';
 
 const {

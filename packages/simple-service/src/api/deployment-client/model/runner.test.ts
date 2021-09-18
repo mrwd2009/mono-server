@@ -1,7 +1,8 @@
 import appDB from '../../../config/model/app';
-import { running, runService } from './runner';
+import axios from 'axios';
+import { running, runService, registerSelf } from './runner';
 import config from '../../../config/config';
-import { bashRunner } from '../../../lib/util';
+import { bashRunner, ip } from '../../../lib/util';
 import logger from '../../../lib/logger';
 
 const {
@@ -265,4 +266,16 @@ test('running a command with unknown error', async () => {
     running(),
   ]);
   expect(findOne.mock.calls.length).toBe(1);
+});
+
+test('register client self to server', async () => {
+  const postMethod = jest.spyOn(axios, 'post').mockResolvedValue(true);
+  config.jwt.secret = 'xxxxxjjjjjjxxxx';
+  await registerSelf();
+  expect(postMethod.mock.calls[0][1]).toEqual({
+    name: ip.getLocalHostName(),
+    ip: ip.getLocalIPs()[0],
+  });
+  expect(postMethod.mock.calls[0][2]?.headers.Cookie).toContain(config.jwt.cookieKey);
+  jest.restoreAllMocks();
 });

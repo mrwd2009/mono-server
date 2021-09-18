@@ -1,10 +1,13 @@
 import _ from 'lodash';
+import axios from 'axios';
+import dayjs from 'dayjs';
 import { MergedParams } from '../../../type';
 import appDB from '../../../config/model/app';
-import { ip, bashRunner } from '../../../lib/util';
+import { ip, bashRunner, common } from '../../../lib/util';
 import { DataError } from '../../../lib/error';
 import config from '../../../config/config';
 import logger from '../../../lib/logger';
+import { userHelper } from '../../auth/helper/index';
 import {
   AgentDef,
   ServiceDef,
@@ -99,14 +102,14 @@ export async function running() {
         }
         await log.update({
           status: 'failed',
-          output: `${output}${output ? '\n' : ''}${command.value}\n${error.message}`
+          output: `${output}${output ? '\n' : ''}${command.value}\n${(error as Error).message}`
         });
-        logger.error(error.message, { response: error });
+        logger.error((error as Error).message, { response: error });
         break;
       }
     }
   } catch (error) {
-    logger.error(error.message, { response: error });
+    logger.error((error as Error).message, { response: error });
     throw error;
   } finally {
     processing = false;
@@ -149,4 +152,55 @@ export async function runService(params: MergedParams): Promise<void> {
   });
   // trigger local running
   running();
+}
+
+let apiToken: {
+  token: string,
+  expired: number,
+};
+export async function getAPIToken(): Promise<string> {
+  if (!apiToken || apiToken.expired < dayjs().unix()) {
+    const token = await userHelper.createJwtToken(config.jwt.issuer);
+    const expired = dayjs().unix() + config.jwt.expireHour * 3600;
+    apiToken = {
+      token,
+      expired,
+    };
+    return `${config.jwt.cookieKey}=${token}`;
+  }
+  return `${config.jwt.cookieKey}=${apiToken.token}`;
+}
+
+export async function registerSelf(): Promise<void> {
+  const ipAddress = ip.getLocalIPs()[0];
+  if (!ipAddress) {
+    return;
+  }
+  const hostname = ip.getLocalHostName();
+  const authInfo = await getAPIToken();
+  await axios.post(`${config.deployment.adminHost}/api/deployment-server/agent`, {
+    name: hostname,
+    ip: ipAddress,
+  }, {
+    headers: {
+      Cookie: authInfo,
+    }
+  });
+}
+
+const intervalRegister = async (): Promise<void> => {
+  try {
+    await registerSelf();
+  } catch (error) {
+    logger.error(error);
+  }
+}
+
+if (config.deployment.isClient) {
+  const runRegister = async (): Promise<void> => {
+    await common.delay(10000);
+    await intervalRegister();
+    await runRegister();
+  };
+  runRegister();
 }

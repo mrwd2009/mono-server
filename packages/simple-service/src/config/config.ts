@@ -1,6 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import _ from 'lodash';
+import { env } from 'process';
 
 export type GatewayENV = NodeJS.ProcessEnv & {
   JWT_SECRET?: string,
@@ -24,6 +25,8 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   GATEWAY_DB_HOST?: string,
   GITHUB_USERNAME?: string,
   GITHUB_PASSWORD?: string,
+  DEPLOYMENT_ADMIN_HOST?: string,
+  DEPLOYMENT_CLIENT?: string,
 }
 
 export interface GatewayConfig {
@@ -113,6 +116,10 @@ const config = {
   github:{
     username: envObj.GITHUB_USERNAME || '',
     password: envObj.GITHUB_PASSWORD || '',
+  },
+  deployment: {
+    adminHost: envObj.DEPLOYMENT_ADMIN_HOST || '',
+    isClient: envObj.DEPLOYMENT_CLIENT === 'true'
   },
   ...appConfig
 };

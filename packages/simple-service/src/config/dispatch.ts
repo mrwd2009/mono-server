@@ -2,7 +2,8 @@ import Koa from 'koa';
 import Router from '@koa/router';
 import config from './config';
 import { passport } from './middleware';
-import deployRubyRouter from '../api/deployment-client';
+import deploymentClient from '../api/deployment-client';
+import deploymentServer from '../api/deployment-server';
 import authRouter from '../api/auth';
 import systemRouter from '../api/system';
 import openRouter from '../api/public';
@@ -21,7 +22,8 @@ const dispatch = async (app: Koa): Promise<void> => {
   // including jwt checking logic
   authCheckingRouter
     .use(passport.jwtAuth)
-    .use(deployRubyRouter.routes())
+    .use(deploymentServer.routes())
+    .use(deploymentClient.routes())
     .use(systemRouter.routes());
 
   app

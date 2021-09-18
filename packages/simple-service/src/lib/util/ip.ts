@@ -1,9 +1,9 @@
 import os from 'os';
 import forEach from 'lodash/forEach';
 
-export function getLocalIPs() {
+export function getLocalIPs(): string[] {
   const interfaces = os.networkInterfaces();
-  const ips = [];
+  const ips:string[] = [];
   forEach(interfaces, (items) => {
     forEach(items, (item) => {
       if (!item.internal && item.family === 'IPv4') {
@@ -12,4 +12,8 @@ export function getLocalIPs() {
     });
   });
   return ips;
+}
+
+export function getLocalHostName(): string {
+  return os.hostname();
 }

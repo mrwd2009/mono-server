@@ -2,8 +2,8 @@ import { Sequelize, DataTypes, Model, ModelStatic } from 'sequelize';
 
 export class DeploymentLog extends Model {
   static associate = (models: { [name: string]: ModelStatic<Model> }) => {
-    DeploymentLog.hasOne(models.Agent, { foreignKey: 'agent_id', constraints: false });
-    DeploymentLog.hasOne(models.Service, { foreignKey: 'service_id', constraints: false });
+    DeploymentLog.belongsTo(models.Agent, { foreignKey: 'agent_id', constraints: false });
+    DeploymentLog.belongsTo(models.Service, { foreignKey: 'service_id', constraints: false });
   }
   public id!: number;
   public agent_id!: number;
@@ -23,7 +23,7 @@ export type DeploymentLogDef = typeof DeploymentLog;
 export default (sequelize: Sequelize, types: typeof DataTypes): typeof Model => {
   DeploymentLog.init({
     id: {
-      type: types.INET,
+      type: types.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
