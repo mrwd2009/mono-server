@@ -107,3 +107,7 @@ duplicated operator applies to current line.
 `:[range]move{address}` Move line range to target address   
 `:'<,'>normal .` Repeat normal operation  
 `@:`  Redo previous command  
+`:write | !ruby %` Excute whole page using ruby interpretor  
+`p:` Popup command editor  
+`q/` Enter search command editor  
+`<Ctrl-f>` From command line to command editor  
