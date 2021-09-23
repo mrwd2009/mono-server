@@ -9,6 +9,19 @@ const api = {
     reset: '/api/auth/resetPassword',
     logout: '/api/auth/logout',
   },
+  service: {
+    list: '/api/deployment-server/service/list',
+    create: '/api/deployment-server/service',
+    assign: '/api/deployment-server/assign',
+    agentList: '/api/deployment-server/service/agent-list',
+  },
+  agent: {
+    list: '/api/deployment-server/agent/list',
+    create: '/api/deployment-server/agent',
+  },
+  deployment: {
+    list: '/api/deployment-server/log/list',
+  },
 };
 
 export default api;

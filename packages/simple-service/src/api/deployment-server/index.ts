@@ -7,6 +7,7 @@ const router = new Router({
 
 router.post('/service', ...ctrl.createServiceHandler);
 router.post('/service/list', ...ctrl.getServiceListHandler);
+router.post('/service/agent-list', ...ctrl.getServiceAgentListHandler);
 router.post('/service/assign', ...ctrl.assignAgentHandler);
 router.post('/agent', ...ctrl.createAgentHandler);
 router.post('/agent/list', ...ctrl.getAgentListHandler);

@@ -128,7 +128,7 @@ test('return agent list', async () => {
   const params = {
     sorter: {
       field: 'name',
-      direction: 'asc'
+      order: 'asc'
     },
     filter: {
       ip: '10',
@@ -174,7 +174,7 @@ test('return log list', async () => {
   const params = {
     sorter: {
       field: 'agent_id',
-      direction: 'asc'
+      order: 'asc'
     },
     filter: {
       agent_id: 2,

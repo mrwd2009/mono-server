@@ -1,24 +1,27 @@
 import React, { memo } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { MainLayout, SimpleLayout } from './layouts';
-import { getRouter } from './config/router';
+import { getRouter, homePath } from './config/router';
 import PrivateRoute from './routes/PrivateRoute';
 import { Login, Register, ForgotPassword, ResetPassword } from './views/UserAuth';
 import NotFound from './views/Common/404';
-import Dashboard from './views/Dashboard';
+import Service from './views/Service';
+import Agent from './views/Agent';
+import Deployment from './views/Deployment';
 
 const authRender = (Comp) => {
   return <SimpleLayout><Comp /></SimpleLayout>;
 };
 
 const mainRender = () => {
-  const dashPathname = getRouter('dashboard').pathname;
   return (
     <PrivateRoute>
       <MainLayout>
         <Switch>
-          <Redirect from="/" exact to={dashPathname} />
-          <Route path={dashPathname} exact component={Dashboard} />
+          <Redirect from="/" exact to={homePath} />
+          <Route path={getRouter('service').pathname} exact component={Service} />
+          <Route path={getRouter('agent').pathname} exact component={Agent} />
+          <Route path={getRouter('deployment').pathname} exact component={Deployment} />
           <Route component={NotFound} />
         </Switch>
       </MainLayout>

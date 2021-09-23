@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { Order, WhereOptions } from 'sequelize';
+import { Order, WhereOptions, Op, QueryTypes } from 'sequelize';
 import { MergedParams, PageParams } from '../../../type';
 import appDB from '../../../config/model/app';
 import {
@@ -18,6 +18,7 @@ const {
     models,
   }
 } = appDB;
+const { SELECT } = QueryTypes;
 const Service = models.Service as ServiceDef;
 const AgentService = models.AgentService as AgentServiceDef;
 const Agent = models.Agent as AgentDef;
@@ -39,18 +40,22 @@ export const getServiceList = async (params: MergedParams): Promise<{ list: Arra
   } = params;
   let order: Order = [];
   if (sorter) {
-    order = [[sorter.field, sorter.direction]];
+    order = [[sorter.field, sorter.order]];
   }
   const where: WhereOptions = {};
   if (filter) {
     if (filter.name) {
-      where.name = `%${filter.name}%`;
+      where.name = {
+        [Op.like]: `%${filter.name}%`,
+      };
     }
     if (filter.category) {
       where.category = filter.category;
     }
     if (filter.description) {
-      where.description = `%${filter.description}%`;
+      where.description = {
+        [Op.like]: `%${filter.description}%`,
+      };
     }
   }
   const {
@@ -65,6 +70,71 @@ export const getServiceList = async (params: MergedParams): Promise<{ list: Arra
   return {
     total: count,
     list: rows,
+  };
+};
+
+export const getServiceAgentList = async (params: MergedParams): Promise<{ list: Array<{ id: number }>, total: number }> => {
+  const {
+    pagination: {
+      current,
+      pageSize,
+    },
+    service_id,
+    direction,
+  } = params;
+  const limit = pageSize;
+  const offset = (current - 1) * pageSize;
+  let countSql = '';
+  let resultSql = '';
+  if (direction === 'left') {
+    countSql = `
+      select count(*) as count from agents
+      where id not in (
+        select agents.id from agents inner join agents_services on agent_id = agents_services.id
+        where service_id = :service_id
+      )
+    `;
+    resultSql= `
+    select id, name, ip as count from agents
+      where id not in (
+        select agents.id from agents inner join agents_services on agent_id = agents_services.id
+        where service_id = :service_id
+      )
+      limit :limit offset :offset
+    `;
+  } else {
+    countSql = `
+      select count(*) as count from agents inner join agents_services on agent_id = agents_services.id
+      where service_id = :service_id
+    `;
+    resultSql= `
+      select agents.id, name, ip from agents inner join agents_services on agent_id = agents_services.id
+      where service_id = :service_id
+      limit :limit offset :offset
+    `;
+  }
+  const [
+    count,
+    rows,
+  ] = await Promise.all([
+    sequelize.query(countSql, {
+      type: SELECT,
+      replacements: {
+        service_id,
+      },
+    }),
+    sequelize.query(resultSql, {
+      replacements: {
+        limit,
+        offset,
+        service_id,
+      },
+      type: SELECT,
+    })
+  ])
+  return {
+    total: (count[0] as { count: number }).count,
+    list: rows as Array<{ id: number }>,
   };
 };
 
@@ -156,15 +226,19 @@ export const getAgentList = async (params: PageParams): Promise<{ list: Array<Ag
 
   let order: Order = [];
   if (sorter) {
-    order = [[sorter.field, sorter.direction]];
+    order = [[sorter.field, sorter.order]];
   }
   const where: WhereOptions = {};
   if (filter) {
     if (filter.name) {
-      where.name = `%${filter.name}%`;
+      where.name = {
+        [Op.like]: `%${filter.name}%`
+      };
     }
     if (filter.ip) {
-      where.ip = `%${filter.ip}%`;
+      where.ip = {
+        [Op.like]: `%${filter.ip}%`
+      };
     }
     if (filter.status) {
       where.status = filter.status;
@@ -210,7 +284,7 @@ export const getLogList = async (params: PageParams): Promise<{ list: Array<LogI
 
   let order: Order = [];
   if (sorter) {
-    order = [[sorter.field, sorter.direction]];
+    order = [[sorter.field, sorter.order]];
   }
   const where: WhereOptions = {};
   if (filter) {
@@ -229,6 +303,7 @@ export const getLogList = async (params: PageParams): Promise<{ list: Array<LogI
     rows,
     count,
   } = await DeploymentLog.findAndCountAll({
+    attributes: ['id', 'agent_id', 'service_id', 'status', 'created_at', 'updated_at'],
     limit: pageSize,
     offset: (current - 1) * pageSize,
     order,

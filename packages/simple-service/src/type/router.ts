@@ -20,7 +20,7 @@ export interface PageParams {
   filter?: any,
   sorter?: {
     field: string,
-    direction: string
+    order: string
   },
   pagination: {
     current: number,

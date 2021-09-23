@@ -4,6 +4,9 @@ import { useHistory } from 'react-router-dom';
 import map from 'lodash/map';
 import find from 'lodash/find';
 import { useGlobalSearch } from '../../context/app';
+import useServiceGlobalSearch from '../../views/Service/hooks/useServiceGlobalSearch';
+import useAgentGlobalSearch from '../../views/Agent/hooks/useAgentGlobalSearch';
+import useDeploymentGlobalSearch from '../../views/Deployment/hooks/useDeploymentGlobalSearch';
 
 const { Group: InputGroup } = Input;
 const { Option } = Select;
@@ -11,9 +14,12 @@ const GlobalSearch = () => {
   const { setGlobalSearch } = useGlobalSearch();
   // global search list
   const searchList = [
+    useServiceGlobalSearch(),
+    useAgentGlobalSearch(),
+    useDeploymentGlobalSearch(),
   ];
   // set event searching as default
-  const [searchType, setSearchType] = useState(searchList[1] && searchList[1].key);
+  const [searchType, setSearchType] = useState(searchList[0] && searchList[0].key);
   // current handler for global search
   const searchHandler = find(searchList, { key: searchType });
   // search text in select
@@ -60,7 +66,7 @@ const GlobalSearch = () => {
   return (
     <div className="gridx-contextual-search">
       <InputGroup compact>
-        <Select value={searchType} onChange={hSTChange}>
+        <Select value={searchType} onChange={hSTChange} dropdownMatchSelectWidth={false}>
           {
             map(searchList, item => (
               <Option value={item.key} key={item.key}>{item.label}</Option>

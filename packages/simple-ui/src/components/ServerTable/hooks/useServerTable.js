@@ -4,9 +4,31 @@ import forEach from 'lodash/forEach';
 import isArray from 'lodash/isArray';
 import identity from 'lodash/identity';
 import includes from 'lodash/includes';
+import mapValues from 'lodash/mapValues';
 import axios from 'axios';
 import { useMounted } from '../../../hooks/useMounted';
 import { useFilterPanel } from '../../FilterPanel/hooks/useFilterPanel';
+
+export const defaultBeforeRequest = (postData) => {
+  if (postData.filter) {
+    // copy each filter fields
+    let filter = {
+      ...postData.filter,
+    };
+    filter = mapValues(filter, (value) => {
+      if (isArray(value) && value.length === 1) {
+        return value[0];
+      }
+      return value;
+    });
+    // return a new copy to avoid change raw value
+    return {
+      ...postData,
+      filter,
+    };
+  }
+  return postData;
+}
 
 // If inputOptions is a heavy computation, please send a function
 export const useServerTable = (inputOptions) => {
@@ -51,7 +73,7 @@ export const useServerTable = (inputOptions) => {
       const {
         url,
         method = 'post',
-        beforeRequest = identity,
+        beforeRequest = defaultBeforeRequest,
         afterRequest = identity,
       } = tableOption || {};
       let postParams = {

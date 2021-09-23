@@ -5,33 +5,24 @@ import filter from 'lodash/filter';
 
 const routerList = [
   {
-    title: 'Dashboard',
-    key: 'dashboard',
-    pathname: '/dashboard',
+    title: 'Service',
+    key: 'service',
+    pathname: '/service',
     rbacCode: '',
     menu: true, // display on top navigation
   },
   {
-    title: 'Nav2(todo)',
-    key: 'nav2todo',
-    pathname: '/todo/nav2',
+    title: 'Server',
+    key: 'agent',
+    pathname: '/agent',
     rbacCode: '',
     menu: true, // display on top navigation
   },
   {
-    key: 'Nav3(todo)',
-    pathname: '/todo/nav3',
+    title: 'Deployment',
+    key: 'deployment',
+    pathname: '/deployment',
     rbacCode: '',
-  },
-  {
-    title: 'Nav4(todo)',
-    key: 'nav4todo',
-    pathname: '/todo/nav4',
-    rbacCode: '',
-    badge: {
-      field: 'todofield',// field for result from useGlobalInfo hook
-      type: 'danger',
-    },
     menu: true, // display on top navigation
   },
   {
@@ -64,6 +55,6 @@ export const getRouter = (routerKey) => {
 // items for navigation
 export const menuList = filter(routerList, 'menu');
 
-export const homePath = getRouter('dashboard').pathname;
+export const homePath = getRouter('service').pathname;
 
 export default routerList;

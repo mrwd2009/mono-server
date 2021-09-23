@@ -1,8 +1,7 @@
 import React, { memo, useMemo } from 'react';
-import { Table, Input, InputNumber, AutoComplete, Select, Row, Col, Button, Divider } from 'antd';
-// import { SearchOutlined } from '@ant-design/icons';
+import { Table, Input, InputNumber, AutoComplete, Select, Row, Col, Button } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import map from 'lodash/map';
-import isEmpty from 'lodash/isEmpty';
 import isObject from 'lodash/isObject';
 import useServerTable from './hooks/useServerTable';
 import './index.less';
@@ -23,8 +22,8 @@ const getFileterDropdown = ({ cFilterType, cFilterOptions = [], title }) => {
     };
     const inputProps = {
       className: 'mb-2 server-table-header-input',
-      size: 'small',
-      value: selectedKeys[0],
+      // size: 'small',
+      value: selectedKeys[0] || '',
       placeholder: `Search ${title}`,
       onChange: handleChange,
     };
@@ -52,21 +51,12 @@ const getFileterDropdown = ({ cFilterType, cFilterOptions = [], title }) => {
     return (
       <div className="server-table-header-filter">
         {inputEle}
-        {/* <Row gutter={8}>
+        <Row gutter={8}>
           <Col span={12}>
             <Button type="primary" size="small" block icon={<SearchOutlined />} onClick={() => confirm()}>Search</Button>
           </Col>
           <Col span={12}>
             <Button size="small" block onClick={() => clearFilters()}>Reset</Button>
-          </Col>
-        </Row> */}
-        <Divider style={{ margin: '0 -8px 8px -8px', width: 'auto' }}/>
-        <Row justify="space-between">
-          <Col flex="none">
-            <Button size="small" style={{ marginLeft: '-8px' }} type="link" disabled={!selectedKeys.length} onClick={() => clearFilters()}>Reset</Button>
-          </Col>
-          <Col flex="none">
-            <Button type="primary" size="small" onClick={() => confirm()}>OK</Button>
           </Col>
         </Row>
       </div>
@@ -111,7 +101,9 @@ let ServerTable = ({table, rowKey = 'key', scroll = {}, className = '', columns,
           // default filter value should be 'null', otherwise hiding empty filter will trigger searching
           colDef.filteredValue = filteredValue.length ? filteredValue : null;
         } else if (colDef.cFilterType) {
-          colDef.filteredValue = filteredValue;
+          // avoid render temp selected key to be cleared
+          colDef.filteredValue = filteredValue.length ? filteredValue : null;
+          colDef.filterIcon = filtered => <SearchOutlined style={{ color: filtered ? '#fff' : undefined, fontSize: '16px' }} />
           colDef.filterDropdown = getFileterDropdown(colDef);
         }
       }
@@ -150,10 +142,6 @@ let ServerTable = ({table, rowKey = 'key', scroll = {}, className = '', columns,
     pageProps.hideOnSinglePage = true;
   }
 
-  if (!isEmpty(scroll)) {
-    rest.scroll = scroll;
-  }
-
   return (
     <Table
       className={`server-table nowrap-table ${className}`}
@@ -165,6 +153,7 @@ let ServerTable = ({table, rowKey = 'key', scroll = {}, className = '', columns,
       dataSource={list}
       pagination={pageProps}
       onChange={onChange}
+      scroll={scroll}
       {...rest}
     />
   );

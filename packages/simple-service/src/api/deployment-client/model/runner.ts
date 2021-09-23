@@ -198,7 +198,7 @@ const intervalRegister = async (): Promise<void> => {
 
 if (config.deployment.isClient) {
   const runRegister = async (): Promise<void> => {
-    await common.delay(10000);
+    await common.delay(config.deployment.updateInternal);
     await intervalRegister();
     await runRegister();
   };

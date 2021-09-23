@@ -119,7 +119,8 @@ const config = {
   },
   deployment: {
     adminHost: envObj.DEPLOYMENT_ADMIN_HOST || '',
-    isClient: envObj.DEPLOYMENT_CLIENT === 'true'
+    isClient: envObj.DEPLOYMENT_CLIENT === 'true',
+    updateInternal: 10000,
   },
   ...appConfig
 };

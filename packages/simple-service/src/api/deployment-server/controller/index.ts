@@ -1,3 +1,5 @@
+import cookie from 'cookie';
+import config from '../../../config/config';
 import { GatewayCtrlArray } from '../../../type';
 import { validator, validatePagination } from '../../../middleware';
 import { deploymentModel } from '../model';
@@ -22,6 +24,14 @@ export const getServiceListHandler: GatewayCtrlArray = [
   }
 ];
 
+export const getServiceAgentListHandler: GatewayCtrlArray = [
+  validatePagination(),
+  async (context) => {
+    const result = await deploymentModel.getServiceAgentList(context.mergedParams);
+    context.gateway?.sendJSON?.(result);
+  }
+];
+
 export const assignAgentHandler: GatewayCtrlArray = [
   validator(Schema => Schema.object({
     serviceId: Schema.number().integer(),
@@ -41,6 +51,8 @@ export const createAgentHandler: GatewayCtrlArray = [
     }),
   })),
   async (context) => {
+    const cookieObj = cookie.parse(context.request.header.cookie as string);
+    console.log(cookieObj[config.jwt.cookieKey]);
     context.gateway?.sendJSON?.(await deploymentModel.createAgent(context.mergedParams));
   }
 ];
@@ -55,6 +67,6 @@ export const getAgentListHandler: GatewayCtrlArray = [
 export const getLogListHandler: GatewayCtrlArray = [
   validatePagination(),
   async (context) => {
-    context.gateway?.sendJSON?.(await deploymentModel)
+    context.gateway?.sendJSON?.(await deploymentModel.getLogList(context.mergedParams))
   }
 ]

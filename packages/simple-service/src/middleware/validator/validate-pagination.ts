@@ -23,7 +23,7 @@ export const validatePagination = (options: Options = {}): Middleware => {
       filter,
       sorter: Schema.object({
         field: options.sorter ? Schema.string().valid(options.sorter) : Schema.string(),
-        direction: Schema.string().valid('ASC', 'DESC', 'asc', 'desc'),
+        order: Schema.string().valid('ASC', 'DESC', 'asc', 'desc'),
       }).optional(),
     })
   });
