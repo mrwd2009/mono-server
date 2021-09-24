@@ -46,10 +46,12 @@ const useAssign = (assign) => {
 
   const [state, setState] = useMergedState({
     visible: false,
+    loading: false,
   });
 
   const {
     visible,
+    loading,
   } = state;
 
   const handleClose = useCallback(() => {
@@ -65,12 +67,45 @@ const useAssign = (assign) => {
     });
   }, [setState]);
 
-  const handleChange = useCallback((...args) => {
-    console.log(args);
-  }, []);
+  const isMounted = useMounted();
+
+  const {
+    refreshListRef: refreshLeft,
+  } = leftTable;
+  const {
+    refreshListRef: refreshRight,
+  } = rightTable;
+  const handleChange = useCallback((_, direction, ids) => {
+    const action = direction === 'left' ? 'remove' : 'add';
+    setState({
+      loading: true,
+    });
+    axios.post(api.service.assign, {
+      action,
+      serviceId: service_id,
+      agentIds: ids,
+    })
+      .then(() => {
+        if (isMounted.current) {
+          refreshLeft.current();
+          refreshRight.current();
+          setState({
+            loading: false,
+          });
+        }
+      })
+      .catch(() => {
+        if (isMounted.current) {
+          setState({
+            loading: false,
+          });
+        }
+      });
+  }, [isMounted, setState, service_id, refreshLeft, refreshRight]);
 
   return {
     visible,
+    loading,
     leftTable,
     rightTable,
     handleClose,

@@ -90,25 +90,25 @@ export const getServiceAgentList = async (params: MergedParams): Promise<{ list:
     countSql = `
       select count(*) as count from agents
       where id not in (
-        select agents.id from agents inner join agents_services on agent_id = agents_services.id
+        select agents.id from agents inner join agents_services on agent_id = agents.id
         where service_id = :service_id
       )
     `;
     resultSql= `
-    select id, name, ip as count from agents
+    select id, name, ip from agents
       where id not in (
-        select agents.id from agents inner join agents_services on agent_id = agents_services.id
+        select agents.id from agents inner join agents_services on agent_id = agents.id
         where service_id = :service_id
       )
       limit :limit offset :offset
     `;
   } else {
     countSql = `
-      select count(*) as count from agents inner join agents_services on agent_id = agents_services.id
+      select count(*) as count from agents inner join agents_services on agent_id = agents.id
       where service_id = :service_id
     `;
     resultSql= `
-      select agents.id, name, ip from agents inner join agents_services on agent_id = agents_services.id
+      select agents.id, name, ip from agents inner join agents_services on agent_id = agents.id
       where service_id = :service_id
       limit :limit offset :offset
     `;
@@ -142,51 +142,38 @@ export const assignAgent = async (params: MergedParams): Promise<boolean>  => {
   const {
     serviceId,
     agentIds,
+    action,
   } = params;
-  const assignedList = await AgentService.findAll({
-    attributes: ['agent_id', 'status'],
-    where: {
-      service_id: serviceId,
-    },
-  });
-  const existedIds = _.map(assignedList, 'agent_id');
-  const addedIds = _.difference(agentIds, existedIds);
-  const removedIds = _.difference(existedIds, agentIds);
-
-  const hasInProgress = _.some(removedIds, id => {
-    const item = _.find(assignedList, { agent_id: id });
-    if (item) {
-      return item.status === 'in progress';
-    }
-    return false;
-  });
-
-  if (hasInProgress) {
-    throw new LogicError(`Can't remove agent which in progress.`);
-  }
-
-  await sequelize.transaction(transaction => {
-    const items = _.map(addedIds, id => {
+  if (action === 'add') {
+    const items = _.map(agentIds, id => {
       return {
         service_id: serviceId,
         agent_id: id,
         status: 'ready',
       };
     });
-    return Promise.all([
-      AgentService.destroy({
-        where: {
-          service_id: serviceId,
-          agent_id: removedIds,
-        },
-        transaction,
-      }),
-      AgentService.bulkCreate(items, {
-        transaction,
-      }),
-    ]);
+    await AgentService.bulkCreate(items);
+    return true
+  }
+
+  const count = await AgentService.count({
+    where: {
+      service_id: serviceId,
+      agent_id: agentIds,
+      status: 'in progress',
+    }
   });
 
+  if (count > 0) {
+    throw new LogicError(`Can't remove agent which in progress.`);
+  }
+
+  await AgentService.destroy({
+    where: {
+      service_id: serviceId,
+      agent_id: agentIds,
+    },
+  });
   return true;
 }
 

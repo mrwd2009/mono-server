@@ -1,5 +1,5 @@
 import React, { memo, useEffect } from 'react';
-import { Modal, Button, Transfer } from 'antd';
+import { Modal, Button, Transfer, Spin } from 'antd';
 import difference from 'lodash/difference';
 import map from 'lodash/map';
 import useAssign from './hooks/useAssign';
@@ -14,6 +14,7 @@ const columns = [
 const Assign = ({ assign }) => {
   const {
     visible,
+    loading,
     handleClose,
     setVisible,
     leftTable,
@@ -53,6 +54,9 @@ const Assign = ({ assign }) => {
     };
     return (
       <ServerTable
+        pagination={{
+          showSizeChanger: false
+        }}
         rowSelection={rowSelection}
         rowKey="id"
         columns={columns}
@@ -73,9 +77,17 @@ const Assign = ({ assign }) => {
         [<Button key="close" onClick={handleClose}>Close</Button>]
       }
     >
-      <Transfer onChange={handleChange} rowKey={(row) => row.id} showSelectAll={false} selectAllLabels={[(info) => `${info.selectedCount} Item`]}>
-        {transferContent}
-      </Transfer>
+      <Spin spinning={loading}>
+        <Transfer
+          onChange={handleChange}
+          rowKey={(row) => row.id}
+          showSelectAll={false}
+          selectAllLabels={[(info) => `${info.selectedCount} Item`]}
+          titles={['Available', 'Assigned']}
+        >
+          {transferContent}
+        </Transfer>
+      </Spin>
     </Modal>
   );
 };

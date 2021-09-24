@@ -1,4 +1,5 @@
 import { getServiceList, assignAgent, getAgentList, createService, getLogList } from './deployment';
+import { Op } from 'sequelize';
 import appDB from '../../../config/model/app';
 
 const {
@@ -146,7 +147,7 @@ test('return agent list', async () => {
   expect(list.length).toBe(1);
   expect(list[0].name).toBe('test name');
   expect(inputOpt.order[0][0]).toBe('name');
-  expect(inputOpt.where.ip).toBe('%10%');
+  expect(inputOpt.where.ip[Op.like]).toBe('%10%');
   spy.mockRestore();
 });
 

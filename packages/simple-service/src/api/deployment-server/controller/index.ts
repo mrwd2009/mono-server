@@ -36,6 +36,7 @@ export const assignAgentHandler: GatewayCtrlArray = [
   validator(Schema => Schema.object({
     serviceId: Schema.number().integer(),
     agentIds: Schema.array().items(Schema.number().integer()),
+    action: Schema.string().valid('add', 'remove'),
   })),
   async (context) => {
     const result = await deploymentModel.assignAgent(context.mergedParams);

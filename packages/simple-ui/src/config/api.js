@@ -12,7 +12,7 @@ const api = {
   service: {
     list: '/api/deployment-server/service/list',
     create: '/api/deployment-server/service',
-    assign: '/api/deployment-server/assign',
+    assign: '/api/deployment-server/service/assign',
     agentList: '/api/deployment-server/service/agent-list',
   },
   agent: {
