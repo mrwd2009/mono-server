@@ -72,8 +72,8 @@ test('assign agent throw', async () => {
       status: 'in progress',
     })
   ];
-  const spy = jest.spyOn(AgentService, 'findAll').mockImplementation(async () => {
-    return result;
+  const spy = jest.spyOn(AgentService, 'count').mockImplementation(async () => {
+    return 2;
   });
   expect(assignAgent({ serviceId: 1, agentIds: [1] })).rejects.toThrowError();
   spy.mockRestore();
@@ -93,8 +93,8 @@ test('assign agent', async () => {
   const spy = jest.spyOn(AgentService, 'findAll').mockImplementation(async () => {
     return result;
   });
-  const spyTran = jest.spyOn(sequelize, 'transaction').mockImplementation(async (call1) => {
-    await call1('transaction');
+  const spyTran = jest.spyOn(AgentService, 'count').mockImplementation(async () => {
+    return 0;
   });
   const spyDes = jest.spyOn(AgentService, 'destroy').mockImplementation(async (options) => {
     return;
@@ -104,7 +104,6 @@ test('assign agent', async () => {
   });
   await assignAgent({ serviceId: 1, agentIds: [3, 1] });
   expect(spyDes.mock.calls[0][0].where.service_id).toBe(1);
-  expect(spyBulk.mock.calls[0][1].transaction).toBe('transaction');
   spy.mockRestore();
   spyTran.mockRestore();
   spyDes.mockRestore();

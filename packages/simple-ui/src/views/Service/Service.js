@@ -1,5 +1,6 @@
 import React, { memo, useEffect } from 'react';
 import { Card, Input, Popover, Button, Space } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { useBC, useGlobalInfo } from '../../context/app';
 import ServerTable from '../../components/ServerTable';
@@ -36,6 +37,7 @@ const getColumns = ({ openAssign }) => {
         return (
           <Space>
             <Button size="small" type="primary">Deploy</Button>
+            <Button size="small">Edit</Button>
             <Button size="small" onClick={() => openAssign(row.id)}>Server</Button>
             <Button size="small" type="danger">Delete</Button>
           </Space>
@@ -90,7 +92,7 @@ const Service = () => {
     }
   }, [isSearching, handleGlobalSearch]);
   return (
-    <Card title="Service">
+    <Card title="Service" extra={<Button type="primary" icon={<PlusOutlined />}>Add</Button>}>
       <ServerTable
         className="ant-table--listing"
         rowKey="id"
