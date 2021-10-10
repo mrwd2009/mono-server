@@ -4,7 +4,9 @@ import { PlusOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { useBC, useGlobalInfo } from '../../context/app';
 import ServerTable from '../../components/ServerTable';
+import Editor from './Editor';
 import useService from './hooks/useService';
+import useEditor from './hooks/useEditor';
 import Assign from './Assign';
 
 const dateText = (cell) => {
@@ -91,8 +93,10 @@ const Service = () => {
       handleGlobalSearch();
     }
   }, [isSearching, handleGlobalSearch]);
+
+  const editor = useEditor();
   return (
-    <Card title="Service" extra={<Button type="primary" icon={<PlusOutlined />}>Add</Button>}>
+    <Card title="Service" extra={<Button type="primary" icon={<PlusOutlined />} onClick={editor.openNewEditor}>Add</Button>}>
       <ServerTable
         className="ant-table--listing"
         rowKey="id"
@@ -100,6 +104,7 @@ const Service = () => {
         table={table}
       />
       <Assign assign={assign} />
+      <Editor editor={editor} />
     </Card>
   );
 };
