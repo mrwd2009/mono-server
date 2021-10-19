@@ -11,9 +11,9 @@ const getSubscriberRedis = memoizeOne(() => {
   return new Redis(config.queue.redis.url);
 });
 
-const getDefaultRedis = memoizeOne(() => {
+const getDefaultRedis = () => {
   return new Redis(config.queue.redis.url);
-});
+};
 
 //https://github.com/OptimalBits/bull/blob/master/PATTERNS.md#reusing-redis-connections
 export const createQueue =(name: string, options: QueueOptions = {}): QueueType => {
