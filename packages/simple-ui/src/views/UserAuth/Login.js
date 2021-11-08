@@ -17,8 +17,8 @@ const Login = (props) => {
   return (
     <Card style={{ maxWidth: 360, margin: 'auto' }} className="login">
       <div className="login__logo-wrapper" style={{ textAlign: 'center' }}>
-        <Logo title="GridX Logo" className="login__logo" style={{ maxWidth: 137, margin: '24px auto 12px' }} />
-        <Title style={{ fontSize: 16, color: '#7E8083', marginBottom: 32 }}>Billing Exceptions Management</Title>
+        <Logo title="SU Logo" className="login__logo" style={{ maxWidth: 80, margin: '24px auto 12px' }} />
+        <Title style={{ fontSize: 16, color: '#7E8083', marginBottom: 32 }}>Simple UI</Title>
       </div>
       <Form onFinish={handleLogin}>
         <Form.Item name="Email" rules={[

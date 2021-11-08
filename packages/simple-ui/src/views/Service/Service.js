@@ -8,6 +8,8 @@ import Editor from './Editor';
 import useService from './hooks/useService';
 import useEditor from './hooks/useEditor';
 import Assign from './Assign';
+import CreateService from './CreateService';
+import { useModelContainer } from '../../components/ModelContainer';
 
 const dateText = (cell) => {
   return cell && dayjs(cell).format('YYYY-MM-DD hh:mm a');
@@ -94,9 +96,11 @@ const Service = () => {
     }
   }, [isSearching, handleGlobalSearch]);
 
+  const modelContainer = useModelContainer();
+
   const editor = useEditor();
   return (
-    <Card title="Service" extra={<Button type="primary" icon={<PlusOutlined />} onClick={editor.openNewEditor}>Add</Button>}>
+    <Card title="Service" extra={<Button type="primary" icon={<PlusOutlined />} onClick={modelContainer.handleOpen}>Add</Button>}>
       <ServerTable
         className="ant-table--listing"
         rowKey="id"
@@ -105,6 +109,7 @@ const Service = () => {
       />
       <Assign assign={assign} />
       <Editor editor={editor} />
+      <CreateService modelContainer={modelContainer} />
     </Card>
   );
 };

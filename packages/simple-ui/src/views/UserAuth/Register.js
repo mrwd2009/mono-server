@@ -97,7 +97,7 @@ const Register = () => {
   return (
     <Card style={{ maxWidth: 360, margin: 'auto' }} className="login">
       <div className="login__logo-wrapper" style={{ textAlign: 'center' }}>
-        <Logo title="GridX Logo" className="login__logo" style={{ maxWidth: 137, margin: '24px auto 36px' }} />
+        <Logo title="SU Logo" className="login__logo" style={{ maxWidth: 80, margin: '24px auto 36px' }} />
       </div>
       {outputEle}
     </Card>

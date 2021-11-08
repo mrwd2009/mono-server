@@ -4,10 +4,8 @@
     <g id="Favicon" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g>
             <rect id="background" fill="#FFFFFF" x="0" y="0" width="64" height="64" rx="8"></rect>
-            <g id="gridx" transform="translate(12.000000, 9.000000)" fill-rule="nonzero">
-                <polyline id="Fill-8" fill="#FF9724" points="32.048451 46 16 22.9993005 32.048451 0 40 0 24.0159198 22.9993005 40 46 32.048451 46"></polyline>
-                <polyline id="Fill-9" fill="#7E8083" points="8.0453037 0 0 0 14.9468813 21 19 15.3268832 8.0453037 0"></polyline>
-                <polyline id="Fill-10" fill="#7E8083" points="0 46 8.0453037 46 19 30.6720524 14.9461811 25 0 46"></polyline>
+            <g id="gridx" transform="translate(20.000000, 20.000000)" fill-rule="nonzero">
+                <path fill="#4ad395" d="M12,0A12,12,0,1,0,24,12,12,12,0,0,0,12,0Zm0,22A10,10,0,1,1,22,12,10,10,0,0,1,12,22Z"/>
             </g>
         </g>
     </g>
