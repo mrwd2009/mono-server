@@ -15,5 +15,8 @@
     "sd-test": "cd ./packages/simple-deployment && yarn test",
     "sd-add": "cd ./packages/simple-deployment && yarn add",
     "sd-remove": "cd ./packages/simple-deployment && yarn remove"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.176"
   }
 }
