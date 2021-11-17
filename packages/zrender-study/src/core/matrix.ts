@@ -82,11 +82,11 @@ export function rotate(out: Matrix, a: Matrix, rad: number): Matrix {
   const a5 = a[5];
 
   out[0] = cos * a0 + sin * a1;
-  out[1] = -sin * a0 + cos * a1;
+  out[1] = cos * a1 - sin * a0;
   out[2] = cos * a2 + sin * a3;
-  out[3] = -sin * a2 + cos * a3;
+  out[3] = cos * a3 - sin * a2;
   out[4] = cos * a4 + sin * a5;
-  out[5] = -sin * a4 + cos * a5;
+  out[5] = cos * a5 - sin * a4;
 
   return out;
 }
