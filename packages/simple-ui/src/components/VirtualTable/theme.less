@@ -1,0 +1,22 @@
+.virtual-rate-table {
+  .virtual-rate-table-td.changed {
+    color: #00b38a;
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      display: block;
+      border-right: 10px solid transparent;
+      border-bottom: 10px solid transparent;
+      border-top: 10px solid #00b38a;
+    }
+  }
+  .virtual-rate-table-edit-cell {
+    .anticon {
+      color: @primary-color;
+    }
+  }
+}

@@ -1,0 +1,35 @@
+.virtual-rate-table {
+  th, td {
+    white-space: nowrap;
+    word-break: keep-all;
+  }
+  .ant-table-bordered > .ant-table-container {
+    .virtual-rate-table-body {
+      .virtual-rate-table-td:not(.virtual-rate-table-last-col) {
+        border-right: 1px solid rgba(160,162,177,.15);
+      }
+      .virtual-rate-table-td:not(.virtual-rate-table-last-row) {
+        border-bottom: 1px solid rgba(160,162,177,.15);
+      }
+    }
+    border-right: 1px solid rgba(160, 162, 177, 0.15);
+    border-bottom: 1px solid rgba(160, 162, 177, 0.15);
+  }
+  .virtual-rate-table-body {
+    .virtual-rate-table-td {
+      white-space: nowrap;
+      word-break: keep-all;
+      padding: 8px;
+    }
+  }
+
+  .virtual-rate-table-edit-cell {
+    position: relative;
+    padding-right: 12px;
+    .anticon {
+      position: absolute;
+      top: 2px;
+      right: -2px;
+    }
+  }
+}
