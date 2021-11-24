@@ -6,7 +6,7 @@ const simulation = (func: Parameters<RequestAnimationFrameType>[0]): number => {
   return setTimeout(func, 16);
 };
 
-if (window != null) {
+if (typeof window !== 'undefined') {
   rAF = window.requestAnimationFrame || (window as any).msRequestAnimationFrame || (window as any).mozRequestAnimationFrame || (window as any).webkitRequestAnimationFrame;
   if (rAF) {
     rAF = rAF.bind(window);

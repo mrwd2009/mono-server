@@ -1,6 +1,7 @@
 import Eventful from '../core/Eventful';
 import requestAnimationFrame from './requestAnimationFrame';
 import Clip from './Clip';
+import Animator from './Animator';
 
 interface Stage {
   update?: () => void;
@@ -42,7 +43,7 @@ export default class Animation extends Eventful {
     }
 
     if (!this._clipsHead) {
-      this._clipsHead = this._clipsHead = clip;
+      this._clipsHead = this._clipsTail = clip;
     } else {
       this._clipsTail.next = clip;
       clip.prev = this._clipsTail;
@@ -69,7 +70,7 @@ export default class Animation extends Eventful {
     if (prev) {
       prev.next = next;
     } else {
-      this._clipsTail = next;
+      this._clipsHead = next;
     }
     if (next) {
       next.prev = prev;
@@ -169,7 +170,7 @@ export default class Animation extends Eventful {
     return this._clipsHead == null;
   }
 
-  animate<T>(target: T, options: { loop?: boolean }) {
+  animate<T>(target: T, options?: { loop?: boolean }) {
     options = options || {};
 
     this.start();
