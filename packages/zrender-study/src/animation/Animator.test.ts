@@ -1,4 +1,4 @@
-import * as animator from './Animator';
+import Animator, * as animator from './Animator';
 
 test('interpolateNumber', () => {
   expect(animator.interpolateNumber(1, 2, 0.5)).toBeCloseTo(1.5);
@@ -489,4 +489,261 @@ test('Track#step with percent -0.25 and 1.25', () => {
   expect(target.value2).toEqual([0.5, 1.5, 2.5]);
   track1.step(target, 1.25);
   expect(target.value2).toEqual([3.5, 4.5, 5.5]);
+});
+
+test('Animator basic usages', () => {
+  const target1 = {};
+  const target2 = {};
+  const anim = new Animator(target1, false);
+  expect(anim.getTarget()).toBe(target1);
+  anim.changeTarget(target2);
+  expect(anim.getTarget()).toBe(target2);
+  anim.pause();
+  expect(anim.isPaused()).toBe(true);
+  anim.resume();
+  expect(anim.isPaused()).toBe(false);
+  expect(anim.delay(200)).toBe(anim);
+  expect(anim.during(() => {})).toBe(anim);
+  expect(anim.done(() => {})).toBe(anim);
+  expect(anim.aborted(() => {})).toBe(anim);
+  expect(anim.getClip()).toBe(null);
+  expect(anim.getTrack('color')).toBeUndefined();
+});
+
+test('Animator#when', () => {
+  const target: any = { color: '', arr1: [], arr2: [], val1: 0};
+  const anim = new Animator(target, false);
+  anim.when(0, {
+    color: 'rgb(1,2,3)',
+    arr1: [1,2],
+    arr2: [[3,4], [5,6]],
+    val1: 1
+  });
+  anim.when(50, {
+    color: 'rgb(2,3,4)',
+    arr1: [2,3],
+    arr2: [[4,5], [6,7]],
+    val1: 2
+  });
+  anim.when(100, {
+    color: 'rgb(3,4,5)',
+    arr1: [3,4],
+    arr2: [[5,6], [7,8]],
+    val1: 3
+  });
+  const track = anim.getTrack('color');
+  expect(track.keyframes[2].value).toEqual([3,4,5,1]);
+
+  const anim2 = new Animator(target, false, [anim]);
+  anim2.when(150, {
+    val1: 4,
+  });
+ const track2 = anim2.getTrack('val1');
+ expect(track2.keyframes[0].value).toBe(3);
+ expect(track2.keyframes[1].value).toBe(4);
+});
+
+test('Animator#start', () => {
+  const target: any = { val1: 0, val2: 0};
+  const anim = new Animator(target, false);
+  anim.when(0, {
+    val1: 1,
+    val2: 1,
+  });
+  anim.when(50, {
+    val1: 2,
+    val2: 2,
+  });
+  anim.when(100, {
+    val1: 3,
+    val2: 3,
+  });
+  const val2Track = anim.getTrack('val2');
+  val2Track.interpolable = false;
+  anim.start();
+  expect(target.val2).toBe(3);
+  expect(anim.getClip()).not.toBeUndefined();
+  expect(anim.start()).toBeUndefined();
+
+  const anim2 = new Animator(target, false);
+  let done = false;
+  anim2.done(() => {
+    done = true;
+  });
+  anim2.start();
+  expect(done).toBe(true);
+
+  let result3 = '';
+  const anim3 = new Animator(target, false);
+  anim3.during(() => {
+    result3 += 'during';
+  });
+  anim3.done(() => {
+    result3 += 'done';
+  });
+  anim3.when(0, {
+    val1: 1,
+    val2: 1,
+  });
+  anim3.when(50, {
+    val1: 2,
+    val2: 2,
+  });
+  anim3.when(100, {
+    val1: 3,
+    val2: 3,
+  });
+  anim3.start();
+  const clip3 = anim3.getClip();
+  clip3.step(200, 0);
+  expect(result3).toBe('during');
+  expect(target.val1).toBe(1);
+  clip3.step(300, 100);
+  clip3.ondestroy();
+  expect(result3).toBe('duringduringdone');
+  expect(target.val1).toBe(3);
+});
+
+test('Animator#stop(false)', () => {
+  const target: any = { val1: 0, val2: 0};
+  const anim = new Animator(target, false);
+  anim.when(0, {
+    val1: 1,
+    val2: 1,
+  });
+  anim.when(50, {
+    val1: 2,
+    val2: 2,
+  });
+  anim.when(100, {
+    val1: 3,
+    val2: 3,
+  });
+  let abor = false;
+  anim.aborted(() => {
+    abor = true;
+  });
+  anim.start();
+  anim.stop();
+  expect(target.val2).toBe(0);
+  expect(abor).toBe(true);
+  expect(anim.getClip()).not.toBeUndefined();
+});
+
+test('Animator#stop(true)', () => {
+  const target: any = { val1: 0, val2: 0};
+  const anim = new Animator(target, false);
+  anim.when(0, {
+    val1: 1,
+    val2: 1,
+  });
+  anim.when(50, {
+    val1: 2,
+    val2: 2,
+  });
+  anim.when(100, {
+    val1: 3,
+    val2: 3,
+  });
+  let abor = false;
+  anim.aborted(() => {
+    abor = true;
+  });
+  anim.start();
+  anim.stop(true);
+  expect(target.val2).toBe(3);
+  expect(abor).toBe(true);
+  expect(anim.getClip()).not.toBeUndefined();
+});
+
+test('Animator#stopTracks without forward', () => {
+  const target: any = { val1: 0, val2: 0};
+  const anim = new Animator(target, false);
+  anim.when(0, {
+    val1: 1,
+    val2: 1,
+  });
+  anim.when(50, {
+    val1: 2,
+    val2: 2,
+  });
+  anim.when(100, {
+    val1: 3,
+    val2: 3,
+  });
+  let abor = false;
+  anim.aborted(() => {
+    abor = true;
+  });
+  anim.start();
+  anim.stopTracks(['val1', 'val2'])
+  expect(target.val2).toBe(1);
+  expect(abor).toBe(true);
+  expect(anim.getClip()).toBe(null);
+});
+
+test('Animator#stopTracks with forward', () => {
+  const target: any = { val1: 0, val2: 0};
+  const anim = new Animator(target, false);
+  anim.when(0, {
+    val1: 1,
+    val2: 1,
+  });
+  anim.when(50, {
+    val1: 2,
+    val2: 2,
+  });
+  anim.when(100, {
+    val1: 3,
+    val2: 3,
+  });
+  let abor = false;
+  anim.aborted(() => {
+    abor = true;
+  });
+  anim.start();
+  anim.stopTracks(['val1', 'val2'], true)
+  expect(target.val2).toBe(3);
+  expect(abor).toBe(true);
+  expect(anim.getClip()).toBe(null);
+});
+
+test('Animator#saveFinalToTarget', () => {
+  const target: any = { val1: 0, val2: 0};
+  const anim = new Animator(target, false);
+  anim.when(0, {
+    val1: 1,
+    val2: 1,
+  });
+  anim.when(50, {
+    val1: 2,
+    val2: 2,
+  });
+  anim.when(100, {
+    val1: 3,
+    val2: 3,
+  });
+  let target2: any = {};
+  anim.saveFinalToTarget(target2, ['val1'])
+  expect(target2.val1).toBe(3);
+});
+
+test('Animator#__changeFinalValue', () => {
+  const target: any = { val1: 0, val2: 0};
+  const anim = new Animator(target, false);
+  anim.when(0, {
+    val1: 1,
+    val2: 1,
+  });
+  anim.when(50, {
+    val1: 2,
+    val2: 2,
+  });
+  anim.when(100, {
+    val1: 3,
+    val2: 3,
+  });
+  anim.__changeFinalValue({ val1: 4 });
+  const track = anim.getTrack('val1');
+  expect(track.keyframes[2].value).toBe(4);
 });

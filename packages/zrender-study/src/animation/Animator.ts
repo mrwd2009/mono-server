@@ -613,12 +613,12 @@ export default class Animator<T> {
   }
 
   pause() {
-    this._clip.pause();
+    this._clip?.pause();
     this._paused = true;
   }
 
   resume() {
-    this._clip.resume();
+    this._clip?.resume();
     this._paused = false;
   }
 
