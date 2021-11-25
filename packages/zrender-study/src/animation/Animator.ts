@@ -128,7 +128,7 @@ export function catmullRomInterpolate2DArray(out: NumberArray[], p0:  NumberArra
   const len = p0.length;
   for (let i = 0; i < len; i ++) {
     if (!out[i]) {
-      out[1] = [];
+      out[i] = [];
     }
     const len2 = p0[i].length;
     for (let j = 0; j < len2; j++) {
@@ -172,8 +172,8 @@ type KeyFrame = {
 
 let tmpRgba = [0, 0, 0, 0];
 
-class Track {
-  keyframes: KeyFrame[];
+export class Track {
+  keyframes: KeyFrame[] = [];
   maxTime: number = 0;
 
   propName: string;
