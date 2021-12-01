@@ -344,6 +344,20 @@ class Transformable {
 
 }
 
+// used by Element mixin
+const proto = Transformable.prototype;
+proto.x = 0;
+proto.y = 0;
+proto.scaleX = 1;
+proto.scaleY = 1;
+proto.originX = 0;
+proto.originX = 0;
+proto.originY = 0;
+proto.skewX = 0;
+proto.skewY = 0;
+proto.rotation = 0;
+proto.globalScaleRatio = 1;
+
 export const TRANSFORMABLE_PROPS = [
   'x', 'y', 'originX', 'originY', 'rotation', 'scaleX', 'scaleY', 'skewX', 'skewY'
 ] as const;
