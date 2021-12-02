@@ -114,3 +114,8 @@ const objToString = Object.prototype.toString;
 export function isTypedArray(value: any): boolean {
   return !!TYPED_ARRAY[objToString.call(value)];
 }
+
+let idStart = 0;
+export function guid(): number {
+  return idStart++;
+}

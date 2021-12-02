@@ -15,6 +15,7 @@ import {
   RectLike,
 } from './core/BoundingRect';
 import Eventful from './core/Eventful';
+import Point from './core/Point';
 import {
   isArrayLike,
   logError,
