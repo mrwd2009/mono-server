@@ -11,7 +11,8 @@ import {
   AllPropTypes,
   MapToType,
 } from './core/types';
-import {
+import { ZRenderType } from './zrender';
+import BoundingRect, {
   RectLike,
 } from './core/BoundingRect';
 import Eventful from './core/Eventful';
@@ -25,9 +26,15 @@ import {
   indexOf,
   mixin,
   isTypedArray,
+  guid,
 } from './core/util';
 import { parse, stringify } from './tool/color';
-import { REDRAW_BIT, STYLE_CHANGED_BIT, SHAPE_CHANGED_BIT } from './graphic/constants';
+import ZRText, { DefaultTextStyle } from './graphic/Text';
+import { REDRAW_BIT } from './graphic/constants';
+import { calculateTextPosition, TextPositionCalculationResult, parsePercent } from './contain/text';
+import Polyline from './graphic/shape/Polyline';
+import Group from './graphic/Group';
+
 
 export interface ElementAnimateConfig {
   duration?: number;
@@ -691,7 +698,7 @@ class Element<Props extends ElementProps = ElementProps> {
         this._toggleHoverLayerFlag(true);
       }
 
-      const mergedState = this._mergeStates(stateObjcts);
+      const mergedState = this._mergeStates(stateObjects);
       const animationCfg = this.stateTransition;
 
       this.saveCurrentToNormalState(mergedState);
@@ -997,7 +1004,7 @@ class Element<Props extends ElementProps = ElementProps> {
     }
   }
 
-  addSeflToZr(zr: ZRenderType) {
+  addSelfToZr(zr: ZRenderType) {
     if (this.__zr === zr) {
       return;
     }
@@ -1113,7 +1120,7 @@ class Element<Props extends ElementProps = ElementProps> {
     animateTo(this, target, cfg, animationProps);
   }
 
-  animateFrom(taret: Props, cfg: ElementAnimateConfig, animationProps?: MapToType<Props, boolean>) {
+  animateFrom(target: Props, cfg: ElementAnimateConfig, animationProps?: MapToType<Props, boolean>) {
     animateTo(this, target, cfg, animationProps, true);
   }
 
