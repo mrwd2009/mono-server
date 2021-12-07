@@ -119,3 +119,20 @@ let idStart = 0;
 export function guid(): number {
   return idStart++;
 }
+
+export function createObject<T>(proto?: object, properties?: T): T {
+  let obj: T;
+  
+  if (Object.create) {
+    obj = Object.create(proto);
+  } else {
+    const Ctor = function() {};
+    Ctor.prototype = proto;
+    obj = new (Ctor as any)();
+  }
+  if (properties) {
+    extend(obj, properties);
+  }
+
+  return obj;
+}
