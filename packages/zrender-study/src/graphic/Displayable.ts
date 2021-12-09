@@ -1,5 +1,6 @@
 import Element, { ElementProps, ElementStatePropNames, ElementAnimateConfig, ElementCommonState } from '../Element';
 import BoundingRect from '../core/BoundingRect';
+import Path from './Path';
 import { PropType, Dictionary, MapToType } from '../core/types';
 import { keys, extend, createObject } from '../core/util';
 import Animator from '../animation/Animator';

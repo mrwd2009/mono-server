@@ -92,3 +92,70 @@ test('isTypedArray', () => {
 test('guid', () => {
   expect(util.guid()).toBe(0);
 });
+
+test('createObject', () => {
+  let obj1: any = util.createObject({ x: 2, y: 3}, { name: 'name' });
+  expect(obj1.x).toBe(2);
+  expect(obj1.y).toBe(3);
+  expect(obj1.name).toBe('name');
+  const rawCreate = Object.create;
+  Object.create = null;
+  obj1 = util.createObject({ x: 2, y: 3}, { name: 'name' });
+  expect(obj1.x).toBe(2);
+  expect(obj1.y).toBe(3);
+  expect(obj1.name).toBe('name');
+  Object.create = rawCreate;
+});
+
+test('isString', () => {
+  expect(util.isString('12')).toBe(true);
+  expect(util.isString(true)).toBe(false);
+});
+
+test('setAsPrimitive and isPrimitive', () => {
+  const obj1 = {};
+  util.setAsPrimitive(obj1);
+  expect(util.isPrimitive(obj1)).toBe(true);
+});
+
+test('isDom', () => {
+  const node = {
+    nodeType: 1,
+    ownerDocument: {},
+  };
+  expect(util.isDom(node)).toBe(true);
+});
+
+test('clone', () => {
+  let a: any = {
+    name: 'name',
+    label: 'label',
+    re: {
+      reLabel: 'reLabel',
+    }
+  };
+  let b: any = util.clone(a);
+  expect(b === a).toBe(false);
+  expect(b.name).toBe('name');
+  expect(b.label).toBe('label');
+  expect(b.re.reLabel).toBe('reLabel');
+
+  a = [1, 2, 3];
+  b = util.clone(a);
+  expect(b === a).toBe(false);
+  expect(b[0]).toBe(1);
+  expect(b[1]).toBe(2);
+  expect(b[2]).toBe(3);
+
+  a = new Float32Array([2,3,5]);
+  b = util.clone(a);
+  expect(b === a).toBe(false);
+  expect(b[0]).toBe(2);
+  expect(b[1]).toBe(3);
+  expect(b[2]).toBe(5);
+
+  a = {};
+  util.setAsPrimitive(a);
+  b = util.clone(a);
+  expect(b === a).toBe(true);
+});

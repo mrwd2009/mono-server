@@ -98,6 +98,18 @@ export function mixin<T, S>(target: T | Function, source: S | Function, override
   }
 }
 
+const BUILTIN_OBJECT: {[key: string]: boolean} = {
+  '[object Function]': true,
+  '[object RegExp]': true,
+  '[object Date]': true,
+  '[object Error]': true,
+  '[object CanvasGradient]': true,
+  '[object CanvasPattern]': true,
+  // For node-canvas
+  '[object Image]': true,
+  '[object Canvas]': true
+};
+
 const TYPED_ARRAY: {[key: string]: boolean} = {
   '[object Int8Array]': true,
   '[object Uint8Array]': true,
@@ -110,6 +122,7 @@ const TYPED_ARRAY: {[key: string]: boolean} = {
   '[object Float64Array]': true
 };
 const objToString = Object.prototype.toString;
+const protoKey = '__proto__';
 
 export function isTypedArray(value: any): boolean {
   return !!TYPED_ARRAY[objToString.call(value)];
@@ -122,7 +135,7 @@ export function guid(): number {
 
 export function createObject<T>(proto?: object, properties?: T): T {
   let obj: T;
-  
+
   if (Object.create) {
     obj = Object.create(proto);
   } else {
@@ -135,4 +148,61 @@ export function createObject<T>(proto?: object, properties?: T): T {
   }
 
   return obj;
+}
+
+export function isString(value: any): value is string {
+  return typeof value === 'string';
+}
+
+const primitiveKey = '__ec_primitive__';
+
+export function setAsPrimitive(obj: any) {
+  obj[primitiveKey] = true;
+}
+
+export function isPrimitive(obj: any): boolean {
+  return obj[primitiveKey];
+}
+
+export function isDom(value: any): value is HTMLElement {
+  return typeof value === 'object' && typeof value.nodeType === 'number' && typeof value.ownerDocument === 'object';
+}
+
+export function clone<T extends any>(source: T): T {
+  if (source == null || typeof source !== 'object') {
+    return source;
+  }
+
+  let result = source as any;
+  const typeStr = objToString.call(source);
+
+  if (typeStr === '[object Array]') {
+    if (!isPrimitive(source)) {
+      result = [] as any;
+      for (let i = 0, len = (source as any[]).length; i < len; i++) {
+        result[i] = clone((source as any[])[i]);
+      }
+    }
+  } else if (TYPED_ARRAY[typeStr]) {
+    if (!isPrimitive(source)) {
+      const Ctor = source.constructor as typeof Float32Array;
+      if (Ctor.from) {
+        result = Ctor.from(source as Float32Array);
+      } else {
+        result = new Ctor((source as Float32Array).length);
+        for (let i = 0, len = (source as Float32Array).length; i < len; i++) {
+          result[i] = clone((source as Float32Array)[i]);
+        }
+      }
+    }
+  } else if (!BUILTIN_OBJECT[typeStr] && !isPrimitive(source) && !isDom(source)) {
+    result = {} as any;
+    for (let key in source) {
+      if (source.hasOwnProperty(key) && key !== protoKey) {
+        result[key] = clone(source[key]);
+      }
+    }
+  }
+
+  return result;
 }

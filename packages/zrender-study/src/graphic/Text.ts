@@ -1,11 +1,15 @@
-
-
-export type DefaultTextStyle = any & {
-  autoStroke?: boolean,
-};
-
-class ZRText {
-
-}
-
-export default ZRText;
+import { TextAlign, TextVerticalAlign, ImageLike, Dictionary, MapToType } from '../core/types';
+import { parseRichText, parsePlainText } from './helper/parseText';
+import TSpan, { TSpanStyleProps } from './TSpan';
+import { retrieve2, each, normalizeCssArray, trim, retrieve3, extend, keys, defaults } from '../core/util';
+import { DEFAULT_FONT, adjustTextX, adjustTextY } from '../contain/text';
+import ZRImage from './Image';
+import Rect from './shape/Rect';
+import BoundingRect from '../core/BoundingRect';
+import { Matrix } from '../core/matrix';
+import Displayable, { DisplayableStatePropNames, DisplayableProps, DEFAULT_COMMON_ANIMATION_PROPS } from './Displayable';
+import { ZRenderType } from '../zrender';
+import Animator from '../animation/Animator';
+import Transformable from '../core/Transformable';
+import { ElementCommonState } from '../Element';
+import { GroupLike } from './Group';
