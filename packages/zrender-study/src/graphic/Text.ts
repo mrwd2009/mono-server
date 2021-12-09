@@ -1,7 +1,7 @@
 import { TextAlign, TextVerticalAlign, ImageLike, Dictionary, MapToType } from '../core/types';
 import { parseRichText, parsePlainText } from './helper/parseText';
 import TSpan, { TSpanStyleProps } from './TSpan';
-import { retrieve2, each, normalizeCssArray, trim, retrieve3, extend, keys, defaults } from '../core/util';
+import { retrieve2, forEach, normalizeCssArray, trim, retrieve3, extend, keys, defaults } from '../core/util';
 import { DEFAULT_FONT, adjustTextX, adjustTextY } from '../contain/text';
 import ZRImage from './Image';
 import Rect from './shape/Rect';

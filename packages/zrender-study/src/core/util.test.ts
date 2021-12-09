@@ -159,3 +159,61 @@ test('clone', () => {
   b = util.clone(a);
   expect(b === a).toBe(true);
 });
+
+test('retrieve2', () => {
+  expect(util.retrieve2(2, 3)).toBe(2);
+  expect(util.retrieve2(null, 3)).toBe(3);
+});
+
+test('retrieve3', () => {
+  expect(util.retrieve3(2, 3, 4)).toBe(2);
+  expect(util.retrieve3(null, 3, 5)).toBe(3);
+  expect(util.retrieve3(null, null, 5)).toBe(5);
+});
+
+test('each', () => {
+  let keys: any = [];
+  let values: any = [];
+  util.each([1, 2, 3], (val, key) => {
+    keys.push(key);
+    values.push(val);
+  });
+
+  expect(keys).toEqual([0, 1, 2]);
+  expect(values).toEqual([1, 2, 3]);
+  
+  const list = [1, 2, 3];
+  list.forEach = null;
+  keys = [];
+  values = [];
+  util.each(list, (val, key) => {
+    keys.push(key);
+    values.push(val);
+  });
+
+  expect(keys).toEqual([0, 1, 2]);
+  expect(values).toEqual([1, 2, 3]);
+
+  keys = [];
+  values = [];
+  util.each({ a: 1, b: 2, c: 3}, (val, key) => {
+    keys.push(key);
+    values.push(val);
+  });
+  expect(keys).toEqual(['a', 'b', 'c']);
+  expect(values).toEqual([1, 2, 3]);
+});
+
+test('normalizeCssArray', () => {
+  expect(util.normalizeCssArray(1)).toEqual([1, 1, 1, 1]);
+  expect(util.normalizeCssArray([1, 2])).toEqual([1, 2, 1, 2]);
+  expect(util.normalizeCssArray([1, 2, 3])).toEqual([1, 2, 3, 2]);
+  expect(util.normalizeCssArray([1, 2, 3, 4])).toEqual([1, 2, 3, 4]);
+});
+
+test('trim', () => {
+  expect(util.trim('    a ')).toBe('a');
+  const str = '    b     ';
+  expect(util.trim(str)).toBe('b');
+  expect(util.trim(null)).toBe(null);
+});

@@ -206,3 +206,65 @@ export function clone<T extends any>(source: T): T {
 
   return result;
 }
+
+export function retrieve2<T, R>(value0: T, value1: R): T | R {
+  return value0 != null ? value0 : value1;
+}
+
+export function retrieve3<T, R, W>(value0: T, value1: R, value2: W): T | R | W {
+  return value0 != null ? value0 : (value1 != null ? value1 : value2);
+}
+
+const arrayProto = Array.prototype;
+const nativeForEach = arrayProto.forEach;
+const nativeFilter = arrayProto.filter;
+const nativeSlice = arrayProto.slice;
+const nativeMap = arrayProto.map;
+
+export function each<I extends Dictionary<any> | any[] | readonly any[] | ArrayLike<any>, Context>(
+  arr: I,
+  cb: (this: Context, value: I extends (infer T)[] | readonly (infer T)[] | ArrayLike<infer T> ? T : I extends Dictionary<any> ? I extends Record<infer K, infer T> ? T : unknown : unknown, index?: I extends any[] | readonly any[] | ArrayLike<any> ? number : keyof I & string, arr?: I) => void,
+  context?: Context
+) {
+  if (!(arr && cb)) {
+    return;
+  }
+  if ((arr as any).forEach && (arr as any).forEach === nativeForEach) {
+    (arr as any).forEach(cb, context);
+  } else if (arr.length === +arr.length) {
+    for (let i = 0, len = arr.length; i < len; i++) {
+      cb.call(context, (arr as any[])[i], i as any, arr);
+    }
+  } else {
+    for (let key in arr) {
+      if (arr.hasOwnProperty(key)) {
+        cb.call(context, (arr as Dictionary<any>)[key], key as any, arr);
+      }
+    }
+  }
+}
+
+export const forEach = each;
+
+export function normalizeCssArray(val: number | number []) {
+  if (typeof val === 'number') {
+    return [val, val, val, val];
+  }
+  const len = val.length;
+  if (len === 2) {
+    return [val[0], val[1], val[0], val[1]];
+  } else if (len === 3) {
+    return [val[0], val[1], val[2], val[1]];
+  }
+  return val;
+}
+
+export function trim(str: string): string {
+  if (str == null) {
+    return null;
+  } else if (typeof str.trim === 'function') {
+    return str.trim();
+  } else {
+    return str.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
+  }
+}
