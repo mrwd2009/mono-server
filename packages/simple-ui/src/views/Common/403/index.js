@@ -1,9 +1,8 @@
-import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { HomeOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Row, Col } from 'antd';
 
-export default ({ logout }) => {
+const Page403 = ({ logout }) => {
   const history = useHistory();
   return (
     <div style={{display: 'table', width: '100%', minHeight: 'calc(100vh - 63px)'}}>
@@ -20,3 +19,5 @@ export default ({ logout }) => {
     </div>
   );
 }
+
+export default Page403;

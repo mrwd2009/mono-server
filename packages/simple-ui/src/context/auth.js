@@ -20,7 +20,7 @@ export function clearToken() {
   localStorage.removeItem('sso');
 }
 
-const AuthProvider = ({props, children}) => {
+const AuthProvider = ({children}) => {
   const [authState, setAuthState] = useState({
     user: localStorage.getItem('user') || '',
     permissions: localStorage.getItem('permissions') || '[]',
