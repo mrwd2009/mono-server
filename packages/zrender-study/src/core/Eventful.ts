@@ -78,12 +78,14 @@ export default class Eventful<EvtDef extends DefaultEventDefinition = DefaultEve
 
     const eventHandlers = _h.get(event as string);
     for (let i = 0; i < eventHandlers.length; i++) {
+      // @ts-ignore
       if (eventHandlers[i].h === handler) {
         return this;
       }
     }
 
     const wrap: EventHandler<Ctx, this, unknown[]> = {
+      // @ts-ignore
       h: handler as EventCallback<unknown[]>,
       query,
       ctx: (context || this) as CbThis<Ctx, this>,

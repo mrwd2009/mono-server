@@ -1,6 +1,6 @@
 import React from 'react';
 import logo from './logo.svg';
-import { truncateSingleLine, prepareTruncateOptions } from '../../src/graphic/helper/parseText'
+import { getWidth } from '../../src/contain/text';
 import './App.css';
 
 function App() {
@@ -19,7 +19,7 @@ function App() {
         >
           Learn React
         </a>
-        { truncateSingleLine('test', prepareTruncateOptions(100, 'sans-serif', '...', { placeholder: '%'})) }
+        { getWidth('test') }
       </header>
     </div>
   );

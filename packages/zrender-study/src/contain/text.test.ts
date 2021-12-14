@@ -77,85 +77,85 @@ test('parsePercent', () => {
 
 test('calculateTextPosition', () => {
   let out: text.TextPositionCalculationResult = { x: 0, y: 0, align: null, verticalAlign: null };
-  text.calcualteTextPosition(out, { position: ['50%', '50%'] }, { x: 0, y: 0, width: 20, height: 20 });
+  text.calculateTextPosition(out, { position: ['50%', '50%'] }, { x: 0, y: 0, width: 20, height: 20 });
   expect(out.x).toBe(10);
   expect(out.y).toBe(10);
   expect(out.align).toBe(null);
   expect(out.verticalAlign).toBe(null);
 
-  text.calcualteTextPosition(out, { position: 'left', distance: 10 }, { x: 0, y: 0, width: 20, height: 20 });
+  text.calculateTextPosition(out, { position: 'left', distance: 10 }, { x: 0, y: 0, width: 20, height: 20 });
   expect(out.x).toBe(-10);
   expect(out.y).toBe(10);
   expect(out.align).toBe('right');
   expect(out.verticalAlign).toBe('middle');
 
-  text.calcualteTextPosition(out, { position: 'right', distance: 10 }, { x: 0, y: 0, width: 20, height: 20 });
+  text.calculateTextPosition(out, { position: 'right', distance: 10 }, { x: 0, y: 0, width: 20, height: 20 });
   expect(out.x).toBe(30);
   expect(out.y).toBe(10);
   expect(out.align).toBe('left');
   expect(out.verticalAlign).toBe('middle');
 
-  text.calcualteTextPosition(out, { position: 'top', distance: 10 }, { x: 0, y: 0, width: 20, height: 20 });
+  text.calculateTextPosition(out, { position: 'top', distance: 10 }, { x: 0, y: 0, width: 20, height: 20 });
   expect(out.x).toBe(10);
   expect(out.y).toBe(-10);
   expect(out.align).toBe('center');
   expect(out.verticalAlign).toBe('bottom');
 
-  text.calcualteTextPosition(out, { position: 'bottom', distance: 10 }, { x: 0, y: 0, width: 20, height: 20 });
+  text.calculateTextPosition(out, { position: 'bottom', distance: 10 }, { x: 0, y: 0, width: 20, height: 20 });
   expect(out.x).toBe(10);
   expect(out.y).toBe(30);
   expect(out.align).toBe('center');
   expect(out.verticalAlign).toBe('top');
 
-  text.calcualteTextPosition(out, { position: 'inside', distance: 10 }, { x: 0, y: 0, width: 20, height: 20 });
+  text.calculateTextPosition(out, { position: 'inside', distance: 10 }, { x: 0, y: 0, width: 20, height: 20 });
   expect(out.x).toBe(10);
   expect(out.y).toBe(10);
   expect(out.align).toBe('center');
   expect(out.verticalAlign).toBe('middle');
 
-  text.calcualteTextPosition(out, { position: 'insideLeft', distance: 10 }, { x: 0, y: 0, width: 20, height: 20 });
+  text.calculateTextPosition(out, { position: 'insideLeft', distance: 10 }, { x: 0, y: 0, width: 20, height: 20 });
   expect(out.x).toBe(10);
   expect(out.y).toBe(10);
   expect(out.align).toBe('left');
   expect(out.verticalAlign).toBe('middle');
 
-  text.calcualteTextPosition(out, { position: 'insideRight', distance: 10 }, { x: 0, y: 0, width: 20, height: 20 });
+  text.calculateTextPosition(out, { position: 'insideRight', distance: 10 }, { x: 0, y: 0, width: 20, height: 20 });
   expect(out.x).toBe(10);
   expect(out.y).toBe(10);
   expect(out.align).toBe('right');
   expect(out.verticalAlign).toBe('middle');
 
-  text.calcualteTextPosition(out, { position: 'insideTop', distance: 10 }, { x: 0, y: 0, width: 20, height: 20 });
+  text.calculateTextPosition(out, { position: 'insideTop', distance: 10 }, { x: 0, y: 0, width: 20, height: 20 });
   expect(out.x).toBe(10);
   expect(out.y).toBe(10);
   expect(out.align).toBe('center');
   expect(out.verticalAlign).toBe('top');
 
-  text.calcualteTextPosition(out, { position: 'insideBottom', distance: 10 }, { x: 0, y: 0, width: 20, height: 20 });
+  text.calculateTextPosition(out, { position: 'insideBottom', distance: 10 }, { x: 0, y: 0, width: 20, height: 20 });
   expect(out.x).toBe(10);
   expect(out.y).toBe(10);
   expect(out.align).toBe('center');
   expect(out.verticalAlign).toBe('bottom');
 
-  text.calcualteTextPosition(out, { position: 'insideTopLeft', distance: 10 }, { x: 0, y: 0, width: 20, height: 20 });
+  text.calculateTextPosition(out, { position: 'insideTopLeft', distance: 10 }, { x: 0, y: 0, width: 20, height: 20 });
   expect(out.x).toBe(10);
   expect(out.y).toBe(10);
   expect(out.align).toBe('left');
   expect(out.verticalAlign).toBe('top');
 
-  text.calcualteTextPosition(out, { position: 'insideTopRight', distance: 10 }, { x: 0, y: 0, width: 20, height: 20 });
+  text.calculateTextPosition(out, { position: 'insideTopRight', distance: 10 }, { x: 0, y: 0, width: 20, height: 20 });
   expect(out.x).toBe(10);
   expect(out.y).toBe(10);
   expect(out.align).toBe('right');
   expect(out.verticalAlign).toBe('top');
 
-  text.calcualteTextPosition(out, { position: 'insideBottomLeft', distance: 10 }, { x: 0, y: 0, width: 20, height: 20 });
+  text.calculateTextPosition(out, { position: 'insideBottomLeft', distance: 10 }, { x: 0, y: 0, width: 20, height: 20 });
   expect(out.x).toBe(10);
   expect(out.y).toBe(10);
   expect(out.align).toBe('left');
   expect(out.verticalAlign).toBe('bottom');
 
-  text.calcualteTextPosition(out, { position: 'insideBottomRight', distance: 10 }, { x: 0, y: 0, width: 20, height: 20 });
+  text.calculateTextPosition(out, { position: 'insideBottomRight', distance: 10 }, { x: 0, y: 0, width: 20, height: 20 });
   expect(out.x).toBe(10);
   expect(out.y).toBe(10);
   expect(out.align).toBe('right');

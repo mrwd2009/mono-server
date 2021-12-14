@@ -125,7 +125,7 @@ interface Opts {
   position?: BuiltinTextPosition | (number | string)[];
   distance?: number;
 }
-export function calcualteTextPosition(out: TextPositionCalculationResult, opts: Opts, rect: RectLike): TextPositionCalculationResult {
+export function calculateTextPosition(out: TextPositionCalculationResult, opts: Opts, rect: RectLike): TextPositionCalculationResult {
   const textPosition = opts.position || 'inside';
   const distance = opts.distance != null ? opts.distance : 5;
 
