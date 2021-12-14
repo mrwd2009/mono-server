@@ -217,3 +217,7 @@ test('trim', () => {
   expect(util.trim(str)).toBe('b');
   expect(util.trim(null)).toBe(null);
 });
+
+test('reduce', () => {
+  expect(util.reduce<number, number, unknown>([1,2,3], (prev, cur) => (prev + cur), 0)).toBe(6);
+})

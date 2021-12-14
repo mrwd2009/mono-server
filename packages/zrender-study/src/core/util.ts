@@ -268,3 +268,31 @@ export function trim(str: string): string {
     return str.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
   }
 }
+
+const methods: { [key: string]: Function } = {};
+export function $override(name: string, fn: Function) {
+  methods[name] = fn;
+}
+
+methods.createCanvas = (): HTMLCanvasElement => {
+  return document.createElement('canvas');
+}
+
+export const createCanvas = (): HTMLCanvasElement => {
+  return methods.createCanvas();
+}
+
+export function reduce<T, S, Context>(
+  arr: readonly T[],
+  cb: (this: Context, previousValue: S, currentValue: T, currentIndex?: number, arr?: readonly T[]) => S,
+  memo?: S,
+  context?: Context,
+): S {
+  if (!(arr && cb)) {
+    return;
+  }
+  for (let i = 0, len = arr.length; i < len; i++) {
+    memo = cb.call(context, memo, arr[i], i, arr);
+  }
+  return memo;
+}
