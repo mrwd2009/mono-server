@@ -2,11 +2,11 @@ import Displayable, { DisplayableProps, CommonStyleProps, DEFAULT_COMMON_STYLE, 
 import Element, { ElementAnimateConfig } from '../Element';
 import PathProxy from '../core/PathProxy';
 import * as pathContain from '../contain/path';
-import { PatternObject } from './Pattern';
+import type { PatternObject } from './Pattern';
 import { Dictionary, PropType, MapToType } from '../core/types';
 import BoundingRect from '../core/BoundingRect';
-import { LinearGradientObject } from './LinearGradient';
-import { RadialGradientObject } from './RadialGradient';
+import type { LinearGradientObject } from './LinearGradient';
+import type { RadialGradientObject } from './RadialGradient';
 import { defaults, keys, extend, clone, isString, createObject} from '../core/util';
 import Animator from '../animation/Animator';
 import { lum } from '../tool/color';

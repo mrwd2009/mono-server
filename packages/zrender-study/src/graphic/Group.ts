@@ -3,6 +3,7 @@ import BoundingRect from '../core/BoundingRect';
 import { Matrix } from '../core/matrix';
 import Displayable from './Displayable';
 import { indexOf } from '../core/util';
+import { ZRenderType } from '../zrender';
 
 export interface GroupProps extends ElementProps {
 
