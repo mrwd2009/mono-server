@@ -14,7 +14,7 @@ type CachedImageObj = {
   pending: PendingWrap[]
 };
 
-export function FindExistImage(newImageOrSrc: string | ImageLike): ImageLike {
+export function findExistImage(newImageOrSrc: string | ImageLike): ImageLike {
   if (typeof newImageOrSrc === 'string') {
     const cachedImageOjb = globalImageCache.get(newImageOrSrc);
     return cachedImageOjb?.image;
@@ -66,6 +66,6 @@ function imageOnLoad(this: any) {
   cachedImgObj.pending.length = 0;
 }
 
-export function isImageReady(image: ImageLike) {
-  return image && image.width && image.height;
+export function isImageReady(image: ImageLike): boolean {
+  return !!(image && image.width && image.height);
 }

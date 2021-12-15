@@ -375,7 +375,7 @@ export function parseRichText(text: string, style: TextStyleProps) {
           let bgImg = textBackgroundColor && (textBackgroundColor as { image: ImageLike }).image;
 
           if (bgImg) {
-            bgImg = imageHelper.FindExistImage(bgImg);
+            bgImg = imageHelper.findExistImage(bgImg);
             if (imageHelper.isImageReady(bgImg)) {
               token.width = Math.max(token.width, bgImg.width * tokenHeight / bgImg.height);
             }
@@ -428,7 +428,7 @@ export function parseRichText(text: string, style: TextStyleProps) {
 
 type TokenStyle = TextStyleProps['rich'][string];
 
-function pushTokens(block: RichTextContentBlock, str: string, style: TextStyleProps, wrapInfo: WrapInfo, styleName?: string) {
+export function pushTokens(block: RichTextContentBlock, str: string, style: TextStyleProps, wrapInfo: WrapInfo, styleName?: string) {
   const isEmptyStr = str === '';
   const tokenStyle: TokenStyle = styleName && style.rich[styleName] || {};
   const lines = block.lines;
@@ -511,7 +511,7 @@ function isWorkBreakChar(ch: string) {
   return true;
 }
 
-function wrapText(text: string, font: string, lineWidth: number, isBreakAll: boolean, lastAccumWidth: number) {
+export function wrapText(text: string, font: string, lineWidth: number, isBreakAll: boolean, lastAccumWidth: number) {
   let lines: string[] = [];
   let linesWidths: number[] = [];
   let line = '';
