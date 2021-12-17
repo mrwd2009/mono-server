@@ -237,7 +237,7 @@ class Path<Props extends PathProps = PathProps> extends Displayable<Props> {
       const zr = this.__zr;
       const isDarkMode = !!(zr && zr.isDarkMode());
       const isDarkLabel = lum(textFill, 0) < DARK_MODE_THRESHOLD;
-      if (isDarkLabel === isDarkLabel) {
+      if (isDarkMode === isDarkLabel) {
         return pathFill;
       }
     }
