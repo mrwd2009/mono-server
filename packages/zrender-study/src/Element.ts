@@ -11,6 +11,7 @@ import {
   AllPropTypes,
   MapToType,
 } from './core/types';
+import Path from './graphic/Path';
 import { ZRenderType } from './zrender';
 import BoundingRect, {
   RectLike,
@@ -34,6 +35,7 @@ import { REDRAW_BIT } from './graphic/constants';
 import { calculateTextPosition, TextPositionCalculationResult, parsePercent } from './contain/text';
 import Polyline from './graphic/shape/Polyline';
 import Group from './graphic/Group';
+import { LIGHT_LABEL_COLOR, DARK_LABEL_COLOR } from './config';
 
 
 export interface ElementAnimateConfig {
@@ -151,7 +153,7 @@ export interface ElementProps extends Partial<ElementEventHandlerProps> {
   textConfig?: ElementTextConfig;
   textContent?: ZRText;
 
-  clipPath?: Path2D;
+  clipPath?: Path;
   drift?: (dx: number, dy: number, e?: ElementEvent) => void;
   
   extra?: Dictionary<unknown>;
@@ -227,7 +229,7 @@ class Element<Props extends ElementProps = ElementProps> {
 
   __inHover: boolean;
 
-  private _clipPath?: Path2D;
+  private _clipPath?: Path;
 
   private _textContent?: ZRText;
 
