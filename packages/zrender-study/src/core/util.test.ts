@@ -220,4 +220,9 @@ test('trim', () => {
 
 test('reduce', () => {
   expect(util.reduce<number, number, unknown>([1,2,3], (prev, cur) => (prev + cur), 0)).toBe(6);
-})
+});
+
+test('map', () => {
+  const a = [1, 2];
+  expect(util.map(a, item => item * 2)).toEqual([2, 4]);
+});

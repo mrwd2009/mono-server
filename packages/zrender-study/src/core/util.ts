@@ -282,6 +282,38 @@ export const createCanvas = (): HTMLCanvasElement => {
   return methods.createCanvas();
 }
 
+
+type SliceParams = Parameters<typeof nativeSlice>;
+export function slice<T>(arr: ArrayLike<T>, ...args: SliceParams): T[] {
+    return nativeSlice.apply(arr, args as any[]);
+}
+
+export function map<T, R, Context>(
+  arr: readonly T[],
+  cb: (this: Context, val: T, index?: number, arr?: readonly T[]) => R,
+  context?: Context
+): R[] {
+  // Take the same behavior with lodash when !arr and !cb,
+  // which might be some common sense.
+  if (!arr) {
+      return [];
+  }
+  if (!cb) {
+      return slice(arr) as unknown[] as R[];
+  }
+  if (arr.map && arr.map === nativeMap) {
+      return arr.map(cb, context);
+  }
+  else {
+      const result = [];
+      for (let i = 0, len = arr.length; i < len; i++) {
+          // FIXME: should the elided item be travelled, like `[33,,55]`.
+          result.push(cb.call(context, arr[i], i, arr));
+      }
+      return result;
+  }
+}
+
 export function reduce<T, S, Context>(
   arr: readonly T[],
   cb: (this: Context, previousValue: S, currentValue: T, currentIndex?: number, arr?: readonly T[]) => S,
@@ -296,3 +328,5 @@ export function reduce<T, S, Context>(
   }
   return memo;
 }
+
+export function noop() {}
