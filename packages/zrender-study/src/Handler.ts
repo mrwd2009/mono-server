@@ -94,22 +94,65 @@ class Handler extends Eventful {
         proxy: HandlerProxyInterface,
         painterRoot: HTMLElement
     ) {
-        super();
+      super();
+      // Common handlers
+      util.each(['click', 'mousedown', 'mouseup', 'mousewheel', 'dblclick', 'contextmenu'], (name: HandlerName) => {
+        this[name] = function (event) {
+          const x = event.zrX;
+          const y = event.zrY;
+          const isOutside = isOutsideBoundary(this, x, y);
 
-        this.storage = storage;
+          let hovered;
+          let hoveredTarget;
 
-        this.painter = painter;
+          if (name !== 'mouseup' || !isOutside) {
+            // Find hover again to avoid click event is dispatched manually. Or click is triggered without mouseover
+            hovered = this.findHover(x, y);
+            hoveredTarget = hovered.target;
+          }
 
-        this.painterRoot = painterRoot;
+          if (name === 'mousedown') {
+            this._downEl = hoveredTarget;
+            this._downPoint = [event.zrX, event.zrY];
+            // In case click triggered before mouseup
+            this._upEl = hoveredTarget;
+          }
+          else if (name === 'mouseup') {
+            this._upEl = hoveredTarget;
+          }
+          else if (name === 'click') {
+            if (this._downEl !== this._upEl
+              // Original click event is triggered on the whole canvas element,
+              // including the case that `mousedown` - `mousemove` - `mouseup`,
+              // which should be filtered, otherwise it will bring trouble to
+              // pan and zoom.
+              || !this._downPoint
+              // Arbitrary value
+              || vec2.dist(this._downPoint, [event.zrX, event.zrY]) > 4
+            ) {
+              return;
+            }
+            this._downPoint = null;
+          }
 
-        proxy = proxy || new EmptyProxy();
+          this.dispatchToElement(hovered, name, event);
+        };
+      });
 
-        /**
-         * Proxy of event. can be Dom, WebGLSurface, etc.
-         */
-        this.proxy = null;
+      this.storage = storage;
 
-        this.setHandlerProxy(proxy);
+      this.painter = painter;
+
+      this.painterRoot = painterRoot;
+
+      proxy = proxy || new EmptyProxy();
+
+      /**
+       * Proxy of event. can be Dom, WebGLSurface, etc.
+       */
+      this.proxy = null;
+
+      this.setHandlerProxy(proxy);
 
         // this._draggingMgr = new Draggable(this);
     }
@@ -328,50 +371,6 @@ class Handler extends Eventful {
     dblclick: (event: ZRRawEvent) => void
     contextmenu: (event: ZRRawEvent) => void
 }
-
-// Common handlers
-util.each(['click', 'mousedown', 'mouseup', 'mousewheel', 'dblclick', 'contextmenu'], function (name: HandlerName) {
-    Handler.prototype[name] = function (event) {
-        const x = event.zrX;
-        const y = event.zrY;
-        const isOutside = isOutsideBoundary(this, x, y);
-
-        let hovered;
-        let hoveredTarget;
-
-        if (name !== 'mouseup' || !isOutside) {
-            // Find hover again to avoid click event is dispatched manually. Or click is triggered without mouseover
-            hovered = this.findHover(x, y);
-            hoveredTarget = hovered.target;
-        }
-
-        if (name === 'mousedown') {
-            this._downEl = hoveredTarget;
-            this._downPoint = [event.zrX, event.zrY];
-            // In case click triggered before mouseup
-            this._upEl = hoveredTarget;
-        }
-        else if (name === 'mouseup') {
-            this._upEl = hoveredTarget;
-        }
-        else if (name === 'click') {
-            if (this._downEl !== this._upEl
-                // Original click event is triggered on the whole canvas element,
-                // including the case that `mousedown` - `mousemove` - `mouseup`,
-                // which should be filtered, otherwise it will bring trouble to
-                // pan and zoom.
-                || !this._downPoint
-                // Arbitrary value
-                || vec2.dist(this._downPoint, [event.zrX, event.zrY]) > 4
-            ) {
-                return;
-            }
-            this._downPoint = null;
-        }
-
-        this.dispatchToElement(hovered, name, event);
-    };
-});
 
 function isHover(displayable: Displayable, x: number, y: number) {
     if (displayable[displayable.rectHover ? 'rectContain' : 'contain'](x, y)) {

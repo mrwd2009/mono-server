@@ -6,7 +6,7 @@ import TSpan from '../graphic/TSpan';
 import arrayDiff from '../core/arrayDiff';
 import GradientManager from './helper/GradientManager';
 import PatternManager from './helper/PatternManager';
-import ClipPathManager, { hasClipPath } from './helper/ClippathManager';
+import ClipPathManager, { hasClipPath } from './helper/ClipPathManager';
 import ShadowManager from './helper/ShadowManager';
 import {
   path as svgPath,
