@@ -226,3 +226,13 @@ test('map', () => {
   const a = [1, 2];
   expect(util.map(a, item => item * 2)).toEqual([2, 4]);
 });
+
+test('isNumber', () => {
+  expect(util.isNumber(1)).toBe(true);
+  expect(util.isNumber('1')).toBe(false);
+});
+
+test('isArray', () => {
+  expect(util.isArray([])).toBe(true);
+  expect(util.isArray('12')).toBe(false);
+})

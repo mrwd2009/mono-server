@@ -330,3 +330,16 @@ export function reduce<T, S, Context>(
 }
 
 export function noop() {}
+
+export function isArray(value: any): value is any[] {
+  if (Array.isArray) {
+      return Array.isArray(value);
+  }
+  return objToString.call(value) === '[object Array]';
+}
+
+export function isNumber(value: any): value is number {
+  // Faster than `objToString.call` several times in chromium and webkit.
+  // And `new Number()` is rarely used.
+  return typeof value === 'number';
+}
