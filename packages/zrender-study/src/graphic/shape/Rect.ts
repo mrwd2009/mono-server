@@ -22,6 +22,7 @@ class Rect extends Path<RectProps> {
 
   constructor(opts?: RectProps) {
     super(opts);
+    this.type = 'rect';
   }
 
   getDefaultShape() {
@@ -60,7 +61,5 @@ class Rect extends Path<RectProps> {
     return !this.shape.width || !this.shape.height;
   }
 }
-
-Rect.prototype.type = 'rect';
 
 export default Rect;

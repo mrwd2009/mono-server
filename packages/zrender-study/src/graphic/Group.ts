@@ -16,6 +16,7 @@ class Group extends Element<GroupProps> {
 
   constructor(opts?: GroupProps) {
     super();
+    this.type = 'group'
     this.attr(opts);
   }
 
@@ -207,8 +208,6 @@ class Group extends Element<GroupProps> {
     return rect || tmpRect;
   }
 }
-
-Group.prototype.type = 'group';
 
 export interface GroupLike extends Element {
   childrenRef(): Element []

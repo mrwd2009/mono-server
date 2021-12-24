@@ -128,6 +128,12 @@ class Path<Props extends PathProps = PathProps> extends Displayable<Props> {
 
   constructor(opts?: Props) {
     super(opts);
+    this.type = 'path';
+    this.strokeContainThreshold = 5;
+    this.segmentIgnoreThreshold = 0;
+    this.subPixelOptimize = false;
+    this.autoBatch = false;
+    this.__dirty = REDRAW_BIT | STYLE_CHANGED_BIT | SHAPE_CHANGED_BIT;
   }
 
   update() {
@@ -532,6 +538,7 @@ class Path<Props extends PathProps = PathProps> extends Displayable<Props> {
   }
 
   protected static initDefaultProps = (() => {
+    // This only works for mixin. We must initialize them in constructor, otherwise they will be undefined.
     const proto = Path.prototype;
     proto.type = 'path';
     proto.strokeContainThreshold = 5;

@@ -3,17 +3,22 @@ import { init } from '../../../../src/zrender';
 import ZText from '../../../../src/graphic/Text';
 import '../../../../src/svg/svg';
 
-const createText = (container: HTMLDivElement) => {
-  const chart = init(container, {
-    width: 500,
-    height: 400,
-    renderer: 'svg'
-  });
-  const text = new ZText({
+const createText = () => {
+  return new ZText({
     style: {
       text: 'ZText',
-    }
+    },
+    zlevel: 1,
   });
+};
+
+const createChart = (container: HTMLDivElement) => {
+  const chart = init(container, {
+    width: 500,
+    height: 300,
+    renderer: 'svg'
+  });
+  const text = createText();
   chart.add(text);
   return chart;
 };
@@ -21,7 +26,7 @@ const createText = (container: HTMLDivElement) => {
 const Text: FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const chart = createText(containerRef.current);
+    const chart = createChart(containerRef.current);
     return () => {
       chart.dispose();
     };

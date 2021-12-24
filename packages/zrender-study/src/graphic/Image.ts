@@ -60,6 +60,11 @@ class ZRImage extends Displayable<ImageProps> {
 
   onload: (image: ImageLike) => void;
 
+  constructor() {
+    super();
+    this.type = 'image';
+  }
+
   createStyle(obj?: ImageStyleProps) {
     return createObject(DEFAULT_IMAGE_STYLE, obj);
   }
@@ -107,7 +112,5 @@ class ZRImage extends Displayable<ImageProps> {
     return this._rect;
   }
 }
-
-ZRImage.prototype.type = 'image';
 
 export default ZRImage;

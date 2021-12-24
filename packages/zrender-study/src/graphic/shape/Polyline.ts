@@ -20,6 +20,7 @@ class Polyline extends Path<PolylineProps> {
 
   constructor(opts?: PolylineProps) {
     super(opts);
+    this.type = 'polyLine';
   }
 
   getDefaultStyle() {
@@ -38,5 +39,4 @@ class Polyline extends Path<PolylineProps> {
   }
 }
 
-Polyline.prototype.type = 'polyLine';
 export default Polyline;

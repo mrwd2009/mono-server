@@ -122,6 +122,18 @@ class Displayable<Props extends DisplayableProps = DisplayableProps> extends Ele
 
   constructor(props?: Props) {
     super(props);
+    this.type = 'displayable';
+    this.invisible = false;
+    this.z = 0;
+    this.z2 = 0;
+    this.zlevel = 0;
+    this.culling = false;
+    this.cursor = 'pointer';
+    this.rectHover = false;
+    this.incremental = false;
+    this._rect = null;
+    this.dirtyRectTolerance = 0;
+    this.__dirty = REDRAW_BIT | STYLE_CHANGED_BIT;
   }
 
   protected _init(props?: Props) {
@@ -418,6 +430,7 @@ class Displayable<Props extends DisplayableProps = DisplayableProps> extends Ele
   }
 
   protected static initDefaultProps = (() => {
+    // This only works for mixin. We must initialize them in constructor, otherwise they will be undefined.
     const proto = Displayable.prototype;
     proto.type = 'displayable';
     proto.invisible = false;

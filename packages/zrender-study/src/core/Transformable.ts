@@ -345,6 +345,7 @@ class Transformable {
 }
 
 // used by Element mixin
+// This only works for mixin. We must initialize them in constructor, otherwise they will be undefined.
 const proto = Transformable.prototype;
 proto.x = 0;
 proto.y = 0;

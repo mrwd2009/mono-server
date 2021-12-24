@@ -158,6 +158,16 @@ export default class PathProxy {
     static CMD = CMD
 
     constructor(notSaveData?: boolean) {
+        this._saveData = true;
+        this._needsDash = false;
+        this._dashOffset = 0;
+        this._dashIdx = 0;
+        this._dashSum = 0;
+        this._ux = 0;
+        this._uy = 0;
+        this._pendingPtDist = 0;
+        this._version = 0;
+
         if (notSaveData) {
             this._saveData = false;
         }
@@ -1155,6 +1165,7 @@ export default class PathProxy {
     }
 
     private static initDefaultProps = (function () {
+       // This only works for mixin. We must initialize them in constructor, otherwise they will be undefined.
         const proto = PathProxy.prototype;
         proto._saveData = true;
         proto._needsDash = false;
