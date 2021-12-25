@@ -60,9 +60,12 @@ class ZRImage extends Displayable<ImageProps> {
 
   onload: (image: ImageLike) => void;
 
-  constructor() {
-    super();
+  constructor(props?: ImageProps, skipInit: boolean = false) {
+    super(props, true);
     this.type = 'image';
+    if (!skipInit) {
+      super._init(props);
+    }
   }
 
   createStyle(obj?: ImageStyleProps) {

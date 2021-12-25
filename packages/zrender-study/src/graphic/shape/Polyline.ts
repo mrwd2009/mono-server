@@ -15,11 +15,16 @@ export interface PolylineProps extends PathProps {
   shape?: Partial<PolylineProps>;
 }
 
+interface Polyline {
+  // if you want to make parent class property type more accurately, you must define in same name interface. If you do it in class, it will be overwritten to be void 0 in new ts version.
+  shape: PolylineShape;
+}
+
 class Polyline extends Path<PolylineProps> {
   shape: PolylineShape;
 
-  constructor(opts?: PolylineProps) {
-    super(opts);
+  constructor(opts?: PolylineProps, skipInit: boolean = false) {
+    super(opts, skipInit);
     this.type = 'polyLine';
   }
 

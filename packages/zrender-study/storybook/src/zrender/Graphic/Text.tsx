@@ -5,8 +5,14 @@ import '../../../../src/svg/svg';
 
 const createText = () => {
   return new ZText({
+    x: 100,
+    y: 50,
     style: {
-      text: 'ZText',
+      text: 'ZText\nSecond Line',
+      padding: 10,
+      align: 'left',
+      borderColor: 'rgb(255, 0, 0)',
+      borderWidth: 1
     },
     zlevel: 1,
   });

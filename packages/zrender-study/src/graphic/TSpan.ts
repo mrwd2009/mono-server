@@ -40,10 +40,14 @@ export type TSpanState = Pick<TSpanProps, DisplayableStatePropNames>;
 class TSpan extends Displayable<TSpanProps> {
   style: TSpanStyleProps;
 
-  constructor() {
-    super();
+  constructor(props?: TSpanProps, skipInit: boolean = false) {
+    super(props, true);
     this.dirtyRectTolerance = 10;
     this.type = 'tspan';
+
+    if (!skipInit) {
+      super._init();
+    }
   }
 
   hasStroke() {

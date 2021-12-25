@@ -167,9 +167,11 @@ class ZRText extends Displayable<TextProps> implements GroupLike {
 
   private _defaultStyle: DefaultTextStyle = DEFAULT_RICH_TEXT_COLOR;
 
-  constructor(opts?: TextProps) {
-    super(opts);
-    this.attr(opts);
+  constructor(opts?: TextProps, skipInit: boolean = false) {
+    super(opts, true);
+    if (!skipInit) {
+      this.attr(opts);
+    }
   }
 
   childrenRef() {
@@ -587,7 +589,6 @@ class ZRText extends Displayable<TextProps> implements GroupLike {
     const isImageBg = textBackgroundColor && (textBackgroundColor as { image: ImageLike }).image;
     const isPlainGradientBg = textBackgroundColor && !isImageBg;
     const textBorderRadius = style.borderRadius;
-    const self = this;
 
     let rectEl: Rect;
     let imgEl: ZRImage;

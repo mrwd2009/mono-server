@@ -14,10 +14,13 @@ class Group extends Element<GroupProps> {
 
   private _children: Element[] = [];
 
-  constructor(opts?: GroupProps) {
-    super();
-    this.type = 'group'
-    this.attr(opts);
+  constructor(opts?: GroupProps, skipInit: boolean = false) {
+    super(opts, true);
+    this.type = 'group';
+
+    if (!skipInit) {
+      this.attr(opts);
+    }
   }
 
   childrenRef() {

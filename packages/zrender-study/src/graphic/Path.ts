@@ -126,14 +126,18 @@ class Path<Props extends PathProps = PathProps> extends Displayable<Props> {
 
   shape: Dictionary<any>;
 
-  constructor(opts?: Props) {
-    super(opts);
+  constructor(opts?: Props, skipInit: boolean = false) {
+    super(opts, true);
     this.type = 'path';
     this.strokeContainThreshold = 5;
     this.segmentIgnoreThreshold = 0;
     this.subPixelOptimize = false;
     this.autoBatch = false;
     this.__dirty = REDRAW_BIT | STYLE_CHANGED_BIT | SHAPE_CHANGED_BIT;
+
+    if (!skipInit) {
+      this._init(opts);
+    }
   }
 
   update() {

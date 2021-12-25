@@ -120,8 +120,8 @@ class Displayable<Props extends DisplayableProps = DisplayableProps> extends Ele
 
   __svgEl: SVGElement;
 
-  constructor(props?: Props) {
-    super(props);
+  constructor(props?: Props, skipInit: boolean = false) {
+    super(props, true);
     this.type = 'displayable';
     this.invisible = false;
     this.z = 0;
@@ -134,6 +134,9 @@ class Displayable<Props extends DisplayableProps = DisplayableProps> extends Ele
     this._rect = null;
     this.dirtyRectTolerance = 0;
     this.__dirty = REDRAW_BIT | STYLE_CHANGED_BIT;
+    if (!skipInit) {
+      this._init(props);
+    }
   }
 
   protected _init(props?: Props) {

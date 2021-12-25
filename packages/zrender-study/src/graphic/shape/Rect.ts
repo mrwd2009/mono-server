@@ -17,11 +17,15 @@ export interface RectProps extends PathProps {
 
 const subPixelOptimizeOutputShape = {};
 
-class Rect extends Path<RectProps> {
+interface Rect {
+  // if you want to make parent class property type more accurately, you must define in same name interface. If you do it in class, it will be overwritten to be void 0 in new ts version.
   shape: RectShape;
+}
 
-  constructor(opts?: RectProps) {
-    super(opts);
+class Rect extends Path<RectProps> {
+
+  constructor(opts?: RectProps, skipInit: boolean = false) {
+    super(opts, skipInit);
     this.type = 'rect';
   }
 

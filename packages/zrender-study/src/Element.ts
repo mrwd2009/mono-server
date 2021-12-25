@@ -257,7 +257,7 @@ class Element<Props extends ElementProps = ElementProps> {
 
   private _innerTextDefaultStyle: DefaultTextStyle;
 
-  constructor(props?: Props) {
+  constructor(props?: Props, skipInit: boolean = false) {
     this.type = 'element';
     this.name = '';
     this.ignore = false;
@@ -268,9 +268,13 @@ class Element<Props extends ElementProps = ElementProps> {
     this.ignoreClip = false;
     this.__inHover = false;
     this.__dirty = REDRAW_BIT;
-    this._init(props);
+    if (!skipInit) {
+      this._init(props);
+    }
   }
-
+  
+  // can't initialize sub class property in overridden method 
+  // because in ts v4.5 all properties will be assigned to 'void 0' in constructor
   protected _init(props?: Props) {
     this.attr(props);
   }
