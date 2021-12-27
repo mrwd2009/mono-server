@@ -87,6 +87,6 @@ export function buildPath(ctx: CanvasRenderingContext2D | PathProxy, shape: {
 
   ctx.lineTo(x, y + r1);
   if (r1 !== 0) {
-    ctx.arc(x + r1, y + r1, Math.PI, Math.PI * 1.5);
+    ctx.arc(x + r1, y + r1, r1, Math.PI, Math.PI * 1.5);
   }
 }

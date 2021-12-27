@@ -1,15 +1,14 @@
 import BoundingRect, { RectLike } from '../core/BoundingRect';
-import { createCanvas } from '../core/util';
+import { createCanvas, createMeasureDiv } from '../core/util';
 import { Dictionary, PropType, TextAlign, TextVerticalAlign, BuiltinTextPosition } from '../core/types';
 import LRU from '../core/LRU';
 
-let textWidthCache: Dictionary<LRU<number>> = {};
 
 export const DEFAULT_FONT = '12px sans-serif';
 
+let textWidthCache: Dictionary<LRU<number>> = {};
 let _ctx: CanvasRenderingContext2D;
 let _cachedFont: string;
-
 function defaultMeasureText(text: string, font?: string): { width: number } {
   if (!_ctx) {
     _ctx = createCanvas().getContext('2d');
@@ -21,10 +20,35 @@ function defaultMeasureText(text: string, font?: string): { width: number } {
   return _ctx.measureText(text);
 }
 
+let textHeightCache: Dictionary<LRU<number>> = {};
+let _div: HTMLDivElement;
+let _cachedDivFont: string;
+function defaultMeasureHeight(text: string, font?: string): { height: number } {
+  if (!_div) {
+    _div = createMeasureDiv();
+    _div.className = 'zrender-calculate-line-height';
+    _div.style.position = 'absolute';
+    _div.style.top = '-100px';
+    _div.style.left = '-100px';
+    _div.style.zIndex = '-100';
+    document.body.appendChild(_div);
+  }
+  if (_cachedDivFont !== font) {
+    _cachedDivFont = _div.style.font = font || DEFAULT_FONT;
+  }
+  _div.textContent = text;
+
+  return {
+    height: _div.offsetHeight,
+  };
+}
+
 let methods: {
-  measureText: (text: string, font?: string) => { width: number }
+  measureText: (text: string, font?: string) => { width?: number, height?: number },
+  measureTextHeight: (text: string, font?: string) => { width?: number, height?: number }
 } = {
   measureText: defaultMeasureText,
+  measureTextHeight: defaultMeasureHeight,
 };
 
 export function $override(name: keyof typeof methods, fn: PropType<typeof methods, keyof typeof methods>) {
@@ -46,6 +70,23 @@ export function getWidth(text: string, font?: string): number {
 
   return width;
 }
+
+export function getHeight(text: string, font?: string): number {
+  font = font || DEFAULT_FONT;
+  let cacheOfFont = textHeightCache[font];
+  if (!cacheOfFont) {
+    cacheOfFont = textHeightCache[font] = new LRU(500);
+  }
+
+  let height = cacheOfFont.get(text);
+  if (height == null) {
+    height = methods.measureTextHeight(text, font).height;
+    cacheOfFont.put(text, height);
+  }
+
+  return height;
+}
+
 
 export function innerGetBoundingRect(text: string, font: string, textAlign?: TextAlign, textBaseline?: TextVerticalAlign): BoundingRect {
   const width = getWidth(text, font);
@@ -97,11 +138,15 @@ export function adjustTextY(y: number, height: number, verticalAlign: TextVertic
 
 // this is a rough computation
 export function getLineHeight(font?: string): number {
-  return getWidth('国', font);
+  // render character in a div to get real height. I think it much better than width of charater
+  return getHeight('国', font);
+  // return getWidth('国', font);
 }
 
 export function measureText(text: string, font?: string): { width: number } {
-  return methods.measureText(text, font);
+  return {
+    width: methods.measureText(text, font).width,
+  };
 }
 
 export function parsePercent(value: number | string, maxValue: number): number {

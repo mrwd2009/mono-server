@@ -170,7 +170,7 @@ class ZRText extends Displayable<TextProps> implements GroupLike {
   constructor(opts?: TextProps, skipInit: boolean = false) {
     super(opts, true);
     if (!skipInit) {
-      this.attr(opts);
+      this._init(opts);
     }
   }
 
@@ -499,7 +499,7 @@ class ZRText extends Displayable<TextProps> implements GroupLike {
       }
 
       lineXLeft += (contentWidth - (lineXLeft - xLeft) - (xRight - lineXRight) - remainedWidth) / 2;
-      while(leftIndex < rightIndex) {
+      while(leftIndex <= rightIndex) {
         token = tokens[leftIndex];
         this._placeToken(token, style, lineHeight, lineTop, lineXLeft + token.width / 2, 'center', bgColorDrawn);
         lineXLeft += token.width;
@@ -613,6 +613,7 @@ class ZRText extends Displayable<TextProps> implements GroupLike {
       rectStyle.fillOpacity = retrieve2(style.fillOpacity, 1);
     } else if (isImageBg) {
       imgEl = this._getOrCreateChild(ZRImage);
+      // not called in svg painter, for background it's enough to display
       imgEl.onload = () => {
         this.dirtyStyle();
       };
@@ -640,11 +641,11 @@ class ZRText extends Displayable<TextProps> implements GroupLike {
     }
 
     const commonStyle = (rectEl || imgEl).style;
-      commonStyle.shadowBlur = style.shadowBlur || 0;
-      commonStyle.shadowColor = style.shadowColor || 'transparent';
-      commonStyle.shadowOffsetX = style.shadowOffsetX || 0;
-      commonStyle.shadowOffsetY = style.shadowOffsetY || 0;
-      commonStyle.opacity = retrieve3(style.opacity, topStyle.opacity, 1);
+    commonStyle.shadowBlur = style.shadowBlur || 0;
+    commonStyle.shadowColor = style.shadowColor || 'transparent';
+    commonStyle.shadowOffsetX = style.shadowOffsetX || 0;
+    commonStyle.shadowOffsetY = style.shadowOffsetY || 0;
+    commonStyle.opacity = retrieve3(style.opacity, topStyle.opacity, 1);
   }
 
   static makeFont(style: TextStylePropsPart): string {

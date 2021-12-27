@@ -127,8 +127,7 @@ class Transformable {
   }
 
   setRotation(rad: number) {
-    // anticlockwise
-    this.rotation = -rad;
+    this.rotation = rad;
   }
 
   needLocalTransform(): boolean {

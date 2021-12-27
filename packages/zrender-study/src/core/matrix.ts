@@ -63,6 +63,7 @@ export function translate(out: Matrix, a: Matrix, v: Vec2): Matrix {
   return out;
 }
 
+// different direction comapred with rotae(deg) https://developer.mozilla.org/en-US/docs/Web/CSS/transform-function/rotate()
 /** 
  * clockwise rotation
  * 

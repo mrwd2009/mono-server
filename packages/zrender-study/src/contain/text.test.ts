@@ -13,6 +13,11 @@ beforeAll(() => {
       }
     }
   });
+  text.$override('measureTextHeight', () => {
+    return {
+      height: 20,
+    }
+  });
 });
 
 test('getWidth', () => {

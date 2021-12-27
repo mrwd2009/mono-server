@@ -8,4 +8,17 @@ export default {
 
 const Template: ComponentStory<typeof Text> = (args) => <Text {...args} />;
 
-export const DefaultText = Template.bind({});
+export const PlainText = Template.bind({});
+PlainText.args = {
+  type: 'plain',
+};
+
+export const RichText = Template.bind({});
+RichText.args = {
+  type: 'rich',
+};
+
+export const MatrixText = Template.bind({});
+MatrixText.args = {
+  type: 'matrix',
+};

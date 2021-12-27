@@ -278,8 +278,16 @@ methods.createCanvas = (): HTMLCanvasElement => {
   return document.createElement('canvas');
 }
 
+methods.createMeasureDiv = (): HTMLDivElement => {
+  return document.createElement('div');
+}
+
 export const createCanvas = (): HTMLCanvasElement => {
   return methods.createCanvas();
+}
+
+export const createMeasureDiv = (): HTMLDivElement => {
+  return methods.createMeasureDiv();
 }
 
 

@@ -1,5 +1,6 @@
 import * as parse from './parseText';
 import * as util from '../../core/util';
+import * as text from '../../contain/text';
 
 beforeAll(() => {
   util.$override('createCanvas', () => {
@@ -11,6 +12,11 @@ beforeAll(() => {
           }
         }
       }
+    }
+  });
+  text.$override('measureTextHeight', () => {
+    return {
+      height: 10,
     }
   });
 });
