@@ -1,9 +1,9 @@
-import { memo, FC, useEffect, useRef } from 'react';
+import { memo, FC, useEffect, useRef, useState } from 'react';
 import { init } from '../../../../src/zrender';
 import ZRText from '../../../../src/graphic/Text';
 import '../../../../src/svg/svg';
 
-type TextType = 'plain' | 'rich' | 'matrix';
+type TextType = 'plain' | 'rich' | 'matrix' | 'break';
 
 const createText = (type: TextType) => {
   if (type === 'rich') {
@@ -70,6 +70,19 @@ const createText = (type: TextType) => {
       }
     })
   }
+
+  if (type === 'break') {
+    return new ZRText({
+      x: 100,
+      y: 50,
+      style: {
+        text: 'long long long long long',
+        width: 30,
+        overflow: 'break',
+      }
+    })
+  }
+
   return new ZRText({
     x: 50,
     y: 25,
@@ -104,7 +117,10 @@ const createChart = (container: HTMLDivElement, type: TextType) => {
   });
   const text = createText(type);
   chart.add(text);
-  return chart;
+  return {
+    chart,
+    text,
+  };
 };
 
 interface Props {
@@ -113,14 +129,21 @@ interface Props {
 
 const Text: FC<Props> = ({ type }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [state, setState] = useState('');
   useEffect(() => {
-    const chart = createChart(containerRef.current, type);
+    const { chart, text } = createChart(containerRef.current, type);
+    setState(JSON.stringify(text.getBoundingRect(), null, 2));
     return () => {
       chart.dispose();
     };
   }, [type]);
   return (
-    <div ref={containerRef}></div>
+    <>
+      <div ref={containerRef}></div>
+      <pre>
+        { state }
+      </pre>
+    </>
   );
 };
 

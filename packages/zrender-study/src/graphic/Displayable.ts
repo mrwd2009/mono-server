@@ -15,7 +15,7 @@ export interface CommonStyleProps {
   shadowColor?: string;
 
   opacity?: number;
-  blend?: string;
+  blend?: string; // not used in svg painter
 }
 
 export const DEFAULT_COMMON_STYLE: CommonStyleProps = {
@@ -89,7 +89,7 @@ class Displayable<Props extends DisplayableProps = DisplayableProps> extends Ele
 
   zlevel: number;
 
-  culling: boolean;
+  culling: boolean; // if not visible in viewport
 
   cursor: string;
 
@@ -101,7 +101,7 @@ class Displayable<Props extends DisplayableProps = DisplayableProps> extends Ele
 
   protected _normalState: DisplayableState;
 
-  protected _rect: BoundingRect;
+  protected _rect: BoundingRect; // to store bounding rect
   protected _paintRect: BoundingRect;
   protected _prevPaintRect: BoundingRect;
 
@@ -118,7 +118,7 @@ class Displayable<Props extends DisplayableProps = DisplayableProps> extends Ele
   __canvasFillPattern: CanvasPattern;
   __canvasStrokePattern: CanvasPattern;
 
-  __svgEl: SVGElement;
+  __svgEl: SVGElement; // corresponding svg element
 
   constructor(props?: Props, skipInit: boolean = false) {
     super(props, true);

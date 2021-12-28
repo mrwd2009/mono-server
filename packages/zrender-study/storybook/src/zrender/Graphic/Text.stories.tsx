@@ -22,3 +22,8 @@ export const MatrixText = Template.bind({});
 MatrixText.args = {
   type: 'matrix',
 };
+
+export const BreakText = Template.bind({});
+BreakText.args = {
+  type: 'break',
+};

@@ -107,7 +107,7 @@ test('setOrigin', () => {
 test('setRotation', () => {
   const t = new Transformable();
   t.setRotation(3);
-  expect(t.rotation).toBe(-3);
+  expect(t.rotation).toBe(3);
 });
 
 test('needLocalTransform', () => {
