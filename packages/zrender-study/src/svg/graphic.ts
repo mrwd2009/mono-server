@@ -285,6 +285,7 @@ class SVGPathRebuilder implements PathRebuilder {
 interface PathWithSVGBuildPath extends Path {
   __svgPathVersion: number;
   __svgPathBuilder: SVGPathRebuilder;
+  __svgPathStrokePercent: number;
 }
 
 const svgPath: SVGProxy<Path> = {
@@ -313,7 +314,9 @@ const svgPath: SVGProxy<Path> = {
     const elExt = el as PathWithSVGBuildPath;
     let svgPathBuilder = elExt.__svgPathBuilder;
 
-    if (elExt.__svgPathVersion !== pathVersion || !svgPathBuilder || el.style.strokePercent < 1) {
+    // I think in raw zrender it's a bug.
+    // Using el.style.strokePercent < 1 as condition will cause a bug in animation. Because it won't draw percent which is larger than or equal to 1
+    if (elExt.__svgPathVersion !== pathVersion || !svgPathBuilder || el.style.strokePercent !== elExt.__svgPathStrokePercent) {
       if (!svgPathBuilder) {
         svgPathBuilder = elExt.__svgPathBuilder = new SVGPathRebuilder();
       }
@@ -321,6 +324,7 @@ const svgPath: SVGProxy<Path> = {
       path.rebuildPath(svgPathBuilder, el.style.strokePercent);
       svgPathBuilder.generateStr();
       elExt.__svgPathVersion = pathVersion;
+      elExt.__svgPathStrokePercent = el.style.strokePercent;
     }
 
     attr(svgEl, 'd', svgPathBuilder.getStr());
