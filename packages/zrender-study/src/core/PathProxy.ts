@@ -988,6 +988,8 @@ export default class PathProxy {
                     // Not draw too small seg between
                     if (dx > ux || dy > uy) {
                         if (drawPart) {
+                          // In animation, the percent might be negative value. The nagative value can be drawn.
+                          // But percent larger than 100 won't be drawn. It'll jump to next drawing command.
                             const l = pathSegLen[segCount++];
                             if (accumLength + l > displayedLength) {
                                 const t = (displayedLength - accumLength) / l;

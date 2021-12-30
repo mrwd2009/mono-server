@@ -77,8 +77,7 @@ export default class Clip {
 
     const easing = this.easing;
     const easingFunc = typeof easing === 'string' ? easingFuncs[easing as keyof typeof easingFuncs] : easing;
-    const schedule = typeof easingFuncs === 'function' ? easingFunc(percent) : percent;
-
+    const schedule = typeof easingFunc === 'function' ? easingFunc(percent) : percent;
     this.onframe?.(schedule);
 
     if (percent === 1) {

@@ -528,7 +528,7 @@ export default class Animator<T> {
 
   targetName?: string;
 
-  scope?: string;
+  scope?: string; // used by Element to stop multiple animators
 
   __fromStateTransition?: string;
 

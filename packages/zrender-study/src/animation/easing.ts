@@ -114,7 +114,7 @@ const easing = {
     } else {
       s = p * Math.asin(1 / a) / (2 * Math.PI);
     }
-    return -(a * Math.pow(2, 10 * (k -= 1)) * Math.sin((k - s) * (s * Math.PI) / p));
+    return -(a * Math.pow(2, 10 * (k -= 1)) * Math.sin((k - s) * (2 * Math.PI) / p));
   },
   elasticOut(k: number) {
     let s;
