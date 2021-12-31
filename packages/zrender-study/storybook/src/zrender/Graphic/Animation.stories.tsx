@@ -42,6 +42,7 @@ PositionAnimation.args = {
   duration: 2000,
   easing: 'backInOut',
   delay: 0,
+  reverse: false,
 };
 
 export const ConfigAnimation = Template.bind({});

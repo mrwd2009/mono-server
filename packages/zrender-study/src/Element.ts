@@ -47,10 +47,10 @@ export interface ElementAnimateConfig {
   done?: Function;
   aborted?: Function;
 
-  scope?: string;
-  force?: boolean;
-  additive?: boolean;
-  setToFinal?: boolean;
+  scope?: string; // label to filter out animations
+  force?: boolean; // at least one frame
+  additive?: boolean;// if existing animation, just apply additive value
+  setToFinal?: boolean; // clone a new source value instead of current element
 }
 
 export interface ElementTextConfig {

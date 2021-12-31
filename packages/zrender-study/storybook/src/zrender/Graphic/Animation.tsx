@@ -68,9 +68,10 @@ const createChart = (container: HTMLDivElement, type: PathType) => {
 
 interface Props {
   type: PathType;
+  reverse: boolean;
 };
 
-const PathT: FC<ElementAnimateConfig & Props> = ({ type, duration = 2000, delay, easing = 'linear', additive = false  }) => {
+const PathT: FC<ElementAnimateConfig & Props> = ({ type, duration = 2000, delay, easing = 'linear', additive = false, reverse = false  }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [state, setState] = useState('');
   const pathRef = useRef<Path>(null);
@@ -119,7 +120,7 @@ const PathT: FC<ElementAnimateConfig & Props> = ({ type, duration = 2000, delay,
       path.attr({
         x: 0,
       });
-      return path.animateTo({
+      return (reverse ? path.animateFrom : path.animateTo).call(path, {
         x: 200,
         y: 25
       }, {
