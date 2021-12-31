@@ -43,3 +43,20 @@ PositionAnimation.args = {
   easing: 'backInOut',
   delay: 0,
 };
+
+export const ConfigAnimation = Template.bind({});
+ConfigAnimation.args = {
+  type: 'config',
+  duration: 2000,
+  easing: 'backInOut',
+  delay: 0,
+};
+
+export const AdditiveAnimation = Template.bind({});
+AdditiveAnimation.args = {
+  type: 'additive',
+  duration: 4000,
+  easing: 'backInOut',
+  delay: 0,
+  additive: true,
+};

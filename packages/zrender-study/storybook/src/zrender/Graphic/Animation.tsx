@@ -10,7 +10,7 @@ import { ElementAnimateConfig } from '../../../../src/Element';
 
 
 import '../../../../src/svg/svg';
-type PathType = 'primary' | 'cubic' | 'rect' | 'position';
+type PathType = 'primary' | 'cubic' | 'rect' | 'position' | 'config' | 'additive';
 
 class TestPath extends Path {
   buildPath(path: PathProxy, shape: Dictionary<any>) {
@@ -25,7 +25,7 @@ class TestPath extends Path {
       return;
     }
 
-    if (shape.type === 'position') {
+    if (shape.type === 'position' || shape.type === 'config' || shape.type === 'additive') {
       path.rect(50, 50, 50, 50);
       return;
     }
@@ -70,10 +70,12 @@ interface Props {
   type: PathType;
 };
 
-const PathT: FC<ElementAnimateConfig & Props> = ({ type, duration = 2000, delay, easing = 'linear'  }) => {
+const PathT: FC<ElementAnimateConfig & Props> = ({ type, duration = 2000, delay, easing = 'linear', additive = false  }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [state, setState] = useState('');
   const pathRef = useRef<Path>(null);
+  const statusRef = useRef<any>({});
+  const [statusStr, setStatusStr] = useState('');
 
   const initialStyle = {
     stroke: '#ffd666',
@@ -82,6 +84,33 @@ const PathT: FC<ElementAnimateConfig & Props> = ({ type, duration = 2000, delay,
   const handleStart = () => {
     const path = pathRef.current;
     path.stopAnimation();
+    if (type === 'config') {
+      path.attr({
+        x: 0,
+        y: 0,
+      });
+      path.animateTo({
+        x: 200,
+        y: 50
+      }, {
+        duration,
+        delay,
+        easing,
+        during: (percent) => {
+          statusRef.current.percent = percent;
+        },
+        done: () => {
+          statusRef.current.aborted = false;
+          statusRef.current.done = true;
+        },
+        aborted: () => {
+          statusRef.current.done = false;
+          statusRef.current.aborted = true;
+        },
+        scope: 'config',
+      });
+      return;
+    }
     if (type === 'position') {
       path.attr('style', {
         stroke: '#ffd666',
@@ -118,7 +147,46 @@ const PathT: FC<ElementAnimateConfig & Props> = ({ type, duration = 2000, delay,
   const handleReset = () => {
     const path = pathRef.current;
     path.stopAnimation();
+    setStatusStr(JSON.stringify(statusRef.current, null, 2));
     // path.attr('style', initialStyle);
+  };
+
+  const additiveStart1 = () => {
+    const path = pathRef.current;
+    path.animateTo({
+      x: 100,
+    }, {
+      duration,
+      delay,
+      easing,
+      additive,
+    });
+  };
+
+  const additiveStart2 = () => {
+    const path = pathRef.current;
+    path.animateTo({
+      x: 200,
+    }, {
+      duration,
+      delay,
+      easing,
+      additive,
+    });
+  };
+
+  const addtiveInit = () => {
+    const path = pathRef.current;
+    path.stopAnimation();
+    path.attr({
+      x: 0,
+      y: 0,
+    });
+  };
+
+  const additiveStop = () => {
+    const path = pathRef.current;
+    path.stopAnimation();
   };
 
   useEffect(() => {
@@ -131,9 +199,21 @@ const PathT: FC<ElementAnimateConfig & Props> = ({ type, duration = 2000, delay,
   }, [type]);
   return (
     <>
-      <button onClick={handleStart}>Start</button> <button onClick={handleReset}>Stop</button>
+      {
+        type === 'additive' ? (
+          <>
+            <button onClick={addtiveInit}>Init</button>
+            <button onClick={additiveStart1}>Start1</button>
+            <button onClick={additiveStart2}>Start2</button>
+            <button onClick={additiveStop}>Stop</button>
+          </>
+        ) : (
+          <><button onClick={handleStart}>Start</button> <button onClick={handleReset}>Stop</button></>
+        )
+      }
       <div ref={containerRef}></div>
       <pre>
+        { statusStr }
         { state }
       </pre>
     </>

@@ -272,7 +272,7 @@ class Element<Props extends ElementProps = ElementProps> {
       this._init(props);
     }
   }
-  
+
   // can't initialize sub class property in overridden method 
   // because in ts v4.5 all properties will be assigned to 'void 0' in constructor
   protected _init(props?: Props) {
@@ -1282,6 +1282,7 @@ function animateToShallow<T>(
       if (isObject(target[innerKey]) && !isArrayLike(target[innerKey])) {
 
         if (topKey) {
+          // only support 1 tier property
           if (!reverse) {
             source[innerKey] = target[innerKey];
             animatable.updateDuringAnimation(topKey);
