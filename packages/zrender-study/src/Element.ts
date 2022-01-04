@@ -54,21 +54,21 @@ export interface ElementAnimateConfig {
 }
 
 export interface ElementTextConfig {
-  position?: BuiltinTextPosition | (number | string)[];
+  position?: BuiltinTextPosition | (number | string)[]; // position in layout rect
   
   rotation?: number;
 
-  layoutRect?: RectLike;
+  layoutRect?: RectLike; // layout rect used to calculate text position
 
   offset?: number[];
 
   origin?: (number | string)[] | 'center';
 
-  distance?: number;
+  distance?: number; // change x value
 
-  local?: boolean;
+  local?: boolean; // local coordinate
 
-  insideFill?: string;
+  insideFill?: string; // style for different position related to layout rect
 
   insideStroke?: string;
 
