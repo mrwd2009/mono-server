@@ -1,0 +1,20 @@
+@import '../../components//style/color/colors';
+
+@list: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10;
+@color-names: blue, purple, cyan, green, magenta, pink, red, orange, yellow, volcano, geekblue, lime, gold;
+
+.colorClass(@name) {
+  each(@list, {
+    .@{name}-@{value} {
+      @color-key: "@{name}-@{value}";
+      display: inline-block;
+      width: 100px;
+      height: 50px;
+      background-color: @@color-key;
+    }
+  })  
+}
+
+each(@color-names, {
+  .colorClass(@value)
+})
