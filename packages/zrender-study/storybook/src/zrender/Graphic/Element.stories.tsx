@@ -12,3 +12,8 @@ export const PrimaryElement = Template.bind({});
 PrimaryElement.args = {
   type: 'primary',
 };
+
+export const DraggableElement = Template.bind({});
+DraggableElement.args = {
+  type: 'draggable',
+};

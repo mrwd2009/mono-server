@@ -418,7 +418,7 @@ class Element<Props extends ElementProps = ElementProps> {
           textFill = this.getOutsideFill();
         }
 
-        if (textStroke == null && textStroke === 'auto') {
+        if (textStroke == null || textStroke === 'auto') {
           textStroke = this.getOutsideStroke(textFill);
           autoStroke = true;
         }

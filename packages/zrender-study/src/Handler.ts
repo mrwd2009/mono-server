@@ -1,6 +1,6 @@
 import * as util from './core/util';
 import * as vec2 from './core/vector';
-// import Draggable from './mixin/Draggable';
+import Draggable from './mixin/Draggable';
 import Eventful from './core/Eventful';
 import * as eventTool from './core/event';
 import { GestureMgr } from './core/GestureMgr';
@@ -82,7 +82,7 @@ class Handler extends Eventful {
 
     private _gestureMgr: GestureMgr
 
-    // private _draggingMgr: Draggable
+    private _draggingMgr: Draggable
 
     _downEl: Element
     _upEl: Element
@@ -154,7 +154,7 @@ class Handler extends Eventful {
 
       this.setHandlerProxy(proxy);
 
-        // this._draggingMgr = new Draggable(this);
+      this._draggingMgr = new Draggable(this);
     }
 
     setHandlerProxy(proxy: HandlerProxyInterface) {

@@ -1,13 +1,13 @@
 import { memo, FC, useEffect, useRef, useState } from 'react';
-import { init } from '../../../../src/zrender';
+import { init, ZRenderType } from '../../../../src/zrender';
 import Rect from '../../../../src/graphic/shape/Rect';
 import ZRText from '../../../../src/graphic/Text';
 
 import '../../../../src/svg/svg';
 
-type ElementType = 'primary';
+type ElementType = 'primary' | 'draggable';
 
-const createElement = (type: ElementType) => {
+const createTextContent = (chart: ZRenderType) => {
   const text = new ZRText({
     name: 'text',
     x: 50,
@@ -39,9 +39,11 @@ const createElement = (type: ElementType) => {
     textConfig: {
       local: false,
       origin: [0, 0],
-      offset: [10, 10],
-      rotation: Math.PI / 4,
-      position: 'insideTop',
+      // offset: [10, 10],
+      // rotation: Math.PI / 4,
+      position: 'left',
+      outsideStroke: 'auto',
+      outsideFill: 'none',
       distance: 0,
       layoutRect: {
         x: 100,
@@ -61,10 +63,41 @@ const createElement = (type: ElementType) => {
       fill: 'none',
     },
   });
+  chart.add(rect);
+  chart.add(rect2);
   return {
-    rect,
-    rect2,
+    element: rect,
   };
+}
+
+const createDraggable = (chart: ZRenderType) => {
+  const element = new Rect({
+    shape: {
+      x: 50,
+      y: 50,
+      width: 100,
+      height: 100,
+    },
+    scaleX: 2,
+    scaleY: 2,
+    draggable: true,
+    style: {
+      fill: 'cyan',
+    }
+  });
+  chart.add(element);
+  return {
+    element,
+  };
+};
+
+const createElement = (type: ElementType, chart: ZRenderType) => {
+  if (type === 'primary') {
+    return createTextContent(chart);
+  }
+  if (type === 'draggable') {
+    return createDraggable(chart);
+  }
 };
 
 const createChart = (container: HTMLDivElement, type: ElementType) => {
@@ -74,14 +107,11 @@ const createChart = (container: HTMLDivElement, type: ElementType) => {
     renderer: 'svg'
   });
   const {
-    rect,
-    rect2,
-  } = createElement(type);
-  chart.add(rect);
-  chart.add(rect2);
+    element
+  } = createElement(type, chart);
   return {
     chart,
-    element: rect,
+    element,
   };
 };
 
