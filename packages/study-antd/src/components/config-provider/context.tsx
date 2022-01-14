@@ -1,5 +1,6 @@
 import { createContext } from 'react';
 import defaultRenderEmpty, { RenderEmptyHandler } from './renderEmpty';
+import { Locale } from '../locale-provider';
 import { SizeType } from './SizeContext';
 
 export interface Theme {
@@ -29,7 +30,7 @@ export interface ConfigConsumerProps {
   input?: {
     autoComplete?: string;
   };
-  // locale?: Locale;
+  locale?: Locale;
   pageHeader?: {
     ghost: boolean;
   };

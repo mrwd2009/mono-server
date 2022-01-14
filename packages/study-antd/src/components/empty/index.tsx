@@ -1,7 +1,7 @@
-import { FC, ReactNode, CSSProperties, useContext, ReactElement } from 'react';
+import { FC, ReactNode, CSSProperties, useContext } from 'react';
 import classNames from 'classnames';
 import { ConfigContext } from '../config-provider';
-// import LocaleReceiver from '../locale-provider/LocaleReceiver';
+import LocaleReceiver from '../locale-provider/LocaleReceiver';
 import DefaultEmptyImg from './empty';
 import SimpleEmptyImg from './simple';
 
@@ -26,11 +26,6 @@ interface EmptyType extends FC<EmptyProps> {
   PRESENTED_IMAGE_DEFAULT: ReactNode;
   PRESENTED_IMAGE_SIMPLE: ReactNode;
 }
-
-// temp, need to replace with real LocaleReceiver
-const LocaleReceiver: FC<{ componentName: string, children: (locale: TransferLocale) => ReactElement }> = ({ children, componentName }) => {
-  return children({ description: 'No Data' });
-};
 
 const Empty: EmptyType = ({
   className,

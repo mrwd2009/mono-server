@@ -9,6 +9,9 @@ import {
   Theme,
 } from './context';
 import useUtilMemo from '../../dependents/util/src/hooks/useMemo';
+import LocaleProvider, { ANT_MARK, Locale } from '../locale-provider';
+// import LocaleReceiver from '../locale-provider/LocaleReceiver';
+// import defaultLocale from '../locale/default';
 import { SizeContextProvider, SizeType } from './SizeContext';
 
 export type {
@@ -61,7 +64,7 @@ export interface ConfigProviderProps {
   input?: {
     autoComplete?: string;
   };
-  // locale?: Locale;
+  locale?: Locale;
   pageHeader?: {
     ghost: boolean;
   };
@@ -137,6 +140,7 @@ const ProviderChildren: FC<ProviderChildrenProps> = props => {
     children,
     csp,
     autoInsertSpaceInButton,
+    locale,
     componentSize,
     direction,
     space,
@@ -164,6 +168,7 @@ const ProviderChildren: FC<ProviderChildrenProps> = props => {
     ...parentContext,
     csp,
     autoInsertSpaceInButton,
+    locale,
     direction,
     space,
     virtual,
@@ -190,6 +195,14 @@ const ProviderChildren: FC<ProviderChildrenProps> = props => {
   // const memoizedIconContextValue = useMemo(() => ({ prefixCls: iconPrefixCls, csp }), [iconPrefixCls, csp]);
 
   let childNode = children;
+
+  if (locale) {
+    childNode = (
+      <LocaleProvider locale={locale} _ANT_MARK__={ANT_MARK}>
+        {childNode}
+      </LocaleProvider>
+    );
+  }
 
   // if (iconPrefixCls) {
   //   childNode = (
