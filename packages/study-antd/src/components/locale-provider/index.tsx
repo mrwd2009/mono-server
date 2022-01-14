@@ -44,6 +44,11 @@ export default class LocaleProvider extends Component<LocaleProviderProps, any> 
     locale: {},
   };
 
+  getMemoizedContextValue = memoizedOne(localeValue => ({
+    ...localeValue,
+    exist: true
+  }));
+
   constructor(props: LocaleProviderProps) {
     super(props);
     devWarning(props._ANT_MARK__ === ANT_MARK, 'LocaleProvider', '`LocaleProvider` is deprecated. Please use `locale` with `ConfigProvider` instead: http://u.ant.design/locale');
@@ -63,10 +68,7 @@ export default class LocaleProvider extends Component<LocaleProviderProps, any> 
 
   render() {
     const { locale, children } = this.props;
-    const contextValue = memoizedOne(localeValue => ({
-      ...localeValue,
-      exist: true
-    }))(locale);
+    const contextValue = this.getMemoizedContextValue(locale);
 
     return <LocaleContext.Provider value={contextValue}>{children}</LocaleContext.Provider>;
   }
