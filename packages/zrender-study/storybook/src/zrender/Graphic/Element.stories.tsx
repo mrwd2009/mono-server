@@ -17,3 +17,8 @@ export const DraggableElement = Template.bind({});
 DraggableElement.args = {
   type: 'draggable',
 };
+
+export const ClippathElement = Template.bind({});
+ClippathElement.args = {
+  type: 'clippath',
+};
