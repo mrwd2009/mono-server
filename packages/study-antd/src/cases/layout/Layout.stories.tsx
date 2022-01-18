@@ -23,3 +23,8 @@ export const BreakpointLayout = Template.bind({});
 BreakpointLayout.args = {
   type: 'breakpoint',
 };
+
+export const FullLayout = Template.bind({});
+FullLayout.args = {
+  type: 'full',
+};

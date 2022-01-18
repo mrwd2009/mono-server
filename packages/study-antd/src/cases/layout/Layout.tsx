@@ -60,6 +60,25 @@ const createBreakpoint = (breakpoint: string) => {
   );
 };
 
+const createFull = () => {
+  return (
+    <Layout tagName="div">
+      <Layout.Sider
+        tagName="div"
+        theme="light"
+        collapsible
+      >Sider1</Layout.Sider>
+      <Layout.Content tagName="div">
+        <Layout tagName="div">
+          <Layout.Header tagName="div">Header</Layout.Header>
+          <Layout.Content tagName="div">Content</Layout.Content>
+          <Layout.Footer tagName="div">Footer</Layout.Footer>
+        </Layout>
+      </Layout.Content>
+    </Layout>
+  );
+};
+
 const LayoutCase: FC<Props> = ({ type, theme = 'light-theme' }) => {
   let el = null;
   let extra = null;
@@ -79,6 +98,8 @@ const LayoutCase: FC<Props> = ({ type, theme = 'light-theme' }) => {
       }}>Change Breakpoint {breakpoint}</button>
     );
     el = createBreakpoint(breakpoint);
+  } else if (type === 'full') {
+    el = createFull();
   }
   return (
     <div className={theme}>
