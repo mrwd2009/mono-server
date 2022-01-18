@@ -39,6 +39,7 @@ export interface SiderProps extends HTMLAttributes<HTMLDivElement> {
   breakpoint?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
   theme?: SiderTheme;
   onBreakpoint?: (broken: boolean) => void;
+  tagName?: 'aside' | 'div'
 }
 
 export interface SiderState {
@@ -72,6 +73,7 @@ const Sider = forwardRef<HTMLDivElement, SiderProps>(
       breakpoint,
       onCollapse,
       onBreakpoint,
+      tagName: Tag = 'aside',
       ...props
     },
     ref,
@@ -151,7 +153,7 @@ const Sider = forwardRef<HTMLDivElement, SiderProps>(
       const prefixCls = getPrefixCls('layout-sider', customizePrefixCls);
       const divProps = omit(props, ['collapsed']);
       const rawWidth = collapsed ? collapsedWidth : width;
-      const siderWidth = isNumeric(rawWidth) ? `${rawWidth}px` : String(rawWidth);
+      const siderWidth = isNumeric(rawWidth) ? `${rawWidth}px` : rawWidth as string;
       const zeroWidthTrigger = parseFloat(String(collapsedWidth || 0)) === 0 ? (
         <span
           onClick={toggle}
@@ -197,10 +199,10 @@ const Sider = forwardRef<HTMLDivElement, SiderProps>(
         className,
       );
       return (
-        <aside className={siderCls} {...divProps} style={divStyle} ref={ref}>
+        <Tag className={siderCls} {...divProps} style={divStyle} ref={ref}>
           <div className={`${prefixCls}-children`}>{children}</div>
           {collapsible || (below && zeroWidthTrigger) ? triggerDom : null}
-        </aside>
+        </Tag>
       )
     };
 

@@ -1,16 +1,17 @@
-import { HTMLAttributes, createContext, useContext, FC, createElement, useState, useMemo } from 'react';
+import { HTMLAttributes, createContext, useContext, FC, useState, useMemo } from 'react';
 import classNames from 'classnames';
 import { ConfigContext } from '../config-provider';
 
 export interface GeneratorProps {
   suffixCls: string;
-  tagName: 'header' | 'footer' | 'main' | 'section';
+  tagName: 'header' | 'footer' | 'main' | 'section' | 'div';
   displayName: string;
 }
 
 export interface BasicProps extends HTMLAttributes<HTMLDivElement> {
   prefixCls?: string;
   hasSider?: boolean;
+  tagName?: GeneratorProps['tagName'];
 }
 
 export interface LayoutContextProps {
@@ -28,7 +29,7 @@ export const LayoutContext = createContext<LayoutContextProps>({
 });
 
 interface BasicPropsWithTagName extends BasicProps {
-  tagName: 'header' | 'footer' | 'main' | 'section';
+  tagName: 'header' | 'footer' | 'main' | 'section' | 'div';
 }
 
 function generator({ suffixCls, tagName, displayName }: GeneratorProps) {

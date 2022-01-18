@@ -13,3 +13,13 @@ export const PrimaryLayout = Template.bind({});
 PrimaryLayout.args = {
   type: 'primary',
 };
+
+export const CollapseLayout = Template.bind({});
+CollapseLayout.args = {
+  type: 'collapse',
+};
+
+export const BreakpointLayout = Template.bind({});
+BreakpointLayout.args = {
+  type: 'breakpoint',
+};
