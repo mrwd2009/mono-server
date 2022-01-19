@@ -22,7 +22,8 @@
     "test": "craco test",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 6003 -s public",
-    "build-storybook": "build-storybook -s public"
+    "build-storybook": "build-storybook -s public",
+    "link-local-zrender": "ln -s $PWD/../zrender-study/ $PWD/node_modules/zrender"
   },
   "eslintConfig": {
     "extends": [

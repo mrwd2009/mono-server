@@ -2,7 +2,7 @@
   "name": "zrender-study",
   "version": "1.0.0",
   "description": "Just study from zrender",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "test": "jest"
   },

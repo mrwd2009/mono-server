@@ -20,7 +20,7 @@ export interface PainterBase {
   dispose(): void;
 
   getViewportRoot: () => HTMLElement;
-  getViewportRootOffset: () => { offsetLeft: number, offsetTop: number };
+  getViewportRootOffset: () => { offsetLeft: number, offsetTop: number } | undefined;
 
   refreshHover(): void;
   pathToImage(e: Path, dpr: number): ZRImage;
