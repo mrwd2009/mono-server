@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`layout with full elements 1`] = `
+<section
+  className="ant-layout"
+>
+  <aside
+    className="ant-layout-sider ant-layout-sider-dark"
+    style={
+      Object {
+        "flex": "0 0 200px",
+        "maxWidth": "200px",
+        "minWidth": "200px",
+        "width": "200px",
+      }
+    }
+  >
+    <div
+      className="ant-layout-sider-children"
+    >
+      Sider
+    </div>
+  </aside>
+  <main
+    className="ant-layout-content"
+  >
+    <header
+      className="ant-layout-header"
+    >
+      Header
+    </header>
+    <footer
+      className="ant-layout-footer"
+    >
+      Footer
+    </footer>
+  </main>
+</section>
+`;
