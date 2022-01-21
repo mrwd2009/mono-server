@@ -11,3 +11,7 @@ Date: Fri Dec 31 2021 10:44:16 GMT+0800
 ### 2022-01-14
 Pull request about conext in LocaleProvider and Anchor is accepted.
 https://github.com/ant-design/ant-design/pull/33723
+
+### 2022-01-21
+Pull request about hook dependency array in Row and Sider component is accepted.
+https://github.com/ant-design/ant-design/pull/33804
