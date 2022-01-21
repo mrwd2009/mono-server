@@ -109,8 +109,10 @@ const Row = React.forwardRef<HTMLDivElement, RowProps>((props, ref) => {
     rowStyle.marginBottom = verticalGutter;
   }
   // todo fix this won't work, because gutters is an array.
-  const rowContext = React.useMemo(() => ({ gutter: gutters, wrap, supportFlexGap }), [
-    gutters,
+  const [gutterH, gutterV] = gutters;
+  const rowContext = React.useMemo(() => ({ gutter: [gutterH, gutterV] as [number, number], wrap, supportFlexGap }), [
+    gutterH,
+    gutterV,
     wrap,
     supportFlexGap,
   ]);
