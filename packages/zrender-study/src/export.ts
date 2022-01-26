@@ -26,6 +26,7 @@ export { default as Arc, ArcProps, ArcShape } from './graphic/shape/Arc';
 export { default as BezierCurve, BezierCurveProps, BezierCurveShape } from './graphic/shape/BezierCurve';
 export { default as Rect, RectProps, RectShape } from './graphic/shape/Rect';
 export { default as Polyline, PolylineProps, PolylineShape } from './graphic/shape/Polyline';
+export { default as Circle, CircleProps, CircleShape } from './graphic/shape/Circle';
 
 export { default as LinearGradient, LinearGradientObject } from './graphic/LinearGradient';
 export { default as RadialGradient, RadialGradientObject } from './graphic/RadialGradient';
