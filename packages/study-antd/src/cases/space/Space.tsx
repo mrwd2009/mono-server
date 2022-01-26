@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, Children } from 'react';
 import Space from '../../components/space';
 import './index.less';
 
