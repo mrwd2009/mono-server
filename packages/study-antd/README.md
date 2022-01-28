@@ -15,3 +15,7 @@ https://github.com/ant-design/ant-design/pull/33723
 ### 2022-01-21
 Pull request about hook dependency array in Row and Sider component is accepted.
 https://github.com/ant-design/ant-design/pull/33804
+
+### 2022-01-27
+Pull request about button loading timer has been accepted.
+https://github.com/ant-design/ant-design/pull/33858
