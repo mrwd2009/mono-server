@@ -11,3 +11,7 @@ Date: Wed Nov 10 2021 10:55:47 GMT+0800
 ### 2022-01-05
 The pull request about animation bug on `style.strokePercent` was accepted.
 https://github.com/ecomfe/zrender/pull/867
+
+
+### 2022-01-27
+Code diff 0b246a38..43eb0935 in raw repository.
