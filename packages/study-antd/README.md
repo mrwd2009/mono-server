@@ -19,3 +19,7 @@ https://github.com/ant-design/ant-design/pull/33804
 ### 2022-01-27
 Pull request about button loading timer has been accepted.
 https://github.com/ant-design/ant-design/pull/33858
+
+### 2022-02-10
+Pull request about enter key callback on Paragraph is accepted
+https://github.com/ant-design/ant-design/pull/33976
