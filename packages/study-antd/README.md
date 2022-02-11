@@ -2,7 +2,19 @@
 This project is used to study antd components step by step. I just add unit test for each modules to learn antd.
 The raw project is https://github.com/ant-design/ant-design.
 
-The referenced code version as following.
+
+## Available Scripts
+
+### `yarn install`
+
+Install all depencencies for current project.
+
+### `yarn storybook`
+
+I'm using storybook to create test case to test basic function.
+You can visit it through [http://localhost:6002](http://localhost:6002).
+
+## Event Log
 
 ### 2021-12-31
 Commit ID: 0976e9e6a45469df611d37541314874f2fc456a2
