@@ -351,3 +351,7 @@ export function isNumber(value: any): value is number {
   // And `new Number()` is rarely used.
   return typeof value === 'number';
 }
+
+export function isFunction(value: any): value is Function {
+  return typeof value === 'function';
+}
