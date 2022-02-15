@@ -1104,7 +1104,7 @@ class Element<Props extends ElementProps = ElementProps> {
     this.markRedraw();
   }
 
-  stopAnimation(scope?: string, forwardToLast?: boolean) {
+  stopAnimation(scope?: string | null, forwardToLast?: boolean) {
     const animators = this.animators;
     const len = animators.length;
     const leftAnimators: Animator<any>[] = [];
