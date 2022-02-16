@@ -242,6 +242,7 @@ class Affix extends React.Component<AffixProps, AffixState> {
     return (
       <ResizeObserver
         onResize={() => {
+          console.log('test')
           this.updatePosition();
         }}
       >

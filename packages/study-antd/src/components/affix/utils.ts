@@ -4,7 +4,7 @@ import Affix from '.';
 export type BindElement = HTMLElement | Window | null | undefined;
 
 export function getTargetRect(target: BindElement): DOMRect {
-  if (target === window) {
+  if (target !== window) {
     return (target as unknown as HTMLElement).getBoundingClientRect();
   }
   return ({
