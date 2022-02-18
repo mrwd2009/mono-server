@@ -57,6 +57,15 @@ class InternalMenu extends React.Component<InternalMenuProps> {
     }
     return inlineCollapsed;
   }
+
+  getCachedContext = memoizeOne((cls, collapsed, the, dir, disableMenuItemTitleTooltip) => ({
+    prefixCls: cls,
+    inlineCollapsed: collapsed || false,
+    antdMenuTheme: the,
+    direction: dir,
+    firstLevel: true,
+    disableMenuItemTitleTooltip,
+  }));
   
 
   renderMenu = ({ getPopupContainer, getPrefixCls, direction }: ConfigConsumerProps) => {
@@ -84,14 +93,7 @@ class InternalMenu extends React.Component<InternalMenuProps> {
     const menuClassName = classNames(`${prefixCls}-${theme}`, className);
 
     // todo fix
-    const contextValue = memoizeOne((cls, collapsed, the, dir, disableMenuItemTitleTooltip) => ({
-      prefixCls: cls,
-      inlineCollapsed: collapsed || false,
-      antdMenuTheme: the,
-      direction: dir,
-      firstLevel: true,
-      disableMenuItemTitleTooltip,
-    }))(prefixCls, inlineCollapsed, theme, direction, _internalDisableMenuItemTitleTooltip);
+    const contextValue = this.getCachedContext(prefixCls, inlineCollapsed, theme, direction, _internalDisableMenuItemTitleTooltip);
 
     return (
       <MenuContext.Provider value={contextValue}>
