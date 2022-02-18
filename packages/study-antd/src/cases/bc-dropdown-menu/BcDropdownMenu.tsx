@@ -60,9 +60,9 @@ const BcDropdownMenu: FC<Props> = ({ type }) => {
             <Menu>
               <Menu.Item key="1" title="title1">menu1</Menu.Item>
               <Menu.Item key="2" title="title2">menu2</Menu.Item>
-              <Menu.SubMenu title="title3">
+              <Menu.SubMenu title="title3" key="title3">
                 <Menu.Item key="3-1" title="menu-3-1">menu-3-1</Menu.Item>
-                <Menu.SubMenu title="title-3-2">
+                <Menu.SubMenu title="title-3-2" key="title-3-2">
                   <Menu.Item key="3-2-1" title="menu-3-2-1">menu-3-2-1</Menu.Item>
                 </Menu.SubMenu>
                 <Menu.Item key="3-3" title="menu-3-3">menu-3-3</Menu.Item>
@@ -74,9 +74,9 @@ const BcDropdownMenu: FC<Props> = ({ type }) => {
             <Menu mode="horizontal">
               <Menu.Item key="1" title="title1">menu1</Menu.Item>
               <Menu.Item key="2" title="title2">menu2</Menu.Item>
-              <Menu.SubMenu title="title3">
+              <Menu.SubMenu title="title3" key="title3">
                 <Menu.Item key="3-1" title="menu-3-1">menu-3-1</Menu.Item>
-                <Menu.SubMenu title="title-3-2">
+                <Menu.SubMenu title="title-3-2" key="title-3-2">
                   <Menu.Item key="3-2-1" title="menu-3-2-1">menu-3-2-1</Menu.Item>
                 </Menu.SubMenu>
                 <Menu.Item key="3-3" title="menu-3-3">menu-3-3</Menu.Item>
