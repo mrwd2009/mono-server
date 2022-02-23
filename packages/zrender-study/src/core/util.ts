@@ -122,6 +122,9 @@ const TYPED_ARRAY: {[key: string]: boolean} = {
   '[object Float64Array]': true
 };
 const objToString = Object.prototype.toString;
+
+const ctorFunction = function () {}.constructor;
+const protoFunction = ctorFunction ? ctorFunction.prototype : null;
 const protoKey = '__proto__';
 
 export function isTypedArray(value: any): boolean {
@@ -354,4 +357,217 @@ export function isNumber(value: any): value is number {
 
 export function isFunction(value: any): value is Function {
   return typeof value === 'function';
+}
+
+export function assert(condition: any, message?: string) {
+  if (!condition) {
+    throw new Error(message);
+  }
+}
+
+export type Bind1<F, Ctx> = F extends (this: Ctx, ...args: infer A) => infer R ? (...args: A) => R : unknown;
+export type Bind2<F, Ctx, T1> = F extends (this: Ctx, a: T1, ...args: infer A) => infer R ? (...args: A) => R : unknown;
+export type Bind3<F, Ctx, T1, T2> = F extends (this: Ctx, a: T1, b: T2, ...args: infer A) => infer R ? (...args: A) => R : unknown;
+export type Bind4<F, Ctx, T1, T2, T3> = F extends (this: Ctx, a: T1, b: T2, c: T3, ...args: infer A) => infer R ? (...args: A) => R : unknown;
+export type Bind5<F, Ctx, T1, T2, T3, T4> = F extends (this: Ctx, a: T1, b: T2, c: T3, d: T4, ...args: infer A) => infer R ? (...args: A) => R : unknown;
+type BindFunc<Ctx> = (this: Ctx, ...arg: any[]) => any
+
+interface FunctionBind {
+  <F extends BindFunc<Ctx>, Ctx>(func: F, ctx: Ctx): Bind1<F, Ctx>
+  <F extends BindFunc<Ctx>, Ctx, T1 extends Parameters<F>[0]>(func: F, ctx: Ctx, a: T1): Bind2<F, Ctx, T1>
+  <F extends BindFunc<Ctx>, Ctx, T1 extends Parameters<F>[0], T2 extends Parameters<F>[1]>(func: F, ctx: Ctx, a: T1, b: T2): Bind3<F, Ctx, T1, T2>
+  <F extends BindFunc<Ctx>, Ctx, T1 extends Parameters<F>[0], T2 extends Parameters<F>[1], T3 extends Parameters<F>[2]>(func: F, ctx: Ctx, a: T1, b: T2, c: T3): Bind4<F, Ctx, T1, T2, T3>
+  <F extends BindFunc<Ctx>, Ctx, T1 extends Parameters<F>[0], T2 extends Parameters<F>[1], T3 extends Parameters<F>[2], T4 extends Parameters<F>[3]>(func: F, ctx: Ctx, a: T1, b: T2, c: T3, d: T4): Bind5<F, Ctx, T1, T2, T3, T4>
+}
+function bindPolyfill<Ctx, Fn extends (...args: any) => any>(
+  func: Fn, context: Ctx, ...args: any[]
+): (...args: Parameters<Fn>) => ReturnType<Fn> {
+  return function (this: Ctx) {
+    return func.apply(context, args.concat(nativeSlice.call(arguments)));
+  };
+}
+export const bind: FunctionBind = (protoFunction && isFunction(protoFunction.bind))
+  ? protoFunction.call.bind(protoFunction.bind)
+  : bindPolyfill;
+
+/**
+* @constructor
+* @param {Object} obj Only apply `ownProperty`.
+*/
+export class HashMap<T, KEY extends string | number = string | number> {
+
+  data: { [key in KEY]: T } = {} as { [key in KEY]: T };
+
+  constructor(obj?: HashMap<T, KEY> | { [key in KEY]?: T } | KEY[]) {
+    const isArr = isArray(obj);
+    // Key should not be set on this, otherwise
+    // methods get/set/... may be overrided.
+    this.data = {} as { [key in KEY]: T };
+    const thisMap = this;
+
+    (obj instanceof HashMap)
+      ? obj.each(visit)
+      : (obj && each(obj, visit));
+
+    function visit(value: any, key: any) {
+      isArr ? thisMap.set(value, key) : thisMap.set(key, value);
+    }
+  }
+
+  // Do not provide `has` method to avoid defining what is `has`.
+  // (We usually treat `null` and `undefined` as the same, different
+  // from ES6 Map).
+  get(key: KEY): T {
+    return this.data.hasOwnProperty(key) ? this.data[key] : null;
+  }
+  set(key: KEY, value: T): T {
+    // Comparing with invocation chaining, `return value` is more commonly
+    // used in this case: `const someVal = map.set('a', genVal());`
+    return (this.data[key] = value);
+  }
+  // Although util.each can be performed on this hashMap directly, user
+  // should not use the exposed keys, who are prefixed.
+  each<Context>(
+    cb: (this: Context, value?: T, key?: KEY) => void,
+    context?: Context
+  ) {
+    for (let key in this.data) {
+      if (this.data.hasOwnProperty(key)) {
+        cb.call(context, this.data[key], key);
+      }
+    }
+  }
+  keys(): KEY[] {
+    return keys(this.data);
+  }
+  // Do not use this method if performance sensitive.
+  removeKey(key: KEY) {
+    delete this.data[key];
+  }
+}
+
+export function createHashMap<T, KEY extends string | number = string | number>(
+  obj?: HashMap<T, KEY> | { [key in KEY]?: T } | KEY[]
+) {
+  return new HashMap<T, KEY>(obj);
+}
+
+/**
+ * Array filtering.
+ * @return Must be an array.
+ */
+export function filter<T, Context>(
+  arr: readonly T[],
+  cb: (this: Context, value: T, index: number, arr: readonly T[]) => boolean,
+  context?: Context
+): T[] {
+  // Take the same behavior with lodash when !arr and !cb,
+  // which might be some common sense.
+  if (!arr) {
+    return [];
+  }
+  if (!cb) {
+    return slice(arr);
+  }
+  if (arr.filter && arr.filter === nativeFilter) {
+    return arr.filter(cb, context);
+  }
+  else {
+    const result = [];
+    for (let i = 0, len = arr.length; i < len; i++) {
+      // FIXME: should the elided items be travelled? like `[33,,55]`.
+      if (cb.call(context, arr[i], i, arr)) {
+        result.push(arr[i]);
+      }
+    }
+    return result;
+  }
+}
+
+export function isBuiltInObject(value: any): boolean {
+  return !!BUILTIN_OBJECT[objToString.call(value)];
+}
+
+export function merge<
+  T extends Dictionary<any>,
+  S extends Dictionary<any>
+>(target: T, source: S, overwrite?: boolean): T & S;
+export function merge<
+  T extends any,
+  S extends any
+>(target: T, source: S, overwrite?: boolean): T | S;
+export function merge(target: any, source: any, overwrite?: boolean): any {
+  // We should escapse that source is string
+  // and enter for ... in ...
+  if (!isObject(source) || !isObject(target)) {
+    return overwrite ? clone(source) : target;
+  }
+
+  for (let key in source) {
+    // Check if key is __proto__ to avoid prototype pollution
+    if (source.hasOwnProperty(key) && key !== protoKey) {
+      const targetProp = target[key];
+      const sourceProp = source[key];
+
+      if (isObject(sourceProp)
+        && isObject(targetProp)
+        && !isArray(sourceProp)
+        && !isArray(targetProp)
+        && !isDom(sourceProp)
+        && !isDom(targetProp)
+        && !isBuiltInObject(sourceProp)
+        && !isBuiltInObject(targetProp)
+        && !isPrimitive(sourceProp)
+        && !isPrimitive(targetProp)
+      ) {
+        // 如果需要递归覆盖，就递归调用merge
+        merge(targetProp, sourceProp, overwrite);
+      }
+      else if (overwrite || !(key in target)) {
+        // 否则只处理overwrite为true，或者在目标对象中没有此属性的情况
+        // NOTE，在 target[key] 不存在的时候也是直接覆盖
+        target[key] = clone(source[key]);
+      }
+    }
+  }
+
+  return target;
+}
+
+export function concatArray<T, R>(a: ArrayLike<T>, b: ArrayLike<R>): ArrayLike<T | R> {
+  const newArray = new (a as any).constructor(a.length + b.length);
+  for (let i = 0; i < a.length; i++) {
+    newArray[i] = a[i];
+  }
+  const offset = a.length;
+  for (let i = 0; i < b.length; i++) {
+    newArray[i + offset] = b[i];
+  }
+  return newArray;
+}
+
+export type Curry1<F, T1> = F extends (a: T1, ...args: infer A) => infer R ? (...args: A) => R : unknown;
+export type Curry2<F, T1, T2> = F extends (a: T1, b: T2, ...args: infer A) => infer R ? (...args: A) => R : unknown;
+export type Curry3<F, T1, T2, T3> = F extends (a: T1, b: T2, c: T3, ...args: infer A) => infer R ? (...args: A) => R : unknown;
+export type Curry4<F, T1, T2, T3, T4> = F extends (a: T1, b: T2, c: T3, d: T4, ...args: infer A) => infer R ? (...args: A) => R : unknown;
+type CurryFunc = (...arg: any[]) => any
+
+function curry<F extends CurryFunc, T1 extends Parameters<F>[0]>(func: F, a: T1): Curry1<F, T1>
+function curry<F extends CurryFunc, T1 extends Parameters<F>[0], T2 extends Parameters<F>[1]>(func: F, a: T1, b: T2): Curry2<F, T1, T2>
+function curry<F extends CurryFunc, T1 extends Parameters<F>[0], T2 extends Parameters<F>[1], T3 extends Parameters<F>[2]>(func: F, a: T1, b: T2, c: T3): Curry3<F, T1, T2, T3>
+function curry<F extends CurryFunc, T1 extends Parameters<F>[0], T2 extends Parameters<F>[1], T3 extends Parameters<F>[2], T4 extends Parameters<F>[3]>(func: F, a: T1, b: T2, c: T3, d: T4): Curry4<F, T1, T2, T3, T4>
+function curry(func: Function, ...args: any[]): Function {
+  return function (this: any) {
+    return func.apply(this, args.concat(nativeSlice.call(arguments)));
+  };
+}
+export { curry };
+
+
+export function retrieve<T>(...args: T[]): T {
+  for (let i = 0, len = args.length; i < len; i++) {
+      if (args[i] != null) {
+          return args[i];
+      }
+  }
 }

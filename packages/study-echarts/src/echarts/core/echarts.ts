@@ -1,4 +1,4 @@
-import { ZRenderType, init } from 'zrender';
+import { ZRenderType, init as zrenderInit } from 'zrender';
 import {
   assert,
   each,
@@ -124,6 +124,8 @@ import lifecycle, {
 import { platformApi, setPlatformAPI } from 'zrender/src/core/platform';
 import { getImpl } from './impl';
 import type geoSourceManager from '../coord/geo/geoSourceManager';
+
+const __DEV__ = process.env.NODE_ENV === 'development';
 
 type ModelFinder = modelUtil.ModelFinder;
 
@@ -380,7 +382,7 @@ class ECharts extends Eventful<ECEventDefinition> {
       defaultUseDirtyRect = devUseDirtyRect == null ? defaultUseDirtyRect : devUseDirtyRect;
     }
 
-    const zr = this._zr = init(dom, {
+    const zr = this._zr = zrenderInit(dom, {
       renderer: opts.renderer || defaultRenderer,
       devicePixelRatio: opts.devicePixelRatio,
       width: opts.width,
@@ -712,7 +714,7 @@ class ECharts extends Eventful<ECEventDefinition> {
       const width = right - left;
       const height = bottom - top;
       const targetCanvas = platformApi.createCanvas();
-      const zr = init(targetCanvas, {
+      const zr = zrenderInit(targetCanvas, {
         renderer: isSvg ? 'svg' : 'canvas'
       });
       zr.resize({
@@ -2391,7 +2393,7 @@ export function registerCoordinateSystem(
   CoordinateSystemManager.register(type, coordSysCreator);
 }
 
-export function getCoordinateSystemDimensions(type: string): DimensionDefinitionLoose[] {
+export function getCoordinateSystemDimensions(type: string): DimensionDefinitionLoose[] | undefined {
   const coordSysCreator = CoordinateSystemManager.get(type);
   if (coordSysCreator) {
     return coordSysCreator.getDimensionsInfo
@@ -2400,7 +2402,7 @@ export function getCoordinateSystemDimensions(type: string): DimensionDefinition
   }
 }
 
-export {registerLocale} from './locale';
+export { registerLocale } from './locale';
 
 function registerLayout(priority: number, layoutTask: StageHandler | StageHandlerOverallReset): void;
 function registerLayout(layoutTask: StageHandler | StageHandlerOverallReset): void;
