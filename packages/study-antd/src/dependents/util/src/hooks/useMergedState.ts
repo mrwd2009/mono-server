@@ -33,6 +33,7 @@ export default function useControlledState<T, R = T>(
   const onChangeRef = React.useRef(onChange);
   onChangeRef.current = onChange;
 
+  // todo add mergedValue ref
   const triggerChange = React.useCallback(
     (newValue: T) => {
       setInnerValue(newValue);
