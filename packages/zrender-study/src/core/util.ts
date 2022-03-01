@@ -1,4 +1,5 @@
 import { ArrayLike, Dictionary, KeyOfDistributive } from './types';
+import { GradientObject } from '../graphic/Gradient';
 
 export function isArrayLike(data: any): boolean {
   if (!data) {
@@ -570,4 +571,40 @@ export function retrieve<T>(...args: T[]): T {
           return args[i];
       }
   }
+}
+
+export function isGradientObject(value: any): value is GradientObject {
+  return (value as GradientObject).colorStops != null;
+}
+
+export function isStringSafe(value: any): value is string {
+  return objToString.call(value) === '[object String]';
+}
+
+export function hasOwn(own: object, prop: string): boolean {
+  return own.hasOwnProperty(prop);
+}
+
+export function inherits(clazz: Function, baseClazz: Function) {
+  const clazzPrototype = clazz.prototype;
+  function F() {}
+  F.prototype = baseClazz.prototype;
+  clazz.prototype = new (F as any)();
+
+  for (let prop in clazzPrototype) {
+      if (clazzPrototype.hasOwnProperty(prop)) {
+          clazz.prototype[prop] = clazzPrototype[prop];
+      }
+  }
+  clazz.prototype.constructor = clazz;
+  (clazz as any).superClass = baseClazz;
+}
+
+export function eqNaN(value: any): boolean {
+  /* eslint-disable-next-line no-self-compare */
+  return value !== value;
+}
+
+export function isRegExp(value: unknown): value is RegExp {
+  return objToString.call(value) === '[object RegExp]';
 }

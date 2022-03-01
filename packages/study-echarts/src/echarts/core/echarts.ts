@@ -22,7 +22,7 @@ import env from 'zrender/src/core/env';
 import timsort from 'zrender/src/core/timsort';
 import Eventful, { EventCallbackSingleParam } from 'zrender/src/core/Eventful';
 import Element, { ElementEvent } from 'zrender/src/Element';
-import GlobalModel, { QueryConditionKindA, GlobalModelSetOptionOpt } from '../model/Global';
+import GlobalModel, { QueryConditionKindA, GlobalModelSetOptionOpts } from '../model/Global';
 import ExtensionAPI from './ExtensionAPI';
 import CoordinateSystemManager from './CoordinateSystem';
 import OptionManager from '../model/OptionManager';
@@ -109,7 +109,7 @@ import { deprecateLog, deprecateReplaceLog, error } from '../util/log';
 import { handleLegacySelectEvents } from '../legacy/dataSelectAction';
 
 import { registerExternalTransform } from '../data/helper/transform';
-import { createLocaleObjet, SYSTEM_LANG, LocaleOption } from './locale';
+import { createLocaleObject, SYSTEM_LANG, LocaleOption } from './locale';
 
 import type { EChartsOption } from '../export/option';
 import { findEventDispatcher } from '../util/event';
@@ -120,7 +120,7 @@ import lifecycle, {
   UpdateLifecycleTransitionItem,
   UpdateLifecycleParams,
   UpdateLifecycleTransitionOpt
-} from './lifecyle';
+} from './lifecycle';
 import { platformApi, setPlatformAPI } from 'zrender/src/core/platform';
 import { getImpl } from './impl';
 import type geoSourceManager from '../coord/geo/geoSourceManager';
@@ -212,7 +212,7 @@ export interface SetOptionOpts {
   notMerge?: boolean;
   lazyUpdate?: boolean;
   silent?: boolean;
-  replaceMerge?: GlobalModelSetOptionOpt['replaceMerge'];
+  replaceMerge?: GlobalModelSetOptionOpts['replaceMerge'];
   transition?: SetOptionTransitionOpt;
 }
 
@@ -400,7 +400,7 @@ class ECharts extends Eventful<ECEventDefinition> {
 
     this._theme = theme;
 
-    this._locale = createLocaleObjet(opts.locale || SYSTEM_LANG);
+    this._locale = createLocaleObject(opts.locale || SYSTEM_LANG);
 
     this._coordSysMgr = new CoordinateSystemManager();
 
