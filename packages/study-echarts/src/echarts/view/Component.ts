@@ -32,9 +32,9 @@ class ComponentView {
 
   readonly uid: string;
 
-  __model: ComponentModel;
-  __alive: boolean;
-  __id: string;
+  __model?: ComponentModel;
+  __alive?: boolean;
+  __id?: string;
 
   constructor() {
     this.group = new Group();

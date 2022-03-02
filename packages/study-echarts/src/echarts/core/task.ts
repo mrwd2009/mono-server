@@ -7,7 +7,7 @@ import SeriesData from '../data/SeriesData';
 export interface TaskContext {
   outputData?: SeriesData;
   data?: SeriesData;
-  payload: Payload;
+  payload?: Payload;
   model?: SeriesModel;
 }
 

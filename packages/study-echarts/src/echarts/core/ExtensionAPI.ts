@@ -36,7 +36,7 @@ abstract class ExtensionAPI {
   }
 
   abstract getCoordinateSystems(): CoordinateSystemMaster[];
-  abstract getComponentByElement(el: Element): ComponentModel;
+  abstract getComponentByElement(el: Element): ComponentModel | undefined;
   abstract enterEmphasis(el: Element, highlightDigit?: number): void;
   abstract leaveEmphasis(el: Element, highlightDigit?: number): void;
   abstract enterSelect(el: Element): void;

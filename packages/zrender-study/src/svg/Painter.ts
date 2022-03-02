@@ -424,6 +424,10 @@ class SVGPainter implements PainterBase {
   refreshHover = createMethodNotSupport('refreshHover') as PainterBase['refreshHover'];
   pathToImage = createMethodNotSupport('pathToImage') as PainterBase['pathToImage'];
   configLayer = createMethodNotSupport('configLayer') as PainterBase['configLayer'];
+
+  renderToString(input: any): string {
+    throw new Error('Not implemented.');
+  }
 }
 
 // Not supported methods

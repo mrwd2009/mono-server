@@ -245,11 +245,11 @@ class Element<Props extends ElementProps = ElementProps> {
 
   currentStates?: string[] = [];
 
-  prevStages?: string[];
+  prevStates?: string[];
 
   states: Dictionary<ElementState> = {};
 
-  stateTransition: ElementAnimateConfig;
+  stateTransition: ElementAnimateConfig | null;
 
   stateProxy?: (stateName: string, targetStates?: string[]) => ElementState;
 

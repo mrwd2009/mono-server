@@ -65,7 +65,7 @@ type PerformStageTaskOpt = {
   block?: boolean;
   setDirty?: boolean;
   visualType?: StageHandlerInternal['visualType'];
-  drityMap?: HashMap<any>;
+  dirtyMap?: HashMap<any>;
 };
 
 export interface SeriesTaskContext extends TaskContext {
@@ -79,7 +79,7 @@ export interface SeriesTaskContext extends TaskContext {
   reset?: StageHandlerReset;
   scheduler?: Scheduler;
   payload?: Payload;
-  resetDefines: StageHandlerProgressExecutor[];
+  resetDefines?: StageHandlerProgressExecutor[];
 }
 interface OverallTaskContext extends TaskContext {
   ecModel: GlobalModel;
@@ -97,7 +97,7 @@ class Scheduler {
   readonly ecInstance: EChartsType;
   readonly api: ExtensionAPI;
 
-  unfinshed: boolean;
+  unfinished!: boolean;
 
   private _dataProcessorHandlers: StageHandlerInternal[];
   private _visualHandlers: StageHandlerInternal[];
@@ -105,7 +105,7 @@ class Scheduler {
 
   private _stageTaskMap: HashMap<TaskRecord> = createHashMap<TaskRecord>();
   // key: pipelineId
-  private _pipelineMap: HashMap<Pipeline>;
+  private _pipelineMap!: HashMap<Pipeline>;
 
   constructor(
     ecInstance: EChartsType,
@@ -133,7 +133,7 @@ class Scheduler {
     });
   }
 
-  getPerformArgs(task: GeneralTask, isBlock?: boolean): { step: number | null, modBy: number | null, modDataCount: number | null } | undefined {
+  getPerformArgs(task: GeneralTask, isBlock?: boolean): { step?: number, modBy?: number, modDataCount?: number } | undefined{
     if (!task.__pipeline) {
       return;
     }
@@ -144,9 +144,9 @@ class Scheduler {
       && (!pCtx || pCtx.progressiveRender)
       && task.__idxInPipeline > pipeline.blockIndex;
 
-    const step = incremental ? pipeline.step : null;
-    const modDataCount = (pCtx?.modDataCount) || null;
-    const modBy = (modDataCount != null && step != null) ? Math.ceil(modDataCount / step) : null;
+    const step = incremental ? pipeline.step : undefined;
+    const modDataCount = (pCtx?.modDataCount) || undefined;
+    const modBy = (modDataCount != null && step != null) ? Math.ceil(modDataCount / step) : undefined;
 
     return { step, modBy, modDataCount };
   }

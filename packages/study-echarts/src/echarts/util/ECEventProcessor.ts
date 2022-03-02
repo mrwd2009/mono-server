@@ -35,9 +35,9 @@ export class ECEventProcessor implements EventProcessor {
         let reserved = false;
         for (let i = 0; i < suffixes.length; i++) {
           const propSuffix = suffixes[i];
-          const suffixPos = key.lastIndexOf(propSuffix);
-          if (suffixPos > 0 && suffixPos === key.length - propSuffix.length) {
-            const mainType = key.slice(0, suffixPos);
+          const suffixPos = key!.lastIndexOf(propSuffix);
+          if (suffixPos > 0 && suffixPos === key!.length - propSuffix.length) {
+            const mainType = key!.slice(0, suffixPos);
             // Consider `dataIndex`.
             if (mainType !== 'data') {
               cptQuery.mainType = mainType;
@@ -46,12 +46,12 @@ export class ECEventProcessor implements EventProcessor {
             }
           }
         }
-        if (dataKeys.hasOwnProperty(key)) {
-          dataQuery[key] = val;
+        if (dataKeys.hasOwnProperty(key!)) {
+          dataQuery[key!] = val;
           reserved = true;
         }
         if (!reserved) {
-          otherQuery[key] = val;
+          otherQuery[key!] = val;
         }
       });
     }
@@ -63,7 +63,8 @@ export class ECEventProcessor implements EventProcessor {
     };
   }
 
-  filter(eventType: string | number, query: NormalizedEventQuery): boolean {
+  filter(eventType: string | number, outquery: EventQuery): boolean {
+    const query = outquery as NormalizedEventQuery;
     const eventInfo = this.eventInfo;
 
     if (!eventInfo) {

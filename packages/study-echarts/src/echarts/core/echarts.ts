@@ -30,6 +30,7 @@ import backwardCompat from '../preprocessor/backwardCompat';
 import dataStack from '../processor/dataStack';
 import ComponentModel from '../model/Component';
 import SeriesModel from '../model/Series';
+import type Model from '../model/Model';
 import ComponentView, { ComponentViewConstructor } from '../view/Component';
 import ChartView, { ChartViewConstructor } from '../view/Chart';
 import * as graphic from '../util/graphic';
@@ -63,7 +64,7 @@ import {
   handleGlobalMouseOutForHighDown
 } from '../util/states';
 import * as modelUtil from '../util/model';
-import { throttle } from '../util/throttle';
+import { throttle, ThrottleController } from '../util/throttle';
 import { seriesStyleTask, dataStyleTask, dataColorPaletteTask } from '../visual/style';
 import loadingDefault from '../loading/default';
 import Scheduler from './Scheduler';
@@ -95,7 +96,7 @@ import {
   ZRColor,
   ComponentMainType,
   ComponentSubType,
-  ColorString,
+  // ColorString,
   SelectChangedPayload,
   ScaleDataValue,
   ZRElementEventName,
@@ -105,7 +106,7 @@ import {
 import Displayable from 'zrender/src/graphic/Displayable';
 import { seriesSymbolTask, dataSymbolTask } from '../visual/symbol';
 import { getVisualFromData, getItemVisualFromData } from '../visual/helper';
-import { deprecateLog, deprecateReplaceLog, error } from '../util/log';
+import { error } from '../util/log';
 import { handleLegacySelectEvents } from '../legacy/dataSelectAction';
 
 import { registerExternalTransform } from '../data/helper/transform';
@@ -121,7 +122,7 @@ import lifecycle, {
   UpdateLifecycleParams,
   UpdateLifecycleTransitionOpt
 } from './lifecycle';
-import { platformApi, setPlatformAPI } from 'zrender/src/core/platform';
+import { platformApi } from 'zrender/src/core/platform';
 import { getImpl } from './impl';
 import type geoSourceManager from '../coord/geo/geoSourceManager';
 
@@ -232,8 +233,8 @@ type EventMethodName = 'on' | 'off';
 function createRegisterEventWithLowercaseECharts(method: EventMethodName) {
   return function (this: ECharts, ...args: any): ECharts {
     if (this.isDisposed()) {
-      disposeWarning(this.id);
-      return;
+      disposedWarning(this.id);
+      return this;
     }
     return toLowercaseNameAndCallEventful<ECharts>(this, method, args);
   }
@@ -311,9 +312,9 @@ type EChartsInitOpts = {
 };
 
 class ECharts extends Eventful<ECEventDefinition> {
-  id: string;
+  id!: string;
 
-  group: string;
+  group!: string;
 
   private _ssr: boolean;
 
@@ -321,9 +322,9 @@ class ECharts extends Eventful<ECEventDefinition> {
 
   private _dom: HTMLElement;
 
-  private _model: GlobalModel;
+  private _model!: GlobalModel;
 
-  private _throttledZrFlush: RendererType extends { flush: infer R } ? R : never;
+  private _throttledZrFlush: ThrottleController & (() => void);
 
   private _theme: ThemeOption;
 
@@ -348,11 +349,11 @@ class ECharts extends Eventful<ECEventDefinition> {
   private _pendingActions: Payload[] = [];
 
   // todo check whether setting to undefined in latest typescript
-  protected _$eventProcessor: never;
+  protected _$eventProcessor!: never;
 
-  private _disposed: boolean;
+  private _disposed!: boolean;
 
-  private _loadingFX: LoadingEffect;
+  private _loadingFX?: LoadingEffect;
 
   private [PENDING_UPDATE]: {
     silent: boolean,
@@ -398,7 +399,7 @@ class ECharts extends Eventful<ECEventDefinition> {
     theme = clone(theme);
     theme && backwardCompat(theme as ECUnitOption, true);
 
-    this._theme = theme;
+    this._theme = theme!;
 
     this._locale = createLocaleObject(opts.locale || SYSTEM_LANG);
 
@@ -444,7 +445,7 @@ class ECharts extends Eventful<ECEventDefinition> {
 
       try {
         prepare(this);
-        updateMethods.update.call(this, null, this[PENDING_UPDATE]!.updateParams);
+        updateMethods.update.call(this, undefined, this[PENDING_UPDATE]!.updateParams);
       } catch (e) {
         this[IN_MAIN_PROCESS_KEY] = false;
         this[PENDING_UPDATE] = null;
@@ -522,7 +523,7 @@ class ECharts extends Eventful<ECEventDefinition> {
       lazyUpdate = notMerge.lazyUpdate;
       silent = notMerge.silent!;
       replaceMerge = notMerge.replaceMerge;
-      transitionOpt = notMerge.transition;
+      transitionOpt = notMerge.transition!;
       notMerge = notMerge.notMerge;
     }
 
@@ -534,13 +535,13 @@ class ECharts extends Eventful<ECEventDefinition> {
       const ecModel = this._model = new GlobalModel();
       ecModel.scheduler = this._scheduler;
       ecModel.ssr = this._ssr;
-      ecModel.init(null, null, null, theme, this._locale, optionsManager);
+      ecModel.init(null as any, null as any, null as any, theme, this._locale, optionsManager);
     }
 
-    this._model.setOption(option as ECBasicOption, { replaceMerge }, optionPreprocessorFuncs);
+    this._model.setOption(option as ECBasicOption, { replaceMerge: replaceMerge as string | string[] }, optionPreprocessorFuncs);
 
     const updateParams = {
-      seriesTransition: transitionOpt,
+      seriesTransition: transitionOpt!,
       optionChanged: true,
     } as UpdateLifecycleParams;
 
@@ -554,7 +555,7 @@ class ECharts extends Eventful<ECEventDefinition> {
     } else {
       try {
         prepare(this);
-        updateMethods.update.call(this, null, updateParams);
+        updateMethods.update.call(this, undefined, updateParams);
       } catch (e) {
         this[PENDING_UPDATE] = null;
         this[IN_MAIN_PROCESS_KEY] = false;
@@ -640,13 +641,12 @@ class ECharts extends Eventful<ECEventDefinition> {
     const excludeComponents = opts.excludeComponets;
     const ecModel = this._model;
     const excludesComponentViews: ComponentView[] = [];
-    const self = this;
 
     each(excludeComponents!, (componentType) => {
       ecModel.eachComponent({
         mainType: componentType
       }, (component) => {
-        const view = this._componentsMap[component.__viewId];
+        const view = this._componentsMap[component.__viewId!];
         if (!view.group.ignore) {
           excludesComponentViews.push(view);
           view.group.ignore = true;
@@ -749,13 +749,13 @@ class ECharts extends Eventful<ECEventDefinition> {
 
   convertToPixel(finder: ModelFinder, value: ScaleDataValue): number;
   convertToPixel(finder: ModelFinder, value: ScaleDataValue[]): number[];
-  convertToPixel(finder: ModelFinder, value: ScaleDataValue | ScaleDataValue[]): number | number[] {
+  convertToPixel(finder: ModelFinder, value: ScaleDataValue | ScaleDataValue[]): number | number[] | undefined {
     return doConvertPixel(this, 'convertToPixel', finder, value);
   }
 
   convertFromPixel(finder: ModelFinder, value: number): number;
   convertFromPixel(finder: ModelFinder, value: number[]): number[];
-  convertFromPixel(finder: ModelFinder, value: number | number[]): number | number[] {
+  convertFromPixel(finder: ModelFinder, value: number | number[]): number | number[] | undefined {
     return doConvertPixel(this, 'convertFromPixel', finder, value);
   }
 
@@ -771,14 +771,14 @@ class ECharts extends Eventful<ECEventDefinition> {
     const findResult = modelUtil.parseFinder(ecModel, finder);
 
     each(findResult, (models, key) => {
-      if (key.indexOf('Models') >= 0) {
+      if (key!.indexOf('Models') >= 0) {
         each(models as ComponentModel[], (model) => {
           const coordSys = (model as CoordinateSystemHostModel).coordinateSystem;
 
           if (coordSys && coordSys.containPoint) {
             result = result || !!coordSys.containPoint(value);
           } else if (key === 'seriesModels') {
-            const view = this._chartsMap[model.__viewId];
+            const view = this._chartsMap[model.__viewId!];
             if (view && view.containPoint) {
               result = result || view.containPoint(value, model as SeriesModel);
             } else {
@@ -816,7 +816,7 @@ class ECharts extends Eventful<ECEventDefinition> {
       }
     }
 
-    const data = seriesModel.getData();
+    const data = seriesModel!.getData();
 
     const dataIndexInside = parsedFinder.hasOwnProperty('dataIndexInside')
       ? parsedFinder.dataIndexInside
@@ -828,11 +828,11 @@ class ECharts extends Eventful<ECEventDefinition> {
   }
 
   private getViewOfComponentModel(componentModel: ComponentModel): ComponentView {
-    return this._componentsMap[componentModel.__viewId];
+    return this._componentsMap[componentModel.__viewId!];
   }
 
   private getViewOfSeriesModel(seriesModel: SeriesModel): ChartView {
-    return this._chartsMap[seriesModel.__viewId];
+    return this._chartsMap[seriesModel.__viewId!];
   }
 
   private _initEvents(): void {
@@ -858,21 +858,22 @@ class ECharts extends Eventful<ECEventDefinition> {
                 params = extend({}, ecData.eventData) as ECElementEvent;
                 return true;
               }
+              return false;
             }, true);
           }
         }
 
-        if (params) {
+        if (params!) {
           let componentType = params.componentType;
           let componentIndex = params.componentIndex;
 
           if (componentType === 'markLine' || componentType === 'markPoint' || componentType === 'markArea') {
             componentType = 'series';
-            componentIndex = params.seriesIndex;
+            componentIndex = params.seriesIndex!;
           }
 
           const model = componentType && componentIndex != null && ecModel.getComponent(componentType, componentIndex);
-          const view = model && this[model.mainType === 'series' ? '_chartsMap' : '_componentsMap'][model.__viewId];
+          const view = model && this[model.mainType === 'series' ? '_chartsMap' : '_componentsMap'][model.__viewId!];
 
 
           if (__DEV__) {
@@ -890,8 +891,8 @@ class ECharts extends Eventful<ECEventDefinition> {
           (this._$eventProcessor as ECEventProcessor).eventInfo = {
             targetEl: el,
             packedEvent: params,
-            model,
-            view,
+            model: model as ComponentModel,
+            view: view as ComponentView,
           };
 
           this.trigger(eveName, params);
@@ -903,7 +904,7 @@ class ECharts extends Eventful<ECEventDefinition> {
     });
 
     each(eventActionMap, (actionType, eventType) => {
-      this._messageCenter.on(eventType, (event: Payload) => {
+      this._messageCenter.on(eventType!, (event: Payload) => {
         (this as any).trigger(eventType, event);
       }, this);
     });
@@ -1014,7 +1015,7 @@ class ECharts extends Eventful<ECEventDefinition> {
         type: 'resize',
         animation: extend({
           duration: 0
-        }, opts && opts.animation)
+        }, opts?.animation!)
       });
     } catch (e) {
       this[IN_MAIN_PROCESS_KEY] = false;
@@ -1050,7 +1051,7 @@ class ECharts extends Eventful<ECEventDefinition> {
       return;
     }
 
-    const el = loadingEffects[name](this._api, cfg);
+    const el = loadingEffects[name](this._api, cfg!);
     const zr = this._zr;
     this._loadingFX = el;
 
@@ -1064,7 +1065,7 @@ class ECharts extends Eventful<ECEventDefinition> {
     }
 
     this._loadingFX && this._zr.remove(this._loadingFX);
-    this._loadingFX = null;
+    this._loadingFX = undefined;
   }
 
   makeActionFromEvent(eventObj: ECActionEvent): Payload {
@@ -1075,7 +1076,7 @@ class ECharts extends Eventful<ECEventDefinition> {
 
   dispatchAction(payload: Payload, opt?: boolean | { silent?: boolean, flush?: boolean | undefined }): void {
     if (this._disposed) {
-      diposedWarning(this.id);
+      disposedWarning(this.id);
       return;
     }
 
@@ -1097,7 +1098,7 @@ class ECharts extends Eventful<ECEventDefinition> {
     }
 
     const silent = opt.silent;
-    doDispatchAction.call(this, payload, silent);
+    doDispatchAction.call(this, payload, silent!);
 
     const flush = opt.flush;
     if (flush) {
@@ -1162,7 +1163,7 @@ class ECharts extends Eventful<ECEventDefinition> {
 
       if (isComponent) {
         ecModel.eachComponent((componentType, model) => {
-          if (compnentType === 'series') {
+          if (componentType === 'series') {
             doPrepare(model);
           }
         });
@@ -1183,7 +1184,7 @@ class ECharts extends Eventful<ECEventDefinition> {
             assert(Clazz, classType.sub + ' does not exist.');
           }
 
-          view = new Clazz();
+          view = (new Clazz()) as ComponentView | ChartView;
           view.init(ecModel, api);
           viewMap[viewId] = view;
           viewList.push(view as any);
@@ -1211,10 +1212,10 @@ class ECharts extends Eventful<ECEventDefinition> {
           zr.remove(view.group);
           view.dispose(ecModel, api);
           viewList.splice(i, 1);
-          if (viewMap[view.__id] === view) {
-            delete viewMap[view.__id];
+          if (viewMap[view.__id!] === view) {
+            delete viewMap[view.__id!];
           }
-          view.__id = view.group.__ecComponentInfo = null;
+          view.__id = view.group.__ecComponentInfo = undefined;
         } else {
           i++;
         }
@@ -1226,7 +1227,7 @@ class ECharts extends Eventful<ECEventDefinition> {
       ecModel.setUpdatePayload(payload);
 
       if (!mainType) {
-        each([].concat(ecIns._componentsViews).concat(ecIns._chartsViews), callView);
+        each(([] as (ChartView | ComponentView)[]).concat(ecIns._componentsViews).concat(ecIns._chartsViews), callView);
         return;
       }
 
@@ -1243,7 +1244,7 @@ class ECharts extends Eventful<ECEventDefinition> {
       if (excludeSeriesId != null) {
         excludeSeriesIdMap = createHashMap();
         each(modelUtil.normalizeToArray(excludeSeriesId), id => {
-          const modelId = modelUtil.convertOptionIdName(id, null);
+          const modelId = modelUtil.convertOptionIdName(id, '');
           if (modelId != null) {
             excludeSeriesIdMap.set(modelId, true);
           }
@@ -1302,7 +1303,7 @@ class ECharts extends Eventful<ECEventDefinition> {
         };
         callView(ecIns[
           mainType === 'series' ? '_chartsMap' : '_componentsMap'
-        ][model.__viewId]);
+        ][model.__viewId!]);
       }, ecIns);
 
       function callView(view: ComponentView | ChartView) {
@@ -1313,16 +1314,16 @@ class ECharts extends Eventful<ECEventDefinition> {
     };
 
     updateMethods = {
-      prepareAndUpdate(this: ECharts, payload: Payload): void {
+      prepareAndUpdate(this: ECharts, payload?: Payload, renderParams?: UpdateLifecycleParams): void {
         prepare(this);
         updateMethods.update.call(this, payload, {
           // Needs to mark option changed if newOption is given.
           // It's from MagicType.
           // TODO If use a separate flag optionChanged in payload?
-          optionChanged: payload.newOption != null
+          optionChanged: payload!.newOption != null
         });
       },
-      update(this: ECharts, payload: Payload, updateParams: UpdateLifecycleParams): void {
+      update(this: ECharts, payload?: Payload, updateParams?: UpdateLifecycleParams): void {
         const ecModel = this._model;
         const api = this._api;
         const zr = this._zr;
@@ -1334,9 +1335,9 @@ class ECharts extends Eventful<ECEventDefinition> {
           return;
         }
 
-        ecModel.setUpdatePayload(payload);
+        ecModel.setUpdatePayload(payload!);
 
-        scheduler.restoreData(ecModel, payload);
+        scheduler.restoreData(ecModel, payload!);
 
         scheduler.performSeriesTasks(ecModel);
         coordSysMgr.create(ecModel, api);
@@ -1350,8 +1351,8 @@ class ECharts extends Eventful<ECEventDefinition> {
         clearColorPalette(ecModel);
         scheduler.performVisualTasks(ecModel, payload);
 
-        render(this, ecModel, api, payload, updateParams);
-        render(this, ecModel, api, payload, updateParams);
+        render(this, ecModel, api, payload!, updateParams!);
+        render(this, ecModel, api, payload!, updateParams!);
 
         // Set background
         const backgroundColor = ecModel.get('backgroundColor') || 'transparent';
@@ -1366,7 +1367,7 @@ class ECharts extends Eventful<ECEventDefinition> {
 
         lifecycle.trigger('afterupdate', ecModel, api);
       },
-      updateTransform(this: ECharts, payload: Payload): void {
+      updateTransform(this: ECharts, payload?: Payload, renderParams?: UpdateLifecycleParams): void {
         const ecModel = this._model;
         const api = this._api;
 
@@ -1374,7 +1375,7 @@ class ECharts extends Eventful<ECEventDefinition> {
           return;
         }
 
-        ecModel.setUpdatePayload(payload);
+        ecModel.setUpdatePayload(payload!);
         const componentDirtyList = [];
         ecModel.eachComponent((componentType, componentModel) => {
           if (componentType === 'series') {
@@ -1384,7 +1385,7 @@ class ECharts extends Eventful<ECEventDefinition> {
           const componentView = this.getViewOfComponentModel(componentModel);
           if (componentView && componentView.__alive) {
             if (componentView.updateTransform) {
-              const result = componentView.updateTransform(componentModel, ecModel, api, payload);
+              const result = componentView.updateTransform(componentModel, ecModel, api, payload!);
               result && result.update && componentDirtyList.push(componentView);
             }
             else {
@@ -1395,9 +1396,9 @@ class ECharts extends Eventful<ECEventDefinition> {
 
         const seriesDirtyMap = createHashMap();
         ecModel.eachSeries((seriesModel) => {
-          const chartView = this._chartsMap[seriesModel.__viewId];
+          const chartView = this._chartsMap[seriesModel.__viewId!];
           if (chartView.updateTransform) {
-            const result = chartView.updateTransform(seriesModel, ecModel, api, payload);
+            const result = chartView.updateTransform(seriesModel, ecModel, api, payload!);
             result && result.update && seriesDirtyMap.set(seriesModel.uid, 1);
           }
           else {
@@ -1414,28 +1415,28 @@ class ECharts extends Eventful<ECEventDefinition> {
 
         // Currently, not call render of components. Geo render cost a lot.
         // renderComponents(ecIns, ecModel, api, payload, componentDirtyList);
-        renderSeries(this, ecModel, api, payload, {}, seriesDirtyMap);
+        renderSeries(this, ecModel, api, payload!, {}, seriesDirtyMap);
 
         lifecycle.trigger('afterupdate', ecModel, api);
       },
-      updateView(this: ECharts, payload: Payload): void {
+      updateView(this: ECharts, payload?: Payload, renderParams?: UpdateLifecycleParams): void {
         const ecModel = this._model;
 
         if (!ecModel) {
           return;
         }
 
-        ecModel.setUpdatePayload(payload);
-        ChartView.markUpdateMethod(payload, 'updateView');
+        ecModel.setUpdatePayload(payload!);
+        ChartView.markUpdateMethod(payload!, 'updateView');
         clearColorPalette(ecModel);
 
         this._scheduler.performVisualTasks(ecModel, payload, { setDirty: true });
 
-        render(this, ecModel, this._api, payload, {});
+        render(this, ecModel, this._api, payload!, {});
 
         lifecycle.trigger('afterupdate', ecModel, this._api);
       },
-      updateVisual(this: ECharts, payload: Payload): void {
+      updateVisual(this: ECharts, payload?: Payload, renderParams?: UpdateLifecycleParams): void {
         const ecModel = this._model;
 
         // update before setOption
@@ -1443,7 +1444,7 @@ class ECharts extends Eventful<ECEventDefinition> {
           return;
         }
 
-        ecModel.setUpdatePayload(payload);
+        ecModel.setUpdatePayload(payload!);
 
         // clear all visual
         ecModel.eachSeries(function (seriesModel) {
@@ -1451,7 +1452,7 @@ class ECharts extends Eventful<ECEventDefinition> {
         });
 
         // Perform visual
-        ChartView.markUpdateMethod(payload, 'updateVisual');
+        ChartView.markUpdateMethod(payload!, 'updateVisual');
 
         clearColorPalette(ecModel);
 
@@ -1462,18 +1463,18 @@ class ECharts extends Eventful<ECEventDefinition> {
           if (componentType !== 'series') {
             const componentView = this.getViewOfComponentModel(componentModel);
             componentView && componentView.__alive
-              && componentView.updateVisual(componentModel, ecModel, this._api, payload);
+              && componentView.updateVisual(componentModel, ecModel, this._api, payload!);
           }
         });
 
         ecModel.eachSeries((seriesModel) => {
-          const chartView = this._chartsMap[seriesModel.__viewId];
-          chartView.updateVisual(seriesModel, ecModel, this._api, payload);
+          const chartView = this._chartsMap[seriesModel.__viewId!];
+          chartView.updateVisual(seriesModel, ecModel, this._api, payload!);
         });
 
         lifecycle.trigger('afterupdate', ecModel, this._api);
       },
-      updateLayout(this: ECharts, payload: Payload): void {
+      updateLayout(this: ECharts, payload?: Payload, renderParams?: UpdateLifecycleParams): void {
         updateMethods.update.call(this, payload);
       }
     };
@@ -1497,7 +1498,7 @@ class ECharts extends Eventful<ECEventDefinition> {
       for (let i = 0; i < coordSysList.length; i++) {
         const coordSys = coordSysList[i];
         if (coordSys[methodName]
-          && (result = coordSys[methodName](ecModel, parsedFinder, value as any)) != null
+          && (result = coordSys[methodName]!(ecModel, parsedFinder, value as any)) != null
         ) {
           return result;
         }
@@ -1514,7 +1515,7 @@ class ECharts extends Eventful<ECEventDefinition> {
       const chartsMap = ecIns._chartsMap;
       const scheduler = ecIns._scheduler;
       ecModel.eachSeries((seriesModel) => {
-        scheduler.updateStreamModes(seriesModel, chartsMap[seriesModel.__viewId]);
+        scheduler.updateStreamModes(seriesModel, chartsMap[seriesModel.__viewId!]);
       });
     };
 
@@ -1534,7 +1535,7 @@ class ECharts extends Eventful<ECEventDefinition> {
       // Batch action
       if (payload.batch) {
         batched = true;
-        payloads = map<Payload['batch'][0], Payload, unknown>(payload.batch, function (item) {
+        payloads = map<NonNullable<Payload['batch']>[0], Payload, unknown>(payload.batch, function (item) {
           item = defaults(extend({}, item), payload);
           item.batch = null;
           return item as Payload;
@@ -1565,17 +1566,17 @@ class ECharts extends Eventful<ECEventDefinition> {
         if (isHighDown) {
           const { queryOptionMap, mainTypeSpecified } = modelUtil.preParseFinder(payload as ModelFinder);
           const componentMainType = mainTypeSpecified ? queryOptionMap.keys()[0] : 'series';
-          updateDirectly(this, updateMethod, batchItem as Payload, componentMainType);
+          updateDirectly(this, updateMethod!, batchItem as Payload, componentMainType);
           markStatusToUpdate(this);
         }
         else if (isSelectChange) {
           // At present `dispatchAction({ type: 'select', ... })` is not supported on components.
           // geo still use 'geoselect'.
-          updateDirectly(this, updateMethod, batchItem as Payload, 'series');
+          updateDirectly(this, updateMethod!, batchItem as Payload, 'series');
           markStatusToUpdate(this);
         }
         else if (cptType) {
-          updateDirectly(this, updateMethod, batchItem as Payload, cptType.main, cptType.sub);
+          updateDirectly(this, updateMethod!, batchItem as Payload, cptType.main, cptType.sub);
         }
 
       });
@@ -1619,7 +1620,7 @@ class ECharts extends Eventful<ECEventDefinition> {
         if (isSelectChange) {
           const newObj: SelectChangedPayload = {
             type: 'selectchanged',
-            escapeConnect: escapeConnect,
+            escapeConnect: escapeConnect!,
             selected: getAllSelectedIndices(ecModel),
             isFromClick: payload.isFromClick || false,
             fromAction: payload.type as 'select' | 'unselect' | 'toggleSelected',
@@ -1634,7 +1635,7 @@ class ECharts extends Eventful<ECEventDefinition> {
       const pendingActions = this._pendingActions;
       while (pendingActions.length) {
         const payload = pendingActions.shift();
-        doDispatchAction.call(this, payload, silent);
+        doDispatchAction.call(this, payload!, silent);
       }
     };
 
@@ -1821,13 +1822,13 @@ class ECharts extends Eventful<ECEventDefinition> {
     ) => {
       each(dirtyList || ecIns._componentsViews, function(componentView: ComponentView) {
         const componentModel = componentView.__model;
-        clearStates(componentModel, componentView);
+        clearStates(componentModel!, componentView);
         
-        componentView.render(componentModel, ecModel, api, payload);
+        componentView.render(componentModel!, ecModel, api, payload);
 
-        updateZ(componentModel, componentView);
+        updateZ(componentModel!, componentView);
 
-        updateStates(componentModel, componentView);
+        updateStates(componentModel!, componentView);
       });
     };
 
@@ -1849,7 +1850,7 @@ class ECharts extends Eventful<ECEventDefinition> {
 
       let unfinished: boolean = false;
       ecModel.eachSeries(function(seriesModel) {
-        const chartView = ecIns._chartsMap[seriesModel.__viewId];
+        const chartView = ecIns._chartsMap[seriesModel.__viewId!];
         chartView.__alive = true;
 
         const renderTask = chartView.renderTask;
@@ -1861,7 +1862,7 @@ class ECharts extends Eventful<ECEventDefinition> {
           renderTask.dirty();
         }
 
-        if (renderTask.perform(scheduler.getPerformArgs(renderTask))) {
+        if (renderTask.perform(scheduler.getPerformArgs(renderTask)!)) {
           unfinished = true;
         }
 
@@ -1879,7 +1880,7 @@ class ECharts extends Eventful<ECEventDefinition> {
       lifecycle.trigger('series:transition', ecModel, api, updateParams);
 
       ecModel.eachSeries(function(seriesModel) {
-        const chartView = ecIns._chartsMap[seriesModel.__viewId];
+        const chartView = ecIns._chartsMap[seriesModel.__viewId!];
         updateZ(seriesModel, chartView);
 
         updateStates(seriesModel, chartView);
@@ -1913,7 +1914,7 @@ class ECharts extends Eventful<ECEventDefinition> {
     function applyElementStates(el: ECElement) {
       const newStates = [];
 
-      const oldStates = el.currentStates;
+      const oldStates = el.currentStates!;
       for (let i = 0; i < oldStates.length; i++) {
         const stateName = oldStates[i];
         if (!(['emphasis', 'blur', 'select'].includes(stateName))){
@@ -1944,12 +1945,12 @@ class ECharts extends Eventful<ECEventDefinition> {
         }
       });
 
-      if (elCount > ecModel.get('hoverLayerThreshold') && !env.node && !env.worker) {
+      if (elCount > (ecModel.get('hoverLayerThreshold') as number) && !env.node && !env.worker) {
         ecModel.eachSeries(function (seriesModel) {
           if (seriesModel.preventUsingHoverLayer) {
             return;
           }
-          const chartView = ecIns._chartsMap[seriesModel.__viewId];
+          const chartView = ecIns._chartsMap[seriesModel.__viewId!];
           if (chartView.__alive) {
             chartView.eachRendered((el: ECElement) => {
               if (el.states.emphasis) {
@@ -1963,11 +1964,11 @@ class ECharts extends Eventful<ECEventDefinition> {
 
     function updateBlend(seriesModel: SeriesModel, chartView: ChartView): void {
       const blendMode = seriesModel.get('blendMode') || null;
-      chartView.eachRendered((el: Displayable) => {
+      chartView.eachRendered((el) => {
         // FIXME marker and other components
         if (!el.isGroup) {
           // DONT mark the element dirty. In case element is incremental and don't wan't to rerender.
-          el.style.blend = blendMode;
+          (el as Displayable).style.blend = blendMode;
         }
       });
     };
@@ -2026,7 +2027,8 @@ class ECharts extends Eventful<ECEventDefinition> {
     }
 
     function clearStates(model: ComponentModel, view: ComponentView | ChartView): void {
-      view.eachRendered(function (el: Displayable) {
+      view.eachRendered(function (rawEl) {
+        let el = rawEl as Displayable;
         // Not applied on removed elements, it may still in fading.
         if (graphic.isElementRemoved(el)) {
           return;
@@ -2050,22 +2052,23 @@ class ECharts extends Eventful<ECEventDefinition> {
           el.clearStates();
         }
         else if (el.prevStates) {
-          el.prevStates = null;
+          el.prevStates = undefined;
         }
       });
     }
 
     function updateStates(model: ComponentModel, view: ComponentView | ChartView): void {
-      const stateAnimationModel = (model as SeriesModel).getModel('stateAnimation');
+      const stateAnimationModel = (model as SeriesModel).getModel('stateAnimation') as Model<AnimationOption>;
       const enableAnimation = model.isAnimationEnabled();
       const duration = stateAnimationModel.get('duration');
-      const stateTransition = duration > 0 ? {
+      const stateTransition = duration! > 0 ? {
         duration,
         delay: stateAnimationModel.get('delay'),
         easing: stateAnimationModel.get('easing')
         // additive: stateAnimationModel.get('additive')
       } : null;
-      view.eachRendered(function (el: Displayable) {
+      view.eachRendered(function (rawEl) {
+        const el = rawEl as Displayable;
         if (el.states && el.states.emphasis) {
           // Not applied on removed elements, it may still in fading.
           if (graphic.isElementRemoved(el)) {
@@ -2073,7 +2076,7 @@ class ECharts extends Eventful<ECEventDefinition> {
           }
 
           if (el instanceof graphic.Path) {
-            savePathStates(el);
+            savePathStates(el as any);
           }
 
           // Only updated on changed element. In case element is incremental and don't wan't to rerender.
@@ -2169,7 +2172,7 @@ class ECharts extends Eventful<ECEventDefinition> {
       }
 
       each(eventActionMap, function (actionType, eventType) {
-        chart._messageCenter.on(eventType, function (event: ECActionEvent) {
+        chart._messageCenter.on(eventType!, function (event: ECActionEvent) {
           if (connectedGroups[chart.group] && chart[CONNECT_STATUS_KEY] !== CONNECT_STATUS_PENDING) {
             if (event && event.escapeConnect) {
               return;
@@ -2313,7 +2316,7 @@ export function dispose(chart: EChartsType | HTMLElement | string): void {
   if (isString(chart)) {
     chart = instances[chart];
   } else if (!(chart instanceof ECharts)) {
-    chart = getInstanceByDom(chart);
+    chart = getInstanceByDom(chart)!;
   }
 
   if ((chart instanceof ECharts) && !chart.isDisposed()) {
@@ -2343,7 +2346,7 @@ export function registerProcessor(
   priority: number | StageHandler | StageHandlerOverallReset,
   processor?: StageHandler | StageHandlerOverallReset,
 ): void {
-  normalizeRegister(dataProcessorFuncs, priority, processor, PRIORITY_PROCESSOR_DEFAULT);
+  normalizeRegister(dataProcessorFuncs, priority, processor!, PRIORITY_PROCESSOR_DEFAULT);
 }
 
 export function registerPostInit(postInitFunc: PostIniter): void {
@@ -2372,7 +2375,7 @@ export function registerAction(actionInfo: string | ActionInfo, eventName: strin
   const actionType = isObject(actionInfo) ? (actionInfo as ActionInfo).type : ([actionInfo, actionInfo = { event: eventName } as ActionInfo])[0];
 
   (actionInfo as ActionInfo).event = ((actionInfo as ActionInfo).event || actionType as string).toLowerCase();
-  eventName = (actionInfo as ActionInfo).event;
+  eventName = (actionInfo as ActionInfo).event!;
 
   if (eventActionMap[eventName as string]) {
     return;
@@ -2381,7 +2384,7 @@ export function registerAction(actionInfo: string | ActionInfo, eventName: strin
   assert(ACTION_REG.test(actionType as string) && ACTION_REG.test(eventName));
 
   if (!actions[actionType as string]) {
-    actions[actionType as string] = { action, actionInfo: actionInfo as ActionInfo };
+    actions[actionType as string] = { action: action!, actionInfo: actionInfo as ActionInfo };
   }
   eventActionMap[eventName as string] = actionType as string;
 }
@@ -2398,7 +2401,7 @@ export function getCoordinateSystemDimensions(type: string): DimensionDefinition
   if (coordSysCreator) {
     return coordSysCreator.getDimensionsInfo
       ? coordSysCreator.getDimensionsInfo()
-      : coordSysCreator.dimensions.slice();
+      : coordSysCreator.dimensions!.slice();
   }
 }
 
@@ -2410,7 +2413,7 @@ function registerLayout(
   priority: number | StageHandler | StageHandlerOverallReset,
   layoutTask?: StageHandler | StageHandlerOverallReset
 ): void {
-  normalizeRegister(visualFuncs, priority, layoutTask, PRIORITY_VISUAL_LAYOUT, 'layout');
+  normalizeRegister(visualFuncs, priority, layoutTask!, PRIORITY_VISUAL_LAYOUT, 'layout');
 }
 
 function registerVisual(priority: number, layoutTask: StageHandler | StageHandlerOverallReset): void;
@@ -2419,7 +2422,7 @@ function registerVisual(
   priority: number | StageHandler | StageHandlerOverallReset,
   visualTask?: StageHandler | StageHandlerOverallReset
 ): void {
-  normalizeRegister(visualFuncs, priority, visualTask, PRIORITY_VISUAL_CHART, 'visual');
+  normalizeRegister(visualFuncs, priority, visualTask!, PRIORITY_VISUAL_CHART, 'visual');
 }
 
 export { registerLayout, registerVisual };

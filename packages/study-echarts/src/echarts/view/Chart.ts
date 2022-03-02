@@ -72,11 +72,11 @@ class ChartView {
 
   readonly renderTask: SeriesTask;
 
-  ignoreLabelLineUpdate: boolean;
+  ignoreLabelLineUpdate?: boolean;
 
-  __alive: boolean;
-  __model: SeriesModel;
-  __id: string;
+  __alive?: boolean;
+  __model?: SeriesModel;
+  __id?: string;
 
   static protoInitialize = (function () {
     const proto = ChartView.prototype;
@@ -85,6 +85,7 @@ class ChartView {
 
   constructor() {
     this.type = 'chart';
+    this.group = new Group();
     this.uid = componentUtil.getUID('viewChart');
 
     this.renderTask = createTask<SeriesTaskContext>({

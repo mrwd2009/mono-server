@@ -848,10 +848,10 @@ export function isHighDownPayload(payload: Payload): payload is HighlightPayload
 
 export function savePathStates(el: Path) {
   const store = getSavedStates(el);
-  store.normalFill = el.style.fill;
-  store.normalStroke = el.style.stroke;
+  store.normalFill = el.style.fill!;
+  store.normalStroke = el.style.stroke!;
 
   const selectState = el.states.select || {};
-  store.selectFill = (selectState.style && selectState.style.fill) || null;
-  store.selectStroke = (selectState.style && selectState.style.stroke) || null;
+  store.selectFill = (selectState.style && selectState.style.fill) || undefined;
+  store.selectStroke = (selectState.style && selectState.style.stroke) || undefined;
 }
