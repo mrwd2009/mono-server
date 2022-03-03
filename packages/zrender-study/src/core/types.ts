@@ -64,3 +64,5 @@ export type MapToType<T extends Dictionary<any>, S> = {
 export type RenderedEvent = {
   elapsedTime: number;
 };
+
+export type FunctionPropertyNames<T> = {[K in keyof T]: T[K] extends Function ? K : never}[keyof T];

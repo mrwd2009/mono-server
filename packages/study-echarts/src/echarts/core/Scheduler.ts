@@ -9,7 +9,7 @@ import {
   PerformArgs,
 } from './task';
 import { getUID } from '../util/component';
-import GlobalMOdel from '../model/Global';
+import GlobalModel from '../model/Global';
 import ExtensionAPI from './ExtensionAPI';
 import { normalizeToArray } from '../util/model';
 import {
@@ -27,7 +27,8 @@ import { EChartsType } from './echarts';
 import SeriesModel from '../model/Series';
 import ChartView from '../view/Chart';
 import SeriesData from '../data/SeriesData';
-import GlobalModel from '../model/Global';
+
+const __DEV__ = process.env.NODE_ENV === 'development';
 
 export type GeneralTask = Task<TaskContext>;
 export type SeriesTask = Task<SeriesTaskContext>;
@@ -40,7 +41,7 @@ export type StubTask = Task<StubTaskContext> & {
 
 export type Pipeline = {
   id: string;
-  header: GeneralTask;
+  head: GeneralTask;
   tail: GeneralTask;
   threshold: number;
   progressiveEnabled: boolean;
@@ -169,7 +170,7 @@ class Scheduler {
       && view.incrementalPrepareRender
       && dataLen >= pipeline.threshold;
 
-    const large = seriesModel.get('large') && dataLen >= seriesModel.get('largeThreshold');
+    const large = seriesModel.get('large') && dataLen >= seriesModel.get('largeThreshold')!;
 
     // TODO: modDataCount should not updated if `appendData`, otherwise cause whole repaint.
     // see `test/candlestick-large3.html`
@@ -177,8 +178,8 @@ class Scheduler {
 
     seriesModel.pipelineContext = pipeline.context = {
       progressiveRender: progressiveRender,
-      modDataCount: modDataCount,
-      large: large
+      modDataCount: modDataCount!,
+      large: large!
     };
   }
 
@@ -192,10 +193,10 @@ class Scheduler {
 
       pipelineMap.set(pipelineId, {
         id: pipelineId,
-        head: null,
-        tail: null,
+        head: null as any,
+        tail: null as any,
         threshold: seriesModel.getProgressiveThreshold(),
-        progressiveEnabled: progressive
+        progressiveEnabled: !!progressive
           && !(seriesModel.preventIncremental && seriesModel.preventIncremental()),
         blockIndex: -1,
         step: Math.round(progressive || 700),
@@ -241,7 +242,7 @@ class Scheduler {
 
   performDataProcessorTasks(ecModel: GlobalModel, payload?: Payload): void {
     // If we do not use `block` here, it should be considered when to update modes.
-    this._performStageTasks(this._dataProcessorHandlers, ecModel, payload, {block: true});
+    this._performStageTasks(this._dataProcessorHandlers, ecModel, payload!, {block: true});
   }
 
   performVisualTasks(
@@ -249,7 +250,7 @@ class Scheduler {
     payload?: Payload,
     opt?: PerformStageTaskOpt
   ): void {
-    this._performStageTasks(this._visualHandlers, ecModel, payload, opt);
+    this._performStageTasks(this._visualHandlers, ecModel, payload!, opt);
   }
 
   private _performStageTasks(
@@ -263,7 +264,7 @@ class Scheduler {
     const scheduler = this;
 
     each(stageHandlers, function (stageHandler, idx) {
-      if (opt.visualType && opt.visualType !== stageHandler.visualType) {
+      if (opt?.visualType && opt?.visualType !== stageHandler.visualType) {
         return;
       }
 
@@ -274,32 +275,32 @@ class Scheduler {
       if (overallTask) {
         let overallNeedDirty;
         const agentStubMap = overallTask.agentStubMap;
-        agentStubMap.each(function (stub) {
-          if (needSetDirty(opt, stub)) {
-            stub.dirty();
+        agentStubMap!.each(function (stub) {
+          if (needSetDirty(opt!, stub! as unknown as GeneralTask)) {
+            stub?.dirty();
             overallNeedDirty = true;
           }
         });
         overallNeedDirty && overallTask.dirty();
         scheduler.updatePayload(overallTask, payload);
-        const performArgs = scheduler.getPerformArgs(overallTask, opt.block);
+        const performArgs = scheduler.getPerformArgs(overallTask as unknown as GeneralTask, opt?.block);
         // Execute stubs firstly, which may set the overall task dirty,
         // then execute the overall task. And stub will call seriesModel.setData,
         // which ensures that in the overallTask seriesModel.getData() will not
         // return incorrect data.
-        agentStubMap.each(function (stub) {
-          stub.perform(performArgs);
+        agentStubMap?.each(function (stub) {
+          stub?.perform(performArgs!);
         });
-        if (overallTask.perform(performArgs)) {
+        if (overallTask.perform(performArgs!)) {
           unfinished = true;
         }
       }
       else if (seriesTaskMap) {
         seriesTaskMap.each(function (task, pipelineId) {
-          if (needSetDirty(opt, task)) {
-            task.dirty();
+          if (needSetDirty(opt!, task!)) {
+            task?.dirty();
           }
-          const performArgs: PerformArgs = scheduler.getPerformArgs(task, opt.block);
+          const performArgs = scheduler.getPerformArgs(task!, opt?.block) as PerformArgs;
           // FIXME
           // if intending to decalare `performRawSeries` in handlers, only
           // stream-independent (specifically, data item independent) operations can be
@@ -309,10 +310,10 @@ class Scheduler {
           // of providing the config `performRawSeries`. The stream-dependent operaions
           // and stream-independent operations should better not be mixed.
           performArgs.skip = !stageHandler.performRawSeries
-            && ecModel.isSeriesFiltered(task.context.model);
-          scheduler.updatePayload(task, payload);
+            && ecModel.isSeriesFiltered(task?.context.model!);
+          scheduler.updatePayload(task!, payload);
 
-          if (task.perform(performArgs)) {
+          if (task?.perform(performArgs)) {
             unfinished = true;
           }
         });
@@ -334,26 +335,26 @@ class Scheduler {
       unfinished = seriesModel.dataTask.perform() || unfinished;
     });
 
-    this.unfinished = unfinished || this.unfinished;
+    this.unfinished = unfinished! || this.unfinished;
   }
 
   plan(): void {
     // Travel pipelines, check block.
     this._pipelineMap.each(function (pipeline) {
-      let task = pipeline.tail;
+      let task = pipeline?.tail;
       do {
-        if (task.__block) {
-          pipeline.blockIndex = task.__idxInPipeline;
+        if (task?.__block) {
+          pipeline!.blockIndex = task?.__idxInPipeline;
           break;
         }
-        task = task.getUpstream();
+        task = task!.getUpstream();
       }
       while (task);
     });
   }
 
   updatePayload(
-    task: Task<SeriesTaskContext | OverallTaskContext>,
+    task: Task<SeriesTaskContext> | Task<OverallTaskContext>,
     payload: Payload | 'remain'
   ): void {
     payload !== 'remain' && (task.context.payload = payload);
@@ -383,7 +384,7 @@ class Scheduler {
       ecModel.eachRawSeriesByType(seriesType, create);
     }
     else if (getTargetSeries) {
-      getTargetSeries(ecModel, api).each(create);
+      getTargetSeries(ecModel, api).each(create as any);
     }
 
     function create(seriesModel: SeriesModel): void {
@@ -393,10 +394,10 @@ class Scheduler {
       // Reuse original task instance.
       const task = newSeriesTaskMap.set(
         pipelineId,
-        oldSeriesTaskMap && oldSeriesTaskMap.get(pipelineId)
+        (oldSeriesTaskMap && oldSeriesTaskMap.get(pipelineId))
         || createTask<SeriesTaskContext>({
           plan: seriesTaskPlan,
-          reset: seriesTaskReset,
+          reset: seriesTaskReset as any,
           count: seriesTaskCount
         })
       );
@@ -423,12 +424,12 @@ class Scheduler {
     const scheduler = this;
     const overallTask: OverallTask = stageHandlerRecord.overallTask = stageHandlerRecord.overallTask
       // For overall task, the function only be called on reset stage.
-      || createTask<OverallTaskContext>({ reset: overallTaskReset });
+      || createTask<OverallTaskContext>({ reset: overallTaskReset as any });
 
     overallTask.context = {
       ecModel: ecModel,
       api: api,
-      overallReset: stageHandler.overallReset,
+      overallReset: stageHandler.overallReset!,
       scheduler: scheduler
     };
 
@@ -458,7 +459,7 @@ class Scheduler {
       ecModel.eachRawSeriesByType(seriesType, createStub);
     }
     else if (getTargetSeries) {
-      getTargetSeries(ecModel, api).each(createStub);
+      getTargetSeries(ecModel, api).each(createStub as any);
     }
     // Otherwise, (usually it is legancy case), the overall task will only be
     // executed when upstream dirty. Otherwise the progressive rendering of all
@@ -473,13 +474,13 @@ class Scheduler {
       const pipelineId = seriesModel.uid;
       const stub = newAgentStubMap.set(
         pipelineId,
-        oldAgentStubMap && oldAgentStubMap.get(pipelineId)
+        (oldAgentStubMap && oldAgentStubMap.get(pipelineId))
         || (
           // When the result of `getTargetSeries` changed, the overallTask
           // should be set as dirty and re-performed.
           shouldOverallTaskDirty = true,
           createTask<StubTaskContext>(
-            { reset: stubReset, onDirty: stubOnDirty }
+            { reset: stubReset as any, onDirty: stubOnDirty }
           )
         )
       );
@@ -492,7 +493,7 @@ class Scheduler {
       stub.agent = overallTask;
       stub.__block = overallProgress;
 
-      scheduler._pipe(seriesModel, stub);
+      scheduler._pipe(seriesModel, stub as any);
     }
 
     if (shouldOverallTaskDirty) {
@@ -535,11 +536,11 @@ function overallTaskReset(context: OverallTaskContext): void {
 }
 
 function stubReset(context: StubTaskContext): TaskProgressCallback<StubTaskContext> {
-  return context.overallProgress && stubProgress;
+  return (context.overallProgress && stubProgress) as any;
 }
 
 function stubProgress(this: StubTask): void {
-  this.agent.dirty();
+  this.agent?.dirty();
   this.getDownstream().dirty();
 }
 
@@ -549,7 +550,7 @@ function stubOnDirty(this: StubTask): void {
 
 function seriesTaskPlan(context: SeriesTaskContext): TaskPlanCallbackReturn {
   return context.plan ? context.plan(
-    context.model, context.ecModel, context.api, context.payload
+    context.model!, context.ecModel!, context.api!, context.payload
   ) : null;
 }
 
@@ -557,14 +558,14 @@ function seriesTaskReset(
   context: SeriesTaskContext
 ): TaskProgressCallback<SeriesTaskContext> | TaskProgressCallback<SeriesTaskContext>[] {
   if (context.useClearVisual) {
-    context.data.clearAllVisual();
+    context?.data?.clearAllVisual();
   }
   const resetDefines = context.resetDefines = normalizeToArray(
-    context.reset(context.model, context.ecModel, context.api, context.payload)
+    context.reset?.(context.model!, context.ecModel!, context.api!, context.payload)
   ) as StageHandlerProgressExecutor[];
   return resetDefines.length > 1
     ? map(resetDefines, function (v, idx) {
-      return makeSeriesTaskProgress(idx);
+      return makeSeriesTaskProgress(idx!);
     })
     : singleSeriesTaskProgress;
 }
@@ -574,21 +575,21 @@ const singleSeriesTaskProgress = makeSeriesTaskProgress(0);
 function makeSeriesTaskProgress(resetDefineIdx: number): TaskProgressCallback<SeriesTaskContext> {
   return function (params: TaskProgressParams, context: SeriesTaskContext): void {
     const data = context.data;
-    const resetDefine = context.resetDefines[resetDefineIdx];
+    const resetDefine = context.resetDefines![resetDefineIdx];
 
     if (resetDefine && resetDefine.dataEach) {
       for (let i = params.start; i < params.end; i++) {
-        resetDefine.dataEach(data, i);
+        resetDefine.dataEach(data!, i);
       }
     }
     else if (resetDefine && resetDefine.progress) {
-      resetDefine.progress(params, data);
+      resetDefine.progress(params, data!);
     }
   };
 }
 
 function seriesTaskCount(context: SeriesTaskContext): number {
-  return context.data.count();
+  return context.data!.count();
 }
 
 function detectSeriseType(legacyFunc: StageHandlerOverallReset): string {
@@ -599,7 +600,7 @@ function detectSeriseType(legacyFunc: StageHandlerOverallReset): string {
   }
   catch (e) {
   }
-  return seriesType;
+  return seriesType as any;
 }
 
 const ecModelMock: GlobalModel = {} as GlobalModel;

@@ -11,7 +11,7 @@ export interface TaskContext {
   model?: SeriesModel;
 }
 
-export type TaskResetCallback<Ctx extends TaskContext> = (this: Task<ctx>, context: Ctx) => TaskResetCallback<Ctx>;
+export type TaskResetCallback<Ctx extends TaskContext> = (this: Task<Ctx>, context: Ctx) => TaskResetCallback<Ctx>;
 export type TaskResetCallbackReturn<Ctx extends TaskContext> = void |
   (TaskProgressCallback<Ctx> | TaskProgressCallback<Ctx>[]) |
   {
@@ -89,7 +89,7 @@ export class Task<Ctx extends TaskContext> {
     this._dirty = true;
   }
 
-  perform(performArgs: PerformArgs): boolean {
+  perform(performArgs?: PerformArgs): boolean {
     const upTask = this._upstream;
     const skip = performArgs?.skip;
 
