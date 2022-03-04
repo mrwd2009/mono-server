@@ -26,7 +26,7 @@ class TextStyleMixin {
     const ecModel = this.ecModel;
     return this.getShallow('color')
       || (
-        (!isEmphasis && ecModel) ? ecModel.get(PATH_COLOR) : null
+        (!isEmphasis && ecModel) ? ecModel.get(PATH_COLOR as any) : null
       );
   }
 
@@ -40,7 +40,7 @@ class TextStyleMixin {
       fontWeight: this.getShallow('fontWeight'),
       fontSize: this.getShallow('fontSize'),
       fontFamily: this.getShallow('fontFamily')
-    }, this.ecModel);
+    }, this.ecModel!);
   }
 
   getTextRect(this: Model<LabelRectRelatedOption> & TextStyleMixin, text: string): graphicUtil.BoundingRect {

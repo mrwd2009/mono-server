@@ -8,6 +8,7 @@ import {
   assert,
   clone,
   merge,
+  extend,
   mixin,
   HashMap,
   isFunction,
@@ -108,7 +109,7 @@ const BUILTIN_CHARTS_MAP = {
 const componetsMissingLogPrinted: Record<string, boolean> = {};
 
 function checkMissingComponents(option: ECUnitOption) {
-  each(option, function (componentOption, mainType: ComponentMainType) {
+  each(option, function (componentOption: any, mainType: ComponentMainType) {
     if (!ComponentModel.hasClass(mainType)) {
       const componentImportName = BUILTIN_COMPONENTS_MAP[mainType as keyof typeof BUILTIN_COMPONENTS_MAP];
       if (componentImportName && !componetsMissingLogPrinted[componentImportName]) {
@@ -118,28 +119,28 @@ echarts.use([${componentImportName}]);`);
         componetsMissingLogPrinted[componentImportName] = true;
       }
     }
-  });
+  } as any);
 }
 
 class GlobalModel extends Model<ECUnitOption> {
   option?: ECUnitOption;
 
-  private _theme: Model;
-  private _locale: Model;
-  private _optionManager: OptionManager;
-  private _componentsMap: HashMap<ComponentModel[], ComponentMainType>;
+  private _theme!: Model;
+  private _locale!: Model;
+  private _optionManager!: OptionManager;
+  private _componentsMap!: HashMap<ComponentModel[], ComponentMainType>;
 
-  private _componentsCount: HashMap<number>;
+  private _componentsCount!: HashMap<number>;
 
-  private _seriesIndices: number[];
+  private _seriesIndices!: number[];
 
-  private _seriesIndicesMap: HashMap<any>;
+  private _seriesIndicesMap!: HashMap<any>;
 
-  private _payload: Payload;
+  private _payload!: Payload;
 
-  scheduler: Scheduler;
+  scheduler!: Scheduler;
 
-  ssr: boolean;
+  ssr!: boolean;
 
   init(
     option: ECBasicOption,
@@ -169,14 +170,14 @@ class GlobalModel extends Model<ECUnitOption> {
 
     this._optionManager.setOption(option, optionPreprocessorFuncs, innerOpt);
 
-    this._resetOption(null, innerOpt);
+    this._resetOption(null as any, innerOpt);
   }
 
   resetOption(
     type: 'recreate' | 'timeline' | 'media',
     opt?: Pick<GlobalModelSetOptionOpts, 'replaceMerge'>
   ): boolean {
-    return this._resetOption(type, normalizeSetOptionInput(opt));
+    return this._resetOption(type, normalizeSetOptionInput(opt!));
   }
 
   private _resetOption(
@@ -228,7 +229,7 @@ class GlobalModel extends Model<ECUnitOption> {
   }
 
   public mergeOption(option: ECUnitOption): void {
-    this._mergeOption(option, null);
+    this._mergeOption(option, null as any);
   }
 
   private _mergeOption(
@@ -244,23 +245,23 @@ class GlobalModel extends Model<ECUnitOption> {
 
     resetSourceDefaulter(this);
 
-    each(newOption, function (componentOption, mainType: ComponentMainType) {
+    each(newOption, function (componentOption: any, mainType: ComponentMainType) {
       if (componentOption === null) {
         return;
       }
 
       if (!ComponentModel.hasClass(mainType)) {
-        option[mainType] = option[mainType] == null ? clone(componentOption) : merge(option[mainType], componentOption, true);
+        option![mainType] = option![mainType] == null ? clone(componentOption) : merge(option![mainType], componentOption, true);
       } else if (mainType) {
         newCmptTypes.push(mainType);
         newCmptTypeMap.set(mainType, true);
       }
-    });
+    } as any);
 
     if (replaceMergeMainTypeMap) {
       replaceMergeMainTypeMap.each(function(val, mainTypeInReplaceMerge) {
-        if (ComponentModel.hasClass(mainTypeInReplaceMerge) && !newCmptTypeMap.get(mainTypeInReplaceMerge!)) {
-          newCmptTypes.push(mainTypeInReplaceMerge);
+        if (ComponentModel.hasClass(mainTypeInReplaceMerge!) && !newCmptTypeMap.get(mainTypeInReplaceMerge!)) {
+          newCmptTypes.push(mainTypeInReplaceMerge!);
           newCmptTypeMap.set(mainTypeInReplaceMerge!, true);
         }
       });
@@ -270,7 +271,7 @@ class GlobalModel extends Model<ECUnitOption> {
       const newCmptOptionList = concatInternalOptions(
         this,
         mainType,
-        modelUtil.normalizeToArray(newOption[mainType])
+        modelUtil.normalizeToArray(newOption[mainType] as any)
       );
       const oldCmptList = componentsMap.get(mainType);
 
@@ -279,7 +280,7 @@ class GlobalModel extends Model<ECUnitOption> {
 
       modelUtil.setComponentTypeToKeyInfo(mappingResult, mainType, ComponentModel as ComponentModelConstructor);
 
-      option[mainType] = null;
+      option![mainType] = null;
       componentsMap.set(mainType, null as any);
       componentsCount.set(mainType, 0);
 
@@ -374,23 +375,23 @@ echarts.use([${seriesImportName}]);`);
             // newCmptOption has been used as componentModel.option
             // and may be merged with theme and default, so pass null
             // to avoid confusion.
-            componentModel.optionUpdated(null, true);
+            componentModel.optionUpdated(null as any, true);
           }
         }
 
         if (componentModel) {
-          optionsByMainType.push(componentModel.option);
+          optionsByMainType.push(componentModel!.option!);
           cmptsByMainType.push(componentModel);
           cmptsCountByMainType++;
         }
         else {
           // Always do assign to avoid elided item in array.
-          optionsByMainType.push(void 0);
-          cmptsByMainType.push(void 0);
+          optionsByMainType.push((void 0) as any);
+          cmptsByMainType.push((void 0) as any);
         }
       }, this);
 
-      option[mainType] = optionsByMainType;
+      option![mainType] = optionsByMainType;
       componentsMap.set(mainType, cmptsByMainType);
       componentsCount.set(mainType, cmptsCountByMainType);
 
@@ -403,7 +404,7 @@ echarts.use([${seriesImportName}]);`);
     (ComponentModel as ComponentModelConstructor).topologicalTravel(
       newCmptTypes,
       (ComponentModel as ComponentModelConstructor).getAllClassMainTypes(),
-      visitComponent,
+      visitComponent as any,
       this,
     );
 
@@ -414,8 +415,8 @@ echarts.use([${seriesImportName}]);`);
 
   getOption(): ECUnitOption {
     const option = clone(this.option);
-    each(option, function (optInMainType, mainType) {
-      if (ComponentModel.hasClass(mainType)) {
+    each(option!, function (optInMainType, mainType) {
+      if (ComponentModel.hasClass(mainType!)) {
         const opts = modelUtil.normalizeToArray(optInMainType);
         // Inner cmpts need to be removed.
         // Inner cmpts might not be at last since ec5.0, but still
@@ -424,7 +425,7 @@ echarts.use([${seriesImportName}]);`);
         let metNonInner = false;
         for (let i = realLen - 1; i >= 0; i--) {
           // Remove options with inner id.
-          if (opts[i] && !modelUtil.isComponentIdInternal(opts[i])) {
+          if (opts[i] && !modelUtil.isComponentIdInternal(opts[i] as any)) {
             metNonInner = true;
           }
           else {
@@ -433,13 +434,13 @@ echarts.use([${seriesImportName}]);`);
           }
         }
         opts.length = realLen;
-        option[mainType] = opts;
+        option![mainType!] = opts;
       }
     });
 
-    delete option[OPTION_INNER_KEY];
+    delete option![OPTION_INNER_KEY];
 
-    return option;
+    return option!;
   }
 
   getTheme(): Model {
@@ -458,7 +459,7 @@ echarts.use([${seriesImportName}]);`);
     return this._payload;
   }
 
-  getComponent(mainType: ComponentMainType, idx?: number): ComponentModel {
+  getComponent(mainType: ComponentMainType, idx?: number): ComponentModel | undefined {
     const list = this._componentsMap.get(mainType);
     if (list) {
       const cmpt = list[idx || 0];
@@ -578,7 +579,7 @@ echarts.use([${seriesImportName}]);`);
       componentsMap.each(function (cmpts, componentType) {
         for (let i = 0; cmpts && i < cmpts.length; i++) {
           const cmpt = cmpts[i];
-          cmpt && cbForAll.call(ctxForAll, componentType, cmpt, cmpt.componentIndex);
+          cmpt && cbForAll.call(ctxForAll, componentType!, cmpt, cmpt.componentIndex);
         }
       });
     }
@@ -598,7 +599,7 @@ echarts.use([${seriesImportName}]);`);
   }
 
   getSeriesByName(name: OptionName): SeriesModel[] {
-    const nameStr = modelUtil.convertOptionIdName(name, null);
+    const nameStr = modelUtil.convertOptionIdName(name, null as any);
     return filter(
       this._componentsMap.get('series') as SeriesModel[],
       oneSeries => !!oneSeries && nameStr != null && oneSeries.name === nameStr
@@ -634,7 +635,7 @@ echarts.use([${seriesImportName}]);`);
     assertSeriesInitialized(this);
     each(this._seriesIndices, function (rawSeriesIndex) {
       const series = this._componentsMap.get('series')[rawSeriesIndex] as SeriesModel;
-      cb.call(context, series, rawSeriesIndex);
+      cb.call(context!, series, rawSeriesIndex);
     }, this);
   }
 
@@ -643,7 +644,7 @@ echarts.use([${seriesImportName}]);`);
     context?: T
   ): void {
     each(this._componentsMap.get('series'), function (series) {
-      series && cb.call(context, series, series.componentIndex);
+      series && cb.call(context!, series as any, series.componentIndex);
     });
   }
 
@@ -656,14 +657,14 @@ echarts.use([${seriesImportName}]);`);
     each(this._seriesIndices, function (rawSeriesIndex) {
       const series = this._componentsMap.get('series')[rawSeriesIndex] as SeriesModel;
       if (series.subType === subType) {
-        cb.call(context, series, rawSeriesIndex);
+        cb.call(context!, series, rawSeriesIndex);
       }
     }, this);
   }
 
   eachRawSeriesByType<T>(
     subType: ComponentSubType,
-    cb: (this: T, series: SeriesModel, rawSeriesIndex: number) => void,
+    cb: (this: T, series: SeriesModel, rawSeriesIndex: number | undefined) => void,
     context?: T
   ): void {
     return each(this.getSeriesByType(subType), cb, context);
@@ -687,7 +688,7 @@ echarts.use([${seriesImportName}]);`);
     const newSeriesIndices: number[] = [];
     each(this._seriesIndices, function (seriesRawIdx) {
       const series = this._componentsMap.get('series')[seriesRawIdx] as SeriesModel;
-      cb.call(context, series, seriesRawIdx) && newSeriesIndices.push(seriesRawIdx);
+      cb.call(context!, series, seriesRawIdx) && newSeriesIndices.push(seriesRawIdx);
     }, this);
 
     this._seriesIndices = newSeriesIndices;
@@ -701,8 +702,8 @@ echarts.use([${seriesImportName}]);`);
     const componentsMap = this._componentsMap;
     const componentTypes: string[] = [];
     componentsMap.each(function (components, componentType) {
-      if (ComponentModel.hasClass(componentType)) {
-        componentTypes.push(componentType);
+      if (ComponentModel.hasClass(componentType!)) {
+        componentTypes.push(componentType!);
       }
     });
 
@@ -714,7 +715,7 @@ echarts.use([${seriesImportName}]);`);
           if (component
             && (
               componentType !== 'series'
-              || !isNotTargetSeries(component as SeriesModel, payload)
+              || !isNotTargetSeries(component as SeriesModel, payload!)
             )
           ) {
             component.restoreData();
@@ -822,15 +823,15 @@ function mergeTheme(option: ECUnitOption, theme: ThemeOption): void {
 
     // If it is component model mainType, the model handles that merge later.
     // otherwise, merge them here.
-    if (!ComponentModel.hasClass(name)) {
+    if (!ComponentModel.hasClass(name!)) {
       if (typeof themeItem === 'object') {
-        option[name] = !option[name]
+        option[name!] = !option[name!]
           ? clone(themeItem)
-          : merge(option[name], themeItem, false);
+          : merge(option[name!], themeItem, false);
       }
       else {
-        if (option[name] == null) {
-          option[name] = themeItem;
+        if (option[name!] == null) {
+          option[name!] = themeItem;
         }
       }
     }
@@ -848,14 +849,14 @@ function queryByIdOrName<T extends { id?: string, name?: string }>(
     const keyMap = createHashMap<boolean>();
     each(idOrName, function (idOrNameItem) {
       if (idOrNameItem != null) {
-        const idName = modelUtil.convertOptionIdName(idOrNameItem, null);
+        const idName = modelUtil.convertOptionIdName(idOrNameItem, null as any);
         idName != null && keyMap.set(idOrNameItem, true);
       }
     });
     return filter(cmpts, cmpt => cmpt && keyMap.get(cmpt[attr]!));
   }
   else {
-    const idName = modelUtil.convertOptionIdName(idOrName, null);
+    const idName = modelUtil.convertOptionIdName(idOrName, null as any);
     return filter(cmpts, cmpt => cmpt && idName != null && cmpt[attr] === idName);
   }
 }

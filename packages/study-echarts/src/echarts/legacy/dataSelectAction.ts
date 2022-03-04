@@ -8,6 +8,8 @@ import type { EChartsType, registerAction } from '../core/echarts';
 import { queryDataIndex } from '../util/model';
 import ExtensionAPI from '../core/ExtensionAPI';
 
+const __DEV__ = process.env.NODE_ENV === 'development';
+
 // Legacy data selection action.
 // Inlucdes: pieSelect, pieUnSelect, pieToggleSelect, mapSelect, mapUnSelect, mapToggleSelect
 export function createLegacyDataSelectAction(seriesType: string, ecRegisterAction: typeof registerAction) {
@@ -18,7 +20,7 @@ export function createLegacyDataSelectAction(seriesType: string, ecRegisterActio
       mainType: 'series', subType: seriesType, query: payload
     }, function (seriesModel: SeriesModel) {
       seriesIndices.push(seriesModel.seriesIndex);
-    });
+    } as any);
     return seriesIndices;
   }
 
@@ -58,7 +60,7 @@ function handleSeriesLegacySelectEvents(
       mainType: 'series', subType: 'pie'
     }, function (seriesModel: SeriesModel) {
       const seriesIndex = seriesModel.seriesIndex;
-      const selectedMap = seriesModel.option.selectedMap;
+      const selectedMap = seriesModel?.option?.selectedMap;
       const selected = payload.selected;
       for (let i = 0; i < selected.length; i++) {
         if (selected[i].seriesIndex === seriesIndex) {
@@ -68,11 +70,11 @@ function handleSeriesLegacySelectEvents(
             type: legacyEventName,
             seriesId: seriesModel.id,
             name: isArray(dataIndex) ? data.getName(dataIndex[0]) : data.getName(dataIndex),
-            selected: isString(selectedMap) ? selectedMap : extend({}, selectedMap)
+            selected: isString(selectedMap) ? selectedMap : extend({}, selectedMap!)
           });
         }
       }
-    });
+    } as any);
   }
 }
 

@@ -821,7 +821,7 @@ class ECharts extends Eventful<ECEventDefinition> {
     const dataIndexInside = parsedFinder.hasOwnProperty('dataIndexInside')
       ? parsedFinder.dataIndexInside
       : parsedFinder.hasOwnProperty('dataIndex')
-        ? data.indexOfRawIndex(parsedFinder.dataIndex)
+        ? data.indexOfRawIndex(parsedFinder.dataIndex!)
         : null;
 
     return dataIndexInside != null ? getItemVisualFromData(data, dataIndexInside, visualType) : getVisualFromData(data, visualType);

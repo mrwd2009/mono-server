@@ -44,7 +44,7 @@ class ComponentModel<Opt extends ComponentOption = ComponentOption> extends Mode
 
   componentIndex: number;
 
-  protected defaultOption: ComponentOption;
+  protected defaultOption!: ComponentOption;
 
   static dependencies: string[];
 
@@ -130,7 +130,7 @@ class ComponentModel<Opt extends ComponentOption = ComponentOption> extends Mode
       while (clz) {
         const opt = clz.prototype.defaultOption;
         opt && optList.push(opt);
-        clz = clz.superClass;
+        clz = clz.superClass as any;
       }
 
       let defaultOption = {};
@@ -152,7 +152,7 @@ class ComponentModel<Opt extends ComponentOption = ComponentOption> extends Mode
     const idKey = (mainType + 'Id') as keyof Opt;
 
     return queryReferringComponents(
-      this.ecModel,
+      this.ecModel!,
       mainType,
       {
         index: this.get(indexKey, true) as unknown as ModelFinderIndexQuery,

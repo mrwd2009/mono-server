@@ -4,6 +4,8 @@ import { Pipeline } from './Scheduler';
 import { Payload } from '../util/types';
 import SeriesData from '../data/SeriesData';
 
+const __DEV__ = process.env.NODE_ENV === 'development';
+
 export interface TaskContext {
   outputData?: SeriesData;
   data?: SeriesData;
@@ -11,7 +13,7 @@ export interface TaskContext {
   model?: SeriesModel;
 }
 
-export type TaskResetCallback<Ctx extends TaskContext> = (this: Task<Ctx>, context: Ctx) => TaskResetCallback<Ctx>;
+export type TaskResetCallback<Ctx extends TaskContext> = (this: Task<Ctx>, context: Ctx) => TaskResetCallbackReturn<Ctx>;
 export type TaskResetCallbackReturn<Ctx extends TaskContext> = void |
   (TaskProgressCallback<Ctx> | TaskProgressCallback<Ctx>[]) |
   {
@@ -59,25 +61,25 @@ export class Task<Ctx extends TaskContext> {
   private _plan: TaskPlanCallback<Ctx>;
   private _count: TaskCountCallback<Ctx>;
   private _onDirty: TaskOnDirtyCallback<Ctx>;
-  private _progress: TaskProgressCallback<Ctx> | TaskProgressCallback<Ctx>[];
-  private _callingProgress: TaskProgressCallback<Ctx>;
+  private _progress!: TaskProgressCallback<Ctx> | TaskProgressCallback<Ctx>[];
+  private _callingProgress!: TaskProgressCallback<Ctx>;
 
   private _dirty: boolean;
-  private _modBy: number;
-  private _modDataCount: number;
-  private _upstream: Task<Ctx>;
-  private _downstream: Task<Ctx>;
-  private _dueEnd: number;
-  private _outputDueEnd: number;
-  private _settedOutputEnd: number;
-  private _dueIndex: number;
-  private _disposed: boolean;
+  private _modBy!: number;
+  private _modDataCount!: number;
+  private _upstream!: Task<Ctx>;
+  private _downstream!: Task<Ctx>;
+  private _dueEnd!: number;
+  private _outputDueEnd!: number;
+  private _settedOutputEnd!: number;
+  private _dueIndex!: number;
+  private _disposed!: boolean;
 
-  __pipeline: Pipeline;
-  __idxInPipeline: number;
-  __block: boolean;
+  __pipeline!: Pipeline;
+  __idxInPipeline!: number;
+  __block!: boolean;
 
-  context: Ctx;
+  context!: Ctx;
 
   constructor(define: TaskDefineParam<Ctx>) {
     define = define || {};
@@ -99,7 +101,7 @@ export class Task<Ctx extends TaskContext> {
     }
 
     if (this.__pipeline) {
-      this.__pipeline.currentTask = this;
+      this.__pipeline.currentTask = this as any;
     }
 
     let planResult;
@@ -128,7 +130,7 @@ export class Task<Ctx extends TaskContext> {
     let forceFirstProgress;
     if (this._dirty || planResult === 'reset') {
       this._dirty = false;
-      forceFirstProgress = this._doReset(skip);
+      forceFirstProgress = this._doReset(skip!);
     }
 
     this._modBy = modBy;
@@ -174,7 +176,7 @@ export class Task<Ctx extends TaskContext> {
       this._dueIndex = this._outputDueEnd = this._settedOutputEnd != null ? this._settedOutputEnd : this._dueEnd;
     }
 
-    return this.unfinisehd();
+    return this.unfinished();
   }
 
   dirty(): void {
@@ -195,7 +197,7 @@ export class Task<Ctx extends TaskContext> {
 
   private _doReset(skip: boolean): boolean {
     this._dueIndex = this._outputDueEnd = this._dueEnd = 0;
-    this._settedOutputEnd = null;
+    this._settedOutputEnd = null as any;
 
     let progress: TaskResetCallbackReturn<Ctx>;
     let forceFirstProgress: boolean;
@@ -207,17 +209,17 @@ export class Task<Ctx extends TaskContext> {
         progress = (progress as any).progress;
       }
       if (isArray(progress) && !progress.length) {
-        progress = null;
+        progress = null as any;
       }
     }
 
     this._progress = progress as TaskProgressCallback<Ctx>;
-    this._modBy = this._modDataCount = null;
+    this._modBy = this._modDataCount = null as any;
 
     const downstream = this._downstream;
     downstream?.dirty();
 
-    return forceFirstProgress();
+    return forceFirstProgress!;
   }
 
   unfinished(): boolean {
@@ -241,10 +243,10 @@ export class Task<Ctx extends TaskContext> {
       return;
     }
     if (this._upstream) {
-      this._upstream._downstream = null;
+      this._upstream._downstream = null as any;
     }
     if (this._downstream) {
-      this._downstream._upstream = null;
+      this._downstream._upstream = null as any;
     }
 
     this._dirty = false;
@@ -290,7 +292,7 @@ const iterator: TaskDataIterator = (function() {
       modDataCount = sCount;
       winCount = Math.ceil(modDataCount / modBy);
 
-      it.next = (modBy > 1 && modDataCount > 0) ? modNext : sequentialNext;
+      it.next = ((modBy > 1 && modDataCount > 0) ? modNext : sequentialNext) as any;
     }
   };
 

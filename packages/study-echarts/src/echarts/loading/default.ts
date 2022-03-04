@@ -108,17 +108,17 @@ export default function defaultLoading(
   // Inject resize
   group.resize = function () {
     const textWidth = textContent.getBoundingRect().width;
-    const r = opts.showSpinner ? opts.spinnerRadius : 0;
+    const r = opts!.showSpinner ? opts!.spinnerRadius! : 0;
     // cx = (containerWidth - arcDiameter - textDistance - textWidth) / 2
     // textDistance needs to be calculated when both animation and text exist
-    const cx = (api.getWidth() - r * 2 - (opts.showSpinner && textWidth ? 10 : 0) - textWidth) / 2
-      - (opts.showSpinner && textWidth ? 0 : 5 + textWidth / 2)
+    const cx = (api.getWidth() - r * 2 - (opts!.showSpinner && textWidth ? 10 : 0) - textWidth) / 2
+      - (opts!.showSpinner && textWidth ? 0 : 5 + textWidth / 2)
       // only show the text
-      + (opts.showSpinner ? 0 : textWidth / 2)
+      + (opts!.showSpinner ? 0 : textWidth / 2)
       // only show the spinner
       + (textWidth ? 0 : r);
     const cy = api.getHeight() / 2;
-    opts.showSpinner && arc.setShape({
+    opts!.showSpinner && arc.setShape({
       cx: cx,
       cy: cy
     });

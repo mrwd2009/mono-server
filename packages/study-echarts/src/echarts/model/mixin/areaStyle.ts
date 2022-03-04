@@ -2,7 +2,6 @@ import makeStyleMapper from './makeStyleMapper';
 import Model from '../Model';
 import { AreaStyleOption } from '../../util/types';
 import { PathStyleProps } from 'zrender/src/graphic/Path';
-import { ModuleDeclaration } from '@babel/types';
 
 export const AREA_STYLE_KEY_MAP = [
   ['fill', 'color'],
@@ -25,7 +24,7 @@ type AreaStyleProps = Pick<PathStyleProps,
 >;
 
 class AreaStyleMixin{
-  getAreaStyle(this: ModuleDeclaration, excludes?: readonly (keyof AreaStyleOption)[], includes?: readonly (keyof AreaStyleOption)[]): AreaStyleProps {
+  getAreaStyle(this: Model, excludes?: readonly (keyof AreaStyleOption)[], includes?: readonly (keyof AreaStyleOption)[]): AreaStyleProps {
     return getAreaStyle(this, excludes, includes);
   }
 };
