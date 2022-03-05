@@ -1783,7 +1783,7 @@ class ECharts extends Eventful<ECEventDefinition> {
             lastSeriesKey = '';
           }
           lastSeriesZLevel = zlevel;
-          componentModel.setZLevel(zlevel);
+          componentModel!.setZLevel(zlevel);
         });
       }
     };
