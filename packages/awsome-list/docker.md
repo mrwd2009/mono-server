@@ -21,4 +21,13 @@
 
  # enter docker image to view content
  docker run -it image_name sh
+
+ # enter docker image with a new container, then destory it after exiting
+ docker run -it --rm image_name sh
+
+ # run image with environment
+ docker run -it -e "NODE_ENV=production" image_name sh
+
+ # limit container memory
+ docker run -it -m "300M" --memory-swap "1G" image_name sh
 ```
