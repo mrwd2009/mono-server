@@ -17,6 +17,8 @@ import {
 import { DatasetOption } from '../component/dataset/install';
 import { error } from '../util/log';
 
+const __DEV__ = process.env.NODE_ENV === 'development';
+
 const QUERY_REG = /^(min|max)?(.+)$/;
 
 interface ParsedRawOption {
@@ -33,13 +35,13 @@ class OptionManager {
 
   private _mediaList: MediaUnit[] = [];
 
-  private _mediaDefault: MediaUnit;
+  private _mediaDefault!: MediaUnit;
 
   private _currentMediaIndices: number[] = [];
 
-  private _optionBackup: ParsedRawOption;
+  private _optionBackup!: ParsedRawOption;
 
-  private _newBaseOption: ECUnitOption;
+  private _newBaseOption!: ECUnitOption;
 
   constructor(api: ExtensionAPI) {
     this._api = api;
@@ -50,10 +52,10 @@ class OptionManager {
       // That set dat primitive is dangerous if user reuse the data when setOption again.
       each(normalizeToArray((rawOption as ECUnitOption).series), function (series: SeriesOption) {
         series && series.data && isTypedArray(series.data) && setAsPrimitive(series.data);
-      });
+      } as any);
       each(normalizeToArray((rawOption as ECUnitOption).dataset), function (dataset: DatasetOption) {
         dataset && dataset.source && isTypedArray(dataset.source) && setAsPrimitive(dataset.source);
-      });
+      } as any);
     }
 
     rawOption = clone(rawOption);
@@ -113,7 +115,7 @@ class OptionManager {
       }
     }
 
-    return option;
+    return option as ECUnitOption;
   }
 
   getMediaOption(ecModel: GlobalModel): ECUnitOption[] {
@@ -131,7 +133,7 @@ class OptionManager {
 
     // Multi media may be applied, the latter defined media has higher priority.
     for (let i = 0, len = mediaList.length; i < len; i++) {
-      if (applyMediaQuery(mediaList[i].query, ecWidth, ecHeight)) {
+      if (applyMediaQuery(mediaList[i].query!, ecWidth, ecHeight)) {
         indices.push(i);
       }
     }
@@ -189,7 +191,7 @@ function parseRawOption(
   // `{ ...normalOptionProps, media: [{ ... }, { ... }] }`
   else {
     if (hasTimeline || hasMedia) {
-      rawOption.options = rawOption.media = null;
+      rawOption.options = rawOption.media = null as any;
     }
     baseOption = rawOption;
   }
@@ -227,7 +229,7 @@ function parseRawOption(
   }
 
   doPreprocess(baseOption);
-  each(timelineOptionsOnRoot, option => doPreprocess(option));
+  each(timelineOptionsOnRoot!, option => doPreprocess(option));
   each(mediaList, media => doPreprocess(media.option));
 
   function doPreprocess(option: ECUnitOption) {
@@ -239,7 +241,7 @@ function parseRawOption(
   return {
     baseOption: baseOption,
     timelineOptions: timelineOptionsOnRoot || [],
-    mediaDefault: mediaDefault,
+    mediaDefault: mediaDefault!,
     mediaList: mediaList
   };
 }
@@ -253,7 +255,7 @@ function applyMediaQuery(query: MediaQuery, ecWidth: number, ecHeight: number): 
 
   let applicatable = true;
 
-  each(query, function (value: number, attr) {
+  each(query, function (value: number, attr: string) {
     const matched = attr.match(QUERY_REG);
 
     if (!matched || !matched[1] || !matched[2]) {
@@ -266,7 +268,7 @@ function applyMediaQuery(query: MediaQuery, ecWidth: number, ecHeight: number): 
     if (!compare(realMap[realAttr as keyof typeof realMap], value, operator)) {
       applicatable = false;
     }
-  });
+  } as any);
 
   return applicatable;
 }

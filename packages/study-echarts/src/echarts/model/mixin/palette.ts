@@ -30,7 +30,7 @@ class PaletteMixin<T extends PaletteOptionMixin = PaletteOptionMixin> {
   ): ZRColor {
     const defaultPalette = normalizeToArray(this.get('color', true));
     const layeredPalette = this.get('colorLayer', true);
-    return getFromPalette<ZRColor>(this, innerColor, defaultPalette, layeredPalette, name, scope, requestNum);
+    return getFromPalette<ZRColor>(this, innerColor, defaultPalette, layeredPalette!, name, scope, requestNum)!;
   }
 
   clearColorPalette(this: PaletteMixin<T>) {
@@ -44,8 +44,8 @@ export function getDecalFromPalette(
   scope?: any,
   requestNum?: number
 ): DecalObject {
-  const defaultDecals = normalizeToArray((ecModel as Model<AriaOptionMixin>).get(['aria', 'decal', 'decals']));
-  return getFromPalette<DecalObject>(ecModel, innerDecal, defaultDecals, null, name, scope, requestNum);
+  const defaultDecals = normalizeToArray((ecModel as Model<AriaOptionMixin>).get(['aria', 'decal', 'decals'] as any));
+  return getFromPalette<DecalObject>(ecModel, innerDecal, defaultDecals, null as any, name, scope, requestNum)!;
 }
 
 function getNearestPalette<T>(

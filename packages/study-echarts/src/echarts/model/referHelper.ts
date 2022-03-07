@@ -57,15 +57,15 @@ const fetchers: Record<SupportedCoordSys, Fetcher> = {
     if (__DEV__) {
       if (!xAxisModel) {
         throw new Error('xAxis "' + retrieve<number | string>(
-          seriesModel.get('xAxisIndex'),
-          seriesModel.get('xAxisId'),
+          seriesModel.get('xAxisIndex')!,
+          seriesModel.get('xAxisId')!,
           0
         ) + '" not found');
       }
       if (!yAxisModel) {
         throw new Error('yAxis "' + retrieve<number | string>(
-          seriesModel.get('xAxisIndex'),
-          seriesModel.get('yAxisId'),
+          seriesModel.get('xAxisIndex')!,
+          seriesModel.get('yAxisId')!,
           0
         ) + '" not found');
       }
@@ -142,7 +142,7 @@ const fetchers: Record<SupportedCoordSys, Fetcher> = {
 
     each(parallelModel.parallelAxisIndex, function (axisIndex, index) {
       const axisModel = ecModel.getComponent('parallelAxis', axisIndex as number) as ParallelAxisModel;
-      const axisDim = coordSysDims[index];
+      const axisDim = coordSysDims[index!];
       axisMap.set(axisDim, axisModel);
 
       if (isCategory(axisModel)) {

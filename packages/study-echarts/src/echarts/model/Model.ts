@@ -18,16 +18,16 @@ import { mixin, clone, merge } from 'zrender/src/core/util';
 interface Model<Opt = ModelOption> extends LineStyleMixin, ItemStyleMixin, TextStyleMixin, AreaStyleMixin {}
 class Model<Opt = ModelOption> {
 
-  parentModel?: Model;
+  parentModel!: Model;
 
-  ecModel?: GlobalModel;
+  ecModel!: GlobalModel;
 
-  option?: Opt;
+  option!: Opt;
 
   constructor(option?: Opt, parentModel?: Model, ecModel?: GlobalModel) {
-    this.parentModel = parentModel;
-    this.ecModel = ecModel;
-    this.option = option;
+    this.parentModel = parentModel!;
+    this.ecModel = ecModel!;
+    this.option = option!;
   }
 
   init(option: Opt, parentModel?: Model, ecModel?: GlobalModel, ...rest: any): void {}

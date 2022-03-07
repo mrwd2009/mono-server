@@ -18,6 +18,8 @@ import GlobalModel from '../Global';
 import { TooltipMarkupBlockFragment } from '../../component/tooltip/tooltipMarkup';
 import { error, makePrintable } from '../../util/log';
 
+const __DEV__ = process.env.NODE_ENV === 'development';
+
 const DIMENSION_LABEL_REG = /\{@(.+?)\}/g;
 
 export interface DataFormatMixin extends DataHost {
@@ -52,15 +54,15 @@ export class DataFormatMixin {
       componentType: mainType,
       componentSubType: this.subType,
       componentIndex: this.componentIndex,
-      seriesType: isSeries ? this.subType : null,
+      seriesType: isSeries ? this.subType : null as any,
       seriesIndex: (this as any).seriesIndex,
-      seriesId: isSeries ? this.id : null,
-      seriesName: isSeries ? this.name : null,
+      seriesId: isSeries ? this.id : null as any,
+      seriesName: isSeries ? this.name : null as any,
       name: name,
       dataIndex: rawDataIndex,
       data: itemOpt,
       dataType: dataType,
-      value: rawValue,
+      value: rawValue as any,
       color: color,
       borderColor: borderColor,
       dimensionNames: userOutput ? userOutput.fullDimensions : null,
@@ -80,7 +82,7 @@ export class DataFormatMixin {
     extendParams?: {
       interpolatedValue: InterpolatableValue
     }
-  ): string {
+  ): string | undefined {
     status = status || 'normal';
     const data = this.getData(dataType);
 
@@ -151,7 +153,7 @@ export class DataFormatMixin {
     dataIndex: number,
     multipleSeries?: boolean,
     dataType?: string
-  ): TooltipFormatResult {
+  ): TooltipFormatResult | undefined {
     // Empty function
     return;
   }
@@ -192,8 +194,8 @@ export function normalizeTooltipFormatResult(result: TooltipFormatResult): {
   }
 
   return {
-    text: markupText,
+    text: markupText as string,
     // markers: markers || markersExisting,
-    frag: markupFragment
+    frag: markupFragment!
   };
 }

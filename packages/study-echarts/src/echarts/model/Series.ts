@@ -30,7 +30,7 @@ import { createTask } from '../core/task';
 import GlobalModel from './Global';
 import { CoordinateSystem } from '../coord/CoordinateSystem';
 import { ExtendableConstructor, mountExtend, Constructor } from '../util/clazz';
-import { PiplineContext, SeriesTaskContext, GeneralTask, OverallTask, SeriesTask } from '../core/Scheduler';
+import { PipelineContext, SeriesTaskContext, GeneralTask, OverallTask, SeriesTask } from '../core/Scheduler';
 import LegendVisualProvider from '../visual/LegendVisualProvider';
 import SeriesData from '../data/SeriesData';
 import Axis from '../coord/Axis';
@@ -43,6 +43,8 @@ import { ECSymbol } from '../util/symbol';
 import { Group } from '../util/graphic';
 import { LegendIconParams } from '../component/legend/LegendModel';
 
+const __DEV__= process.env.NODE_ENV === 'development';
+
 const inner = modelUtil.makeInner<{
   data: SeriesData,
   dataBeforeProcessed: SeriesData,
@@ -52,7 +54,6 @@ const inner = modelUtil.makeInner<{
 function getSelectionKey(data: SeriesData, dataIndex: number): string {
   return data.getName(dataIndex) || data.getId(dataIndex);
 }
-
 
 export const SERIES_UNIVERSAL_TRANSITION_PROP = '__universalTransitionEnabled';
 
@@ -73,22 +74,22 @@ interface SeriesModel {
 class SeriesModel<Opt extends SeriesOption = SeriesOption> extends ComponentModel<Opt> {
   type: string = 'series.__base__';
 
-  defaultOption: SeriesOption;
+  defaultOption!: SeriesOption;
 
   seriesIndex: number = 0;
 
-  coordinateSystem: CoordinateSystem;
+  coordinateSystem!: CoordinateSystem;
 
-  dataTask: SeriesTask;
+  dataTask!: SeriesTask;
 
-  pipelineContext: PipelineContext;
+  pipelineContext!: PipelineContext;
 
-  legendVsiualProvider: LegendVisualProvider;
+  legendVisualProvider!: LegendVisualProvider;
 
   visualStyleAccessPath: string = 'itemStyle';
 
   visualDrawType: 'fill' | 'stroke' = 'fill';
-  visualStyleMapper: ReturnType<typeof makeStyleMapper>;
+  visualStyleMapper!: ReturnType<typeof makeStyleMapper>;
 
   ignoreStyleOnData: boolean = false;
   hasSymbolVisual: boolean = false;
@@ -126,18 +127,18 @@ class SeriesModel<Opt extends SeriesOption = SeriesOption> extends ComponentMode
 
 
     const data = this.getInitialData(option, ecModel);
-    wrapData(data, this);
+    wrapData(data!, this);
     this.dataTask.context.data = data;
 
     if (__DEV__) {
       zrUtil.assert(data, 'getInitialData returned invalid data.');
     }
 
-    inner(this).dataBeforeProcessed = data;
+    inner(this).dataBeforeProcessed = data!;
 
     autoSeriesName(this);
     
-    this._initSelectedMapFromData(data);
+    this._initSelectedMapFromData(data!);
   }
 
   mergeDefaultAndTheme(option: Opt, ecModel: GlobalModel): void {
@@ -179,15 +180,15 @@ class SeriesModel<Opt extends SeriesOption = SeriesOption> extends ComponentMode
     sourceManager.prepareSource();
 
     const data = this.getInitialData(newSeriesOption, ecModel);
-    wrapData(data, this);
+    wrapData(data!, this);
     this.dataTask.dirty();
     this.dataTask.context.data = data;
 
-    inner(this).dataBeforeProcessed = data;
+    inner(this).dataBeforeProcessed = data!;
 
-    autoSeriesNae(this);
+    autoSeriesName(this);
 
-    this._initSelectedMapFromData(data);
+    this._initSelectedMapFromData(data!);
   }
 
   fillDataTextStyle(data: ArrayLike<any>): void {
@@ -204,7 +205,7 @@ class SeriesModel<Opt extends SeriesOption = SeriesOption> extends ComponentMode
     }
   }
 
-  getInitialData(option: Opt, ecModel: GlobalModel): SeriesData {
+  getInitialData(option: Opt, ecModel: GlobalModel): SeriesData | undefined {
     return;
   }
 
@@ -220,7 +221,7 @@ class SeriesModel<Opt extends SeriesOption = SeriesOption> extends ComponentMode
     const task = getCurrentTask(this);
     if (task) {
       const data = task.context.data;
-      return (dataType == null ? data : data.getLinkedData(dataType)) as SeriesData<this>;
+      return (dataType == null ? data : data!.getLinkedData(dataType)) as SeriesData<this>;
     }
     else {
       // When series is not alive (that may happen when click toolbox
@@ -308,7 +309,7 @@ class SeriesModel<Opt extends SeriesOption = SeriesOption> extends ComponentMode
     return defaultSeriesFormatTooltip({
       series: this,
       dataIndex: dataIndex,
-      multipleSeries: multipleSeries
+      multipleSeries: multipleSeries!
     });
   }
 
@@ -347,11 +348,11 @@ class SeriesModel<Opt extends SeriesOption = SeriesOption> extends ComponentMode
   }
 
   getProgressive(): number | false {
-    return this.get('progressive');
+    return this.get('progressive')!;
   }
 
   getProgressiveThreshold(): number {
-    return this.get('progressiveThreshold');
+    return this.get('progressiveThreshold')!;
   }
 
   select(innerDataIndices: number[], dataType?: SeriesDataType): void {
@@ -415,7 +416,7 @@ class SeriesModel<Opt extends SeriesOption = SeriesOption> extends ComponentMode
     const data = this.getData(dataType);
 
     return (selectedMap === 'all' || selectedMap[getSelectionKey(data, dataIndex)])
-      && !data.getItemModel<StatesOptionMixin<unknown, unknown>>(dataIndex).get(['select', 'disabled']);
+      && !data.getItemModel<StatesOptionMixin<unknown, any>>(dataIndex).get(['select', 'disabled']);
   }
 
   isUniversalTransitionEnabled(): boolean {
@@ -434,7 +435,7 @@ class SeriesModel<Opt extends SeriesOption = SeriesOption> extends ComponentMode
     }
 
     // Can be simply 'universalTransition: true'
-    return universalTransitionOpt && universalTransitionOpt.enabled;
+    return universalTransitionOpt && universalTransitionOpt.enabled!;
   }
 
   private _innerSelect(data: SeriesData, innerDataIndices: number[]) {
@@ -535,19 +536,19 @@ function getSeriesAutoName(seriesModel: SeriesModel): string {
 }
 
 function dataTaskCount(context: SeriesTaskContext): number {
-  return context.model.getRawData().count();
+  return context!.model!.getRawData().count();
 }
 
 function dataTaskReset(context: SeriesTaskContext) {
   const seriesModel = context.model;
-  seriesModel.setData(seriesModel.getRawData().cloneShallow());
+  seriesModel!.setData(seriesModel!.getRawData().cloneShallow());
   return dataTaskProgress;
 }
 
 function dataTaskProgress(param: StageHandlerProgressParams, context: SeriesTaskContext): void {
   // Avoid repead cloneShallow when data just created in reset.
   if (context.outputData && param.end > context.outputData.count()) {
-    context.model.getRawData().cloneShallow(context.outputData);
+    context!.model!.getRawData().cloneShallow(context.outputData);
   }
 }
 
@@ -567,7 +568,7 @@ function onDataChange(this: SeriesData, seriesModel: SeriesModel, newList: Serie
   return newList;
 }
 
-function getCurrentTask(seriesModel: SeriesModel): GeneralTask {
+function getCurrentTask(seriesModel: SeriesModel): GeneralTask | undefined {
   const scheduler = (seriesModel.ecModel || {}).scheduler;
   const pipeline = scheduler && scheduler.getPipeline(seriesModel.uid);
 
@@ -576,9 +577,9 @@ function getCurrentTask(seriesModel: SeriesModel): GeneralTask {
     // task (renderTask).
     let task = pipeline.currentTask;
     if (task) {
-      const agentStubMap = (task as OverallTask).agentStubMap;
+      const agentStubMap = (task as unknown as OverallTask).agentStubMap;
       if (agentStubMap) {
-        task = agentStubMap.get(seriesModel.uid);
+        task = agentStubMap.get(seriesModel.uid) as any;
       }
     }
     return task;

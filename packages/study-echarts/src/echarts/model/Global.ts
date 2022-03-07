@@ -123,7 +123,7 @@ echarts.use([${componentImportName}]);`);
 }
 
 class GlobalModel extends Model<ECUnitOption> {
-  option?: ECUnitOption;
+  option!: ECUnitOption;
 
   private _theme!: Model;
   private _locale!: Model;
@@ -151,7 +151,7 @@ class GlobalModel extends Model<ECUnitOption> {
     optionManager: OptionManager,
   ): void {
     theme = theme || {};
-    this.option = undefined;
+    this.option = null as any;
     this._theme = new Model(theme);
     this._locale = new Model(locale);
     this._optionManager = optionManager;
