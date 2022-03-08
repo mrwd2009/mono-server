@@ -34,6 +34,8 @@ import DataStore, { DataStoreDimensionDefine } from '../DataStore';
 import { DefaultDataProvider } from './dataProvider';
 import { SeriesDataSchema } from './SeriesDataSchema';
 
+const __DEV__= process.env.NODE_ENV === 'development';
+
 type DataStoreMap = Dictionary<DataStore>;
 
 export class SourceManager {
@@ -133,7 +135,7 @@ export class SourceManager {
 
       // See [REQUIREMENT_MEMO], merge settings on series and parent dataset if it is root.
       const newMetaRawOption = this._getSourceMetaRawOption() || {} as SourceMetaRawOption;
-      const upMetaRawOption = upSource && upSource.metaRawOption || {} as SourceMetaRawOption;
+      const upMetaRawOption = (upSource! && upSource.metaRawOption) || {} as SourceMetaRawOption;
       const seriesLayoutBy = retrieve2(newMetaRawOption.seriesLayoutBy, upMetaRawOption.seriesLayoutBy) || null;
       const sourceHeader = retrieve2(newMetaRawOption.sourceHeader, upMetaRawOption.sourceHeader);
       // Note here we should not use `upSource.dimensionsDefine`. Consider the case:
@@ -165,9 +167,9 @@ export class SourceManager {
       else {
         const sourceData = datasetModel.get('source', true);
         resultSourceList = [createSource(
-          sourceData,
+          sourceData!,
           this._getSourceMetaRawOption(),
-          null
+          null as any
         )];
         upstreamSignList = [];
       }
@@ -232,7 +234,7 @@ export class SourceManager {
       sourceList = [cloneSourceShallow(upSourceList[0])];
     }
 
-    return { sourceList, upstreamSignList };
+    return { sourceList: sourceList!, upstreamSignList };
   }
 
   private _isDirty(): boolean {
@@ -253,6 +255,8 @@ export class SourceManager {
         return true;
       }
     }
+
+    return false;
   }
 
   /**
@@ -286,7 +290,7 @@ export class SourceManager {
     const schema = seriesDimRequest.makeStoreSchema();
     return this._innerGetDataStore(
       schema.dimensions, seriesDimRequest.source, schema.hash
-    );
+    )!;
   }
 
   private _innerGetDataStore(
@@ -312,7 +316,7 @@ export class SourceManager {
       if (isSeries(this._sourceHost) && upSourceMgr) {
         cachedStore = upSourceMgr._innerGetDataStore(
           storeDims, seriesSource, sourceReadKey
-        );
+        )!;
       }
       else {
         cachedStore = new DataStore();
@@ -356,18 +360,18 @@ export class SourceManager {
     let sourceHeader: OptionSourceHeader;
     let dimensions: DimensionDefinitionLoose[];
     if (isSeries(sourceHost)) {
-      seriesLayoutBy = sourceHost.get('seriesLayoutBy', true);
-      sourceHeader = sourceHost.get('sourceHeader', true);
-      dimensions = sourceHost.get('dimensions', true);
+      seriesLayoutBy = sourceHost.get('seriesLayoutBy', true)!;
+      sourceHeader = sourceHost.get('sourceHeader', true)!;
+      dimensions = sourceHost.get('dimensions', true)!;
     }
     // See [REQUIREMENT_MEMO], `non-root-dataset` do not support them.
     else if (!this._getUpstreamSourceManagers().length) {
       const model = sourceHost as DatasetModel;
-      seriesLayoutBy = model.get('seriesLayoutBy', true);
-      sourceHeader = model.get('sourceHeader', true);
-      dimensions = model.get('dimensions', true);
+      seriesLayoutBy = model.get('seriesLayoutBy', true)!;
+      sourceHeader = model.get('sourceHeader', true)!;
+      dimensions = model.get('dimensions', true)!;
     }
-    return { seriesLayoutBy, sourceHeader, dimensions };
+    return { seriesLayoutBy: seriesLayoutBy!, sourceHeader: sourceHeader!, dimensions: dimensions! };
   }
 
 }

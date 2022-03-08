@@ -84,27 +84,27 @@ export function makeSeriesEncodeForAxisCoordSys(
   each(coordDimensions, function (coordDimInfoLoose, coordDimIdx) {
     const coordDimInfo: CoordDimensionDefinition = isObject(coordDimInfoLoose)
       ? coordDimInfoLoose
-      : (coordDimensions[coordDimIdx] = { name: coordDimInfoLoose as DimensionName });
+      : (coordDimensions[coordDimIdx!] = { name: coordDimInfoLoose as DimensionName });
     if (coordDimInfo.type === 'ordinal' && baseCategoryDimIndex == null) {
-      baseCategoryDimIndex = coordDimIdx;
+      baseCategoryDimIndex = coordDimIdx!;
       categoryWayValueDimStart = getDataDimCountOnCoordDim(coordDimInfo);
     }
-    encode[coordDimInfo.name] = [];
+    encode[coordDimInfo.name!] = [];
   });
 
   const datasetRecord = datasetMap.get(key)
-    || datasetMap.set(key, { categoryWayDim: categoryWayValueDimStart, valueWayDim: 0 });
+    || datasetMap.set(key, { categoryWayDim: categoryWayValueDimStart as any, valueWayDim: 0 });
 
   // TODO
   // Auto detect first time axis and do arrangement.
-  each(coordDimensions, function (coordDimInfo: CoordDimensionDefinition, coordDimIdx) {
+  each(coordDimensions, function (coordDimInfo: CoordDimensionDefinition, coordDimIdx: any) {
     const coordDimName = coordDimInfo.name;
     const count = getDataDimCountOnCoordDim(coordDimInfo);
 
     // In value way.
     if (baseCategoryDimIndex == null) {
       const start = datasetRecord.valueWayDim;
-      pushDim(encode[coordDimName], start, count);
+      pushDim(encode[coordDimName!], start, count);
       pushDim(encodeSeriesName, start, count);
       datasetRecord.valueWayDim += count;
 
@@ -117,17 +117,17 @@ export function makeSeriesEncodeForAxisCoordSys(
     }
     // In category way, the first category axis.
     else if (baseCategoryDimIndex === coordDimIdx) {
-      pushDim(encode[coordDimName], 0, count);
+      pushDim(encode[coordDimName!], 0, count);
       pushDim(encodeItemName, 0, count);
     }
     // In category way, the other axis.
     else {
       const start = datasetRecord.categoryWayDim;
-      pushDim(encode[coordDimName], start, count);
+      pushDim(encode[coordDimName!], start, count);
       pushDim(encodeSeriesName, start, count);
       datasetRecord.categoryWayDim += count;
     }
-  });
+  } as any);
 
   function pushDim(dimIdxArr: DimensionIndex[], idxFrom: number, idxCount: number) {
     for (let i = 0; i < idxCount; i++) {
@@ -260,6 +260,7 @@ export function querySeriesUpstreamDatasetModel(
       SINGLE_REFERRING
     ).models[0] as DatasetModel;
   }
+  return null as any;
 }
 
 /**
@@ -410,6 +411,7 @@ function doGuessOrdinal(
     else if (beStr && val !== '-') {
       return BE_ORDINAL.Must;
     }
+    return null as any
   }
 
   return BE_ORDINAL.Not;

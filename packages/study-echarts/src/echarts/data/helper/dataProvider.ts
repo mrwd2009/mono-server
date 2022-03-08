@@ -15,6 +15,8 @@ import {
 } from '../../util/types';
 import SeriesData from '../SeriesData';
 
+const __DEV__= process.env.NODE_ENV === 'development';
+
 export interface DataProvider {
   /**
    * true: all of the value are in primitive type (in type `OptionDataValue`).
@@ -63,13 +65,13 @@ export class DefaultDataProvider implements DataProvider {
 
   private _data: OptionSourceData;
 
-  private _offset: number;
+  private _offset!: number;
 
-  private _dimSize: number;
+  private _dimSize!: number;
 
-  pure: boolean;
+  pure!: boolean;
 
-  persistent: boolean;
+  persistent!: boolean;
 
   static protoInitialize = (function () {
     // PENDING: To avoid potential incompat (e.g., prototype
@@ -98,7 +100,7 @@ export class DefaultDataProvider implements DataProvider {
         }
       }
       this._offset = 0;
-      this._dimSize = dimSize;
+      this._dimSize = dimSize!;
       this._data = data;
     }
 
@@ -114,7 +116,7 @@ export class DefaultDataProvider implements DataProvider {
   }
 
   getItem(idx: number, out?: ArrayLike<OptionDataValue>): OptionDataItem {
-    return;
+    return null as any;
   }
 
   appendData(newData: OptionSourceData): void {
@@ -219,7 +221,7 @@ export class DefaultDataProvider implements DataProvider {
         appendData: function (this: DefaultDataProvider, newData: Dictionary<OptionDataValue[]>) {
           const data = this._data as Dictionary<OptionDataValue[]>;
           each(newData, function (newCol, key) {
-            const oldCol = data[key] || (data[key] = []);
+            const oldCol = data[key!] || (data[key!] = []);
             for (let i = 0; i < (newCol || []).length; i++) {
               oldCol.push(newCol[i]);
             }
@@ -248,7 +250,7 @@ export class DefaultDataProvider implements DataProvider {
         clean: function (this: DefaultDataProvider): void {
           // PENDING
           this._offset += this.count();
-          this._data = null;
+          this._data = null as any;
         }
       }
     };
@@ -294,7 +296,7 @@ const rawSourceItemGetterMap: Dictionary<RawSourceItemGetter> = {
     const data = rawData as OptionDataValue[][];
     for (let i = 0; i < data.length; i++) {
       const row = data[i];
-      item[i] = row ? row[idx] : null;
+      item[i] = row ? row[idx] : null as any;
     }
     return item;
   },
@@ -310,8 +312,8 @@ const rawSourceItemGetterMap: Dictionary<RawSourceItemGetter> = {
           throw new Error();
         }
       }
-      const col = (rawData as Dictionary<OptionDataValue[]>)[dimName];
-      item[i] = col ? col[idx] : null;
+      const col = (rawData as Dictionary<OptionDataValue[]>)[dimName!];
+      item[i] = col ? col[idx] : null as any;
     }
     return item;
   },
@@ -365,7 +367,7 @@ const rawSourceDataCounterMap: Dictionary<RawSourceDataCounter> = {
         throw new Error();
       }
     }
-    const col = (rawData as Dictionary<OptionDataValue[]>)[dimName];
+    const col = (rawData as Dictionary<OptionDataValue[]>)[dimName!];
     return col ? col.length : 0;
   },
   [SOURCE_FORMAT_ORIGINAL]: countSimply
@@ -396,15 +398,15 @@ const getRawValueSimply = function (
 
 const rawSourceValueGetterMap: Partial<Record<SourceFormat, RawSourceValueGetter>> = {
 
-  [SOURCE_FORMAT_ARRAY_ROWS]: getRawValueSimply,
+  [SOURCE_FORMAT_ARRAY_ROWS]: getRawValueSimply as any,
 
   [SOURCE_FORMAT_OBJECT_ROWS]: function (
     dataItem: Dictionary<OptionDataValue>, dimIndex: number, property: string
   ): OptionDataValue {
     return dataItem[property];
-  },
+  } as any,
 
-  [SOURCE_FORMAT_KEYED_COLUMNS]: getRawValueSimply,
+  [SOURCE_FORMAT_KEYED_COLUMNS]: getRawValueSimply as any,
 
   [SOURCE_FORMAT_ORIGINAL]: function (
     dataItem: OptionDataItem, dimIndex: number, property: string
@@ -417,7 +419,7 @@ const rawSourceValueGetterMap: Partial<Record<SourceFormat, RawSourceValueGetter
       : value[dimIndex];
   },
 
-  [SOURCE_FORMAT_TYPED_ARRAY]: getRawValueSimply
+  [SOURCE_FORMAT_TYPED_ARRAY]: getRawValueSimply as any
 };
 
 export function getRawSourceValueGetter(sourceFormat: SourceFormat): RawSourceValueGetter {
@@ -425,7 +427,7 @@ export function getRawSourceValueGetter(sourceFormat: SourceFormat): RawSourceVa
   if (__DEV__) {
     assert(method, 'Do not suppport get value on "' + sourceFormat + '".');
   }
-  return method;
+  return method!;
 }
 
 
@@ -450,14 +452,14 @@ export function retrieveRawValue(
   dim?: DimensionLoose | NullUndefined
 ): OptionDataValue | OptionDataItem {
   if (!data) {
-    return;
+    return null as any;
   }
 
   // Consider data may be not persistent.
   const dataItem = data.getRawDataItem(dataIndex);
 
   if (dataItem == null) {
-    return;
+    return null as any;
   }
 
   const store = data.getStore();
@@ -467,7 +469,7 @@ export function retrieveRawValue(
     const dimIndex = data.getDimensionIndex(dim);
     const property = store.getDimensionProperty(dimIndex);
 
-    return getRawSourceValueGetter(sourceFormat)(dataItem, dimIndex, property);
+    return getRawSourceValueGetter(sourceFormat)(dataItem, dimIndex, property!);
   }
   else {
     let result = dataItem;
@@ -506,7 +508,7 @@ export function retrieveRawAttr(data: SeriesData, dataIndex: number, attr: strin
 
   let dataItem = data.getRawDataItem(dataIndex);
   if (sourceFormat === SOURCE_FORMAT_ORIGINAL && !isObject(dataItem)) {
-    dataItem = null;
+    dataItem = null as any;
   }
   if (dataItem) {
     return (dataItem as Dictionary<OptionDataValue>)[attr];

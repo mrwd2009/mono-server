@@ -39,6 +39,8 @@ import { DatasetOption } from '../component/dataset/install';
 import { getDataItemValue } from '../util/model';
 import { BE_ORDINAL, guessOrdinal } from './helper/sourceHelper';
 
+const __DEV__ = process.env.NODE_ENV === 'development';
+
 export interface SourceMetaRawOption {
   seriesLayoutBy: SeriesLayoutBy;
   sourceHeader: OptionSourceHeader;
@@ -113,10 +115,10 @@ class SourceImpl {
     // Visit config
     this.seriesLayoutBy = fields.seriesLayoutBy || SERIES_LAYOUT_BY_COLUMN;
     this.startIndex = fields.startIndex || 0;
-    this.dimensionsDetectedCount = fields.dimensionsDetectedCount;
-    this.metaRawOption = fields.metaRawOption;
+    this.dimensionsDetectedCount = fields.dimensionsDetectedCount!;
+    this.metaRawOption = fields.metaRawOption!;
 
-    const dimensionsDefine = this.dimensionsDefine = fields.dimensionsDefine;
+    const dimensionsDefine = this.dimensionsDefine = fields.dimensionsDefine!;
 
     if (dimensionsDefine) {
       for (let i = 0; i < dimensionsDefine.length; i++) {
@@ -266,9 +268,9 @@ function determineSourceDimensions(
   // Should test these cases.
   if (!data) {
     return {
-      dimensionsDefine: normalizeDimensionsOption(dimensionsDefine),
-      startIndex,
-      dimensionsDetectedCount
+      dimensionsDefine: normalizeDimensionsOption(dimensionsDefine)!,
+      startIndex: undefined as any,
+      dimensionsDetectedCount: undefined as any
     };
   }
 
@@ -296,7 +298,7 @@ function determineSourceDimensions(
       startIndex = isNumber(sourceHeader) ? sourceHeader : sourceHeader ? 1 : 0;
     }
 
-    if (!dimensionsDefine && startIndex === 1) {
+    if (!dimensionsDefine && startIndex! === 1) {
       dimensionsDefine = [];
       arrayRowsTravelFirst(function (val, index) {
         dimensionsDefine[index] = (val != null ? val + '' : '') as DimensionName;
@@ -313,7 +315,7 @@ function determineSourceDimensions(
   }
   else if (sourceFormat === SOURCE_FORMAT_OBJECT_ROWS) {
     if (!dimensionsDefine) {
-      dimensionsDefine = objectRowsCollectDimensions(data as OptionSourceDataObjectRows);
+      dimensionsDefine = objectRowsCollectDimensions(data as OptionSourceDataObjectRows)!;
     }
   }
   else if (sourceFormat === SOURCE_FORMAT_KEYED_COLUMNS) {
@@ -335,13 +337,13 @@ function determineSourceDimensions(
   }
 
   return {
-    startIndex: startIndex,
-    dimensionsDefine: normalizeDimensionsOption(dimensionsDefine),
-    dimensionsDetectedCount: dimensionsDetectedCount
+    startIndex: startIndex!,
+    dimensionsDefine: normalizeDimensionsOption(dimensionsDefine)!,
+    dimensionsDetectedCount: dimensionsDetectedCount as any
   };
 }
 
-function objectRowsCollectDimensions(data: OptionSourceDataObjectRows): DimensionDefinitionLoose[] {
+function objectRowsCollectDimensions(data: OptionSourceDataObjectRows): DimensionDefinitionLoose[] | undefined {
   let firstIndex = 0;
   let obj;
   while (firstIndex < data.length && !(obj = data[firstIndex++])) { } // jshint ignore: line
@@ -357,7 +359,7 @@ function objectRowsCollectDimensions(data: OptionSourceDataObjectRows): Dimensio
 // Consider dimensions defined like ['A', 'price', 'B', 'price', 'C', 'price'],
 // which is reasonable. But dimension name is duplicated.
 // Returns undefined or an array contains only object without null/undefiend or string.
-function normalizeDimensionsOption(dimensionsDefine: DimensionDefinitionLoose[]): DimensionDefinition[] {
+function normalizeDimensionsOption(dimensionsDefine: DimensionDefinitionLoose[]): DimensionDefinition[] | undefined {
   if (!dimensionsDefine) {
     // The meaning of null/undefined is different from empty array.
     return;
@@ -410,7 +412,7 @@ function arrayRowsTravelFirst(
 ): void {
   if (seriesLayoutBy === SERIES_LAYOUT_BY_ROW) {
     for (let i = 0; i < data.length && i < maxLoop; i++) {
-      cb(data[i] ? data[i][0] : null, i);
+      cb(data[i] ? data[i][0] : null as any, i);
     }
   }
   else {

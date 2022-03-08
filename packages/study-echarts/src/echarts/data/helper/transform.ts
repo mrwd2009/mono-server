@@ -16,6 +16,7 @@ import { parseDataValue } from './dataValueHelper';
 import { log, makePrintable, throwError } from '../../util/log';
 import { createSource, Source, SourceMetaRawOption, detectSourceFormat } from '../Source';
 
+const __DEV__= process.env.NODE_ENV === 'development';
 
 export type PipedDataTransformOption = DataTransformOption[];
 export type DataTransformType = string;
@@ -88,7 +89,7 @@ export class ExternalSource {
   }
 
   cloneRawData(): Source['data'] {
-    return;
+    return null as any;
   }
 
   /**
@@ -169,7 +170,7 @@ function createExternalSource(internalSource: Source, externalTransform: Externa
         name: name,
         displayName: dimDef.displayName
       };
-      dimensions.push(dimDefExt);
+      dimensions.push(dimDefExt as any);
       // Users probably not sepcify dimension name. For simplicity, data transform
       // do not generate dimension name.
       if (name != null) {
@@ -183,7 +184,7 @@ function createExternalSource(internalSource: Source, externalTransform: Externa
           }
           throwError(errMsg);
         }
-        dimsByName[name] = dimDefExt;
+        dimsByName[name] = dimDefExt as any;
       }
     });
   }
@@ -223,7 +224,7 @@ function createExternalSource(internalSource: Source, externalTransform: Externa
     const dimDef = dimensions[dimIndex];
     // When `dimIndex` is `null`, `rawValueGetter` return the whole item.
     if (dimDef) {
-      return rawValueGetter(dataItem, dimIndex, dimDef.name) as OptionDataValue;
+      return rawValueGetter(dataItem, dimIndex, dimDef.name!) as OptionDataValue;
     }
   };
 
@@ -275,6 +276,8 @@ function cloneRawData(upstream: Source): Source['data'] {
     }
     return result;
   }
+
+  return null as any;
 }
 
 function getDimensionInfo(
@@ -283,7 +286,7 @@ function getDimensionInfo(
   dim: DimensionLoose
 ): ExternalDimensionDefinition {
   if (dim == null) {
-    return;
+    return null as any;
   }
   // Keep the same logic as `List::getDimension` did.
   if (isNumber(dim)
@@ -295,6 +298,8 @@ function getDimensionInfo(
   else if (hasOwn(dimsByName, dim)) {
     return dimsByName[dim as DimensionName];
   }
+
+  return null as any;
 }
 
 function cloneAllDimensionInfo(dimensions: ExternalDimensionDefinition[]): ExternalDimensionDefinition[] {
@@ -352,7 +357,7 @@ export function applyDataTransform(
 
   for (let i = 0, len = pipeLen; i < len; i++) {
     const transOption = pipedTransOption[i];
-    sourceList = applySingleDataTransform(transOption, sourceList, infoForPrint, pipeLen === 1 ? null : i);
+    sourceList = applySingleDataTransform(transOption, sourceList, infoForPrint, (pipeLen === 1 ? null : i) as any);
     // piped transform only support single input, except the fist one.
     // piped transform only support single output, except the last one.
     if (i !== len - 1) {
@@ -500,14 +505,14 @@ function applySingleDataTransform(
       resultMetaRawOption = {
         seriesLayoutBy: SERIES_LAYOUT_BY_COLUMN,
         sourceHeader: 0,
-        dimensions: result.dimensions
+        dimensions: result.dimensions!
       };
     }
 
     return createSource(
       result.data,
       resultMetaRawOption,
-      null
+      null as any
     );
   });
 }

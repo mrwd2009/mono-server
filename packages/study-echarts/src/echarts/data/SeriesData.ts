@@ -33,6 +33,8 @@ import { LineStyleProps } from '../model/mixin/lineStyle';
 import DataStore, { DataStoreDimensionDefine, DimValueGetter } from './DataStore';
 import { isSeriesDataSchema, SeriesDataSchema } from './helper/SeriesDataSchema';
 
+const __DEV__ = process.env.NODE_ENV === 'development';
+
 const isObject = zrUtil.isObject;
 const map = zrUtil.map;
 
@@ -43,7 +45,7 @@ const ID_PREFIX = 'e\0\0';
 const INDEX_NOT_FOUND = -1;
 
 type NameRepeatCount = { [name: string]: number };
-type ItrParamDim = DimensionLoose | Array<DimensionLoose>;
+type ItrParamDims = DimensionLoose | Array<DimensionLoose>;
 type CtxOrList<Ctx> = unknown extends Ctx ? SeriesData : Ctx;
 type EachCb0<Ctx> = (this: CtxOrList<Ctx>, idx: number) => void;
 type EachCb1<Ctx> = (this: CtxOrList<Ctx>, x: ParsedValue, idx: number) => void;
@@ -112,9 +114,9 @@ export interface DataCalculationInfo<SERIES_MODEL> {
 let prepareInvertedIndex: (data: SeriesData) => void;
 let getId: (data: SeriesDataSchema, rawIndex: number) => string;
 let getIdNameFromStore: (data: SeriesData, dimIdx: number, dataIdx: number) => string;
-let normalizeDimensions: (dimensions: ItrParamDim) => Array<DimensionLoose>;
+let normalizeDimensions: (dimensions: ItrParamDims) => Array<DimensionLoose>;
 let transferProperties: (target: SeriesDataSchema, source: SeriesData) => void;
-let cloneListFroMapAndSample: (original: SeriesData) => SeriesData;
+let cloneListForMapAndSample: (original: SeriesData) => SeriesData;
 let makeIdFromName: (data: SeriesDataSchema, idx: number) => void;
 
 class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisual = DefaultDataVisual> {
@@ -132,13 +134,13 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
 
   readonly hostModel: HostModel;
 
-  dataType: SeriesDataType;
+  dataType!: SeriesDataType;
 
   graph?: Graph;
 
   tree?: Tree;
 
-  private _store: DataStore;
+  private _store!: DataStore;
 
   private _nameList: string[] = [];
   private _idList: string[] = [];
@@ -155,21 +157,21 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
 
   private _approximateExtent: Record<SeriesDimensionName, [number, number]> = {};
 
-  private _dimSummary: DimensionSummary;
+  private _dimSummary!: DimensionSummary;
 
   private _invertedIndicesMap: Record<SeriesDimensionName, ArrayLike<number>>;
 
   private _calculationInfo: DataCalculationInfo<HostModel> = {} as DataCalculationInfo<HostModel>;
 
-  userOutput: DimensionSummary['userOutput'];
+  userOutput!: DimensionSummary['userOutput'];
 
   hasItemOption: boolean = false;
 
-  private _nameRepeatCount: NameRepeatCount;
-  private _nameDimIdx: number;
-  private _idDimIdx: number;
+  private _nameRepeatCount!: NameRepeatCount;
+  private _nameDimIdx!: number;
+  private _idDimIdx!: number;
 
-  private __wrappedMethods: string[];
+  private __wrappedMethods!: string[];
 
   TRANSFERABLE_METHODS = ['cloneShallow', 'downSample', 'lttbDownSample', 'map'] as const;
   CHANGABLE_METHODS = ['filterSelf', 'selectRange'] as const;
@@ -231,7 +233,7 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
       }
 
       if (__DEV__) {
-        zrUtil.assert(assignStoreDimIdx || dimensionInfo.storeDimIndex >= 0);
+        zrUtil.assert(assignStoreDimIdx || dimensionInfo.storeDimIndex! >= 0);
       }
       if (assignStoreDimIdx) {
         dimensionInfo.storeDimIndex = i;
@@ -249,12 +251,12 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
     if (this._dimOmitted) {
       const dimIdxToName = this._dimIdxToName = zrUtil.createHashMap<DimensionName, DimensionIndex>();
       zrUtil.each(dimensionNames, dimName => {
-        dimIdxToName.set(dimensionInfos[dimName].storeDimIndex, dimName);
+        dimIdxToName.set(dimensionInfos[dimName].storeDimIndex!, dimName);
       });
     }
   }
 
-  getDimension(dim: SeriesDimensionLoose): DimensionName {
+  getDimension(dim: SeriesDimensionLoose): DimensionName | undefined {
     let dimIdx = this._recognizeDimIndex(dim);
     if (dimIdx == null) {
       return dim as DimensionName;
@@ -267,12 +269,12 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
 
     // Retrieve from series dimension definition becuase it probably contains
     // generated dimension name (like 'x', 'y').
-    const dimName = this._dimIdxToName.get(dimIdx);
+    const dimName = this._dimIdxToName!.get(dimIdx);
     if (dimName != null) {
       return dimName;
     }
 
-    const sourceDimDef = this._schema.getSourceDimension(dimIdx);
+    const sourceDimDef = this._schema!.getSourceDimension(dimIdx);
     if (sourceDimDef) {
       return sourceDimDef.name;
     }
@@ -290,20 +292,20 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
 
     const dimInfo = this._getDimInfo(dim as DimensionName);
     return dimInfo
-      ? dimInfo.storeDimIndex
+      ? dimInfo.storeDimIndex!
       : this._dimOmitted
-        ? this._schema.getSourceDimensionIndex(dim as DimensionName)
+        ? this._schema!.getSourceDimensionIndex(dim as DimensionName)
         : -1;
   }
 
-  private _recognizeDimIndex(dim: DimensionLoose): DimensionIndex {
+  private _recognizeDimIndex(dim: DimensionLoose): DimensionIndex | undefined {
     if (zrUtil.isNumber(dim)
       // If being a number-like string but not being defined as a dimension name.
       || (
         dim != null
         && !isNaN(dim as any)
         && !this._getDimInfo(dim)
-        && (!this._dimOmitted || this._schema.getSourceDimensionIndex(dim) < 0)
+        && (!this._dimOmitted || this._schema!.getSourceDimensionIndex(dim) < 0)
       )
     ) {
       return +dim;
@@ -322,16 +324,16 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
 
   getDimensionInfo(dim: SeriesDimensionLoose): SeriesDimensionDefine {
     // Do not clone, because there may be categories in dimInfo.
-    return this._getDimInfo(this.getDimension(dim));
+    return this._getDimInfo(this.getDimension(dim)!);
   }
 
-  private _getDimInfo: (dimName: SeriesDimensionName) => SeriesDimensionDefine;
+  private _getDimInfo!: (dimName: SeriesDimensionName) => SeriesDimensionDefine;
 
   private _initGetDimensionInfo(needsHasOwn: boolean): void {
     const dimensionInfos = this._dimInfos;
-    this._getDimInfo = needsHasOwn
-      ? dimName => (dimensionInfos.hasOwnProperty(dimName) ? dimensionInfos[dimName] : undefined)
-      : dimName => dimensionInfos[dimName];
+    this._getDimInfo = (needsHasOwn
+      ? (dimName: any) => (dimensionInfos.hasOwnProperty(dimName) ? dimensionInfos[dimName] : undefined)
+      : (dimName: any) => dimensionInfos[dimName]) as any;
   }
 
   getDimensionsOnCoord(): SeriesDimensionName[] {
@@ -371,7 +373,7 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
       store = data;
     }
 
-    if (!store) {
+    if (!store!) {
       const dimensions = this.dimensions;
       const provider = (isSourceInstance(data) || zrUtil.isArrayLike(data))
         ? new DefaultDataProvider(data as Source | OptionSourceData, dimensions.length)
@@ -405,7 +407,7 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
   }
 
   appendValues(values: any[][], names?: string[]): void {
-    const { start, end } = this._store.appendValues(values, names.length);
+    const { start, end } = this._store.appendValues(values, names!.length);
     const shouldMakeIdFromName = this._shouldMakeIdFromName();
 
     this._updateOrdinalMeta();
@@ -415,7 +417,7 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
         const sourceIdx = idx - start;
         this._nameList[idx] = names[sourceIdx];
         if (shouldMakeIdFromName) {
-          makeIdFromName(this, idx);
+          makeIdFromName(this as any, idx);
         }
       }
     }
@@ -427,7 +429,7 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
     for (let i = 0; i < dimensions.length; i++) {
       const dimInfo = this._dimInfos[dimensions[i]];
       if (dimInfo.ordinalMeta) {
-        store.collectOrdinalMeta(dimInfo.storeDimIndex, dimInfo.ordinalMeta);
+        store.collectOrdinalMeta(dimInfo.storeDimIndex!, dimInfo.ordinalMeta);
       }
     }
   }
@@ -473,11 +475,11 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
         if (dataItem) {
           const itemName = (dataItem as any).name;
           if (nameList[idx] == null && itemName != null) {
-            nameList[idx] = convertOptionIdName(itemName, null);
+            nameList[idx] = convertOptionIdName(itemName, null as any);
           }
           const itemId = (dataItem as any).id;
           if (idList[idx] == null && itemId != null) {
-            idList[idx] = convertOptionIdName(itemId, null);
+            idList[idx] = convertOptionIdName(itemId, null as any);
           }
         }
       }
@@ -485,7 +487,7 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
 
     if (this._shouldMakeIdFromName()) {
       for (let idx = start; idx < end; idx++) {
-        makeIdFromName(this, idx);
+        makeIdFromName(this as any, idx);
       }
     }
 
@@ -500,7 +502,7 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
   * Approximate extent is only used for: calculte extent of filtered data outside.
   */
   setApproximateExtent(extent: [number, number], dim: SeriesDimensionLoose): void {
-    dim = this.getDimension(dim);
+    dim = this.getDimension(dim)!;
     this._approximateExtent[dim] = extent.slice() as [number, number];
   }
 
@@ -549,7 +551,7 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
     return ordinal;
   }
   getId(idx: number): string {
-    return getId(this, this.getRawIndex(idx));
+    return getId(this as any, this.getRawIndex(idx));
   }
 
   count(): number {
@@ -561,18 +563,18 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
   *
   * @notice Should better to use `data.getStore().get(dimIndex, dataIdx)` instead.
   */
-  get(dim: SeriesDimensionName, idx: number): ParsedValue {
+  get(dim: SeriesDimensionName, idx: number): ParsedValue | undefined {
     const store = this._store;
     const dimInfo = this._dimInfos[dim];
     if (dimInfo) {
-      return store.get(dimInfo.storeDimIndex, idx);
+      return store.get(dimInfo.storeDimIndex!, idx);
     }
   }
-  getByRawIndex(dim: SeriesDimensionName, rawIdx: number): ParsedValue {
+  getByRawIndex(dim: SeriesDimensionName, rawIdx: number): ParsedValue | undefined {
     const store = this._store;
     const dimInfo = this._dimInfos[dim];
     if (dimInfo) {
-      return store.getByRawIndex(dimInfo.storeDimIndex, rawIdx);
+      return store.getByRawIndex(dimInfo.storeDimIndex!, rawIdx);
     }
   }
 
@@ -656,10 +658,10 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
       }
     }
     const rawIndex = invertedIndices[value];
-    if (rawIndex == null || isNaN(rawIndex)) {
+    if (rawIndex == null || isNaN(rawIndex as number)) {
       return INDEX_NOT_FOUND;
     }
-    return rawIndex;
+    return rawIndex as number;
   }
   indicesOfNearest(dim: DimensionLoose, value: number, maxDistance?: number): number[] {
     return this._store.indicesOfNearest(
@@ -772,7 +774,6 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
     cb: MapArrayCb<Ctx> | Ctx,
     ctx?: Ctx
   ): unknown[] {
-    'use strict';
 
     if (zrUtil.isFunction(dims)) {
       ctx = cb as Ctx;
@@ -785,7 +786,7 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
 
     const result: unknown[] = [];
     this.each(dims, function () {
-      result.push(cb && (cb as MapArrayCb<Ctx>).apply(this, arguments));
+      result.push(cb && (cb as MapArrayCb<Ctx>).apply(this, arguments as any));
     }, ctx);
     return result;
   }
@@ -803,7 +804,6 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
     ctx?: Ctx,
     ctxCompat?: Ctx
   ): SeriesData {
-    'use strict';
 
     // ctxCompat just for compat echarts3
     const fCtx = (ctx || ctxCompat || this) as CtxOrList<Ctx>;
@@ -917,11 +917,11 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
       otherList ? otherList.getStore().getIndices() : [],
       this.getStore().getIndices(),
       function (idx: number) {
-        return getId(otherList, idx);
-      },
+        return getId(otherList as any, idx);
+      } as any,
       function (idx: number) {
-        return getId(thisList, idx);
-      }
+        return getId(thisList as any, idx);
+      } as any
     );
   }
 
@@ -1101,7 +1101,7 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
   ): void {
     zrUtil.each(this._graphicEls, function (el, idx) {
       if (el) {
-        cb && cb.call(context, el, idx);
+        cb && cb.call(context!, el, idx!);
       }
     });
   }
@@ -1120,7 +1120,7 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
       );
     }
 
-    transferProperties(list, this);
+    transferProperties(list as any, this);
     list._store = this._store;
 
     return list;
@@ -1133,13 +1133,13 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
     methodName: FunctionPropertyNames<SeriesData>,
     injectFunction: (...args: any) => any
   ): void {
-    const originalMethod = this[methodName];
+    const originalMethod = this[methodName!];
     if (!zrUtil.isFunction(originalMethod)) {
       return;
     }
     this.__wrappedMethods = this.__wrappedMethods || [];
-    this.__wrappedMethods.push(methodName);
-    this[methodName] = function () {
+    this.__wrappedMethods.push(methodName!);
+    this[methodName!] = function () {
       const res = (originalMethod as any).apply(this, arguments);
       return injectFunction.apply(this, [res].concat(zrUtil.slice(arguments)));
     };
@@ -1150,12 +1150,12 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
     prepareInvertedIndex = function (data: SeriesData): void {
       const invertedIndicesMap = data._invertedIndicesMap;
       zrUtil.each(invertedIndicesMap, function (invertedIndices, dim) {
-        const dimInfo = data._dimInfos[dim];
+        const dimInfo = data._dimInfos[dim!];
         // Currently, only dimensions that has ordinalMeta can create inverted indices.
         const ordinalMeta = dimInfo.ordinalMeta;
         const store = data._store;
         if (ordinalMeta) {
-          invertedIndices = invertedIndicesMap[dim] = new CtorInt32Array(
+          invertedIndices = invertedIndicesMap[dim!] = new CtorInt32Array(
             ordinalMeta.categories.length
           );
           // The default value of TypedArray is 0. To avoid miss
@@ -1165,7 +1165,7 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
           }
           for (let i = 0; i < store.count(); i++) {
             // Only support the case that all values are distinct.
-            invertedIndices[store.get(dimInfo.storeDimIndex, i) as number] = i;
+            invertedIndices[store.get(dimInfo.storeDimIndex!, i) as number] = i;
           }
         }
       });
@@ -1174,7 +1174,7 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
     getIdNameFromStore = function (
       data: SeriesData, dimIdx: number, idx: number
     ): string {
-      return convertOptionIdName(data._getCategory(dimIdx, idx), null);
+      return convertOptionIdName(data._getCategory(dimIdx, idx), null as any);
     };
 
     /**
@@ -1189,7 +1189,7 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
         id = ID_PREFIX + rawIndex;
       }
       return id;
-    };
+    } as any;
 
     normalizeDimensions = function (
       dimensions: ItrParamDims
@@ -1211,7 +1211,7 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
         original.hostModel
       );
       // FIXME If needs stackedOn, value may already been stacked
-      transferProperties(list, original);
+      transferProperties(list as any, original);
       return list;
     };
 
@@ -1232,7 +1232,7 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
       });
 
       target._calculationInfo = zrUtil.extend({}, source._calculationInfo);
-    };
+    } as any;
     makeIdFromName = function (data: SeriesData, idx: number): void {
       const nameList = data._nameList;
       const idList = data._idList;
@@ -1257,7 +1257,7 @@ class SeriesData<HostModel extends Model = Model, Visual extends DefaultDataVisu
         }
         idList[idx] = id;
       }
-    };
+    } as any;
   })();
 }
 
