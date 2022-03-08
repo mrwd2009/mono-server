@@ -10,7 +10,7 @@ import {
   registerTransform,
   registerLoading,
   registerMap,
-  registerUpdateLifecyle,
+  registerUpdateLifecycle,
   PRIORITY,
 } from './core/echarts';
 
@@ -31,7 +31,7 @@ const extensionRegisters = {
   registerProcessor,
   registerPostInit,
   registerPostUpdate,
-  registerUpdateLifecyle,
+  registerUpdateLifecycle,
   registerAction,
   registerCoordinateSystem,
   registerLayout,

@@ -69,7 +69,7 @@ function handleSeriesLegacySelectEvents(
           ecIns.trigger(legacyEventName, {
             type: legacyEventName,
             seriesId: seriesModel.id,
-            name: isArray(dataIndex) ? data.getName(dataIndex[0]) : data.getName(dataIndex),
+            name: isArray(dataIndex) ? data.getName(dataIndex[0]) : data.getName(dataIndex!),
             selected: isString(selectedMap) ? selectedMap : extend({}, selectedMap!)
           });
         }

@@ -19,7 +19,7 @@ export function getTextRect(
       verticalAlign,
       padding,
       rich,
-      overflow: truncate ? 'truncate' : null,
+      overflow: truncate ? 'truncate' : null as any,
       lineHeight
     }
   });

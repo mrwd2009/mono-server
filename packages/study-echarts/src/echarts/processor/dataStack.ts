@@ -54,7 +54,7 @@ export default function dataStack(ecModel: GlobalModel) {
     }
   });
 
-  stackInfoMap.each(calculateStack);
+  stackInfoMap.each(calculateStack as any);
 }
 
 function calculateStack(stackInfoList: StackInfo[]) {
@@ -89,17 +89,17 @@ function calculateStack(stackInfoList: StackInfo[]) {
       // If stackOver is NaN, chart view will render point on value start.
       let stackedOver = NaN;
 
-      for (let j = idxInStack - 1; j >= 0; j--) {
+      for (let j = idxInStack! - 1; j >= 0; j--) {
         const stackInfo = stackInfoList[j];
 
         // Has been optimized by inverted indices on `stackedByDimension`.
         if (!isStackedByIndex) {
-          stackedDataRawIndex = stackInfo.data.rawIndexOf(stackInfo.stackedByDimension, byValue);
+          stackedDataRawIndex = stackInfo.data.rawIndexOf(stackInfo.stackedByDimension, byValue!);
         }
 
-        if (stackedDataRawIndex >= 0) {
+        if (stackedDataRawIndex as any >= 0) {
           const val = stackInfo.data.getByRawIndex(
-            stackInfo.stackResultDimension, stackedDataRawIndex
+            stackInfo.stackResultDimension, stackedDataRawIndex as any
           ) as number;
 
           // Considering positive stack, negative stack and empty data

@@ -102,7 +102,7 @@ export function setLabelText(label: ZRText, labelTexts: Record<DisplayState, str
     state.style.text = text;
   }
 
-  const oldStates = label.currentStates.slice();
+  const oldStates = label.currentStates!.slice();
   label.clearStates(true);
   label.setStyle({ text: labelTexts.normal });
   label.useStates(oldStates, true);
@@ -120,18 +120,18 @@ function getLabelText<TLabelDataIndex>(
   let baseText;
   if (labelFetcher) {
     baseText = labelFetcher.getFormattedLabel(
-      labelDataIndex, 'normal',
-      null,
+      labelDataIndex!, 'normal',
+      null as any,
       labelDimIndex,
       normalModel && normalModel.get('formatter'),
       interpolatedValue != null ? {
         interpolatedValue: interpolatedValue
-      } : null
+      } : null as any
     );
   }
   if (baseText == null) {
     baseText = isFunction(opt.defaultText)
-      ? opt.defaultText(labelDataIndex, opt, interpolatedValue)
+      ? opt.defaultText(labelDataIndex!, opt, interpolatedValue)
       : opt.defaultText;
   }
 
@@ -144,13 +144,13 @@ function getLabelText<TLabelDataIndex>(
     const stateModel = stateModels[stateName];
     statesText[stateName] = retrieve2(labelFetcher
       ? labelFetcher.getFormattedLabel(
-        labelDataIndex,
+        labelDataIndex!,
         stateName,
-        null,
+        null as any,
         labelDimIndex,
         stateModel && stateModel.get('formatter')
       )
-      : null, baseText);
+      : null as any, baseText);
   }
   return statesText;
 }

@@ -27,6 +27,8 @@ import SeriesData from '../data/SeriesData';
 import { traverseElements } from '../util/graphic';
 import { error } from '../util/log';
 
+const __DEV__ = process.env.NODE_ENV === 'development';
+
 const inner = modelUtil.makeInner<{
   updateMethod: keyof ChartView,
 }, Payload>();
@@ -170,12 +172,12 @@ function toggleHighlight(data: SeriesData, payload: Payload, state: DisplayState
 
   if (dataIndex != null) {
     each(modelUtil.normalizeToArray(dataIndex), function (dataIdx) {
-      elSetState(data.getItemGraphicEl(dataIdx), state, highlightDigit);
+      elSetState(data.getItemGraphicEl(dataIdx), state, highlightDigit!);
     });
   }
   else {
     data.eachItemGraphicEl(function (el) {
-      elSetState(el, state, highlightDigit);
+      elSetState(el, state, highlightDigit!);
     });
   }
 }
@@ -188,7 +190,7 @@ clazzUtil.enableClassExtend(ChartView as ChartViewConstructor, ['dispose']);
 clazzUtil.enableClassManagement(ChartView as ChartViewConstructor);
 
 function renderTaskPlan(context: SeriesTaskContext): StageHandlerPlanReturn {
-  return renderPlanner(context.model);
+  return renderPlanner(context.model!);
 }
 
 function renderTaskReset(context: SeriesTaskContext): TaskResetCallbackReturn<SeriesTaskContext> {
@@ -197,20 +199,20 @@ function renderTaskReset(context: SeriesTaskContext): TaskResetCallbackReturn<Se
   const api = context.api;
   const payload = context.payload;
   // FIXME: remove updateView updateVisual
-  const progressiveRender = seriesModel.pipelineContext.progressiveRender;
+  const progressiveRender = seriesModel!.pipelineContext.progressiveRender;
   const view = context.view;
 
   const updateMethod = payload && inner(payload).updateMethod;
   const methodName: keyof ChartView = progressiveRender
     ? 'incrementalPrepareRender'
-    : (updateMethod && view[updateMethod])
+    : (updateMethod && view![updateMethod])
       ? updateMethod
       // `appendData` is also supported when data amount
       // is less than progressive threshold.
       : 'render';
 
   if (methodName !== 'render') {
-    (view[methodName] as any)(seriesModel, ecModel, api, payload);
+    (view![methodName] as any)(seriesModel, ecModel, api, payload);
   }
 
   return progressMethodMap[methodName];
@@ -219,11 +221,11 @@ function renderTaskReset(context: SeriesTaskContext): TaskResetCallbackReturn<Se
 const progressMethodMap: { [method: string]: TaskResetCallbackReturn<SeriesTaskContext> } = {
   incrementalPrepareRender: {
     progress: function (params: StageHandlerProgressParams, context: SeriesTaskContext): void {
-      context.view.incrementalRender(
-        params, context.model, context.ecModel, context.api, context.payload
+      context.view!.incrementalRender(
+        params, context.model!, context.ecModel!, context.api!, context.payload!
       );
     }
-  },
+  } as any,
   render: {
     // Put view.render in `progress` to support appendData. But in this case
     // view.render should not be called in reset, otherwise it will be called
@@ -231,8 +233,8 @@ const progressMethodMap: { [method: string]: TaskResetCallbackReturn<SeriesTaskC
     // in any cases.
     forceFirstProgress: true,
     progress: function (params: StageHandlerProgressParams, context: SeriesTaskContext): void {
-      context.view.render(
-        context.model, context.ecModel, context.api, context.payload
+      context.view!.render(
+        context.model!, context.ecModel!, context.api!, context.payload!
       );
     }
   }

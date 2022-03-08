@@ -2,6 +2,7 @@ import * as zrUtil from 'zrender/src/core/util';
 import * as modelUtil from '../../util/model';
 import { Dictionary } from 'zrender/src/core/types';
 import { deprecateLog, deprecateReplaceLog } from '../../util/log';
+const __DEV__ = process.env.NODE_ENV === 'development';
 
 const each = zrUtil.each;
 const isObject = zrUtil.isObject;
@@ -177,7 +178,7 @@ function processSeries(seriesOpt: any) {
       }
     }
     zrUtil.each(seriesOpt.categories, function (opt) {
-      removeEC3NormalStatus(opt);
+      removeEC3NormalStatus(opt as any);
     });
   }
 
@@ -219,7 +220,7 @@ function processSeries(seriesOpt: any) {
   else if (seriesOpt.type === 'treemap') {
     convertNormalEmphasis(seriesOpt.breadcrumb, 'itemStyle');
     zrUtil.each(seriesOpt.levels, function (opt) {
-      removeEC3NormalStatus(opt);
+      removeEC3NormalStatus(opt as any);
     });
   }
   else if (seriesOpt.type === 'tree') {
@@ -323,7 +324,7 @@ export default function globalCompatStyle(option: any, isTheme?: boolean) {
   each(toArr(option.toolbox), function (toolboxOpt) {
     convertNormalEmphasis(toolboxOpt, 'iconStyle');
     each(toolboxOpt.feature, function (featureOpt) {
-      convertNormalEmphasis(featureOpt, 'iconStyle');
+      convertNormalEmphasis(featureOpt as any, 'iconStyle');
     });
   });
 

@@ -65,8 +65,8 @@ export class DataFormatMixin {
       value: rawValue as any,
       color: color,
       borderColor: borderColor,
-      dimensionNames: userOutput ? userOutput.fullDimensions : null,
-      encode: userOutput ? userOutput.encode : null,
+      dimensionNames: userOutput ? userOutput.fullDimensions : null as any,
+      encode: userOutput ? userOutput.encode : null as any,
 
       // Param name list for mapping `a`, `b`, `c`, `d`, `e`
       $vars: ['seriesName', 'name', 'value']

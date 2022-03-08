@@ -1,5 +1,7 @@
 import SeriesData from '../data/SeriesData';
 
+const __DEV__ = process.env.NODE_ENV === 'development';
+
 export function getItemVisualFromData(data: SeriesData, dataIndex: number, key: string) {
   switch (key) {
     case 'color':

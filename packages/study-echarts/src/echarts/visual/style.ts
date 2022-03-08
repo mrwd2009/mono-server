@@ -120,7 +120,7 @@ const sharedModel = new Model();
 const dataStyleTask: StageHandler = {
   createOnAllSeries: true,
   performRawSeries: true,
-  reset(seriesModel, ecModel) {
+  reset: ((seriesModel: any, ecModel: any) => {
     if (seriesModel.ignoreStyleOnData || ecModel.isSeriesFiltered(seriesModel)) {
       return;
     }
@@ -134,7 +134,7 @@ const dataStyleTask: StageHandler = {
     const colorKey = data.getVisual('drawType');
 
     return {
-      dataEach: data.hasItemOption ? function (data, idx) {
+      dataEach: data.hasItemOption ? function (data: any, idx: any) {
         // Not use getItemModel for performance considuration
         const rawItem = data.getRawDataItem(idx) as any;
         if (rawItem && rawItem[stylePath]) {
@@ -155,7 +155,7 @@ const dataStyleTask: StageHandler = {
         }
       } : null
     };
-  }
+  }) as any
 };
 
 const dataColorPaletteTask: StageHandler = {
