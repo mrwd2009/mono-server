@@ -46,7 +46,7 @@ function boxLayout(
   }
   let currentLineMaxSize = 0;
 
-  group.eachChild(function (child, idx) {
+  group.eachChild(function (child, idx: any) {
     const rect = child.getBoundingRect();
     const nextChild = group.childAt(idx + 1);
     const nextChildRect = nextChild && nextChild.getBoundingRect();
@@ -58,7 +58,7 @@ function boxLayout(
       nextX = x + moveX;
       // Wrap when width exceeds maxWidth or meet a `newline` group
       // FIXME compare before adding gap?
-      if (nextX > maxWidth || (child as NewlineElement).newline) {
+      if (nextX > maxWidth! || (child as NewlineElement).newline) {
         x = 0;
         nextX = moveX;
         y += currentLineMaxSize + gap;
@@ -73,7 +73,7 @@ function boxLayout(
       const moveY = rect.height + (nextChildRect ? (-nextChildRect.y + rect.y) : 0);
       nextY = y + moveY;
       // Wrap when width exceeds maxHeight or meet a `newline` group
-      if (nextY > maxHeight || (child as NewlineElement).newline) {
+      if (nextY > maxHeight! || (child as NewlineElement).newline) {
         x += currentLineMaxSize + gap;
         y = 0;
         nextY = moveY;
@@ -93,8 +93,8 @@ function boxLayout(
     child.markRedraw();
 
     orient === 'horizontal'
-      ? (x = nextX + gap)
-      : (y = nextY + gap);
+      ? (x = nextX! + gap)
+      : (y = nextY! + gap);
   });
 }
 
@@ -117,10 +117,10 @@ export function getAvailableSize(
   const containerWidth = containerRect.width;
   const containerHeight = containerRect.height;
 
-  let x = parsePercent(positionInfo.left, containerWidth);
-  let y = parsePercent(positionInfo.top, containerHeight);
-  let x2 = parsePercent(positionInfo.right, containerWidth);
-  let y2 = parsePercent(positionInfo.bottom, containerHeight);
+  let x = parsePercent(positionInfo.left!, containerWidth);
+  let y = parsePercent(positionInfo.top!, containerHeight);
+  let x2 = parsePercent(positionInfo.right!, containerWidth);
+  let y2 = parsePercent(positionInfo.bottom!, containerHeight);
 
   (isNaN(x) || isNaN(parseFloat(positionInfo.left as string))) && (x = 0);
   (isNaN(x2) || isNaN(parseFloat(positionInfo.right as string))) && (x2 = containerWidth);
@@ -150,12 +150,12 @@ export function getLayoutRect(
   const containerWidth = containerRect.width;
   const containerHeight = containerRect.height;
 
-  let left = parsePercent(positionInfo.left, containerWidth);
-  let top = parsePercent(positionInfo.top, containerHeight);
-  const right = parsePercent(positionInfo.right, containerWidth);
-  const bottom = parsePercent(positionInfo.bottom, containerHeight);
-  let width = parsePercent(positionInfo.width, containerWidth);
-  let height = parsePercent(positionInfo.height, containerHeight);
+  let left = parsePercent(positionInfo.left!, containerWidth);
+  let top = parsePercent(positionInfo.top!, containerHeight);
+  const right = parsePercent(positionInfo.right!, containerWidth);
+  const bottom = parsePercent(positionInfo.bottom!, containerHeight);
+  let width = parsePercent(positionInfo.width!, containerWidth);
+  let height = parsePercent(positionInfo.height!, containerHeight);
 
   const verticalMargin = margin[2] + margin[0];
   const horizontalMargin = margin[1] + margin[3];
@@ -264,7 +264,7 @@ export function positionElement(
   let rect;
   if (boundingMode === 'raw') {
     rect = el.type === 'group'
-      ? new BoundingRect(0, 0, +positionInfo.width || 0, +positionInfo.height || 0)
+      ? new BoundingRect(0, 0, +positionInfo.width! || 0, +positionInfo.height! || 0)
       : el.getBoundingRect();
   }
   else {
@@ -332,7 +332,7 @@ export function mergeLayoutParam<T extends BoxLayoutOptionMixin>(
   opt?: ComponentLayoutMode
 ) {
   let ignoreSize = opt && opt.ignoreSize;
-  !zrUtil.isArray(ignoreSize) && (ignoreSize = [ignoreSize, ignoreSize]);
+  !zrUtil.isArray(ignoreSize) && (ignoreSize = [ignoreSize!, ignoreSize!]);
 
   const hResult = merge(HV_NAMES[0], 0);
   const vResult = merge(HV_NAMES[1], 1);
@@ -361,10 +361,10 @@ export function mergeLayoutParam<T extends BoxLayoutOptionMixin>(
     if ((ignoreSize as [boolean, boolean])[hvIdx]) {
       // Only one of left/right is premitted to exist.
       if (hasValue(newOption, names[1])) {
-        merged[names[2]] = null;
+        merged[names[2]] = null as any;
       }
       else if (hasValue(newOption, names[2])) {
-        merged[names[1]] = null;
+        merged[names[1]] = null as any;
       }
       return merged;
     }

@@ -42,6 +42,8 @@ import ExtensionAPI from '../core/ExtensionAPI';
 import ComponentModel from '../model/Component';
 import { error } from './log';
 
+const __DEV__ = process.env.NODE_ENV === 'development';
+
 // Reserve 0 as default.
 let _highlightNextDigit = 1;
 
@@ -115,8 +117,8 @@ function liftColor(color: string | GradientObject): string | GradientObject {
 }
 
 function doChangeHoverState(el: ECElement, stateName: DisplayState, hoverStateEnum: 0 | 1 | 2) {
-  if (el.onHoverStateChange && (el.hoverState || 0) !== hoverStateEnum) {
-    el.onHoverStateChange(stateName);
+  if ((el as any).onHoverStateChange && (el.hoverState || 0) !== hoverStateEnum) {
+    (el as any).onHoverStateChange(stateName);
   }
   el.hoverState = hoverStateEnum;
 }
@@ -218,7 +220,8 @@ function getFromStateStyle(
       // Dont consider the animation to emphasis state.
       && animator.__fromStateTransition.indexOf(toStateName) < 0
       && animator.targetName === 'style') {
-      animator.saveTo(fromState, props);
+      // TODO-ZRENDER
+      (animator as any).saveTo(fromState, props);
     }
   }
   return fromState;
@@ -233,7 +236,7 @@ function createEmphasisDefaultState(
   const hasSelect = targetStates && indexOf(targetStates, 'select') >= 0;
   let cloned = false;
   if (el instanceof Path) {
-    const store = getSavedStates(el);
+    const store = getSavedStates(el as any);
     const fromFill = hasSelect ? (store.selectFill || store.normalFill) : store.normalFill;
     const fromStroke = hasSelect ? (store.selectStroke || store.normalStroke) : store.normalStroke;
     if (hasFillOrStroke(fromFill) || hasFillOrStroke(fromStroke)) {
@@ -330,7 +333,7 @@ function elementStateProxy(this: Displayable, stateName: string, targetStates?: 
   const state = this.states[stateName];
   if (this.style) {
     if (stateName === 'emphasis') {
-      return createEmphasisDefaultState(this, stateName, targetStates, state);
+      return createEmphasisDefaultState(this, stateName, targetStates!, state);
     }
     else if (stateName === 'blur') {
       return createBlurDefaultState(this, stateName, state);
@@ -442,7 +445,7 @@ export function blurSeries(
   const targetSeriesModel = ecModel.getSeriesByIndex(targetSeriesIndex);
   let targetCoordSys: CoordinateSystemMaster | CoordinateSystem = targetSeriesModel.coordinateSystem;
   if (targetCoordSys && (targetCoordSys as CoordinateSystem).master) {
-    targetCoordSys = (targetCoordSys as CoordinateSystem).master;
+    targetCoordSys = (targetCoordSys as CoordinateSystem).master!;
   }
 
   const blurredSeries: SeriesModel[] = [];
@@ -452,18 +455,18 @@ export function blurSeries(
     const sameSeries = targetSeriesModel === seriesModel;
     let coordSys: CoordinateSystemMaster | CoordinateSystem = seriesModel.coordinateSystem;
     if (coordSys && (coordSys as CoordinateSystem).master) {
-      coordSys = (coordSys as CoordinateSystem).master;
+      coordSys = (coordSys as CoordinateSystem).master!;
     }
     const sameCoordSys = coordSys && targetCoordSys
       ? coordSys === targetCoordSys
       : sameSeries;   // If there is no coordinate system. use sameSeries instead.
     if (!(
       // Not blur other series if blurScope series
-      blurScope === 'series' && !sameSeries
+      (blurScope === 'series' && !sameSeries)
       // Not blur other coordinate system if blurScope is coordinateSystem
-      || blurScope === 'coordinateSystem' && !sameCoordSys
+      || (blurScope === 'coordinateSystem' && !sameCoordSys)
       // Not blur self series if focus is series.
-      || focus === 'series' && sameSeries
+      || (focus === 'series' && sameSeries)
       // TODO blurScope: coordinate system
     )) {
       const view = api.getViewOfSeriesModel(seriesModel);
@@ -477,7 +480,7 @@ export function blurSeries(
       else if (isObject(focus)) {
         const dataTypes = keys(focus);
         for (let d = 0; d < dataTypes.length; d++) {
-          leaveBlurOfIndices(seriesModel.getData(dataTypes[d] as SeriesDataType), focus[dataTypes[d]]);
+          leaveBlurOfIndices(seriesModel.getData(dataTypes[d] as SeriesDataType), (focus as any)[dataTypes[d]]);
         }
       }
 
@@ -579,7 +582,7 @@ export function findComponentHighDownDispatchers(
 } {
   const ret = {
     focusSelf: false,
-    dispatchers: null as Element[]
+    dispatchers: null as any
   };
   if (componentMainType == null
     || componentMainType === 'series'
@@ -614,7 +617,7 @@ export function findComponentHighDownDispatchers(
     }
   }
 
-  return { focusSelf, dispatchers };
+  return { focusSelf: focusSelf!, dispatchers };
 }
 
 export function handleGlobalMouseOverForHighDown(
@@ -688,7 +691,7 @@ export function toggleSelectionFromPayload(
   const data = seriesModel.getData(dataType);
   let dataIndex = queryDataIndex(data, payload);
   if (!isArray(dataIndex)) {
-    dataIndex = [dataIndex];
+    dataIndex = [dataIndex!];
   }
 
   seriesModel[
@@ -735,9 +738,9 @@ export function getAllSelectedIndices(ecModel: GlobalModel) {
 
 export function enableHoverEmphasis(el: Element, focus?: InnerFocus, blurScope?: BlurScope) {
   setAsHighDownDispatcher(el, true);
-  traverseUpdateState(el as ExtendedElement, setDefaultStateProxy);
+  traverseUpdateState(el as ExtendedElement, setDefaultStateProxy as any);
 
-  enableHoverFocus(el, focus, blurScope);
+  enableHoverFocus(el, focus!, blurScope!);
 }
 
 export function disableHoverEmphasis(el: Element) {
@@ -797,7 +800,7 @@ export function setAsHighDownDispatcher(el: Element, asDispatcher: boolean) {
   // Make `highDownSilentOnTouch` and `onStateChange` only work after
   // `setAsHighDownDispatcher` called. Avoid it is modified by user unexpectedly.
   if ((el as ECElement).highDownSilentOnTouch) {
-    extendedEl.__highDownSilentOnTouch = (el as ECElement).highDownSilentOnTouch;
+    extendedEl.__highDownSilentOnTouch = (el as ECElement).highDownSilentOnTouch!;
   }
   // Simple optimize, since this method might be
   // called for each elements of a group in some cases.

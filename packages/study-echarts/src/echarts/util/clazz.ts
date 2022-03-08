@@ -2,6 +2,8 @@ import * as zrUtil from 'zrender/src/core/util';
 import { Dictionary } from 'zrender/src/core/types';
 import { ComponentFullType, ComponentTypeInfo, ComponentMainType, ComponentSubType } from './types';
 
+const __DEV__ = process.env.NODE_ENV === 'development';
+
 const TYPE_DELIMITER = '.';
 const IS_CONTAINER = '___EC__COMPONENT__CONTAINER___' as const;
 const IS_EXTENDED_CLASS = '___EC__EXTENDED_CLASS___' as const;
@@ -43,7 +45,7 @@ export function enableClassExtend(rootClz: ExtendableConstructor, mandatoryMetho
 
   rootClz.extend = function (proto: Dictionary<any>) {
     if (__DEV__) {
-      zrUtil.each(mandatoryMethods, function (method) {
+      zrUtil.each(mandatoryMethods!, function (method) {
         if (!proto[method]) {
           console.warn(
             'Method `' + method + '` should be implemented'
@@ -199,7 +201,7 @@ export function enableClassManagement(
     let clz = storage[mainType];
 
     if (clz && (clz as SubclassContainer)[IS_CONTAINER]) {
-      clz = subType ? (clz as SubclassContainer)[subType] : null;
+      clz = subType ? (clz as SubclassContainer)[subType] : null as any;
     }
 
     if (throwWhenNotFound && !clz) {
@@ -243,7 +245,7 @@ export function enableClassManagement(
   target.getAllClassMainTypes = function (): ComponentMainType[] {
     const types: string[] = [];
     zrUtil.each(storage, function (obj, type) {
-      types.push(type);
+      types.push(type!);
     });
     return types;
   };

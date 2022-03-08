@@ -16,7 +16,7 @@ import Rect from 'zrender/src/graphic/shape/Rect';
 import Line from 'zrender/src/graphic/shape/Line';
 import BezierCurve from 'zrender/src/graphic/shape/BezierCurve';
 import Arc from 'zrender/src/graphic/shape/Arc';
-import CompoundPath from 'zrender/src/graphic/CompoundPath';
+// import CompoundPath from 'zrender/src/graphic/CompoundPath';
 import LinearGradient from 'zrender/src/graphic/LinearGradient';
 import RadialGradient from 'zrender/src/graphic/RadialGradient';
 import BoundingRect from 'zrender/src/core/BoundingRect';
@@ -223,11 +223,11 @@ export function applyTransform(
   invert?: boolean
 ): number[] {
   if (transform && !isArrayLike(transform)) {
-    transform = Transformable.getLocalTransform(transform);
+    transform = Transformable.getLocalTransform(transform as any);
   }
 
   if (invert) {
-    transform = matrix.invert([], transform as matrix.MatrixArray);
+    transform = matrix.invert([], transform as matrix.MatrixArray)!;
   }
   return vector.applyTransform([], target, transform as matrix.MatrixArray);
 }
@@ -260,8 +260,8 @@ export function transformDirection(
 function isNotGroup(el: Element): el is Displayable {
   return !el.isGroup;
 }
-function isPath(el: Displayable): el is Path {
-  return (el as Path).shape != null;
+function isPath(el: Displayable): boolean {
+  return (el as unknown as Path).shape != null;
 }
 
 export function groupTransition(
@@ -289,7 +289,7 @@ export function groupTransition(
           rotation: el.rotation
       };
       if (isPath(el)) {
-          obj.shape = extend({}, el.shape);
+          obj.shape = extend({}, (el as any).shape);
       }
       return obj;
   }
@@ -337,6 +337,7 @@ export function clipRectByRect(targetRect: ZRRectLike, rect: ZRRectLike): ZRRect
           height: y2 - y
       };
   }
+  return null as any;
 }
 
 export function createIcon(
@@ -344,7 +345,7 @@ export function createIcon(
   opt?: Omit<DisplayableProps, 'style'>,
   rect?: ZRRectLike
 ): SVGPath | ZRImage {
-  const innerOpts: DisplayableProps = extend({rectHover: true}, opt);
+  const innerOpts: DisplayableProps = extend({rectHover: true}, opt!);
   const style: ZRStyleProps = innerOpts.style = {strokeNoScale: true};
   rect = rect || {x: -1, y: -1, width: 2, height: 2};
 
@@ -364,6 +365,7 @@ export function createIcon(
               )
           );
   }
+  return null as any;
 }
 
 export function linePolygonIntersect(
@@ -377,6 +379,7 @@ export function linePolygonIntersect(
       }
       p2 = p;
   }
+  return false;
 }
 
 export function lineLineIntersect(
@@ -465,7 +468,7 @@ export function setTooltipConfig(opt: {
       option: defaults({
           content: itemName,
           formatterParams: formatterParams
-      }, itemTooltipOptionObj)
+      }, itemTooltipOptionObj!)
   };
 }
 

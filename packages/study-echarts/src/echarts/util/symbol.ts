@@ -176,42 +176,42 @@ const symbolCtors: Dictionary<SymbolCtor> = {
 
 const symbolShapeMakers: Dictionary<SymbolShapeMaker> = {
 
-  line: function (x, y, w, h, shape: graphic.Line['shape']) {
+  line: function (x: any, y: any, w: any, h: any, shape: graphic.Line['shape']) {
     shape.x1 = x;
     shape.y1 = y + h / 2;
     shape.x2 = x + w;
     shape.y2 = y + h / 2;
-  },
+  } as any,
 
-  rect: function (x, y, w, h, shape: graphic.Rect['shape']) {
+  rect: function (x: any, y: any, w: any, h: any, shape: graphic.Rect['shape']) {
     shape.x = x;
     shape.y = y;
     shape.width = w;
     shape.height = h;
-  },
+  } as any,
 
-  roundRect: function (x, y, w, h, shape: graphic.Rect['shape']) {
+  roundRect: function (x: any, y: any, w: any, h: any, shape: graphic.Rect['shape']) {
     shape.x = x;
     shape.y = y;
     shape.width = w;
     shape.height = h;
     shape.r = Math.min(w, h) / 4;
-  },
+  } as any,
 
-  square: function (x, y, w, h, shape: graphic.Rect['shape']) {
+  square: function (x: any, y: any, w: any, h: any, shape: graphic.Rect['shape']) {
     const size = Math.min(w, h);
     shape.x = x;
     shape.y = y;
     shape.width = size;
     shape.height = size;
-  },
+  } as any,
 
-  circle: function (x, y, w, h, shape: graphic.Circle['shape']) {
+  circle: function (x: any, y: any, w: any, h: any, shape: graphic.Circle['shape']) {
     // Put circle in the center of square
-    shape.cx = x + w / 2;
-    shape.cy = y + h / 2;
-    shape.r = Math.min(w, h) / 2;
-  },
+    (shape as any).cx = x + w / 2;
+    (shape as any).cy = y + h / 2;
+    (shape as any).r = Math.min(w, h) / 2;
+  } as any,
 
   diamond: function (x, y, w, h, shape: InstanceType<typeof Diamond>['shape']) {
     shape.cx = x + w / 2;
@@ -244,7 +244,7 @@ const symbolShapeMakers: Dictionary<SymbolShapeMaker> = {
 
 export const symbolBuildProxies: Dictionary<ECSymbol> = {};
 each(symbolCtors, function (Ctor, name) {
-  symbolBuildProxies[name] = new Ctor();
+  symbolBuildProxies[name!] = new Ctor();
 });
 
 const SymbolClz = graphic.Path.extend({
@@ -377,7 +377,7 @@ export function normalizeSymbolOffset(
   symbolSize: number[]
 ): [number, number] {
   if (symbolOffset == null) {
-    return;
+    return null as any;
   }
   if (!isArray(symbolOffset)) {
     symbolOffset = [symbolOffset, symbolOffset];

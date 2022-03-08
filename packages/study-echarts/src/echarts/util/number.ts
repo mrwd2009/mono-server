@@ -227,7 +227,7 @@ export function getPercentWithPrecision(valueList: number[], idx: number, precis
   }, 0);
 
   const remainder = zrUtil.map(votesPerQuota, function (votes, idx) {
-    return votes - seats[idx];
+    return votes - seats[idx!];
   });
 
   // Has remainding votes.
@@ -243,8 +243,8 @@ export function getPercentWithPrecision(valueList: number[], idx: number, precis
     }
 
     // Add a vote to max remainder.
-    ++seats[maxId];
-    remainder[maxId] = 0;
+    ++seats[maxId!];
+    remainder[maxId!] = 0;
     ++currentSum;
   }
 

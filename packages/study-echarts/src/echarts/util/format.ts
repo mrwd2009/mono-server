@@ -6,6 +6,8 @@ import { GradientObject } from 'zrender/src/graphic/Gradient';
 import { format as timeFormat, pad } from './time';
 import { deprecateReplaceLog } from './log';
 
+const __DEV__ = process.env.NODE_ENV === 'development';
+
 /**
  * Add a comma each three digit.
  */
@@ -76,7 +78,7 @@ export function makeValueReadable(
   const isValueDate = value instanceof Date;
   if (isTypeTime || isValueDate) {
     const date = isTypeTime ? parseDate(value) : value;
-    if (!isNaN(+date)) {
+    if (!isNaN(+(date as any))) {
       return timeFormat(date, USER_READABLE_DEFUALT_TIME_PATTERN, useUTC);
     }
     else if (isValueDate) {
@@ -320,8 +322,8 @@ export function windowOpen(link: string, target: string): void {
   /* global window */
   if (target === '_blank' || target === 'blank') {
     const blank = window.open();
-    blank.opener = null;
-    blank.location.href = link;
+    blank!.opener = null;
+    blank!.location.href = link;
   }
   else {
     window.open(link, target);

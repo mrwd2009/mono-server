@@ -31,9 +31,11 @@ import {
 import { Dictionary } from 'zrender/src/core/types';
 import SeriesModel from '../model/Series';
 import CartesianAxisModel from '../coord/cartesian/AxisModel';
-import GridModel from '../coord/cartesian/GridxModel';
-import { isNumberic, getRandomIdBase, gerPrecision, round } from './number';
+import GridModel from '../coord/cartesian/GridModel';
+import { isNumeric, getRandomIdBase, getPrecision, round } from './number';
 import { warn } from './log';
+
+const __DEV__ = process.env.NODE_ENV === 'development';
 
 function interpolateNumber(p0: number, p1: number, percent: number): number {
   return (p1 - p0) * percent + p0;
@@ -140,7 +142,7 @@ export function mappingToExists<T extends MappingExistingItem>(
   // Validate id and name on user input option.
   each(newCmptOptions, function (cmptOption, index) {
     if (!isObject<ComponentOption>(cmptOption)) {
-      newCmptOptions[index] = null;
+      newCmptOptions[index!] = null as any;
       return;
     }
 
@@ -211,7 +213,7 @@ function prepareResult<T extends MappingExistingItem>(
       newOption: null,
       keyInfo: null,
       brandNew: null
-    });
+    } as any);
   }
   return result;
 }
@@ -239,7 +241,7 @@ function mappingById<T extends MappingExistingItem>(
       // In both mode, if id matched, new option will be merged to
       // the existings rather than creating new component model.
       resultItem.existing = existings[existingIdx];
-      newCmptOptions[index] = null;
+      newCmptOptions[index!] = null as any;
     }
   });
 }
@@ -264,7 +266,7 @@ function mappingByName<T extends MappingExistingItem>(
         && keyExistAndEqual('name', existing, cmptOption)
       ) {
         result[i].newOption = cmptOption;
-        newCmptOptions[index] = null;
+        newCmptOptions[index!] = null as any;
         return;
       }
     }
@@ -315,8 +317,8 @@ function mappingByIndex<T extends MappingExistingItem>(
       result.push({
         newOption: cmptOption,
         brandNew: brandNew,
-        existing: null,
-        keyInfo: null
+        existing: null as any,
+        keyInfo: null as any
       });
     }
     nextIdx++;
@@ -333,8 +335,8 @@ function mappingInReplaceAllMode<T extends MappingExistingItem>(
     result.push({
       newOption: cmptOption,
       brandNew: true,
-      existing: null,
-      keyInfo: null
+      existing: null as any,
+      keyInfo: null as any
     });
   });
 }
@@ -362,7 +364,7 @@ function makeIdAndName(
 
   each(mapResult, function (item) {
     const existing = item.existing;
-    existing && idMap.set(existing.id, item);
+    existing && idMap.set(existing.id!, item);
   });
 
   each(mapResult, function (item) {
@@ -395,7 +397,7 @@ function makeIdAndName(
     keyInfo.name = opt.name != null
       ? makeComparableKey(opt.name)
       : existing
-        ? existing.name
+        ? existing.name!
         // Avoid diffferent series has the same name,
         // because name may be used like in color pallet.
         : DUMMY_COMPONENT_NAME_PREFIX + index;
@@ -428,8 +430,8 @@ function keyExistAndEqual(
   obj1: { id?: OptionId, name?: OptionName },
   obj2: { id?: OptionId, name?: OptionName }
 ): boolean {
-  const key1 = convertOptionIdName(obj1[attr], null);
-  const key2 = convertOptionIdName(obj2[attr], null);
+  const key1 = convertOptionIdName(obj1[attr], null as any);
+  const key2 = convertOptionIdName(obj2[attr], null as any);
   // See `MappingExistingItem`. `id` and `name` trade string equals to number.
   return key1 != null && key2 != null && key1 === key2;
 }
@@ -517,7 +519,7 @@ function determineSubType(
       : (componentModelCtor as ComponentModelConstructor).determineSubType(mainType, newCmptOption);
 
   // tooltip, markline, markpoint may always has no subType
-  return subType;
+  return subType!;
 }
 
 type BatchItem = {
@@ -545,7 +547,7 @@ export function compressBatches(
 
   function makeMap(sourceBatch: BatchItem[], map: InnerMap, otherMap?: InnerMap): void {
     for (let i = 0, len = sourceBatch.length; i < len; i++) {
-      const seriesId = convertOptionIdName(sourceBatch[i].seriesId, null);
+      const seriesId = convertOptionIdName(sourceBatch[i].seriesId, null as any);
       if (seriesId == null) {
         return;
       }
@@ -556,7 +558,7 @@ export function compressBatches(
         const dataIndex = dataIndices[j];
 
         if (otherDataIndices && otherDataIndices[dataIndex]) {
-          otherDataIndices[dataIndex] = null;
+          otherDataIndices[dataIndex] = null as any;
         }
         else {
           (map[seriesId] || (map[seriesId] = {}))[dataIndex] = 1;
@@ -586,7 +588,7 @@ export function queryDataIndex(data: SeriesData, payload: Payload & {
   dataIndexInside?: number | number[]
   dataIndex?: number | number[]
   name?: string | string[]
-}): number | number[] {
+}): number | number[] | undefined {
   if (payload.dataIndexInside != null) {
     return payload.dataIndexInside;
   }
@@ -671,8 +673,8 @@ export function parseFinder(
   queryOptionMap.each(function (queryOption, mainType) {
     const queryResult = queryReferringComponents(
       ecModel,
-      mainType,
-      queryOption,
+      mainType!,
+      queryOption!,
       {
         useDefault: defaultMainType === mainType,
         enableAll: (opt && opt.enableAll != null) ? opt.enableAll : true,
@@ -718,7 +720,7 @@ export function preParseFinder(
       return;
     }
 
-    const parsedKey = key.match(/^(\w+)(Index|Id|Name)$/) || [];
+    const parsedKey = key!.match(/^(\w+)(Index|Id|Name)$/) || [];
     const mainType = parsedKey[1];
     const queryType = (parsedKey[2] || '').toLowerCase() as keyof QueryReferringUserOption;
 
@@ -774,7 +776,7 @@ export function queryReferringComponents(
   let nameOption = userOption.name;
 
   const result = {
-    models: null as ComponentModel[],
+    models: null as any,
     specified: indexOption != null || idOption != null || nameOption != null
   };
 
@@ -797,7 +799,7 @@ export function queryReferringComponents(
   // both all of index/id/name are null/undefined.
   if (indexOption === 'all') {
     assert(opt.enableAll, '`"all"` is not a valid value on index option.');
-    indexOption = idOption = nameOption = null;
+    indexOption = idOption = nameOption = null as any;
   }
   result.models = ecModel.queryComponents({
     mainType: mainType,
