@@ -1,5 +1,7 @@
 import easingFuncs, { AnimationEasing } from './easing';
 import type Animation from './Animation';
+import { isFunction, noop } from '../core/util';
+import { createCubicEasingFunc } from './cubicEasing';
 
 type OnFrameCallback = (percent: number) => void;
 type OnDestroyCallback = () => void;
@@ -11,7 +13,6 @@ export interface ClipProps {
   life?: number;
   delay?: number;
   loop?: boolean;
-  gap?: number;
   easing?: AnimationEasing;
 
   onframe?: OnFrameCallback;
@@ -22,7 +23,7 @@ export interface ClipProps {
 export default class Clip {
   private _life: number;
   private _delay: number;
-  private _initialized = false;
+  private _inited: boolean = false;
   private _startTime = 0;
   private _pausedTime = 0;
   private _paused = false;
@@ -30,8 +31,8 @@ export default class Clip {
   animation: Animation;
 
   loop: boolean;
-  gap: number;
   easing: AnimationEasing;
+  easingFunc: (p: number) => number;
 
   next: Clip;
   prev: Clip;
@@ -43,51 +44,63 @@ export default class Clip {
   constructor(opts: ClipProps) {
     this._life = opts.life || 1000;
     this._delay = opts.delay || 0;
-    this.loop = opts.loop == null ? false : opts.loop;
-    this.gap = opts.gap || 0;
-    this.easing = opts.easing || 'linear';
-    this.onframe = opts.onframe;
-    this.ondestroy = opts.ondestroy;
-    this.onrestart = opts.onrestart;
+
+    this.loop = opts.loop || false;
+
+    this.onframe = opts.onframe || noop;
+    this.ondestroy = opts.ondestroy || noop;
+    this.onrestart = opts.onrestart || noop;
+
+    opts.easing && this.setEasing(opts.easing);
   }
 
-  private _restart(globalTime: number) {
-    const remainder = (globalTime - this._startTime - this._pausedTime) % this._life;
-    this._startTime = globalTime - remainder + this.gap;
-    this._pausedTime = 0;
-  }
-
-  step(globalTime: number, deltaTime: number): boolean | null {
-    if (!this._initialized) {
+  step(globalTime: number, deltaTime: number): boolean | undefined {
+    // Set startTime on first step, or _startTime may has milleseconds different between clips
+    // PENDING
+    if (!this._inited) {
       this._startTime = globalTime + this._delay;
-      this._initialized = true;
+      this._inited = true;
     }
 
     if (this._paused) {
       this._pausedTime += deltaTime;
-      return null;
+      return;
     }
 
-    let percent = (globalTime - this._startTime - this._pausedTime) / this._life;
+    const life = this._life;
+    let elapsedTime = globalTime - this._startTime - this._pausedTime;
+    let percent = elapsedTime / life;
+
+    // PENDING: Not begin yet. Still run the loop.
+    // In the case callback needs to be invoked.
+    // Or want to update to the begin state at next frame when `setToFinal` and `delay` are both used.
+    // To avoid the unexpected blink.
     if (percent < 0) {
       percent = 0;
     }
 
     percent = Math.min(percent, 1);
 
-    const easing = this.easing;
-    const easingFunc = typeof easing === 'string' ? easingFuncs[easing as keyof typeof easingFuncs] : easing;
-    const schedule = typeof easingFunc === 'function' ? easingFunc(percent) : percent;
-    this.onframe?.(schedule);
+    const easingFunc = this.easingFunc;
+    const schedule = easingFunc ? easingFunc(percent) : percent;
 
+    this.onframe(schedule);
+
+    // 结束
     if (percent === 1) {
       if (this.loop) {
-        this._restart(globalTime);
-        this.onrestart?.();
-      } else {
+        // Restart
+        const remainder = elapsedTime % life;
+        this._startTime = globalTime - remainder;
+        this._pausedTime = 0;
+
+        this.onrestart();
+      }
+      else {
         return true;
       }
     }
+
     return false;
   }
 
@@ -97,5 +110,12 @@ export default class Clip {
 
   resume() {
     this._paused = false;
+  }
+
+  setEasing(easing: AnimationEasing) {
+    this.easing = easing;
+    this.easingFunc = isFunction(easing)
+      ? easing
+      : (easingFuncs as any)[easing] || createCubicEasingFunc(easing);
   }
 }

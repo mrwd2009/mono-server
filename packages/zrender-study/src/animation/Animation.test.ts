@@ -11,13 +11,6 @@ test('stage and onframe callback', () => {
           resolve(true);
         }
       },
-      onframe: (delta) => {
-        try {
-          expect(delta).toBeGreaterThanOrEqual(16);
-        } catch (error) {
-          reject(error);
-        }
-      }
     });
     animation.start();
   });
@@ -32,14 +25,6 @@ test('pause and resume', () => {
           resolve(true);
         }
       },
-      onframe: (delta) => {
-        try {
-          // expect(delta).toBeGreaterThanOrEqual(16);
-          expect(delta).toBeLessThan(20);
-        } catch (error) {
-          reject(error);
-        }
-      }
     });
     animation.start();
     animation.pause();

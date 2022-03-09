@@ -7,11 +7,16 @@ import { Dictionary } from "./core/types";
 export interface PainterBase {
   type: string;
 
-  root: HTMLElement;
+  root?: HTMLElement;
+
+  ssrOnly?: boolean
 
   resize(width?: number | string, height?: number | string): void;
   refresh(): void;
   clear(): void;
+
+  // must be given if ssr is true.
+  renderToString?(): string;
 
   getType: () => string;
 
@@ -23,7 +28,6 @@ export interface PainterBase {
   getViewportRootOffset: () => { offsetLeft: number, offsetTop: number } | undefined;
 
   refreshHover(): void;
-  pathToImage(e: Path, dpr: number): ZRImage;
 
   configLayer(zLevel: number, config: Dictionary<any>): void;
   setBackgroundColor(backgroundColor: string | GradientObject | PatternObject): void;

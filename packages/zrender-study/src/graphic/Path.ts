@@ -12,6 +12,7 @@ import Animator from '../animation/Animator';
 import { lum } from '../tool/color';
 import { DARK_LABEL_COLOR, LIGHT_LABEL_COLOR, DARK_MODE_THRESHOLD, LIGHTER_LABEL_COLOR } from '../config';
 import { REDRAW_BIT, SHAPE_CHANGED_BIT, STYLE_CHANGED_BIT } from './constants';
+import { TRANSFORMABLE_PROPS } from '../core/Transformable';
 
 export interface PathStyleProps extends CommonStyleProps {
   fill?: string | PatternObject | LinearGradientObject | RadialGradientObject;
@@ -87,10 +88,9 @@ export type PathState = Pick<PathProps, PathStatePropNames> & {
   hoverLayer?: boolean
 };
 
-const pathCopyParams = [
-  'x', 'y', 'rotation', 'scaleX', 'scaleY', 'originX', 'originY', 'invisible',
-  'culling', 'z', 'z2', 'zlevel', 'parent'
-] as const;
+const pathCopyParams = (TRANSFORMABLE_PROPS as readonly string[]).concat(['invisible',
+    'culling', 'z', 'z2', 'zlevel', 'parent'
+]) as (keyof Path)[];
 
 interface Path<Props extends PathProps = PathProps> {
   animate(key?: '', loop?: boolean): Animator<this>;
@@ -118,7 +118,7 @@ class Path<Props extends PathProps = PathProps> extends Displayable<Props> {
 
   autoBatch: boolean;
 
-  private _rectWithStroke: BoundingRect;
+  private _rectStroke: BoundingRect;
 
   protected _normalState: PathState;
 
@@ -303,7 +303,7 @@ class Path<Props extends PathProps = PathProps> extends Displayable<Props> {
     this._rect = rect;
 
     if (this.hasStroke() && this.path && this.path.len() > 0) {
-      const rectWithStroke = this._rectWithStroke || (this._rectWithStroke = rect.clone());
+      const rectWithStroke = this._rectStroke || (this._rectStroke = rect.clone());
       if (this.__dirty || needsUpdateRect) {
         rectWithStroke.copy(rect);
         const lineScale = style.strokeNoScale ? this.getLineScale() : 1;

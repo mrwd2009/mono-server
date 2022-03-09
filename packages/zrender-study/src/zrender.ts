@@ -3,7 +3,7 @@ import env from './core/env';
 import Handler from './Handler';
 import Storage from './Storage';
 import { PainterBase } from './PainterBase';
-import Animation from './animation/Animation';
+import Animation, { getTime } from './animation/Animation';
 import HandlerProxy from './dom/HandlerProxy';
 import Element, { ElementEventCallback } from './Element';
 import { Dictionary, ElementEventName, RenderedEvent, WithThisType } from './core/types';
@@ -11,17 +11,11 @@ import { LayerConfig } from './canvas/Layer';
 import { GradientObject } from './graphic/Gradient';
 import { PatternObject } from './graphic/Pattern';
 import { EventCallback } from './core/Eventful';
-import TSpan from './graphic/TSpan';
-import ZRImage from './graphic/Image';
 import Displayable from './graphic/Displayable';
 import { lum } from './tool/color';
 import { DARK_MODE_THRESHOLD } from './config';
-import Path from './graphic/Path';
 import Group from './graphic/Group';
 import { keys, guid } from './core/util';
-
-// deprecated
-const useVML = !env.canvasSupported;
 
 type PainterBaseCtor = {
   new(dom: HTMLElement, storage: Storage, ...args: any[]): PainterBase
@@ -58,7 +52,7 @@ function isDarkmode(backgroundColor: string | GradientObject | PatternObject): b
 }
 
 class ZRender {
-  dom: HTMLElement;
+  dom?: HTMLElement;
 
   id: number;
 
@@ -78,7 +72,7 @@ class ZRender {
 
   private _backgroundColor: string | GradientObject | PatternObject;
 
-  constructor(id: number, dom: HTMLElement, opts?: ZRenderInitOpt) {
+  constructor(id: number, dom?: HTMLElement, opts?: ZRenderInitOpt) {
     opts = opts || {};
 
     this.dom = dom;
@@ -88,28 +82,26 @@ class ZRender {
 
     let rendererType = opts.renderer || 'canvas';
 
-    if (useVML) {
-      // already deprecated
-      throw new Error('IE8 support has been dropped since 5.0');
-    }
-
     if (!painterCtors[rendererType]) {
       rendererType = keys(painterCtors)[0];
     }
 
-    if (!painterCtors[rendererType]) {
-      throw new Error(`Renderer '${rendererType}' is not imported. Please import it first.`);
+    if (process.env.NODE_ENV !== 'production') {
+      if (!painterCtors[rendererType]) {
+        throw new Error(`Renderer '${rendererType}' is not imported. Please import it first.`);
+      }
     }
 
     opts.useDirtyRect = opts.useDirtyRect == null ? false : opts.useDirtyRect;
 
     const painter = new painterCtors[rendererType](dom, storage, opts, id);
+    const ssrMode = opts.ssr || painter.ssrOnly;
 
     this.storage = storage;
     this.painter = painter;
 
     let handlerProxy = null;
-    if (!env.node && !env.worker) {
+    if (!env.node && !env.worker && !ssrMode) {
       handlerProxy = new HandlerProxy(painter.getViewportRoot(), painter.root);
     }
 
@@ -117,11 +109,13 @@ class ZRender {
 
     this.animation = new Animation({
       stage: {
-        update: () => this._flush(true)
+        update: ssrMode ? null : () => this._flush(true)
       }
     });
 
-    this.animation.start();
+    if (!ssrMode) {
+      this.animation.start();
+    }
   }
 
   add(el: Element) {
@@ -193,7 +187,7 @@ class ZRender {
   private _flush(fromInside?: boolean) {
     let triggeredRendered;
 
-    const start = new Date().getTime();
+    const start = getTime();
     if (this._needsRefresh) {
       triggeredRendered = true;
       this.refreshImmediately(fromInside);
@@ -204,7 +198,7 @@ class ZRender {
       this.refreshHoverImmediately();
     }
 
-    const end = new Date().getTime();
+    const end = getTime();
 
     if (triggeredRendered) {
       this._stillFrameAccum = 0;
@@ -227,18 +221,6 @@ class ZRender {
   wakeUp() {
     this.animation.start();
     this._stillFrameAccum = 0;
-  }
-
-  addHover(el: Displayable) {
-    // deprecated
-  }
-
-  removeHover(el: Path | TSpan | ZRImage) {
-    // deprecated
-  }
-
-  clearHover() {
-    // deprecated
   }
 
   refreshHover() {
@@ -271,12 +253,6 @@ class ZRender {
 
   getHeight(): number {
     return this.painter.getHeight();
-  }
-
-  pathToImage(e: Path, dpr: number) {
-    if (this.painter.pathToImage) {
-      return this.painter.pathToImage(e, dpr);
-    }
   }
 
   setCursorStyle(cursorStyle: string) {
@@ -340,9 +316,10 @@ export interface ZRenderInitOpt {
   width?: number | string;
   height?: number | string;
   useDirtyRect?: boolean;
+  ssr?: boolean;
 }
 
-export function init(dom: HTMLElement, opts: ZRenderInitOpt) {
+export function init(dom?: HTMLElement, opts?: ZRenderInitOpt) {
   const zr = new ZRender(guid(), dom, opts);
   instances[zr.id] = zr;
   return zr;
@@ -369,6 +346,6 @@ export function registerPainter(name: string, Ctor: PainterBaseCtor) {
   painterCtors[name] = Ctor;
 }
 
-export const version = '5.2.1';
+export const version = '5.3.0';
 
 export interface ZRenderType extends ZRender {};

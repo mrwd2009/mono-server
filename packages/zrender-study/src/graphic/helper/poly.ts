@@ -1,4 +1,3 @@
-import smoothSpline from './smoothSpline';
 import smoothBezier from './smoothBezier';
 import { VectorArray } from '../../core/vector';
 import PathProxy from '../../core/PathProxy';
@@ -7,7 +6,7 @@ export function buildPath(
   ctx: CanvasRenderingContext2D | PathProxy,
   shape: {
     points: VectorArray[],
-    smooth?: number | 'spline',
+    smooth?: number,
     smoothConstraint?: VectorArray[],
   },
   closePath: boolean,
@@ -15,7 +14,7 @@ export function buildPath(
   const smooth = shape.smooth;
   let points = shape.points;
   if (points && points.length >= 2) {
-    if (smooth && smooth !== 'spline') {
+    if (smooth) {
       const controlPoints = smoothBezier(points, smooth, closePath, shape.smoothConstraint);
       ctx.moveTo(points[0][0], points[0][1]);
       const len = points.length;
@@ -27,9 +26,6 @@ export function buildPath(
         ctx.bezierCurveTo(cp1[0], cp1[1], cp2[0], cp2[1], p[0], p[1]);
       }
     } else {
-      if (smooth === 'spline') {
-        points = smoothSpline(points, closePath);
-      }
       ctx.moveTo(points[0][0], points[0][1]);
       const lastIndex = points.length;
 

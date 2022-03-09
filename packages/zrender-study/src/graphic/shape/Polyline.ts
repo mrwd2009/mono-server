@@ -7,7 +7,7 @@ export class PolylineShape {
 
   // used by animation
   percent?: number = 1;
-  smooth?: number | 'spline' = 0;
+  smooth?: number = 0;
   smoothConstraint?: VectorArray[] = null;
 }
 

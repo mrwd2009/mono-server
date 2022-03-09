@@ -29,6 +29,12 @@ class Transformable {
 
   rotation: number;
 
+  /**
+   * Will translated the element to the anchor position before applying other transforms.
+   */
+  anchorX: number
+  anchorY: number
+
   originX: number;
   originY: number;
 
@@ -44,21 +50,25 @@ class Transformable {
     const oy = target.originY || 0;
     const sx = target.scaleX;
     const sy = target.scaleY;
+    const ax = target.anchorX;
+    const ay = target.anchorY;
     const rotation = target.rotation || 0;
     const x = target.x;
     const y = target.y;
     const skewX = target.skewX ? Math.tan(target.skewX) : 0;
     const skewY = target.skewY ? Math.tan(-target.skewY) : 0;
-    // The order of transform (-origin * scale * skew * rotate * origin * translate).
+    // The order of transform (-anchor*-origin * scale * skew * rotate * origin * translate).
     // merge (-origin * scale * skew) into one
     /**
-     * [1,     skewX, 0]   [sx, 0, 0]   [1, 0, -ox] 
-     * [skewY, 1,     0] * [0, sy, 0] * [0, 1, -oy]
-     * [0,     0,     1]   [0,  0, 1]   [0, 0, 1  ] 
+     * [1,     skewX, 0]   [sx, 0, 0]   [1, 0, -ox]   [1, 0, -ax] 
+     * [skewY, 1,     0] * [0, sy, 0] * [0, 1, -oy] * [0, 1, -ay]
+     * [0,     0,     1]   [0,  0, 1]   [0, 0, 1  ]   [0, 0, 1  ] 
      */
-    if (ox || oy) {
-      m[4] = -ox * sx - skewX * oy * sy;
-      m[5] = -oy * sy - skewY * ox * sx;
+    if (ox || oy || ax || ay) {
+      const dx = ox + ax;
+      const dy = oy + ay;
+      m[4] = -dx * sx - skewX * dy * sy;
+      m[5] = -dy * sy - skewY * dx * sx;
     } else {
       m[4] = 0;
       m[5] = 0;
@@ -83,6 +93,8 @@ class Transformable {
     y = 0,
     scaleX = 1,
     scaleY = 1,
+    anchorX = 0,
+    anchorY = 0,
     originX = 0,
     originY = 0,
     skewX = 0,
@@ -94,6 +106,8 @@ class Transformable {
     this.y = y;
     this.scaleX = scaleX;
     this.scaleY = scaleY;
+    this.anchorX = anchorX;
+    this.anchorY = anchorY;
     this.originX = originX;
     this.originY = originY;
     this.skewX = skewX;
@@ -135,7 +149,9 @@ class Transformable {
       || isNotAroundZero(this.x)
       || isNotAroundZero(this.y)
       || isNotAroundZero(this.scaleX - 1)
-      || isNotAroundZero(this.scaleY - 1);
+      || isNotAroundZero(this.scaleY - 1)
+      || isNotAroundZero(this.skewX)
+      || isNotAroundZero(this.skewY);
   }
 
   getGlobalScale(out?: Vec2): Vec2 {
@@ -334,11 +350,7 @@ class Transformable {
   }
 
   copyTransform(source: Transformable) {
-    const target = this;
-    for (let i = 0; i < TRANSFORMABLE_PROPS.length; i++) {
-      const propName = TRANSFORMABLE_PROPS[i];
-      target[propName] = source[propName];
-    }
+    copyTransform(this, source);
   }
 
 }
@@ -350,7 +362,8 @@ proto.x = 0;
 proto.y = 0;
 proto.scaleX = 1;
 proto.scaleY = 1;
-proto.originX = 0;
+proto.anchorX = 0;
+proto.anchorY = 0;
 proto.originX = 0;
 proto.originY = 0;
 proto.skewX = 0;
@@ -359,7 +372,19 @@ proto.rotation = 0;
 proto.globalScaleRatio = 1;
 
 export const TRANSFORMABLE_PROPS = [
-  'x', 'y', 'originX', 'originY', 'rotation', 'scaleX', 'scaleY', 'skewX', 'skewY'
+  'x', 'y', 'anchorX', 'anchorY', 'originX', 'originY', 'rotation', 'scaleX', 'scaleY', 'skewX', 'skewY'
 ] as const;
+
+export type TransformProp = (typeof TRANSFORMABLE_PROPS)[number]
+
+export function copyTransform(
+  target: Partial<Pick<Transformable, TransformProp>>,
+  source: Pick<Transformable, TransformProp>
+) {
+  for (let i = 0; i < TRANSFORMABLE_PROPS.length; i++) {
+    const propName = TRANSFORMABLE_PROPS[i];
+    target[propName] = source[propName];
+  }
+}
 
 export default Transformable;

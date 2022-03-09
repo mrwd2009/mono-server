@@ -3,24 +3,23 @@ import requestAnimationFrame from './requestAnimationFrame';
 import Clip from './Clip';
 import Animator from './Animator';
 
+export function getTime() {
+  return new Date().getTime();
+}
+
 interface Stage {
   update?: () => void;
 }
 
-type OnFrameCallback = (deltaTime: number) => void;
-
 interface AnimationOption {
   stage?: Stage;
-  onframe?: OnFrameCallback;
 }
 
 export default class Animation extends Eventful {
   stage: Stage;
 
-  onframe: OnFrameCallback;
-
-  private _clipsHead: Clip;
-  private _clipsTail: Clip;
+  private _head: Clip;
+  private _tail: Clip;
 
   private _running = false;
 
@@ -34,7 +33,6 @@ export default class Animation extends Eventful {
     super();
     opts = opts || {};
     this.stage = opts.stage || {};
-    this.onframe = opts.onframe || (() => {});
   }
 
   addClip(clip: Clip) {
@@ -42,13 +40,13 @@ export default class Animation extends Eventful {
       this.removeClip(clip);
     }
 
-    if (!this._clipsHead) {
-      this._clipsHead = this._clipsTail = clip;
+    if (!this._head) {
+      this._head = this._tail = clip;
     } else {
-      this._clipsTail.next = clip;
-      clip.prev = this._clipsTail;
+      this._tail.next = clip;
+      clip.prev = this._tail;
       clip.next = null;
-      this._clipsTail = clip;
+      this._tail = clip;
     }
     clip.animation = this;
   }
@@ -70,12 +68,12 @@ export default class Animation extends Eventful {
     if (prev) {
       prev.next = next;
     } else {
-      this._clipsHead = next;
+      this._head = next;
     }
     if (next) {
       next.prev = prev;
     } else {
-      this._clipsTail = prev;
+      this._tail = prev;
     }
     clip.next = clip.prev = clip.animation = null;
   }
@@ -89,9 +87,9 @@ export default class Animation extends Eventful {
   }
 
   update(notTriggerFrameAndStageUpdate?: boolean) {
-    const time = new Date().getTime() - this._pausedTime;
+    const time = getTime() - this._pausedTime;
     const delta = time - this._time;
-    let clip = this._clipsHead;
+    let clip = this._head;
 
     while(clip) {
       const nextClip = clip.next;
@@ -107,8 +105,6 @@ export default class Animation extends Eventful {
 
     this._time = time;
     if (!notTriggerFrameAndStageUpdate) {
-      this.onframe(delta);
-
       this.trigger('frame', delta);
 
       this.stage.update?.();
@@ -131,7 +127,7 @@ export default class Animation extends Eventful {
     if (this._running) {
       return;
     }
-    this._time = new Date().getTime();
+    this._time = getTime();
     this._pausedTime = 0;
     this._startLoop();
   }
@@ -142,20 +138,20 @@ export default class Animation extends Eventful {
 
   pause() {
     if (!this._paused) {
-      this._pausedStart = new Date().getTime();
+      this._pausedStart = getTime();
       this._paused = true;
     }
   }
 
   resume() {
     if (this._paused) {
-      this._pausedTime += (new Date().getTime()) - this._pausedStart;
+      this._pausedTime += getTime() - this._pausedStart;
       this._paused = false;
     }
   }
 
   clear() {
-    let clip = this._clipsHead;
+    let clip = this._head;
 
     while (clip) {
       let nextClip = clip.next;
@@ -163,11 +159,11 @@ export default class Animation extends Eventful {
       clip = nextClip;
     }
 
-    this._clipsHead = this._clipsTail = null;
+    this._head = this._tail = null;
   }
 
   isFinished() {
-    return this._clipsHead == null;
+    return this._head == null;
   }
 
   animate<T>(target: T, options?: { loop?: boolean }) {

@@ -2,11 +2,12 @@ import Displayable, {
   DisplayableProps,
   DisplayableStatePropNames,
 } from "./Displayable";
-import { getBoundingRect, DEFAULT_FONT } from '../contain/text';
+import { getBoundingRect } from '../contain/text';
 import { PathStyleProps, DEFAULT_PATH_STYLE } from './Path';
 import { createObject, defaults } from '../core/util';
-import type { TextAlign, TextVerticalAlign } from "../core/types";
+import type { FontStyle, FontWeight, TextAlign, TextVerticalAlign } from "../core/types";
 import BoundingRect from "../core/BoundingRect";
+import { DEFAULT_FONT } from '../core/platform';
 
 export interface TSpanStyleProps extends PathStyleProps {
   x?: number;
@@ -15,6 +16,14 @@ export interface TSpanStyleProps extends PathStyleProps {
   text?: string;
 
   font?: string;
+
+  // Value for each part of font
+  // Used in svg.
+  // NOTE: font should always been sync with these 4 properties.
+  fontSize?: number
+  fontWeight?: FontWeight
+  fontStyle?: FontStyle
+  fontFamily?: string
 
   textAlign?: CanvasTextAlign;
 

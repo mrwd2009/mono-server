@@ -56,3 +56,5 @@ export {
   colorTool as color,
   zrUtil as util,
 };
+
+export { setPlatformAPI } from './core/platform';

@@ -1,4 +1,5 @@
 import { ImageLike } from "../core/types";
+import { SVGVNode } from '../svg/core';
 
 type ImagePatternRepeat = 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat';
 
@@ -16,6 +17,15 @@ export interface PatternObjectBase {
 export interface ImagePatternObject extends PatternObjectBase {
   image: ImageLike | string;
   repeat?: ImagePatternRepeat;
+
+  /**
+   * Width and height of image.
+   * `imageWidth` and `imageHeight` are only used in svg-ssr renderer.
+   * Because we can't get the size of image in svg-ssr renderer.
+   * They need to be give explictly.
+   */
+  imageWidth?: number
+  imageHeight?: number
 }
 
 export interface InnerImagePatternObject extends ImagePatternObject {
@@ -23,7 +33,7 @@ export interface InnerImagePatternObject extends ImagePatternObject {
 }
 
 export interface SVGPatternObject extends PatternObjectBase {
-  svgElement?: SVGElement;
+  svgElement?: SVGVNode;
   svgWidth?: number;
   svgHeight?: number;
 }
@@ -34,7 +44,7 @@ class Pattern {
   type: 'pattern';
   image: ImageLike | string;
 
-  svgElement: SVGElement;
+  svgElement: SVGElement | string;
 
   repeat: ImagePatternRepeat;
 

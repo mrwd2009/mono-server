@@ -1,5 +1,4 @@
 import * as util from './core/util';
-import env from './core/env';
 import Group, { GroupLike } from './graphic/Group';
 import Element from './Element';
 import timsort from './core/timsort'; // in most case elements are partially sorted.
@@ -57,9 +56,7 @@ export default class Storage {
 
     displayList.length = this._displayListLen;
 
-    if (env.canvasSupported) {
-      timsort(displayList, shapeCompareFunc);
-    }
+    timsort(displayList, shapeCompareFunc);
   }
 
   private _updateAndAddDisplayable(el: Element, clipPaths: Path[], includeIgnore?: boolean) {

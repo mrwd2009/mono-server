@@ -1,4 +1,4 @@
-import Transformable from './core/Transformable';
+import Transformable, { TRANSFORMABLE_PROPS, TransformProp } from './core/Transformable';
 import { AnimationEasing } from './animation/easing';
 import Animator, { cloneValue } from './animation/Animator';
 import {
@@ -28,6 +28,9 @@ import {
   mixin,
   isTypedArray,
   guid,
+  isGradientObject,
+  filter,
+  reduce
 } from './core/util';
 import { parse, stringify } from './tool/color';
 import ZRText, { DefaultTextStyle } from './graphic/Text';
@@ -130,7 +133,7 @@ interface ElementEventHandlerProps {
   ondrop: ElementEventCallback<unknown, unknown>;
 }
 
-export interface ElementProps extends Partial<ElementEventHandlerProps> {
+export interface ElementProps extends Partial<ElementEventHandlerProps>, Partial<Pick<Transformable, TransformProp>> {
   name?: string;
   ignore?: boolean;
   isGroup?: boolean;
@@ -139,14 +142,6 @@ export interface ElementProps extends Partial<ElementEventHandlerProps> {
   silent?: boolean;
 
   ignoreClip?: boolean;
-
-  x?: number;
-  y?: number;
-  scaleX?: number;
-  scaleY?: number;
-  originX?: number;
-  originY?: number;
-  rotation?: number;
 
   globalScaleRatio?: number;
 
@@ -162,20 +157,13 @@ export interface ElementProps extends Partial<ElementEventHandlerProps> {
 
 export const PRESERVED_NORMAL_STATE = '__zr_normal__';
 
-const PRIMARY_STATES_KEYS = ['x', 'y', 'scaleX', 'scaleY', 'originX', 'originY', 'rotation', 'ignore'] as const;
+const PRIMARY_STATES_KEYS = (TRANSFORMABLE_PROPS as any).concat(['ignore']) as [TransformProp, 'ignore'];
+const DEFAULT_ANIMATABLE_MAP = reduce(TRANSFORMABLE_PROPS, (obj, key) => {
+    obj[key] = true;
+    return obj;
+}, {ignore: false} as Partial<Record<ElementStatePropNames, boolean>>);
 
 export type ElementStatePropNames = (typeof PRIMARY_STATES_KEYS)[number] | 'textConfig';
-
-const DEFAULT_ANIMATABLE_MAP: Partial<Record<ElementStatePropNames, boolean>> = {
-  x: true,
-  y: true,
-  scaleX: true,
-  scaleY: true,
-  originX: true,
-  originY: true,
-  rotation: true,
-  ignore: false,
-};
 
 export type ElementCommonState = {
   hoverLayer?: boolean;
@@ -535,13 +523,13 @@ class Element<Props extends ElementProps = ElementProps> {
     for (let i = 0; i < this.animators.length; i++) {
       const animator = this.animators[i];
       const fromStateTransition = animator.__fromStateTransition;
-      if (fromStateTransition && fromStateTransition !== PRESERVED_NORMAL_STATE) {
+      if (animator.getLoop() || fromStateTransition && fromStateTransition !== PRESERVED_NORMAL_STATE) {
         continue;
       }
 
       const targetName = animator.targetName;
       const target = targetName ? (normalState as any)[targetName] : normalState;
-      animator.saveFinalToTarget(target);
+      animator.saveTo(target);
     }
   }
 
@@ -846,7 +834,9 @@ class Element<Props extends ElementProps = ElementProps> {
       for (let i = 0; i < this.animators.length; i++) {
         const animator = this.animators[i];
         const targetName = animator.targetName;
-        animator.__changeFinalValue(targetName ? ((state || normalState) as any)[targetName] : (state || normalState));
+        if (!animator.getLoop()) {
+          animator.__changeFinalValue(targetName ? ((state || normalState) as any)[targetName] : (state || normalState));
+        }
       }
     }
 
@@ -857,11 +847,17 @@ class Element<Props extends ElementProps = ElementProps> {
 
   private _attachComponent(componentEl: Element) {
     if (componentEl.__zr && !componentEl.__hostTarget) {
-      throw new Error('Text element has been added to zrender.');
+      if (process.env.NODE_ENV !== 'production') {
+        throw new Error('Text element has been added to zrender.');
+      }
+      return;
     }
 
     if (componentEl === this) {
-      throw new Error('Recursive component attachment.');
+      if (process.env.NODE_ENV !== 'production') {
+        throw new Error('Recursive component attachment.');
+      }
+      return;
     }
 
     const zr = this.__zr;
@@ -919,8 +915,10 @@ class Element<Props extends ElementProps = ElementProps> {
       this.removeTextContent();
     }
 
-    if (textEl.__zr && !textEl.__hostTarget) {
-      throw new Error('Text element has been added to zrender.');
+    if (process.env.NODE_ENV !== 'production') {
+      if (textEl.__zr && !textEl.__hostTarget) {
+        throw new Error('Text element has been added to zrender.');
+      }
     }
 
     textEl.innerTransformable = new Transformable();
@@ -1063,15 +1061,23 @@ class Element<Props extends ElementProps = ElementProps> {
     }
   }
 
-  animate(key?: string, loop?: boolean) {
+  animate(key?: string, loop?: boolean, allowDiscreteAnimation?: boolean) {
     let target = key ? (this as any)[key] : this;
 
-    if (!target) {
-      logError(`Property ${key} is not existed in element ${this.id}.`);
-      return;
+    if (process.env.NODE_ENV !== 'production') {
+      if (!target) {
+        logError(
+          'Property "'
+          + key
+          + '" is not existed in element '
+          + this.id
+        );
+        return;
+      }
     }
 
-    const animator = new Animator(target, loop);
+    const animator = new Animator(target, loop, allowDiscreteAnimation);
+    key && (animator.targetName = key);
     this.addAnimator(animator, key);
     return animator;
   }
@@ -1203,7 +1209,10 @@ function animateTo<T>(animatable: Element<T>, target: Dictionary<any>, cfg: Elem
     if (abortedCb) {
       animator.aborted(abortedCb);
     }
-    animator.start(cfg.easing, cfg.force);
+    if (cfg.force) {
+      animator.duration(cfg.duration);
+    }
+    animator.start(cfg.easing);
   }
 
   return animators;
@@ -1256,116 +1265,183 @@ function copyValue(target: Dictionary<any>, source: Dictionary<any>, key: string
   }
 }
 
+function isValueSame(val1: any, val2: any) {
+  return val1 === val2
+    // Only check 1 dimension array
+    || isArrayLike(val1) && isArrayLike(val2) && is1DArraySame(val1, val2);
+}
+
+function is1DArraySame(arr0: ArrayLike<number>, arr1: ArrayLike<number>) {
+  const len = arr0.length;
+  if (len !== arr1.length) {
+    return false;
+  }
+  for (let i = 0; i < len; i++) {
+    if (arr0[i] !== arr1[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
 function animateToShallow<T>(
   animatable: Element<T>,
   topKey: string,
-  source: Dictionary<any>,
+  animateObj: Dictionary<any>,
   target: Dictionary<any>,
   cfg: ElementAnimateConfig,
   animationProps: Dictionary<any> | true,
   animators: Animator<any>[],
-  reverse: boolean
+  reverse: boolean    // If `true`, animate from the `target` to current state.
 ) {
-  const animatableKeys: string[] = [];
-  const changedKeys: string[] = [];
   const targetKeys = keys(target);
   const duration = cfg.duration;
   const delay = cfg.delay;
   const additive = cfg.additive;
   const setToFinal = cfg.setToFinal;
   const animateAll = !isObject(animationProps);
+  // Find last animator animating same prop.
+  const existsAnimators = animatable.animators;
 
+  let animationKeys: string[] = [];
   for (let k = 0; k < targetKeys.length; k++) {
     const innerKey = targetKeys[k] as string;
+    const targetVal = target[innerKey];
 
-    if (source[innerKey] != null && target[innerKey] != null && (animateAll || animationProps[innerKey])) {
-      if (isObject(target[innerKey]) && !isArrayLike(target[innerKey])) {
-
+    if (
+      targetVal != null && animateObj[innerKey] != null
+      && (animateAll || (animationProps as Dictionary<any>)[innerKey])
+    ) {
+      if (isObject(targetVal)
+        && !isArrayLike(targetVal)
+        && !isGradientObject(targetVal)
+      ) {
         if (topKey) {
-          // only support 1 tier property
+          // logError('Only support 1 depth nest object animation.');
+          // Assign directly.
+          // TODO richText?
           if (!reverse) {
-            source[innerKey] = target[innerKey];
+            animateObj[innerKey] = targetVal;
             animatable.updateDuringAnimation(topKey);
           }
           continue;
         }
-
-        animateToShallow(animatable, innerKey, source[innerKey], target[innerKey], cfg, animationProps && (animationProps as Dictionary<any>)[innerKey], animators, reverse);
-      } else {
-        animatableKeys.push(innerKey);
-        changedKeys.push(innerKey);
+        animateToShallow(
+          animatable,
+          innerKey,
+          animateObj[innerKey],
+          targetVal,
+          cfg,
+          animationProps && (animationProps as Dictionary<any>)[innerKey],
+          animators,
+          reverse
+        );
       }
-    } else if (!reverse) {
-      source[innerKey] = target[innerKey];
+      else {
+        animationKeys.push(innerKey);
+      }
+    }
+    else if (!reverse) {
+      // Assign target value directly.
+      animateObj[innerKey] = targetVal;
       animatable.updateDuringAnimation(topKey);
-      changedKeys.push(innerKey);
+      // Previous animation will be stopped on the changed keys.
+      // So direct assign is also included.
+      animationKeys.push(innerKey);
     }
   }
 
-  const keyLen = animatableKeys.length;
-
-  if (keyLen > 0 || (cfg.force && !animators.length)) {
-    const existedAnimators = animatable.animators;
-    let exsitedAnimatorsOnSameTarget: Animator<any>[] = [];
-    for (let i = 0; i < existedAnimators.length; i++) {
-      if (existedAnimators[i].targetName === topKey) {
-        exsitedAnimatorsOnSameTarget.push(existedAnimators[i]);
-      }
-    }
-
-    if (!additive && exsitedAnimatorsOnSameTarget.length) {
-      for (let i = 0; i < exsitedAnimatorsOnSameTarget.length; i++) {
-        const allAborted = exsitedAnimatorsOnSameTarget[i].stopTracks(changedKeys);
-        if (allAborted) {
-          const idx = indexOf(existedAnimators, exsitedAnimatorsOnSameTarget[i]);
-          existedAnimators.splice(idx, 1);
+  let keyLen = animationKeys.length;
+  // Stop previous animations on the same property.
+  if (!additive && keyLen) {
+    // Stop exists animation on specific tracks. Only one animator available for each property.
+    // TODO Should invoke previous animation callback?
+    for (let i = 0; i < existsAnimators.length; i++) {
+      const animator = existsAnimators[i];
+      if (animator.targetName === topKey) {
+        const allAborted = animator.stopTracks(animationKeys);
+        if (allAborted) {   // This animator can't be used.
+          const idx = indexOf(existsAnimators, animator);
+          existsAnimators.splice(idx, 1);
         }
       }
     }
+  }
 
+  // Ignore values not changed.
+  // NOTE: Must filter it after previous animation stopped
+  // and make sure the value to compare is using initial frame if animation is not started yet when setToFinal is used.
+  if (!cfg.force) {
+    animationKeys = filter(animationKeys, key => !isValueSame(target[key], animateObj[key]));
+    keyLen = animationKeys.length;
+  }
+
+  if (keyLen > 0
+    // cfg.force is mainly for keep invoking onframe and ondone callback even if animation is not necessary.
+    // So if there is already has animators. There is no need to create another animator if not necessary.
+    // Or it will always add one more with empty target.
+    || (cfg.force && !animators.length)
+  ) {
     let revertedSource: Dictionary<any>;
     let reversedTarget: Dictionary<any>;
     let sourceClone: Dictionary<any>;
-
     if (reverse) {
       reversedTarget = {};
       if (setToFinal) {
         revertedSource = {};
       }
-
       for (let i = 0; i < keyLen; i++) {
-        const innerKey = animatableKeys[i];
-        reversedTarget[innerKey] = source[innerKey];
+        const innerKey = animationKeys[i];
+        reversedTarget[innerKey] = animateObj[innerKey];
         if (setToFinal) {
           revertedSource[innerKey] = target[innerKey];
-        } else {
-          source[innerKey] = target[innerKey];
+        }
+        else {
+          // The usage of "animateFrom" expects that the element props has been updated dirctly to
+          // "final" values outside, and input the "from" values here (i.e., in variable `target` here).
+          // So here we assign the "from" values directly to element here (rather that in the next frame)
+          // to prevent the "final" values from being read in any other places (like other running
+          // animator during callbacks).
+          // But if `setToFinal: true` this feature can not be satisfied.
+          animateObj[innerKey] = target[innerKey];
         }
       }
-    } else if (setToFinal) {
+    }
+    else if (setToFinal) {
       sourceClone = {};
       for (let i = 0; i < keyLen; i++) {
-        const innerKey = animatableKeys[i];
-        sourceClone[innerKey] = cloneValue(source[innerKey]);
-        copyValue(source, target, innerKey);
+        const innerKey = animationKeys[i];
+        // NOTE: Must clone source after the stopTracks. The property may be modified in stopTracks.
+        sourceClone[innerKey] = cloneValue(animateObj[innerKey]);
+        // Use copy, not change the original reference
+        // Copy from target to source.
+        copyValue(animateObj, target, innerKey);
       }
     }
 
+    const animator = new Animator(animateObj, false, false, additive ? filter(
+      // Use key string instead object reference because ref may be changed.
+      existsAnimators, animator => animator.targetName === topKey
+    ) : null);
 
-    const animator = new Animator(source, false, additive ? exsitedAnimatorsOnSameTarget : null);
     animator.targetName = topKey;
     if (cfg.scope) {
       animator.scope = cfg.scope;
     }
 
     if (setToFinal && revertedSource) {
-      animator.whenWithKeys(0, revertedSource, animatableKeys);
+      animator.whenWithKeys(0, revertedSource, animationKeys);
     }
     if (sourceClone) {
-      animator.whenWithKeys(0, sourceClone, animatableKeys);
+      animator.whenWithKeys(0, sourceClone, animationKeys);
     }
 
-    animator.whenWithKeys(duration == null ? 500 : duration, reverse ? reversedTarget : target, animatableKeys).delay(delay || 0);
+    animator.whenWithKeys(
+      duration == null ? 500 : duration,
+      reverse ? reversedTarget : target,
+      animationKeys
+    ).delay(delay || 0);
+
     animatable.addAnimator(animator, topKey);
     animators.push(animator);
   }

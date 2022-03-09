@@ -4,11 +4,6 @@ test('interpolateNumber', () => {
   expect(animator.interpolateNumber(1, 2, 0.5)).toBeCloseTo(1.5);
 });
 
-test('step', () => {
-  expect(animator.step(1, 2, 0.5)).toBe(1);
-  expect(animator.step(1, 2, 0.6)).toBe(2);
-});
-
 test('interpolate1DArray', () => {
   const out = [0, 0, 0];
   const p0 = [1, 2, 3];

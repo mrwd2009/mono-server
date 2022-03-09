@@ -66,3 +66,6 @@ export type RenderedEvent = {
 };
 
 export type FunctionPropertyNames<T> = {[K in keyof T]: T[K] extends Function ? K : never}[keyof T];
+
+export type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter' | number;
+export type FontStyle = 'normal' | 'italic' | 'oblique';

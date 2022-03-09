@@ -1,5 +1,37 @@
 import { ArrayLike, Dictionary, KeyOfDistributive } from './types';
 import { GradientObject } from '../graphic/Gradient';
+import { platformApi } from './platform';
+
+// 用于处理merge时无法遍历Date等对象的问题
+const BUILTIN_OBJECT: Record<string, boolean> = reduce([
+  'Function',
+  'RegExp',
+  'Date',
+  'Error',
+  'CanvasGradient',
+  'CanvasPattern',
+  // For node-canvas
+  'Image',
+  'Canvas'
+], (obj, val) => {
+  obj['[object ' + val + ']'] = true;
+  return obj;
+}, {} as Record<string, boolean>);
+
+const TYPED_ARRAY: Record<string, boolean> = reduce([
+  'Int8',
+  'Uint8',
+  'Uint8Clamped',
+  'Int16',
+  'Uint16',
+  'Int32',
+  'Uint32',
+  'Float32',
+  'Float64'
+], (obj, val) => {
+  obj['[object ' + val + 'Array]'] = true;
+  return obj;
+}, {} as Record<string, boolean>);
 
 export function isArrayLike(data: any): boolean {
   if (!data) {
@@ -99,29 +131,6 @@ export function mixin<T, S>(target: T | Function, source: S | Function, override
   }
 }
 
-const BUILTIN_OBJECT: {[key: string]: boolean} = {
-  '[object Function]': true,
-  '[object RegExp]': true,
-  '[object Date]': true,
-  '[object Error]': true,
-  '[object CanvasGradient]': true,
-  '[object CanvasPattern]': true,
-  // For node-canvas
-  '[object Image]': true,
-  '[object Canvas]': true
-};
-
-const TYPED_ARRAY: {[key: string]: boolean} = {
-  '[object Int8Array]': true,
-  '[object Uint8Array]': true,
-  '[object Uint8ClampedArray]': true,
-  '[object Int16Array]': true,
-  '[object Uint16Array]': true,
-  '[object Int32Array]': true,
-  '[object Uint32Array]': true,
-  '[object Float32Array]': true,
-  '[object Float64Array]': true
-};
 const objToString = Object.prototype.toString;
 
 const ctorFunction = function () {}.constructor;
@@ -195,7 +204,7 @@ export function clone<T extends any>(source: T): T {
       } else {
         result = new Ctor((source as Float32Array).length);
         for (let i = 0, len = (source as Float32Array).length; i < len; i++) {
-          result[i] = clone((source as Float32Array)[i]);
+          result[i] = (source as Float32Array)[i];
         }
       }
     }
@@ -278,17 +287,11 @@ export function $override(name: string, fn: Function) {
   methods[name] = fn;
 }
 
-methods.createCanvas = (): HTMLCanvasElement => {
-  return document.createElement('canvas');
-}
-
 methods.createMeasureDiv = (): HTMLDivElement => {
   return document.createElement('div');
 }
 
-export const createCanvas = (): HTMLCanvasElement => {
-  return methods.createCanvas();
-}
+export const createCanvas = platformApi.createCanvas;
 
 export const createMeasureDiv = (): HTMLDivElement => {
   return methods.createMeasureDiv();
@@ -608,3 +611,14 @@ export function eqNaN(value: any): boolean {
 export function isRegExp(value: unknown): value is RegExp {
   return objToString.call(value) === '[object RegExp]';
 }
+
+export function disableUserSelect(dom: HTMLElement) {
+  const domStyle = dom.style;
+  domStyle.webkitUserSelect = 'none';
+  domStyle.userSelect = 'none';
+  // @ts-ignore
+  domStyle.webkitTapHighlightColor = 'rgba(0,0,0,0)';
+  (domStyle as any)['-webkit-touch-callout'] = 'none';
+}
+
+export const RADIAN_TO_DEGREE = 180 / Math.PI;

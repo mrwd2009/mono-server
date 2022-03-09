@@ -1,6 +1,7 @@
+import env from './core/env';
 let dpr = 1;
 
-if (typeof window !== 'undefined') {
+if (env.hasGlobalWindow) {
   if (window.devicePixelRatio) {
     dpr = Math.max(window.devicePixelRatio, dpr);
   } else if (window.screen && (window.screen as any).deviceXDPI) {
