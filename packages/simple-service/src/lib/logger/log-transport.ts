@@ -5,7 +5,6 @@ import 'winston-daily-rotate-file';
 import path from 'path';
 import net from 'net';
 import Transport, { TransportStreamOptions } from 'winston-transport';
-import { createSocket, Socket } from 'dgram';
 import { isWorker, worker } from 'cluster';
 import { noop } from 'lodash';
 import { Colorizer } from 'logform';
@@ -16,11 +15,6 @@ import config from '../../config/config';
 const {
   isDev,
   logger: {
-    server: {
-      enabled,
-      host,
-      port,
-    },
     ipc,
     rotateOptions: {
       fileDir,
@@ -37,8 +31,6 @@ const { DailyRotateFile } = transports;
 const { colorize } = format;
 
 export class WorkerTransport extends Transport {
-  private enableLogServer = enabled;
-  private logServer?: Socket;
   private ipcClient?: net.Socket;
   private ipcReady = false;
   private ipcQueue: Array<any> = [];
@@ -48,13 +40,7 @@ export class WorkerTransport extends Transport {
     if (!isWorker) {
       throw new Error("WorkerTransport must be used in a cluster worker.");
     }
-    if (this.enableLogServer) {
-      this.logServer = createSocket('udp4');
-      this.logServer.on('error', (error) => {
-        console.error(error);
-        throw error;
-      });
-    } else if (ipc.enabled) {
+    if (ipc.enabled) {
       this.ipcClient = net.createConnection(ipc.path);
       this.ipcClient.setNoDelay();
       this.ipcClient
@@ -90,10 +76,7 @@ export class WorkerTransport extends Transport {
         this.emit('logged', info);
       });
     };
-    if (this.enableLogServer) {
-      this.logServer!.send(Buffer.from(JSON.stringify(postMsg)), port, host, done);
-      return;
-    }
+
     if (ipc.enabled) {
       if (!this.ipcReady) {
         this.ipcQueue.push({

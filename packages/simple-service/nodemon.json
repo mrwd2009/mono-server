@@ -1,6 +1,6 @@
 {
-  "watch": ["src"],
-  "ext": "ts",
+  "watch": ["src", ".env"],
+  "ext": "ts,js",
   "ignore": ["src/**/*.test.ts"],
-  "exec": "yarn build && node --enable-source-maps ./index.js"
+  "exec": "ts-node src/index.ts"
 }

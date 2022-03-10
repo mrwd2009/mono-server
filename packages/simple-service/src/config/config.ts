@@ -1,7 +1,6 @@
 import path from 'path';
 import fs from 'fs';
 import _ from 'lodash';
-import { env } from 'process';
 
 export type GatewayENV = NodeJS.ProcessEnv & {
   JWT_SECRET?: string,
@@ -38,6 +37,7 @@ const nodeEnv = envObj.NODE_ENV || 'development';
 const appEnv = envObj.APP_ENV || 'dev';
 const isDev = nodeEnv !== 'production';
 
+// get app config
 const appConfigFiles = fs.readdirSync(path.join(__dirname, 'env'));
 let appConfig: GatewayConfig;
 if (_.find(appConfigFiles, item => item.includes(appEnv))) {
@@ -48,7 +48,14 @@ if (_.find(appConfigFiles, item => item.includes(appEnv))) {
 
 const defaultRedisUrl = 'redis://localhost:6379';
 const commonPrefix = `simple-service-${nodeEnv}-${appEnv}`;
-const logFileDir = path.join(__dirname, envObj.WINSTON_LOG_DIR || '../../log/winston', `${nodeEnv}/${appEnv}`);
+
+// where to store winston log
+const logFileDir = path.join(envObj.WINSTON_LOG_DIR || path.join(__dirname, '..', '..', 'log', 'winston'), nodeEnv, appEnv);
+if (!fs.existsSync(logFileDir)) {
+  // create log directory automatically
+  fs.mkdirSync(logFileDir, { recursive: true });
+}
+
 const config = {
   appEnv,
   isDev,
@@ -75,11 +82,6 @@ const config = {
       logInfoFileName: envObj.WINSTON_LOG_FILENAME || `info-${nodeEnv}-%DATE%.log`,
       logErrorFileName: envObj.WINSTON_LOG_ERROR_FILENAME || `error-${nodeEnv}-%DATE%.log`,
       logExceptionFileName: envObj.WINSTON_LOG_EXCEPTION_FILENAME || `exception-${nodeEnv}-%DATE%.log`,
-    },
-    server: {
-      enabled: envObj.ENABLE_APP_LOG_SERVER === 'true',
-      host: '127.0.0.1',
-      port: parseInt(envObj.APP_LOG_SEVER_PORT || '2448'),
     },
     ipc: {
       enabled: envObj.ENABLE_APP_LOG_IPC === 'true',

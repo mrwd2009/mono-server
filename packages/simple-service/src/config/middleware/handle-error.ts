@@ -14,7 +14,9 @@ const {
 export const handleError: GatewayMiddleware = async (context, next) => {
   try {
     await next();
-  } catch (error) {
+  } catch (err) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const error = err as any;
     if (config.isDev) {
       if (config.traceKnownErrorInDev || !(error instanceof GatewayError)) {
         console.error(`\x1b[38;2;255;77;79mError occurred at request: ${context.method} ${context.originalUrl}\x1b[0m`);

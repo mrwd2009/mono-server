@@ -1,9 +1,4 @@
-import Koa from 'koa';
-import boot from './config/boot';
+import Application from './application';
 
-const port = process.env.PORT || 4100;
-const app = new Koa();
-
-boot(app, port);
-
-
+const app = new Application();
+app.initialize();
