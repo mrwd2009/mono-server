@@ -6,8 +6,6 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   JWT_SECRET?: string,
   TRACE_KNOWN_ERROR_IN_DEV?: string,
   MAIN_REDIS_URL?: string,
-  APP_LOG_SEVER_PORT?: string,
-  ENABLE_APP_LOG_SERVER?: string,
   ENABLE_APP_LOG_IPC?: string,
   WINSTON_LOG_DIR?: string,
   WINSTON_LOG_FILENAME?: string,
@@ -101,7 +99,7 @@ const config = {
     },
   },
   cors: {
-    allowedDomain: [],
+    allowedDomain: ['localhost'],
   },
   queue: {
     redis: {

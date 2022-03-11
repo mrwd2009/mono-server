@@ -11,7 +11,7 @@ export const measure: GatewayMiddleware = async (context, next) => {
   const profileTag = `${context.state.requestId} ${context.method}:${context.originalUrl}`;
   let hasError = false;
   try {
-    if (config.isDev) {
+    if (!config.isDev) {
       logger.profile(profileTag);
     }
     await next();
@@ -41,7 +41,7 @@ export const measure: GatewayMiddleware = async (context, next) => {
       console.info(`\x1b[38;2;0;204;204mResponse Time(${context.state.requestId}): \x1b[0m ${url}\n`);
     } else {
       // why we must add 'message' and 'level' fields, it's so stupid according to winston type.
-      logger.profile(profileTag, { level: 'info', message: profileTag, user: context.state.user || 'ananymity' });
+      logger.profile(profileTag, { level: 'info', message: profileTag, user: context.state.user?.email || 'ananymity' });
     }
   }
 };

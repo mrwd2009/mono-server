@@ -1,9 +1,6 @@
 node_modules
 dist
 .eslintrc.js
-index.js
 babel.config.js
 pm2.config.js
-log-server-ipc.js
-log-server-udp.js
-queue-starter.js
+src/**/*.test.ts

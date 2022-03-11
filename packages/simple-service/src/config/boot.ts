@@ -5,11 +5,21 @@ import middleware from './middleware';
 import dispatch from './dispatch';
 import { ip } from '../lib/util';
 import config from './config';
+import logger from '../lib/logger';
 
-const boot = async (app: Koa, port: number | string ): Promise<void> => {
-  await initializer();
-  await middleware(app);
-  await dispatch(app);
+// record all app level errors.
+const catchUnhandledError = async (app: Koa) => {
+  app.silent = true;
+  app.on('error', (error: Error, ctx: Koa.Context) => {
+    logger.error(error.message, { response: error, user: ctx?.state.user?.email || 'ananymity' });
+  });
+};
+// in order to get user ip. Because of VPN, maybe it's not working as expected.
+const trustProxy = async (app: Koa) => {
+  app.proxy = true;
+};
+
+const listen = async (app: Koa, port: number | string) => {
   await new Promise((resolve, reject) => {
     const server = http.createServer(app.callback())
       .listen(port, () => {
@@ -29,6 +39,15 @@ const boot = async (app: Koa, port: number | string ): Promise<void> => {
       }
     });
   });
+};
+
+const boot = async (app: Koa, port: number | string ): Promise<void> => {
+  await initializer();
+  await middleware(app);
+  await dispatch(app);
+  await catchUnhandledError(app);
+  await trustProxy(app);
+  await listen(app, port);
 };
 
 export default boot;

@@ -42,7 +42,7 @@ export const handleError: GatewayMiddleware = async (context, next) => {
       if (!_.isEmpty(context.request.body)) {
         error.body = context.request.body;
       }
-      logger.error(error.message, { response: error, user: context.state.user || 'ananymity' });
+      logger.error(error.message, { response: error, user: context.state.user?.email || 'ananymity' });
     }
     
     switch (error.code) {

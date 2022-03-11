@@ -26,27 +26,24 @@ module.exports = {
       out_file: logFile('log-server-out.log')
     },
     {
-      name: 'simple-service',
-      script: './dist/index.js',
-      exec_mode: 'cluster',
-      instances: 2,
+      name: 'simple-service-with-cluster', // cluster created by ourself
+      script: './dist/cluster.js',
       env: {
         APP_ENV: 'prod',
         NODE_ENV: 'production',
-        ENABLE_APP_LOG_SERVER: 'true',
-        APP_LOG_SEVER_PORT: '2000', // used by logger in pm2 cluster mode
         PORT: '4100',
+        CLUSTER_WORKS: '2'
       },
       env_development: {
         NODE_ENV: 'development'
       },
       max_memory_restart: '500M',
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
-      error_file: logFile('simple-service-error.log'),
-      out_file: logFile('simple-service-out.log')
+      error_file: logFile('simple-service-with-cluster-error.log'),
+      out_file: logFile('simple-service-with-cluster-out.log')
     },
     {
-      name: 'simple-service-with-ipc-log',
+      name: 'simple-service-with-log-server', // cluster created by pm2
       script: './dist/index.js',
       exec_mode: 'cluster',
       instances: 2,
@@ -58,8 +55,8 @@ module.exports = {
       },
       max_memory_restart: '500M',
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
-      error_file: logFile('simple-service-with-ipc-log-error.log'),
-      out_file: logFile('simple-service-with-ipc-log-out.log')
+      error_file: logFile('simple-service-with-log-server-error.log'),
+      out_file: logFile('simple-service-with-log-server-out.log')
     },
     {
       name: 'simple-service-queue',
