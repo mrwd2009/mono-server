@@ -16,7 +16,6 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   MAIN_DB_PASS?: string,
   MAIN_DB_HOST?: string,
   QUEUE_REDIS_URL?: string,
-  QUEUE_ENABLE_DASHBOARD?: string,
   GATEWAY_DB_USER?: string,
   GATEWAY_DB_PASS?: string,
   GATEWAY_DB_HOST?: string,
@@ -109,8 +108,7 @@ const config = {
       prefix: `${commonPrefix}-queue-`
     },
     dashboard: {
-      enabled: envObj.QUEUE_ENABLE_DASHBOARD === 'true',
-      basePath: '/admin/queues'
+      basePath: '/dashboard'
     }
   },
   github:{

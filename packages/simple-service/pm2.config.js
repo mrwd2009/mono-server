@@ -13,7 +13,7 @@ const logFile = file => path.join(logPath, file);
 module.exports = {
   apps: [
     {
-      name: 'log-server',
+      name: 'log-server', // if cluster is created by pm2, we need to start a log server to collect logs from workers.
       script: './dist/log-server.js',
       env: {
         NODE_ENV: 'production',
@@ -59,7 +59,7 @@ module.exports = {
       out_file: logFile('simple-service-with-log-server-out.log')
     },
     {
-      name: 'simple-service-queue',
+      name: 'simple-service-queue', // this is our job queue
       script: './dist/queue.js',
       env: {
         APP_ENV: 'queue',
@@ -69,6 +69,18 @@ module.exports = {
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
       error_file: logFile('simple-deployment-queue-error.log'),
       out_file: logFile('simple-deployment-queue-out.log')
+    },
+    {
+      name: 'simple-service-queue-dashboard', // this is our job queue dashboard
+      script: './dist/queue-dashboard.js',
+      env: {
+        APP_ENV: 'queue-dashboard',
+        NODE_ENV: 'production',
+      },
+      max_memory_restart: '500M',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      error_file: logFile('simple-deployment-queue-dashboard-error.log'),
+      out_file: logFile('simple-deployment-queue-dashboard-out.log')
     }
   ]
 };

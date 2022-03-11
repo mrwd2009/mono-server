@@ -1,6 +1,5 @@
 import Koa from 'koa';
 import Router from '@koa/router';
-import config from './config';
 import { passport } from './middleware';
 import deploymentClient from '../api/deployment-client';
 import deploymentServer from '../api/deployment-server';
@@ -29,11 +28,6 @@ const dispatch = async (app: Koa): Promise<void> => {
   app
     .use(publicRouter.routes())
     .use(authCheckingRouter.routes());
-  
-  // add queue dashboard routes
-  if (config.queue.dashboard.enabled) {
-    await require('../queue/dashboard').initialize(app);
-  }
 };
 
 export default dispatch;

@@ -7,7 +7,11 @@
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "build": "rm -rf ./dist/* && tsc -p tsconfig.build.json",
-    "dev": "nodemon"
+    "dev": "nodemon src/index.ts",
+    "dev-cluster": "nodemon src/cluster.ts",
+    "dev-log-server": "nodemon src/log-server.ts",
+    "dev-queue": "nodemon src/queue.ts",
+    "dev-queue-dashboard": "nodemon src/queue-dashboard.ts"
   },
   "author": "di@gridx.cn",
   "license": "MIT",
