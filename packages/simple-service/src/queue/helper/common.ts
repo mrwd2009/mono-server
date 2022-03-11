@@ -4,15 +4,24 @@ import memoizeOne from 'memoize-one';
 import config from '../../config/config';
 
 const getClientRedis = memoizeOne(() => {
-  return new Redis(config.queue.redis.url);
+  return new Redis(config.queue.redis.url, {
+    maxRetriesPerRequest: null,
+    enableReadyCheck: false
+  });
 });
 
 const getSubscriberRedis = memoizeOne(() => {
-  return new Redis(config.queue.redis.url);
+  return new Redis(config.queue.redis.url, {
+    maxRetriesPerRequest: null,
+    enableReadyCheck: false
+  });
 });
 
 const getDefaultRedis = () => {
-  return new Redis(config.queue.redis.url);
+  return new Redis(config.queue.redis.url, {
+    maxRetriesPerRequest: null,
+    enableReadyCheck: false
+  });
 };
 
 //https://github.com/OptimalBits/bull/blob/master/PATTERNS.md#reusing-redis-connections
