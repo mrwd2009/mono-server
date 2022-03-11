@@ -2,7 +2,6 @@ import cluster, { fork, isWorker } from 'cluster';
 import { cpus } from 'os';
 import config from '../config/config';
 
-
 const initialize = () => {
   if (config.isDev) {
     require('./job');
@@ -14,7 +13,7 @@ const initialize = () => {
     return;
   }
   const logger = require('../lib/logger').default;
-  const size = cpus().length;
+  const size = process.env.QUEUE_WORKERS || cpus().length;
   const createWorker = () => {
     fork()
     .on('error', (error) => {

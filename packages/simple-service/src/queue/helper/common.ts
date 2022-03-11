@@ -37,6 +37,7 @@ export const createQueue =(name: string, options: QueueOptions = {}): QueueType 
   });
 }
 
+// todo support close connection automatically.
 export class QueueGetter {
   private cache?: QueueType;
 

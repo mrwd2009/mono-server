@@ -2,13 +2,13 @@ import { createBullBoard } from '@bull-board/api'
 import { BullAdapter } from '@bull-board/api/bullAdapter';
 import { KoaAdapter } from '@bull-board/koa';
 import Koa from 'koa';
-import * as helper from './helper';
+import * as job from './job';
 import config from '../config/config';
 
 const getQueues = () => {
   return [
-    new BullAdapter(helper.job1.getQueue()),
-    new BullAdapter(helper.job2.getQueue()),
+    new BullAdapter(job.job1.queue),
+    new BullAdapter(job.job2.queue),
   ];
 };
 

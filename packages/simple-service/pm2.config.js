@@ -81,6 +81,18 @@ module.exports = {
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
       error_file: logFile('simple-deployment-queue-dashboard-error.log'),
       out_file: logFile('simple-deployment-queue-dashboard-out.log')
+    },
+    {
+      name: 'simple-service-schedule', // this is our schedule
+      script: './dist/schedule.js',
+      env: {
+        APP_ENV: 'schedule',
+        NODE_ENV: 'production',
+      },
+      max_memory_restart: '500M',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      error_file: logFile('simple-deployment-schedule-error.log'),
+      out_file: logFile('simple-deployment-schedule-out.log')
     }
   ]
 };

@@ -24,7 +24,7 @@ const initialize = () => {
     logger = require('./lib/logger/primary').default;
   }
 
-  const size = process.env.CLUSTER_WORKS || cpus().length;
+  const size = process.env.CLUSTER_WORKERS || cpus().length;
   const createWorker = () => {
     fork()
     .on('error', (error) => {

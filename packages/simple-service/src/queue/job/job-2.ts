@@ -1,5 +1,9 @@
-import { getQueue } from '../helper/job-2';
+import { job } from '../helper';
 import processor from './processor/job-2';
 
-const queue = getQueue();
+const queue = job.getQueue('job-2');
 queue.process(processor);
+
+export {
+  queue
+};
