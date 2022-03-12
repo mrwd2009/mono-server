@@ -23,6 +23,7 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   GITHUB_PASSWORD?: string,
   DEPLOYMENT_ADMIN_HOST?: string,
   DEPLOYMENT_CLIENT?: string,
+  TEMP_FILE_DIR?: string;
 }
 
 export interface GatewayConfig {
@@ -54,7 +55,14 @@ if (!fs.existsSync(logFileDir)) {
 }
 
 // secret keys used to create signed cookie.
-const cookieKeys = process.env.COOKIE_KEYS ? process.env.COOKIE_KEYS.split(',') : []
+const cookieKeys = process.env.COOKIE_KEYS ? process.env.COOKIE_KEYS.split(',') : [];
+
+// where to store temp file
+const tempFileDir = path.join(envObj.TEMP_FILE_DIR || path.join(__dirname, '..', '..', 'temp'), nodeEnv, appEnv);
+if (!fs.existsSync(tempFileDir)) {
+  // create temp directory automatically
+  fs.mkdirSync(tempFileDir, { recursive: true });
+}
 
 const config = {
   appEnv,
@@ -69,6 +77,12 @@ const config = {
     audience: 'gridx.cn',
     secret: envObj.JWT_SECRET,
     expireHour: 3,
+  },
+  cors: {
+    allowedDomain: ['localhost'],
+  },
+  upload: {
+    path: tempFileDir,
   },
   redis: {
     main: {
@@ -102,9 +116,6 @@ const config = {
       password: envObj.GATEWAY_DB_PASS!,
       host: envObj.GATEWAY_DB_HOST!,
     },
-  },
-  cors: {
-    allowedDomain: ['localhost'],
   },
   queue: {
     redis: {

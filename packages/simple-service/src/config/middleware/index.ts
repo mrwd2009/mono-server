@@ -8,6 +8,7 @@ import * as mergedParams from './merged-params';
 import * as cors from './cors';
 import * as helmet from './helmet';
 // import * as csrf from './csrf';
+import * as compress from './compress';
 
 export {
   bodyParser,
@@ -24,6 +25,7 @@ export const initialize = async (app: Koa): Promise<void> => {
   await bodyParser.initialize(app);
   await passport.initialize(app);
   // await csrf.initialize(app); // not needed for separation of UI and API
+  await compress.initialize(app);
   await formatResponse.initialize(app);
   await handleError.initialize(app);
   await measure.initialize(app);

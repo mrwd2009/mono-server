@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Middleware, RouterContext } from '@koa/router';
+import { Options } from 'multer';
 
 interface _GatewayRouterState {
   requestId?: string,
@@ -12,6 +13,7 @@ interface _GatewayRouterContext {
     sendJSON?: (result: unknown) => void,
   },
   mergedParams?: any,
+  files?: Array<Parameters<NonNullable<Options['fileFilter']>>[1]>;
 }
 
 export type MergedParams = any;
