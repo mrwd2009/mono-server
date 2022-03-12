@@ -1,19 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Middleware, RouterContext } from '@koa/router';
-import { Options } from 'multer';
+import { DefaultState, DefaultContext } from 'koa';
 
-interface _GatewayRouterState {
+export interface GatewayRouterState extends DefaultState {
   requestId?: string,
-}
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type GatewayRouterState = _GatewayRouterState & Record<string, any>;
-
-interface _GatewayRouterContext {
-  gateway?: {
-    sendJSON?: (result: unknown) => void,
-  },
-  mergedParams?: any,
-  files?: Array<Parameters<NonNullable<Options['fileFilter']>>[1]>;
 }
 
 export type MergedParams = any;
@@ -31,11 +21,14 @@ export interface PageParams {
   [otherKey: string]: any,
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type GatewayRouterContext = _GatewayRouterContext & RouterContext<GatewayRouterState> ;
+export interface GatewayRouterContext extends RouterContext<DefaultState, DefaultContext> {
+  gateway?: {
+    sendJSON?: (result: unknown) => void,
+  },
+  mergedParams?: any,
+}
 
-// eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
-export type GatewayController = Middleware<_GatewayRouterState & Record<string, any>, _GatewayRouterContext & {}>;
+export type GatewayController = Middleware<GatewayRouterState, GatewayRouterContext>;
 
 export type GatewayCtrl = GatewayController;
 

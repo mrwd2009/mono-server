@@ -20,7 +20,6 @@ const dispatch = async (app: Koa): Promise<void> => {
     .use(openRouter.routes());
   // including jwt checking logic
   authCheckingRouter
-    .use(passport.jwtAuth)
     .use(deploymentServer.routes())
     .use(deploymentClient.routes())
     .use(systemRouter.routes());
