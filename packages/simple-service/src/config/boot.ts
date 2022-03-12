@@ -19,6 +19,11 @@ const trustProxy = async (app: Koa) => {
   app.proxy = true;
 };
 
+// to create signed cookie
+const setCookieKeys = async (app: Koa) => {
+  app.keys = config.cookie.keys;
+};
+
 const listen = async (app: Koa, port: number | string) => {
   await new Promise((resolve, reject) => {
     const server = http.createServer(app.callback())
@@ -47,6 +52,7 @@ const boot = async (app: Koa, port: number | string ): Promise<void> => {
   await dispatch(app);
   await catchUnhandledError(app);
   await trustProxy(app);
+  await setCookieKeys(app);
   await listen(app, port);
 };
 

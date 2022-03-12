@@ -53,10 +53,16 @@ if (!fs.existsSync(logFileDir)) {
   fs.mkdirSync(logFileDir, { recursive: true });
 }
 
+// secret keys used to create signed cookie.
+const cookieKeys = process.env.COOKIE_KEYS ? process.env.COOKIE_KEYS.split(',') : []
+
 const config = {
   appEnv,
   isDev,
   traceKnownErrorInDev: isDev ? (envObj.TRACE_KNOWN_ERROR_IN_DEV === 'true') : false,
+  cookie: {
+    keys: cookieKeys,
+  },
   jwt: {
     cookieKey: commonPrefix,
     issuer: 'di@gridx.cn',

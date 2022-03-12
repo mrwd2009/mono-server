@@ -6,6 +6,8 @@ import * as handleError from './handle-error';
 import * as measure from './measure';
 import * as mergedParams from './merged-params';
 import * as cors from './cors';
+import * as helmet from './helmet';
+// import * as csrf from './csrf';
 
 export {
   bodyParser,
@@ -17,9 +19,11 @@ export {
 };
 
 export const initialize = async (app: Koa): Promise<void> => {
+  await helmet.initialize(app);
   await cors.initialize(app);
   await bodyParser.initialize(app);
   await passport.initialize(app);
+  // await csrf.initialize(app); // not needed for separation of UI and API
   await formatResponse.initialize(app);
   await handleError.initialize(app);
   await measure.initialize(app);

@@ -22,7 +22,7 @@ export const initialize = async (app: Koa): Promise<void> => {
       error.expose = true;
       throw error;
     },
-    allowHeaders: ['Content-Type', 'responseType', 'X-Requested-With', 'App-Locale'],
+    allowHeaders: ['Content-Type', 'App-Locale', 'CSRF-Token'],
     credentials: true,
   }));
 };
