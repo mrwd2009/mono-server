@@ -20,7 +20,8 @@ export class RedisFactory {
   constructor(private url: string, private prefix: string, private expired: number) {
   }
 
-  private getClient(): Redis {
+  // for special purpose, otherwise use instance methods directly.
+  public getClient(): Redis {
     if (this.redisClient) {
       return this.redisClient;
     }

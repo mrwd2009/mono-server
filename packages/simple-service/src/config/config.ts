@@ -84,6 +84,11 @@ const config = {
   upload: {
     path: tempFileDir,
   },
+  rateLimiter: {
+    keyPrefix: 'limiter',
+    points: 60,
+    duration: 10,
+  },
   redis: {
     main: {
       url: envObj.MAIN_REDIS_URL || defaultRedisUrl,
