@@ -1,5 +1,6 @@
 import Router from '@koa/router';
 import * as ctrl from './controller';
+import { registerRouter } from '../../config/router';
 
 const router = new Router({
   prefix: '/system',
@@ -7,4 +8,4 @@ const router = new Router({
 
 router.get('/info', ctrl.getInfoCtrl);
 
-export default router;
+registerRouter(router);

@@ -1,5 +1,7 @@
 import Router from '@koa/router';
 import * as ctrl from './controller';
+import { registerPublicRouter } from '../../config/router';
+
 
 const router = new Router({
   prefix: '/public',
@@ -7,4 +9,4 @@ const router = new Router({
 
 router.get('/health-checking', ctrl.healthCheckingCtrl);
 
-export default router;
+registerPublicRouter(router);
