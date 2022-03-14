@@ -1,8 +1,8 @@
-import Koa from 'koa';
+// TODO complete this middleware
+import Koa, { Middleware } from 'koa';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { v4 as uuidV4 } from 'uuid';
-import { GatewayMiddleware } from '../../type';
 import config from '../../config';
 import * as lib from '../../lib';
 
@@ -45,7 +45,7 @@ export const isUrlAllowed = async (email: string, url: string): Promise<boolean>
   return _.includes(assignedP, urlP);
 };
 
-export const checkRoute: GatewayMiddleware = async (context, next) => {
+export const checkRoute: Middleware = async (context, next) => {
   const allowed = await isUrlAllowed(context.originalUrl, context.state.user.email);
   if (allowed) {
     await next();

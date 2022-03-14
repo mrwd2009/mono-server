@@ -1,7 +1,13 @@
-import Koa from 'koa';
-import { GatewayMiddleware } from '../../type';
+import Koa, { Middleware } from 'koa';
 
-export const mergedParams: GatewayMiddleware = async (context, next) => {
+declare module 'koa' {
+  interface DefaultContext {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mergedParams?: any;
+  }
+}
+
+export const mergedParams: Middleware = async (context, next) => {
   const {
     query,
     request: {

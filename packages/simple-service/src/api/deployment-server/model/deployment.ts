@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { Order, WhereOptions, Op, QueryTypes } from '@sequelize/core';
-import { MergedParams, PageParams } from '../../../type';
+import { MergedParams, PageParams } from '../../../types';
 import appDB from '../../../config/model/app';
 import { LogicError } from '../../../lib/error';
 import { ServiceModel, AgentModel } from '../../../model/types';

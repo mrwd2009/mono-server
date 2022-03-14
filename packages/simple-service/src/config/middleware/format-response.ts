@@ -1,7 +1,14 @@
-import Koa from 'koa';
-import { GatewayMiddleware } from '../../type';
+import Koa, { Middleware } from 'koa';
 
-export const formatResponse: GatewayMiddleware = async (context, next) => {
+declare module 'koa' {
+  interface DefaultContext {
+    gateway?: {
+      sendJSON?: (result: unknown) => void;
+    },
+  }
+}
+
+export const formatResponse: Middleware = async (context, next) => {
   context.gateway = context.gateway || {};
   // format response
   context.gateway.sendJSON = (result) => {

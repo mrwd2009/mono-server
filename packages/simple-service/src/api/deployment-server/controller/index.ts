@@ -1,10 +1,10 @@
+import { Middleware } from '@koa/router';
 import cookie from 'cookie';
 import config from '../../../config/config';
-import { GatewayCtrlArray } from '../../../type';
 import { validator, validatePagination } from '../../../middleware';
 import { deploymentModel } from '../model';
 
-export const createServiceHandler: GatewayCtrlArray = [
+export const createServiceHandler: Array<Middleware> = [
   validator(Schema => Schema.object({
     name: Schema.string(),
     category: Schema.string(),
@@ -16,7 +16,7 @@ export const createServiceHandler: GatewayCtrlArray = [
   }
 ];
 
-export const getServiceListHandler: GatewayCtrlArray = [
+export const getServiceListHandler: Array<Middleware> = [
   validatePagination(),
   async (context) => {
     const result = await deploymentModel.getServiceList(context.mergedParams);
@@ -24,7 +24,7 @@ export const getServiceListHandler: GatewayCtrlArray = [
   }
 ];
 
-export const getServiceAgentListHandler: GatewayCtrlArray = [
+export const getServiceAgentListHandler: Array<Middleware> = [
   validatePagination(),
   async (context) => {
     const result = await deploymentModel.getServiceAgentList(context.mergedParams);
@@ -32,7 +32,7 @@ export const getServiceAgentListHandler: GatewayCtrlArray = [
   }
 ];
 
-export const assignAgentHandler: GatewayCtrlArray = [
+export const assignAgentHandler: Array<Middleware> = [
   validator(Schema => Schema.object({
     serviceId: Schema.number().integer(),
     agentIds: Schema.array().items(Schema.number().integer()),
@@ -44,7 +44,7 @@ export const assignAgentHandler: GatewayCtrlArray = [
   }
 ];
 
-export const createAgentHandler: GatewayCtrlArray = [
+export const createAgentHandler: Array<Middleware> = [
   validator(Schema => Schema.object({
     name: Schema.string(),
     ip: Schema.string().ip({
@@ -58,14 +58,14 @@ export const createAgentHandler: GatewayCtrlArray = [
   }
 ];
 
-export const getAgentListHandler: GatewayCtrlArray = [
+export const getAgentListHandler: Array<Middleware> = [
   validatePagination(),
   async (context) => {
     context.gateway?.sendJSON?.(await deploymentModel.getAgentList(context.mergedParams));
   }
 ];
 
-export const getLogListHandler: GatewayCtrlArray = [
+export const getLogListHandler: Array<Middleware> = [
   validatePagination(),
   async (context) => {
     context.gateway?.sendJSON?.(await deploymentModel.getLogList(context.mergedParams))

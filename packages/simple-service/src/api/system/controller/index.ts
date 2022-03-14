@@ -1,7 +1,7 @@
+import { Middleware } from '@koa/router';
 import { systemModel } from '../model';
-import { GatewayController } from '../../../type';
 
-export const getInfoCtrl: GatewayController = async (context) => {
+export const getInfoCtrl: Middleware = async (context) => {
   const info = await systemModel.getInfo();
   context.gateway!.sendJSON!(info);
 };

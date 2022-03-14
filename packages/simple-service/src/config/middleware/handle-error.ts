@@ -1,6 +1,5 @@
-import Koa from 'koa';
+import Koa, { Middleware } from 'koa';
 import _ from 'lodash';
-import { GatewayMiddleware } from '../../type';
 import config from '../../config';
 import * as lib from '../../lib';
 import logger from '../../lib/logger';
@@ -11,7 +10,7 @@ const {
   }
 } = lib;
 
-export const handleError: GatewayMiddleware = async (context, next) => {
+export const handleError: Middleware = async (context, next) => {
   try {
     await next();
   } catch (err) {

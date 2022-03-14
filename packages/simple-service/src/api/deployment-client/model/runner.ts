@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import axios from 'axios';
 import dayjs from 'dayjs';
-import { MergedParams } from '../../../type';
+import { MergedParams } from '../../../types';
 import appDB from '../../../config/model/app';
 import { ip, bashRunner, common } from '../../../lib/util';
 import { DataError } from '../../../lib/error';
