@@ -43,11 +43,7 @@ export const connectTo = (options: DatabaseOptions): Database => {
     host,
     port,
     dialect: 'mysql',
-    pool: {
-      max: 5,
-      min: 0,
-      idle: 10000,
-    },
+    pool: config.database.poolConfig,
     logQueryParameters: config.isDev,
     benchmark: config.isDev,
     logging: (sql, costTime, extra: { model?: { name: string }} = {}) => {

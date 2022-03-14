@@ -48,7 +48,7 @@ const rateLimiter = (): Middleware => {
     }
     ctx.set('X-RateLimit-Limit', `${info.remainingPoints + info.consumedPoints}`);
     ctx.set('X-RateLimit-Remaining', `${info.remainingPoints}`);
-    ctx.set('X-RateLimit-Reset', `${Math.ceil((new Date()).getTime() + info.msBeforeNext / 1000)}`);
+    ctx.set('X-RateLimit-Reset', `${Math.ceil((new Date()).getTime() / 1000 + info.msBeforeNext / 1000)}`);
   };
 
   return async (ctx, next) => {

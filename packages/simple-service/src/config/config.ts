@@ -121,6 +121,11 @@ const config = {
     },
   },
   database: {
+    poolConfig: {
+      max: 5,
+      min: 0,
+      idle: 10000,
+    },
     main: {
       username: envObj.MAIN_DB_USER!,
       password: envObj.MAIN_DB_PASS!,
