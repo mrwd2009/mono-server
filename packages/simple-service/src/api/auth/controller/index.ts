@@ -13,13 +13,14 @@ export const login: Array<Middleware> = [
     context.cookies.set(config.jwt.cookieKey, token, {
       httpOnly: true,
       maxAge: config.jwt.expireHour * 3600 * 1000,
+      signed: true,
     });
     context.gateway!.sendJSON!({ user });
   }
 ];
 
 export const logout: Middleware = async (context) => {
-  context.cookies.set(config.jwt.cookieKey);
+  context.cookies.set(config.jwt.cookieKey, '', { signed: true });
   context.body = {
     success: true,
   };

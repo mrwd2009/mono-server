@@ -27,10 +27,10 @@ const createCSRFMiddleware = (options: Options = {}): Middleware => {
 
   return async (ctx, next) => {
     ctx.generateCSRFToken = () => {
-      let secret = ctx.cookies.get(opts.csrfSecretCookieKey);
+      let secret = ctx.cookies.get(opts.csrfSecretCookieKey, { signed: true });
       if (!secret) {
         secret = tokens.secretSync();
-        ctx.cookies.set(opts.csrfSecretCookieKey, secret, { httpOnly: true });
+        ctx.cookies.set(opts.csrfSecretCookieKey, secret, { httpOnly: true, signed: true });
       }
       return tokens.create(secret!);
     };
@@ -39,7 +39,7 @@ const createCSRFMiddleware = (options: Options = {}): Middleware => {
       return await next();
     }
 
-    const secret = ctx.cookies.get(opts.csrfSecretCookieKey);
+    const secret = ctx.cookies.get(opts.csrfSecretCookieKey, { signed: true });
     if (!secret) {
       return await next();
     }

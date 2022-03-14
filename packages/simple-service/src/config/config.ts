@@ -86,8 +86,18 @@ const config = {
   },
   rateLimiter: {
     keyPrefix: 'limiter',
+    cookieKey: `${commonPrefix}-rl`,
+    cookieExpiredDay: 7,
     points: 60,
     duration: 10,
+    byIP: { // limited by ip
+      points: 100 * 60, // times
+      duration: 60, // second
+    },
+    byID: { // limited by id from cookie
+      points: 50 * 60, // times
+      duration: 60, // second
+    }
   },
   redis: {
     main: {
