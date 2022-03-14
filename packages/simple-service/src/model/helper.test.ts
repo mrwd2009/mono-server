@@ -1,15 +1,14 @@
 import { connectTo } from './helper';
-import { UserDef } from './type';
 
 test('get user list', async () => {
   const db = connectTo({
-    database: 'gridx',
+    database: 'app_share',
     username: 'root',
     password: 'Fnst.123456',
     host: 'localhost',
   });
-  const UserModel = db.models.User as UserDef;
-  const user = await UserModel.findOne();
+  const User = db.models.User;
+  const user = await User.findOne();
   expect(user?.Email).toBeDefined();
   await db.sequelize.close();
 })

@@ -1,4 +1,4 @@
-import { connectTo } from '../helper';
+import { connectTo } from '../../../model/helper';
 import config from '../../config';
 
 export default connectTo({

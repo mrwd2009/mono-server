@@ -1,6 +1,6 @@
 import { userHelper } from '../helper';
 import * as lib from '../../../lib';
-import appDBs, { UserDef } from '../../../config/model/app';
+import appDBs from '../../../config/model/app';
 
 const {
   error: {
@@ -15,7 +15,7 @@ const {
   },
 } = appDBs;
 
-const UserModel = models.User as UserDef;
+const UserModel = models.User;
 
 type UserParams = {
   Email: string,

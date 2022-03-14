@@ -1,31 +1,33 @@
-import { Sequelize, DataTypes, Model } from 'sequelize';
+import { Sequelize, DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional } from '@sequelize/core';
 
-export class AgentService extends Model {
-  // static associate = (models: { [name: string]: Model }) => {
-  //   console.log(models);
-  // }
-  public id!: number;
-  public agent_id!: number;
-  public service_id!: number;
-  public status!: string;
-  public created_at!: Date;
-  public updated_at!: Date;
+declare module '../types' {
+  interface AppModels {
+    AgentService: typeof AgentService
+  }
+  type AgentServiceModel = AgentService;
 }
 
-export type AgentServiceDef = typeof AgentService;
+export class AgentService extends Model<InferAttributes<AgentService>, InferCreationAttributes<AgentService>> {
+  declare id: CreationOptional<number>;
+  declare agent_id: number;
+  declare service_id: number;
+  declare status: CreationOptional<string>;
+  declare created_at: CreationOptional<Date>;
+  declare updated_at: CreationOptional<Date>;
+}
 
-export default (sequelize: Sequelize, types: typeof DataTypes): typeof Model => {
+export const initialize = (sequelize: Sequelize) => {
   AgentService.init({
     id: {
-      type: types.INTEGER,
+      type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    agent_id: types.INTEGER,
-    service_id: types.INTEGER,
-    status: types.STRING,
-    created_at: types.DATE,
-    updated_at: types.DATE,
+    agent_id: DataTypes.INTEGER,
+    service_id: DataTypes.INTEGER,
+    status: DataTypes.STRING,
+    created_at: DataTypes.DATE,
+    updated_at: DataTypes.DATE,
   }, {
     sequelize,
     tableName: 'agents_services',
@@ -34,4 +36,6 @@ export default (sequelize: Sequelize, types: typeof DataTypes): typeof Model => 
   });
 
   return AgentService;
-}
+};
+
+export default AgentService;

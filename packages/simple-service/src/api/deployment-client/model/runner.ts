@@ -8,21 +8,15 @@ import { DataError } from '../../../lib/error';
 import config from '../../../config/config';
 import logger from '../../../lib/logger';
 import { userHelper } from '../../auth/helper/index';
-import {
-  AgentDef,
-  ServiceDef,
-  Service as ServiceIns,
-  DeploymentLogDef,
-} from '../../../config/model/type';
 
 const {
   gateway: {
     models,
   }
 } = appDB;
-const DeploymentLog = models.DeploymentLog as DeploymentLogDef;
-const Service = models.Service as ServiceDef;
-const Agent = models.Agent as AgentDef;
+const DeploymentLog = models.DeploymentLog;
+const Service = models.Service;
+const Agent = models.Agent;
 
 interface Command {
   type: string,
@@ -63,7 +57,7 @@ export async function running() {
     await log.update({
       status: 'in progress',
     });
-    const commands: Array<Command> = JSON.parse((log.Service as ServiceIns).command);
+    const commands: Array<Command> = JSON.parse(log.Service!.command);
     runner = new bashRunner.BashRunner();
     const { github: { username, password } } = config;
     let output = '';

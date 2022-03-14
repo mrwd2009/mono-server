@@ -1,8 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import config from '../config';
-export * from './type';
-import { DatabaseGroup } from './helper';
+import { DatabaseGroup } from '../../model/helper';
 
 const dbPath = path.join(__dirname, config.appEnv);
 

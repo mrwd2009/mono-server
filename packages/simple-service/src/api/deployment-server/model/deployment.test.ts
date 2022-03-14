@@ -1,10 +1,9 @@
 import { getServiceList, assignAgent, getAgentList, createService, getLogList } from './deployment';
-import { Op } from 'sequelize';
+import { Op } from '@sequelize/core';
 import appDB from '../../../config/model/app';
 
 const {
   gateway: {
-    sequelize,
     models: {
       Service,
       AgentService,
@@ -15,7 +14,7 @@ const {
 } = appDB;
 
 test('create service', async () => {
-  let val;
+  let val: any;
   const spy = jest.spyOn(Service, 'create').mockImplementation((valIn) => {
     val = valIn;
   });

@@ -1,30 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import fs from 'fs';
-import SequelizeNameSpace, { Sequelize, DataTypes } from 'sequelize';
+import SequelizeNameSpace, { Sequelize, Model } from '@sequelize/core';
 import path from 'path';
 import _ from 'lodash';
-import config from '../config';
+import config from '../config/config';
 import {
-  UserDef,
-  AgentDef,
-  AgentServiceDef,
-  DeploymentLogDef,
-  ServiceDef,
-} from './type';
-
-type ModelDefs = (UserDef
-  | AgentDef
-  | AgentServiceDef
-  | DeploymentLogDef
-  | ServiceDef
-) ;
+  AppModels
+} from './types';
 
 export interface Database {
   sequelize: Sequelize,
   Sequelize: typeof SequelizeNameSpace,
-  models: {
-    [modelName: string]: ModelDefs,
-  },
+  models: AppModels,
 }
 
 export interface DatabaseGroup {
@@ -51,7 +38,7 @@ export const connectTo = (options: DatabaseOptions): Database => {
     modelDir = 'main',
     ...restOptions
   } = options;
-  const baseDir = path.join(__dirname, '../../model', modelDir);
+  const baseDir = path.join(__dirname, modelDir);
   const sequelize = new Sequelize(database, username, password, {
     host,
     port,
@@ -79,21 +66,22 @@ export const connectTo = (options: DatabaseOptions): Database => {
   const db: Database = {
     sequelize,
     Sequelize: SequelizeNameSpace,
-    models: {}
+    models: {} as any
   };
   fs.readdirSync(baseDir)
     .filter(file => {
       const suffix = file.slice(-3);
-      return ['.ts', '.js'].includes(suffix);
+      // only load model definition
+      return ['.ts', '.js'].includes(suffix) && file !== 'index.ts' && file !== 'index.js';
     })
     .forEach(file => {
-      const model: ModelDefs = require(path.join(baseDir, file)).default(sequelize, DataTypes, config);
+      const model: Model = require(path.join(baseDir, file)).initialize(sequelize, config);
       const name: string = _.get(model, 'name');
-      db.models[name] = model;
+      (db.models as any)[name] = model;
     });
   
   _.forEach(_.keys(db.models), (modelName) => {
-    const model = db.models[modelName];
+    const model: Model = (db.models as any)[modelName];
     const associate = _.get(model, 'associate');
     if (associate) {
       associate(db.models);

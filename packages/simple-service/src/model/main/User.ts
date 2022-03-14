@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Sequelize, DataTypes, Model } from 'sequelize';
+import { Sequelize, DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional } from '@sequelize/core';
 import { util } from '../../lib';
+
+declare module '../types' {
+  interface AppModels {
+    User: typeof User
+  }
+  type UserModel = User;
+}
 
 const hashPasword = async (user: any) => {
   if (user.isNewRecord || user.changed('Password')) {
@@ -8,33 +15,28 @@ const hashPasword = async (user: any) => {
   }
 }
 
-export class User extends Model {
-  // static associate = (models: { [name: string]: Model }) => {
-  //   console.log(models);
-  // }
-  public Email!: string;
-  public Password!: string;
-  public Display_Name!: string;
-  public Active!: boolean;
-  public Failed_Attempts!: number;
-  public Locked_At!: Date;
-  public Pass_Last_Modified_Date!: Date;
+class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
+  declare Email: string;
+  declare Password: string;
+  declare Display_Name: string;
+  declare Active: CreationOptional<boolean>;
+  declare Failed_Attempts: CreationOptional<number>;
+  declare Locked_At: CreationOptional<Date>;
+  declare Pass_Last_Modified_Date: CreationOptional<Date>;
 }
 
-export type UserDef = typeof User;
-
-export default (sequelize: Sequelize, types: typeof DataTypes): typeof Model => {
+export const initialize = (sequelize: Sequelize) => {
   User.init({
     Email: {
-      type: types.STRING,
+      type: DataTypes.STRING,
       primaryKey: true
     },
-    Password: types.STRING,
-    Display_Name: types.STRING,
-    Active: types.BOOLEAN,
-    Failed_Attempts: types.INTEGER,
-    Locked_At: types.DATE,
-    Pass_Last_Modified_Date: types.DATE,
+    Password: DataTypes.STRING,
+    Display_Name: DataTypes.STRING,
+    Active: DataTypes.BOOLEAN,
+    Failed_Attempts: DataTypes.INTEGER,
+    Locked_At: DataTypes.DATE,
+    Pass_Last_Modified_Date: DataTypes.DATE,
   }, {
     sequelize,
     tableName: 'user',
@@ -47,4 +49,6 @@ export default (sequelize: Sequelize, types: typeof DataTypes): typeof Model => 
   });
 
   return User;
-}
+};
+
+export default User;
