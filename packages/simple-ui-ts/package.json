@@ -19,12 +19,24 @@
   "scripts": {
     "start": "PORT=4102 craco start",
     "build": "craco build",
-    "test": "craco test"
+    "test": "craco test",
+    "storybook": "start-storybook -p 5102 -s public",
+    "build-storybook": "build-storybook -s public"
   },
   "eslintConfig": {
     "extends": [
       "react-app",
       "react-app/jest"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "**/*.stories.*"
+        ],
+        "rules": {
+          "import/no-anonymous-default-export": "off"
+        }
+      }
     ]
   },
   "browserslist": {
@@ -41,6 +53,17 @@
   },
   "devDependencies": {
     "@craco/craco": "^6.4.3",
-    "craco-less": "^2.0.0"
+    "@storybook/addon-actions": "^6.4.19",
+    "@storybook/addon-essentials": "^6.4.19",
+    "@storybook/addon-interactions": "^6.4.19",
+    "@storybook/addon-links": "^6.4.19",
+    "@storybook/builder-webpack5": "^6.4.19",
+    "@storybook/manager-webpack5": "^6.4.19",
+    "@storybook/node-logger": "^6.4.19",
+    "@storybook/preset-create-react-app": "^4.0.1",
+    "@storybook/react": "^6.4.19",
+    "@storybook/testing-library": "^0.0.9",
+    "craco-less": "^2.0.0",
+    "webpack": "^5.70.0"
   }
 }
