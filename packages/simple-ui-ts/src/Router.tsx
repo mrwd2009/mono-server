@@ -1,19 +1,37 @@
 import { FC, memo } from 'react';
-import { useRoutes, RouteObject } from 'react-router-dom';
+import { useRoutes, RouteObject, Navigate } from 'react-router-dom';
+import { getRouteInfo } from './config/routes-info';
 import { Login } from './views/Auth';
 import ErrorPageLayout from './layouts/ErrorPageLayout';
 import { NotFound, Forbidden } from './views/ErrorPage';
+import MainLayout from './layouts/MainLayout';
+import { Contract } from './views/Contract';
+
+const defaultPath = getRouteInfo('contract')!.path;
 
 const routes: RouteObject[] = [
   {
-    path: '/login',
+    path: getRouteInfo('login')!.path,
     element: <Login />,
+  },
+  { 
+    element: <MainLayout />,
+    children: [
+      {
+        path: '/',
+        element: <Navigate to={defaultPath} replace />,
+      },
+      {
+        path: defaultPath,
+        element: <Contract />
+      }
+    ]
   },
   {
     element: <ErrorPageLayout />,
     children: [
       {
-        path: '/403',
+        path: getRouteInfo('403')!.path,
         element: <Forbidden />
       },
       {

@@ -1,4 +1,4 @@
-.app-ex-layout-error-page {
+.app-ex-layout-main {
   position: relative;
   &--wrapper {
     display: flex;
@@ -16,7 +16,6 @@
     left: 0px;
     right: 0px;
     display: flex;
-    justify-content: center;
     align-items: center;
     height: 60px;
     padding-left: 1rem;
@@ -31,18 +30,21 @@
     }
   }
   &--header-banner {
+    flex: none;
     img {
       position: relative;
       top: 6px;
-      max-width: 180px;
+      max-width: 120px;
     }
   }
-  &--body {
-    padding: 36px 0;
+  &--header-menu {
     flex: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  }
+  &--header-extra {
+    flex: none;
+  }
+  &--body {
+    flex: auto;
     background-color: #f0f2f5;
   }
   & when (@theme = dark) {
@@ -50,7 +52,6 @@
       background-color: #000;
     }
   }
-  
   
   &--footer {
     display: flex;
@@ -64,16 +65,18 @@
     color: rgba(0, 0, 0, 0.85);
     font-size: 14px;
   }
-
   & when (@theme = dark) {
     &--footer {
       background-color: #000;
       color: rgba(255, 255, 255, 0.85);
     }
   }
-  
-  .route-link {
-    font-size: 16px;
-    text-decoration: underline;
+}
+
+@media (min-width: 768px) {
+  .app-ex-layout-main--header-banner {
+    img {
+      max-width: 100px;
+    }
   }
 }

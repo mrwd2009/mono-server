@@ -11,6 +11,12 @@ interface RouteInfo {
 
 const routesInfo: RouteInfo[] = [
   {
+    title: 'Contract',
+    key: 'contract',
+    path: '/contract',
+    menu: true,
+  },
+  {
     key: 'login',
     path: '/login',
     menu: false,
@@ -28,6 +34,11 @@ const routesInfo: RouteInfo[] = [
   {
     key: 'reset-password',
     path: '/reset-password',
+    menu: false,
+  },
+  {
+    key: '403',
+    path: '/403',
     menu: false,
   }
 ];
