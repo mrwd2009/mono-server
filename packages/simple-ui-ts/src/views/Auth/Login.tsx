@@ -1,15 +1,29 @@
 import { FC, memo } from 'react';
 import { Link } from 'react-router-dom';
-import { Form, Input, Button, Divider } from 'antd';
+import { Form, Input, Button, Divider, Typography } from 'antd';
+import { AmazonOutlined, FacebookOutlined, GoogleOutlined } from '@ant-design/icons';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { getRouteInfo } from '../../config/routes-info';
 import AuthLayout from '../../layouts/AuthLayout';
+import banner from '../../assets/images/banner.png';
+
+const registerRoute = getRouteInfo('register');
+const fogotRoute = getRouteInfo('forgot-password');
 
 const Login: FC = () => {
   return (
-    <AuthLayout>
-      <div className="app-ex-auth-login">
-        <h3 className="app-ex-auth-login--title">Log in to your account</h3>
+    <AuthLayout
+      header={{
+        help: "Don't have an account?",
+        title: 'Sign up',
+        path: registerRoute!.path
+      }}
+    >
+      <div className="app-ex-auth">
+        <div className="app-ex-auth--logo">
+          <img alt="Energix Logo" src={banner} />
+          <Typography.Title >Contract Management</Typography.Title>
+        </div>
         <Form size="large">
           <Form.Item name="Email" rules={[
             {
@@ -32,15 +46,18 @@ const Login: FC = () => {
           <Form.Item>
             <Button type="primary" htmlType="submit" block>Log In</Button>
           </Form.Item>
-          <Divider />
+          <Divider dashed />
           <Form.Item>
-          <Button block htmlType="button">Sign In with Google</Button>
+            <Button block htmlType="button" icon={<AmazonOutlined />}>Sign In with Amazon</Button>
           </Form.Item>
           <Form.Item>
-          <Button block htmlType="button">Sign In with Facebook</Button>
+            <Button block htmlType="button" icon={<GoogleOutlined />}>Sign In with Google</Button>
           </Form.Item>
           <Form.Item>
-          <Button block htmlType="button">Sign In with Salesforce</Button>
+            <Button block htmlType="button" icon={<FacebookOutlined />}>Sign In with Facebook</Button>
+          </Form.Item>
+          <Form.Item>
+            <Link to={fogotRoute!.path} className="route-link">Forgot Password?</Link>
           </Form.Item>
         </Form>
       </div>

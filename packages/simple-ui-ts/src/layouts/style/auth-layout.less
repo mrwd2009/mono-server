@@ -2,6 +2,7 @@
   position: relative;
   &--bg {
     position: absolute;
+    z-index: -1;
     top: 0;
     right: 0;
     bottom: 0;
@@ -33,14 +34,71 @@
     flex: none;
     height: 65px;
   }
+  &--header-content {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 65px;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    background: rgb(255, 255, 255);
+    z-index: 2;
+    box-shadow: rgb(0 0 0 / 25%) 0px 2px 3px;
+  }
+  &--header-banner {
+    img {
+      position: relative;
+      top: 8px;
+      max-width: 120px;
+    }
+  }
+  &--header-extra {
+    font-size: 14px;
+    span {
+      display: none;
+      margin-right: 1rem;
+      font-size: 14px;
+    }
+  }
   &--body {
+    padding: 36px 0;
     flex: auto;
     display: flex;
     justify-content: center;
     align-items: center;
   }
+  
   &--footer {
+    display: flex;
     flex: none;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    justify-content: flex-end;
+    align-items: center;
     height: 32px;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 14px;
+  }
+  
+  .route-link {
+    font-size: 16px;
+    text-decoration: underline;
+  }
+}
+
+@media (min-width: 768px) {
+  .app-ex-layout-auth--header-extra {
+    span {
+      display: inline-block;
+    }
+  }
+  .app-ex-layout-auth--header-banner {
+    img {
+      max-width: 170px;
+    }
   }
 }
