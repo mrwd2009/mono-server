@@ -6,11 +6,13 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { getRouteInfo } from '../../config/routes-info';
 import AuthLayout from '../../layouts/AuthLayout';
 import banner from '../../assets/images/banner.png';
+import useLogin from './hooks/useLogin';
 
 const registerRoute = getRouteInfo('register');
 const fogotRoute = getRouteInfo('forgot-password');
 
 const Login: FC = () => {
+  const { loading, handleLogin } = useLogin();
   return (
     <AuthLayout
       header={{
@@ -24,7 +26,7 @@ const Login: FC = () => {
           <img alt="Energix Logo" src={banner} />
           <Typography.Title >Contract Management</Typography.Title>
         </div>
-        <Form size="large">
+        <Form size="large" onFinish={handleLogin}>
           <Form.Item name="Email" rules={[
             {
               required: true,
@@ -44,7 +46,7 @@ const Login: FC = () => {
             <Input.Password prefix={<LockOutlined style={{ marginRight: 4 }} />} type="password" placeholder="Enter your password" />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" block>Log In</Button>
+            <Button type="primary" htmlType="submit" block loading={loading}>Log In</Button>
           </Form.Item>
           <Divider dashed />
           <Form.Item>
