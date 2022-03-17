@@ -5,7 +5,7 @@ import { AmazonOutlined, FacebookOutlined, GoogleOutlined } from '@ant-design/ic
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { getRouteInfo } from '../../config/routes-info';
 import AuthLayout from '../../layouts/AuthLayout';
-import banner from '../../assets/images/banner.png';
+import brand from '../../assets/images/brand.png';
 import useLogin from './hooks/useLogin';
 
 const registerRoute = getRouteInfo('register');
@@ -23,7 +23,7 @@ const Login: FC = () => {
     >
       <div className="app-ex-auth">
         <div className="app-ex-auth--logo">
-          <img alt="Energix Logo" src={banner} />
+          <img alt="Energix Logo" src={brand} />
           <Typography.Title >Contract Management</Typography.Title>
         </div>
         <Form size="large" onFinish={handleLogin}>

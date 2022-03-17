@@ -1,6 +1,6 @@
 import { FC, memo } from 'react';
 import { Outlet } from 'react-router-dom'
-import banner from '../../assets/images/banner.png';
+import brand from '../../assets/images/brand.png';
 import SystemMenu from './SystemMenu';
 import ThemeSwitch from './ThemeSwitch';
 import UserAction from './UserAction';
@@ -14,8 +14,8 @@ const MainLayout: FC = () => {
       <div className="app-ex-layout-main--wrapper">
         <div className="app-ex-layout-main--header">
           <div className="app-ex-layout-main--header-content">
-            <div className="app-ex-layout-main--header-banner">
-              <img alt="Energix Banner" src={banner} />
+            <div className="app-ex-layout-main--header-brand">
+              <img alt="Energix Brand" src={brand} />
             </div>
             <div className="app-ex-layout-main--header-menu">
               <SystemMenu />

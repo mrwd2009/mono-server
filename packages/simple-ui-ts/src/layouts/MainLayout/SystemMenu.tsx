@@ -1,6 +1,6 @@
 import { FC, memo } from 'react';
 import { Menu } from 'antd';
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import map from 'lodash/map';
 import { getRoutesMenu, RouteMenuInfo } from '../../config/routes-info'
 
@@ -29,8 +29,9 @@ const getMenuItems = (list: RouteMenuInfo[]) => {
 };
 
 const SystemMenu: FC = () => {
+  const location = useLocation();
   return (
-    <Menu mode="horizontal" className="app-ex-system-menu">
+    <Menu mode="horizontal" className="app-ex-system-menu" selectedKeys={[location.pathname]} triggerSubMenuAction="click">
       {getMenuItems(menuList)}
     </Menu>
   );

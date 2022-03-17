@@ -30,8 +30,9 @@
     z-index: 2;
     box-shadow: @shadow-1-down;
   }
-  &--header-banner {
+  &--header-brand {
     flex: none;
+    padding-right: 6px;
     img {
       position: relative;
       top: 6px;
@@ -72,7 +73,7 @@
 }
 
 @media (min-width: 768px) {
-  .app-ex-layout-main--header-banner {
+  .app-ex-layout-main--header-brand {
     img {
       max-width: 100px;
     }
@@ -84,4 +85,20 @@
   font-weight: 500;
   height: 38px;
   line-height: 38px;
+}
+
+.app-ex-user-action-content {
+  .ant-card-grid {
+    width: 100%;
+  }
+}
+.app-ex-user-action-grid {
+  box-shadow:  0 1px 0 0 @border-color-split;
+}
+
+.app-ex-theme-switch {
+  margin-right: 8px;
+  .ant-switch-inner {
+    padding-top: 2px;
+  }
 }

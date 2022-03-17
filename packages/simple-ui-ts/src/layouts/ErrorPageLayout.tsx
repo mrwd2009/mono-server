@@ -1,6 +1,6 @@
 import { FC, memo } from 'react';
 import { Outlet } from 'react-router-dom'
-import banner from '../assets/images/banner.png';
+import brand from '../assets/images/brand.png';
 
 const currentYear = (new Date()).getFullYear();
 
@@ -10,8 +10,8 @@ const ErrorPageLayout: FC = () => {
       <div className="app-ex-layout-error-page--wrapper">
         <div className="app-ex-layout-error-page--header">
           <div className="app-ex-layout-error-page--header-content">
-            <div className="app-ex-layout-error-page--header-banner">
-              <img alt="Energix Banner" src={banner} />
+            <div className="app-ex-layout-error-page--header-brand">
+              <img alt="Energix Brand" src={brand} />
             </div>
           </div>
         </div>

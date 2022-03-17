@@ -5,7 +5,7 @@ import bg750 from '../assets/images/auth-bg/bg-750.jpeg';
 import bg1000 from '../assets/images/auth-bg/bg-1000.jpeg';
 import bg1500 from '../assets/images/auth-bg/bg-1500.jpeg';
 import bg2500 from '../assets/images/auth-bg/bg-2500.jpeg';
-import banner from '../assets/images/banner.png';
+import brand from '../assets/images/brand.png';
 
 const currentYear = (new Date()).getFullYear();
 
@@ -30,8 +30,8 @@ const AuthLayout: FC<{ header?: HeaderExtra, children: ReactElement }> = ({ head
       <div className="app-ex-layout-auth--wrapper">
         <div className="app-ex-layout-auth--header">
           <div className="app-ex-layout-auth--header-content">
-            <div className="app-ex-layout-auth--header-banner">
-              <img alt="Energix Banner" src={banner} />
+            <div className="app-ex-layout-auth--header-brand">
+              <img alt="Energix Brand" src={brand} />
             </div>
             {
               header && (
