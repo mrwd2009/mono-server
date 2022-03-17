@@ -1,10 +1,10 @@
 .app-ex-auth {
   position: relative;
-  background-color: rgb(255, 255, 255);
-  border: 1px solid rgba(91, 105, 135, 0.22);
+  background-color: @component-background;
+  border: 1px solid @border-color-base;
   padding: 12px 32px 16px 32px;
   width: 420px;
-  box-shadow: rgb(11 43 158 / 15%) 0px 6px 20px -6px;
+  box-shadow: @card-shadow;
   border-radius: 24px;
 
   &--logo {
@@ -15,14 +15,8 @@
     }
     h1 {
       font-size: 16px;
-      color: #7E8083;
+      color: @text-color;
       margin-bottom: 32px;
     }
-  }
-}
-
-& when (@theme = dark) {
-  .app-ex-auth {
-    background: #1f1f1f;
   }
 }

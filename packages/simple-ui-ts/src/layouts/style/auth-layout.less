@@ -49,17 +49,13 @@
     justify-content: space-between;
     align-items: center;
     height: 60px;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    background: rgb(255, 255, 255);
+    padding-left: @app-ex-layout-h-padding;
+    padding-right: @app-ex-layout-h-padding;
+    background: @component-background;
     z-index: 2;
-    box-shadow: rgb(0 0 0 / 25%) 0px 2px 3px;
+    box-shadow: @shadow-1-down;
   }
-  & when (@theme = dark) {
-    &--header-content {
-      background: #141414;
-    }
-  }
+
   &--header-banner {
     img {
       position: relative;
@@ -68,11 +64,11 @@
     }
   }
   &--header-extra {
-    font-size: 14px;
+    font-size: @font-size-lg;
     span {
       display: none;
       margin-right: 1rem;
-      font-size: 14px;
+      font-size: @font-size-lg;
     }
   }
   &--body {
@@ -86,13 +82,13 @@
   &--footer {
     display: flex;
     flex: none;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: @app-ex-layout-h-padding;
+    padding-right: @app-ex-layout-h-padding;
     justify-content: flex-end;
     align-items: center;
     height: 32px;
     color: rgba(255, 255, 255, 0.85);
-    font-size: 14px;
+    font-size: @font-size-lg;
   }
   & when (@theme = dark) {
     &--footer {
@@ -101,7 +97,7 @@
   }
   
   .route-link {
-    font-size: 16px;
+    font-size: @font-size-lg + 2px;
     text-decoration: underline;
   }
 }

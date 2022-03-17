@@ -1,6 +1,10 @@
 import { FC, memo } from 'react';
 import { Outlet } from 'react-router-dom'
 import banner from '../../assets/images/banner.png';
+import SystemMenu from './SystemMenu';
+import ThemeSwitch from './ThemeSwitch';
+import UserAction from './UserAction';
+import BC from './BC';
 
 const currentYear = (new Date()).getFullYear();
 
@@ -14,15 +18,19 @@ const MainLayout: FC = () => {
               <img alt="Energix Banner" src={banner} />
             </div>
             <div className="app-ex-layout-main--header-menu">
-              menu
+              <SystemMenu />
             </div>
             <div className="app-ex-layout-main--header-extra">
-              extra
+              <ThemeSwitch />
+              <UserAction />
             </div>
           </div>
         </div>
         <div className="app-ex-layout-main--body">
-          <Outlet />
+          <BC />
+          <div className="app-ex-layout-main--content">
+            <Outlet />
+          </div>
         </div>
         <div className="app-ex-layout-main--footer">
           <span>© {currentYear} Energix, inc. All rights reserved.</span>

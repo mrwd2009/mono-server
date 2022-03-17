@@ -9,6 +9,12 @@
   &--header {
     flex: none;
     height: 60px;
+    .app-ex-system-menu {
+      line-height: 60px;
+      border-bottom: none;
+      font-size: @font-size-lg;
+      font-weight: 500;
+    }
   }
   &--header-content {
     position: fixed;
@@ -18,16 +24,11 @@
     display: flex;
     align-items: center;
     height: 60px;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    background: rgb(255, 255, 255);
+    padding-left: @app-ex-layout-h-padding;
+    padding-right: @app-ex-layout-h-padding;
+    background: @component-background;
     z-index: 2;
-    box-shadow: rgb(0 0 0 / 25%) 0px 2px 3px;
-  }
-  & when (@theme = dark) {
-    &--header-content {
-      background: #141414;
-    }
+    box-shadow: @shadow-1-down;
   }
   &--header-banner {
     flex: none;
@@ -44,32 +45,29 @@
     flex: none;
   }
   &--body {
+    display: flex;
+    flex-direction: column;
     flex: auto;
-    background-color: #f0f2f5;
+    background-color: @layout-body-background;
+    padding: 0 @app-ex-layout-h-padding;
   }
-  & when (@theme = dark) {
-    &--body {
-      background-color: #000;
-    }
+
+  &--content {
+    flex: auto;
+    background: @component-background;
   }
-  
+
   &--footer {
     display: flex;
     flex: none;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: @app-ex-layout-h-padding;
+    padding-right: @app-ex-layout-h-padding;
     justify-content: flex-end;
     align-items: center;
     height: 32px;
-    background-color: #f0f2f5;
-    color: rgba(0, 0, 0, 0.85);
-    font-size: 14px;
-  }
-  & when (@theme = dark) {
-    &--footer {
-      background-color: #000;
-      color: rgba(255, 255, 255, 0.85);
-    }
+    background-color: @layout-body-background;
+    color: @text-color;
+    font-size: @font-size-lg;
   }
 }
 
@@ -79,4 +77,11 @@
       max-width: 100px;
     }
   }
+}
+
+.app-ex-system-sub-menu .ant-menu-item {
+  font-size: @font-size-lg;
+  font-weight: 500;
+  height: 38px;
+  line-height: 38px;
 }

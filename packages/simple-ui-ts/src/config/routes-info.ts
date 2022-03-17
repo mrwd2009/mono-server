@@ -1,7 +1,7 @@
 import forEach from 'lodash/forEach'
 import isArray from 'lodash/isArray';
 
-interface RouteInfo {
+export interface RouteInfo {
   title?: string;
   key: string;
   path: string;
@@ -11,10 +11,50 @@ interface RouteInfo {
 
 const routesInfo: RouteInfo[] = [
   {
+    title: 'Participant',
+    key: 'participant',
+    path: '/participant',
+    menu: true,
+    children: [
+      {
+        title: 'Buyer',
+        key: 'buyer',
+        path: '/participant/buyer',
+        menu: true,
+      },
+      {
+        title: 'Seller',
+        key: 'Seller',
+        path: '/participant/Seller',
+        menu: true,
+      }
+    ]
+  },
+  {
     title: 'Contract',
     key: 'contract',
     path: '/contract',
     menu: true,
+  },
+  {
+    title: 'Debug',
+    key: 'debug',
+    path: '/debug',
+    menu: true,
+    children: [
+      {
+        title: 'Batch Config',
+        key: 'batch-config',
+        path: '/debug/batch-config',
+        menu: true,
+      },
+      {
+        title: 'Batch Result',
+        key: 'batch-result',
+        path: '/debug/batch-result',
+        menu: true,
+      }
+    ]
   },
   {
     key: 'login',
@@ -69,7 +109,7 @@ export const getRouteInfo = (keys: string | string[], routes = routesInfo) => {
   return info;
 };
 
-interface RouteMenuInfo {
+export interface RouteMenuInfo {
   title: string;
   key: string;
   path: string;
