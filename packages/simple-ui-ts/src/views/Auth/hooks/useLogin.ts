@@ -7,6 +7,7 @@ import apiEndpoints from '../../../config/api-endpoints';
 import useMounted from '../../../hooks/useMounted';
 import { getRouteInfo } from '../../../config/routes-info';
 import { updateUserInfo } from '../slice';
+import { useAppDispatch } from '../../../hooks';
 
 // TODO add login redirection
 
@@ -15,6 +16,7 @@ const useLogin = () => {
   // const { setUserInfo, visitedPagesRef } = useAuth();
   const isMounted = useMounted();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const handleLogin = useCallback((params) => {
     setLoading(true);
@@ -32,10 +34,10 @@ const useLogin = () => {
             navigate(`${getRouteInfo('reset-password')?.path}?token=${token}`);
             return;
           }
-          updateUserInfo({
+          dispatch(updateUserInfo({
             permissions,
             user,
-          });
+          }));
           // setUserInfo({
           //   defaultURL,
           //   permissions,
@@ -63,7 +65,7 @@ const useLogin = () => {
         }
       });
     
-  }, [navigate, isMounted]);
+  }, [navigate, isMounted, dispatch]);
   return {
     loading,
     handleLogin,
