@@ -10,7 +10,7 @@ const UserAction: FC = () => {
     </span>,
     <span role="button" key="logout" tabIndex={0}>
       <LogoutOutlined />
-      &nbsp;Logout
+      &nbsp;Sign Out
     </span>
   ];
   const content = (

@@ -1,4 +1,4 @@
-import { getRouteInfo, getRoutesMenu } from './routes-info';
+import { getRouteInfo, getRoutesMenu, getRouteBC } from './routes-info';
 
 test('get route info', () => {
   const routes  = [
@@ -89,6 +89,45 @@ test('get routes menu', () => {
           path: '/test',
         }
       ]
+    }
+  ]);
+});
+
+test('get route bc', () => {
+  const routes  = [
+    {
+      title: 'rest pass',
+      key: 'reset-password',
+      path: '/reset-password',
+      menu: true,
+      children: [
+        {
+          title: 'test',
+          key: 'test',
+          path: '/reset-password/test',
+          menu: true,
+          children: [
+            {
+              key: 'test2',
+              path: '/reset-password/test/test2',
+              menu: false
+            }
+          ]
+        }
+      ]
+    }
+  ];
+
+  expect(getRouteBC('/reset-password/test', routes)).toMatchObject([
+    {
+      title: 'rest pass',
+      key: 'reset-password',
+      path: '/reset-password',
+    },
+    {
+      title: 'test',
+      key: 'test',
+      path: '/reset-password/test',
     }
   ]);
 });

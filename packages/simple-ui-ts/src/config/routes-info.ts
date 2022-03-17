@@ -137,5 +137,37 @@ export const getRoutesMenu = (routes = routesInfo) => {
   return newRoutes;
 };
 
+export interface RouteBCInfo {
+  title: string;
+  key: string;
+  path: string;
+};
+
+export const getRouteBC = (path: string, routes = routesInfo): RouteBCInfo[] => {
+  let bcList: RouteBCInfo[] = [];
+
+  forEach(routes, routeInfo => {
+    if (path.includes(routeInfo.path)) {
+      if (path === routeInfo.path) {
+        bcList.push({
+          title: routeInfo.title!,
+          key: routeInfo.key,
+          path: routeInfo.path,
+        });
+      } else if (routeInfo.children?.length) {
+        const subBCList = getRouteBC(path, routeInfo.children);
+        bcList = bcList.concat({
+          title: routeInfo.title!,
+          key: routeInfo.key,
+          path: routeInfo.path,
+        }, subBCList);
+      }
+      return false;
+    }
+  });
+
+  return bcList;
+};
+
 
 export default routesInfo;
