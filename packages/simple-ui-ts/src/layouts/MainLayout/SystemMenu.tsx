@@ -3,6 +3,8 @@ import { Menu } from 'antd';
 import { Link, useLocation } from 'react-router-dom'
 import map from 'lodash/map';
 import { getRoutesMenu, RouteMenuInfo } from '../../config/routes-info'
+import { useAppSelector } from '../../hooks';
+import { selectDarkMode } from '../../store/slice';
 
 const { Item, SubMenu } = Menu;
 const menuList = getRoutesMenu();
@@ -30,8 +32,15 @@ const getMenuItems = (list: RouteMenuInfo[]) => {
 
 const SystemMenu: FC = () => {
   const location = useLocation();
+  const isDark = useAppSelector(selectDarkMode);
   return (
-    <Menu mode="horizontal" className="app-ex-system-menu" selectedKeys={[location.pathname]} triggerSubMenuAction="click">
+    <Menu
+      mode="horizontal"
+      className="app-ex-system-menu"
+      selectedKeys={[location.pathname]}
+      triggerSubMenuAction="click"
+      theme={isDark ? 'dark' : 'light'}
+    >
       {getMenuItems(menuList)}
     </Menu>
   );
