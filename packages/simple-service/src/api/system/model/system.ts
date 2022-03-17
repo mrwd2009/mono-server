@@ -1,8 +1,10 @@
+import { DefaultState } from 'koa';
 import config from '../../../config';
 
-const getInfo = async (): Promise<{appEnv: string}> => {
+const getInfo = async (state: DefaultState): Promise<{ appEnv: string, user: string }> => {
   return {
     appEnv: config.appEnv,
+    user: state.user.email,
   };
 };
 

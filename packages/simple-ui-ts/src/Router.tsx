@@ -5,6 +5,7 @@ import { Login } from './views/Auth';
 import ErrorPageLayout from './layouts/ErrorPageLayout';
 import { NotFound, Forbidden } from './views/ErrorPage';
 import MainLayout from './layouts/MainLayout';
+import { RouteGuarder } from './permission';
 import { Contract } from './views/Contract';
 
 const defaultPath = getRouteInfo('contract')!.path;
@@ -14,16 +15,21 @@ const routes: RouteObject[] = [
     path: getRouteInfo('login')!.path,
     element: <Login />,
   },
-  { 
-    element: <MainLayout />,
+  {
+    element: <RouteGuarder />,
     children: [
-      {
-        path: '/',
-        element: <Navigate to={defaultPath} replace />,
-      },
-      {
-        path: defaultPath,
-        element: <Contract />
+      { 
+        element: <MainLayout />,
+        children: [
+          {
+            path: '/',
+            element: <Navigate to={defaultPath} replace />,
+          },
+          {
+            path: defaultPath,
+            element: <Contract />
+          }
+        ]
       }
     ]
   },
