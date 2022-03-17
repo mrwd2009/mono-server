@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import apiEndpoints from '../../../config/api-endpoints';
 import useMounted from '../../../hooks/useMounted';
 import { getRouteInfo } from '../../../config/routes-info';
+import { updateUserInfo } from '../slice';
 
 // TODO add login redirection
 
@@ -21,9 +22,9 @@ const useLogin = () => {
       .then((result: any) => {
         if(isMounted.current) {
           const { 
-            // permissions,
+            permissions,
             token,
-            // user,
+            user,
             resetPassword,
           } = result;
           setLoading(true);
@@ -31,6 +32,10 @@ const useLogin = () => {
             navigate(`${getRouteInfo('reset-password')?.path}?token=${token}`);
             return;
           }
+          updateUserInfo({
+            permissions,
+            user,
+          });
           // setUserInfo({
           //   defaultURL,
           //   permissions,

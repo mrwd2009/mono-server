@@ -1,14 +1,20 @@
 import { FC, memo } from 'react';
 import { Card, Popover, Avatar, Button } from 'antd';
 import { UserOutlined, DownOutlined, LogoutOutlined, SettingOutlined } from '@ant-design/icons';
+import { useAppSelector } from '../../hooks';
+import { selectUserInfo } from '../../views/Auth/slice';
 
 const UserAction: FC = () => {
+  const userInfo = useAppSelector(selectUserInfo);
+
   const actions = [
-    <span role="button" key="setting" tabIndex={0}>
+    <span role="button" key="setting" tabIndex={0} className="nowrap">
+      &nbsp;
       <SettingOutlined />
       &nbsp;Setting
     </span>,
-    <span role="button" key="logout" tabIndex={0}>
+    <span role="button" key="logout" tabIndex={0} className="nowrap">
+      &nbsp;
       <LogoutOutlined />
       &nbsp;Sign Out
     </span>
@@ -18,8 +24,8 @@ const UserAction: FC = () => {
       <Card.Grid className="app-ex-user-action-grid">
         <Card.Meta
           title="User"
-          avatar={<Avatar>test@email.com</Avatar>}
-          description={'test@email.com'}
+          avatar={<Avatar>{userInfo.user}</Avatar>}
+          description={userInfo.user}
         />
       </Card.Grid>
     </Card>
