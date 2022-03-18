@@ -33,6 +33,7 @@
     "build-storybook": "build-storybook -s public",
     "lint:style": "stylelint './**/*.less' --fix",
     "prettier": "prettier --write --ignore-unknown ./src",
+    "pretty-quick": "pretty-quick --staged",
     "format": "npm run lint:style && npm run prettier"
   },
   "eslintConfig": {
@@ -78,6 +79,7 @@
     "@types/lodash": "^4.14.180",
     "craco-less": "^2.0.0",
     "prettier": "^2.6.0",
+    "pretty-quick": "^3.1.3",
     "stylelint": "^14.6.0",
     "stylelint-config-prettier": "^9.0.3",
     "stylelint-config-rational-order": "^0.1.2",
