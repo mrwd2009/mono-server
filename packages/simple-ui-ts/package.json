@@ -31,7 +31,6 @@
     "test": "craco test",
     "storybook": "start-storybook -p 5102 -s public",
     "build-storybook": "build-storybook -s public",
-    "lint:style:check": "stylelint './**/*.less'",
     "lint:style": "stylelint './**/*.less' --fix",
     "prettier": "prettier --write --ignore-unknown ./src"
   },
