@@ -1,7 +1,9 @@
 import { useState, useCallback } from 'react';
 import useAppSelector from "./useAppSelector";
 import useMounted from './useMounted';
-import { selectDarkMode } from "../store/slice";
+import { selectDarkMode } from '../store/slice';
+import useAppDisatch from './useAppDispatch';
+import { applyDarkTheme, applyDefaultTheme  } from '../store/slice';
 
 let defaultTheme: any;
 let darkTheme: any;
@@ -16,6 +18,7 @@ const useTheme = () => {
   const [loading, setLoading] = useState(false);
   const darkMode = useAppSelector(selectDarkMode);
   const isMounted = useMounted();
+  const dispatch = useAppDisatch();
 
   const fetchTheme = useCallback((isDark) => {
     // avoid useless processing.
@@ -28,6 +31,7 @@ const useTheme = () => {
       if (defaultTheme && darkTheme) {
         defaultTheme.unuse();
         darkTheme.use();
+        dispatch(applyDarkTheme());
       } else {
         setLoading(true);
         import('../assets/stylesheets/dark.less')
@@ -38,6 +42,7 @@ const useTheme = () => {
               }
               darkTheme = theme.default;
               darkTheme.use();
+              dispatch(applyDarkTheme());
               setLoading(false);
               setLoaded(true);
               clearPlaceholder();
@@ -53,6 +58,7 @@ const useTheme = () => {
       if (darkTheme && defaultTheme) {
         darkTheme.unuse();
         defaultTheme.use();
+        dispatch(applyDefaultTheme());
       } else {
         setLoading(true);
         import('../assets/stylesheets/default.less')
@@ -63,20 +69,20 @@ const useTheme = () => {
               }
               defaultTheme = theme.default;
               defaultTheme.use();
+              dispatch(applyDefaultTheme());
               setLoading(false);
               setLoaded(true);
               clearPlaceholder();
             }
           })
-          .catch((error) => {
-            console.log(error);
+          .catch(() => {
             if (isMounted.current) {
               setLoading(false);
             }
           });
       }
     }
-  }, [isMounted]);
+  }, [isMounted, dispatch]);
 
 
   return {

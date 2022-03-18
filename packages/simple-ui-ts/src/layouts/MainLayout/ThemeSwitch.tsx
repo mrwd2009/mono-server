@@ -2,12 +2,9 @@ import { FC, memo, useEffect } from 'react';
 import { Switch, Tooltip } from 'antd';
 import { ReactComponent as Sun } from '../../assets/images/theme-icon/sun.svg';
 import { ReactComponent as Moon} from '../../assets/images/theme-icon/moon.svg';
-import { useAppDispatch } from '../../hooks';
-import { applyDarkTheme, applyDefaultTheme } from '../../store/slice';
 import { useTheme } from '../../hooks';
 
 const ThemeSwitch: FC = () => {
-  const dispatch = useAppDispatch();
   const {
     loading,
     darkMode,
@@ -25,9 +22,9 @@ const ThemeSwitch: FC = () => {
         checked={darkMode}
         onChange={(checked) => {
           if (checked) {
-            dispatch(applyDarkTheme());
+            fetchTheme(true);
           } else {
-            dispatch(applyDefaultTheme());
+            fetchTheme(false);
           }
         }}
         className="app-ex-theme-switch"

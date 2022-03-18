@@ -1,8 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { AppRootState } from '../store';
 
+type ThemeType = 'dark' | 'default';
 interface GlobalSetting {
-  theme: 'dark' | 'default',
+  theme: ThemeType,
 }
 
 const themeItemKey = 'app-ex-theme';
