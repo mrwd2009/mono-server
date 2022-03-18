@@ -6,7 +6,6 @@ export interface RouteInfo {
   key: string;
   path: string;
   menu: boolean;
-  icon?: string;
   children?: RouteInfo[],
 };
 
@@ -21,7 +20,6 @@ const routesInfo: RouteInfo[] = [
     title: 'Participant',
     key: 'participant',
     path: '/participant',
-    icon: 'participant',
     menu: true,
     children: [
       {
@@ -305,7 +303,6 @@ export interface RouteMenuInfo {
   title: string;
   key: string;
   path: string;
-  icon?: string;
   children?: RouteMenuInfo[],
 };
 
@@ -315,7 +312,6 @@ export const getRoutesMenu = (routes = routesInfo) => {
     let newRouteInfo: RouteMenuInfo = {
       title: routeInfo.title!,
       key: routeInfo.key,
-      icon: routeInfo.icon,
       path: routeInfo.path,
     };
     if (routeInfo.menu) {
