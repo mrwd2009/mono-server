@@ -197,6 +197,26 @@ const routesInfo: RouteInfo[] = [
     ]
   },
   {
+    title: 'Monitoring',
+    key: 'monitoring',
+    path: '/monitoring',
+    menu: true,
+    children: [
+      {
+        title: 'Event',
+        key: 'event',
+        path: '/monitoring/event',
+        menu: true,
+      },
+      {
+        title: 'Error',
+        key: 'Error',
+        path: '/monitoring/Error',
+        menu: true,
+      },
+    ]
+  },
+  {
     title: 'System',
     key: 'system',
     path: '/system',
