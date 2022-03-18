@@ -1,18 +1,21 @@
 .app-ex-layout-auth {
   position: relative;
+
   &--bg {
     position: absolute;
-    z-index: -1;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
+    z-index: -1;
+
     &-image {
       width: 100%;
       height: 100%;
       object-fit: cover;
       object-position: 50% 50%;
     }
+
     &-overlay {
       position: absolute;
       top: 0;
@@ -20,8 +23,8 @@
       bottom: 0;
       left: 0;
       background-color: #2e5263;
-      .background-transition();
       opacity: 0.19;
+      .background-transition();
     }
     & when (@theme = dark) {
       &-overlay {
@@ -37,25 +40,27 @@
     width: 100vw;
     min-height: 100vh;
   }
+
   &--header {
     flex: none;
     height: @app-ex-header-height;
   }
+
   &--header-content {
     position: fixed;
-    top: 0px;
-    left: 0px;
-    right: 0px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: @app-ex-header-height;
-    padding-left: @app-ex-layout-h-padding;
-    padding-right: @app-ex-layout-h-padding;
-    background: @popover-background;
-    .background-transition();
+    top: 0;
+    right: 0;
+    left: 0;
     z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: @app-ex-header-height;
+    padding-right: @app-ex-layout-h-padding;
+    padding-left: @app-ex-layout-h-padding;
+    background: @popover-background;
     box-shadow: @shadow-1-down;
+    .background-transition();
   }
 
   &--header-brand {
@@ -65,30 +70,33 @@
       max-width: 120px;
     }
   }
+
   &--header-extra {
     font-size: @font-size-lg;
+
     span {
       display: none;
       margin-right: 1rem;
       font-size: @font-size-lg;
     }
   }
+
   &--body {
-    padding: 36px 0;
-    flex: auto;
     display: flex;
-    justify-content: center;
+    flex: auto;
     align-items: center;
+    justify-content: center;
+    padding: 36px 0;
   }
   
   &--footer {
     display: flex;
     flex: none;
-    padding-left: @app-ex-layout-h-padding;
-    padding-right: @app-ex-layout-h-padding;
-    justify-content: flex-end;
     align-items: center;
+    justify-content: flex-end;
     height: @app-ex-footer-height;
+    padding-right: @app-ex-layout-h-padding;
+    padding-left: @app-ex-layout-h-padding;
     color: rgba(255, 255, 255, 0.85);
     font-size: @font-size-lg;
   }
@@ -110,6 +118,7 @@
       display: inline-block;
     }
   }
+
   .app-ex-layout-auth--header-brand {
     img {
       max-width: 170px;

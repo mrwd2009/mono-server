@@ -1,31 +1,35 @@
 .app-ex-layout-error-page {
   position: relative;
+
   &--wrapper {
     display: flex;
     flex-direction: column;
     width: 100vw;
     min-height: 100vh;
   }
+
   &--header {
     flex: none;
     height: @app-ex-header-height
   }
+
   &--header-content {
     position: fixed;
-    top: 0px;
-    left: 0px;
-    right: 0px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: @app-ex-header-height;
-    padding-left: @app-ex-layout-h-padding;
-    padding-right: @app-ex-layout-h-padding;
-    background: @popover-background;
-    .background-transition();
+    top: 0;
+    right: 0;
+    left: 0;
     z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: @app-ex-header-height;
+    padding-right: @app-ex-layout-h-padding;
+    padding-left: @app-ex-layout-h-padding;
+    background: @popover-background;
     box-shadow: @shadow-1-down;
+    .background-transition();
   }
+
   &--header-brand {
     img {
       position: relative;
@@ -33,12 +37,13 @@
       max-width: 180px;
     }
   }
+
   &--body {
-    padding: 36px 0;
-    flex: auto;
     display: flex;
-    justify-content: center;
+    flex: auto;
     align-items: center;
+    justify-content: center;
+    padding: 36px 0;
     background-color: @layout-body-background;
     .background-transition();
   }
@@ -46,15 +51,15 @@
   &--footer {
     display: flex;
     flex: none;
-    padding-left: @app-ex-layout-h-padding;
-    padding-right: @app-ex-layout-h-padding;
-    justify-content: flex-end;
     align-items: center;
+    justify-content: flex-end;
     height: @app-ex-footer-height;
-    background-color: @layout-body-background;
-    .background-transition();
+    padding-right: @app-ex-layout-h-padding;
+    padding-left: @app-ex-layout-h-padding;
     color: @text-color;
     font-size: @font-size-lg;
+    background-color: @layout-body-background;
+    .background-transition();
   }
 
   .route-link {

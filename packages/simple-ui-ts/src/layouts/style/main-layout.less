@@ -1,58 +1,67 @@
 .app-ex-layout-main {
   position: relative;
+
   &--wrapper {
     display: flex;
     flex-direction: column;
     width: 100vw;
     min-height: 100vh;
   }
+
   &--header {
     flex: none;
     height: @app-ex-header-height;
+
     .app-ex-system-menu {
+      font-weight: 500;
+      font-size: @font-size-lg;
       line-height: @app-ex-header-height;
       border-bottom: none;
-      font-size: @font-size-lg;
-      font-weight: 500;
     }
   }
+
   &--header-content {
     position: fixed;
-    top: 0px;
-    left: 0px;
-    right: 0px;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 2;
     display: flex;
     align-items: center;
     height: @app-ex-header-height;
-    padding-left: @app-ex-layout-h-padding;
     padding-right: @app-ex-layout-h-padding;
+    padding-left: @app-ex-layout-h-padding;
     background: @popover-background;
-    .background-transition();
-    z-index: 2;
     box-shadow: @shadow-1-down;
+    .background-transition();
   }
+
   &--header-brand {
     flex: none;
     padding-right: 6px;
+
     img {
       position: relative;
       top: 6px;
       max-width: 100px;
     }
   }
+
   &--header-menu {
     flex: auto;
   }
+
   &--header-extra {
     flex: none;
   }
+
   &--body {
     display: flex;
-    flex-direction: column;
     flex: auto;
+    flex-direction: column;
+    padding: 0 @app-ex-layout-h-padding;
     background-color: @layout-body-background;
     .background-transition();
-    padding: 0 @app-ex-layout-h-padding;
   }
 
   &--content {
@@ -64,15 +73,15 @@
   &--footer {
     display: flex;
     flex: none;
-    padding-left: @app-ex-layout-h-padding;
-    padding-right: @app-ex-layout-h-padding;
-    justify-content: flex-end;
     align-items: center;
+    justify-content: flex-end;
     height: @app-ex-footer-height;
-    background-color: @layout-body-background;
-    .background-transition();
+    padding-right: @app-ex-layout-h-padding;
+    padding-left: @app-ex-layout-h-padding;
     color: @text-color;
     font-size: @font-size-lg;
+    background-color: @layout-body-background;
+    .background-transition();
   }
 }
 
@@ -86,32 +95,35 @@
 
 .app-ex-system-sub-menu {
   .ant-menu-submenu, .ant-menu-item {
-    font-size: @font-size-lg;
-    font-weight: 500;
     height: ceil((@font-size-lg / 12) * 32px);
+    font-weight: 500;
+    font-size: @font-size-lg;
     line-height: ceil((@font-size-lg / 12) * 32px);
   }
 }
 
 .app-ex-user-action-content {
   min-width: 140px;
+
   .ant-card-grid {
     width: 100%;
   }
 }
+
 .app-ex-user-action-grid {
   box-shadow:  0 1px 0 0 @border-color-split;
 }
 
 .app-ex-theme-switch {
   margin-right: 8px;
+
   .ant-switch-inner {
     padding-top: 2px;
   }
 }
 
 .app-ex-breadcrumb {
-  height: @app-ex-bc-height;
   display: flex;
   align-items: center;
+  height: @app-ex-bc-height;
 }
