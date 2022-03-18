@@ -1,9 +1,10 @@
 import { FC, memo } from 'react';
 import { Card, Popover, Avatar, Button, Spin } from 'antd';
-import { UserOutlined, DownOutlined, LogoutOutlined, SettingOutlined } from '@ant-design/icons';
+import Icon, { CaretDownOutlined, LogoutOutlined, SettingOutlined } from '@ant-design/icons';
 import { useAppSelector } from '../../hooks';
 import { selectUserInfo } from '../../views/Auth/slice';
 import { useLogout } from '../../views/Auth/hooks';
+import { ReactComponent as UserIcon } from '../../assets/images/user.svg'
 
 const UserAction: FC = () => {
   const userInfo = useAppSelector(selectUserInfo);
@@ -40,8 +41,8 @@ const UserAction: FC = () => {
   return (
     <Popover content={content} placement="bottomRight" trigger="click">
       <span className="app-ex-user-action">
-        <Button type="primary" icon={<UserOutlined />} shape="circle" />
-        <DownOutlined />
+        <Button type="primary" icon={<Icon component={UserIcon}/>} shape="circle" />
+        <CaretDownOutlined />
       </span>
     </Popover>
   );
