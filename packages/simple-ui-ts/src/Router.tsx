@@ -18,34 +18,39 @@ const routes: RouteObject[] = [
   {
     element: <RouteGuarder />,
     children: [
-      { 
+      {
         element: <MainLayout />,
         children: [
           {
             path: '/',
-            element: <Navigate to={defaultPath} replace />,
+            element: (
+              <Navigate
+                to={defaultPath}
+                replace
+              />
+            ),
           },
           {
             path: defaultPath,
-            element: <Contract />
-          }
-        ]
-      }
-    ]
+            element: <Contract />,
+          },
+        ],
+      },
+    ],
   },
   {
     element: <ErrorPageLayout />,
     children: [
       {
         path: getRouteInfo('403')!.path,
-        element: <Forbidden />
+        element: <Forbidden />,
       },
       {
         path: '*',
-        element: <NotFound />
-      }
-    ]
-  }
+        element: <NotFound />,
+      },
+    ],
+  },
 ];
 
 const Router: FC = () => {

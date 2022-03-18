@@ -6,29 +6,29 @@ import BreakpointContext from './contexts/BreakpointContext';
 const list = [
   {
     id: 'xs',
-    range: [0, 576]
+    range: [0, 576],
   },
   {
     id: 'sm',
-    range: [576, 768]
+    range: [576, 768],
   },
   {
     id: 'md',
-    range: [768, 992]
+    range: [768, 992],
   },
   {
     id: 'lg',
-    range: [992, 1200]
+    range: [992, 1200],
   },
   {
     id: 'xl',
-    range: [1200, 1600]
+    range: [1200, 1600],
   },
   {
     id: 'xxl',
-    range: [1600, Infinity]
+    range: [1600, Infinity],
   },
-]
+];
 const ResponsiveContainer: FC<{ children: ReactNode }> = ({ children }) => {
   const [breakpoint, setBreakpoint] = useState('xs');
 
@@ -40,13 +40,11 @@ const ResponsiveContainer: FC<{ children: ReactNode }> = ({ children }) => {
             setBreakpoint(item.id);
             return false;
           }
-        })
+        });
       }}
     >
       <div className={`app-ex-resp-c-${breakpoint}`}>
-        <BreakpointContext.Provider value={breakpoint}>
-          {children}
-        </BreakpointContext.Provider>
+        <BreakpointContext.Provider value={breakpoint}>{children}</BreakpointContext.Provider>
       </div>
     </ResizeObserver>
   );

@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { AppRootState } from '../../../store';
 
 interface UserInfo {
-  permissions: string[],
+  permissions: string[];
   user: string;
 }
 
@@ -19,17 +19,14 @@ export const userInfoSlice = createSlice({
       state.user = payload.payload.user;
       state.permissions = payload.payload.permissions;
     },
-    clearUserInfo: (state) => {
+    clearUserInfo: state => {
       state.user = '';
       state.permissions = [];
     },
   },
 });
 
-export const {
-  updateUserInfo,
-  clearUserInfo,
-} = userInfoSlice.actions;
+export const { updateUserInfo, clearUserInfo } = userInfoSlice.actions;
 
 export const selectUserInfo = (state: AppRootState) => state.userInfo;
 

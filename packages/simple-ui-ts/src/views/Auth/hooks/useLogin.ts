@@ -18,54 +18,54 @@ const useLogin = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const handleLogin = useCallback((params) => {
-    setLoading(true);
-    axios.post(apiEndpoints.auth.login, params, { showError: true })
-      .then((result: any) => {
-        if(isMounted.current) {
-          const { 
-            permissions,
-            token,
-            user,
-            resetPassword,
-          } = result;
-          setLoading(true);
-          if (resetPassword) {
-            navigate(`${getRouteInfo('reset-password')?.path}?token=${token}`);
-            return;
+  const handleLogin = useCallback(
+    params => {
+      setLoading(true);
+      axios
+        .post(apiEndpoints.auth.login, params, { showError: true })
+        .then((result: any) => {
+          if (isMounted.current) {
+            const { permissions, token, user, resetPassword } = result;
+            setLoading(true);
+            if (resetPassword) {
+              navigate(`${getRouteInfo('reset-password')?.path}?token=${token}`);
+              return;
+            }
+            dispatch(
+              updateUserInfo({
+                permissions,
+                user,
+              }),
+            );
+            // setUserInfo({
+            //   defaultURL,
+            //   permissions,
+            //   token,
+            //   user,
+            //   sso: '',
+            // });
+            // const loginPath = getRouter('login').pathname;
+            // const loginUrlIndex = findLastIndex(visitedPagesRef.current, item => item.pathname === loginPath);
+            // if (loginUrlIndex !== -1 && loginUrlIndex === visitedPagesRef.current.length - 1) {
+            //   // remove current route '/login', otherwise keep latest visited url
+            //   visitedPagesRef.current.pop();
+            // }
+            // const prevPage = visitedPagesRef.current.pop();
+            // if (prevPage && !includes(ignoredPaths, prevPage.pathname)) {
+            //   history.push(prevPage);
+            // } else {
+            navigate('/');
+            // }
           }
-          dispatch(updateUserInfo({
-            permissions,
-            user,
-          }));
-          // setUserInfo({
-          //   defaultURL,
-          //   permissions,
-          //   token,
-          //   user,
-          //   sso: '',
-          // });
-          // const loginPath = getRouter('login').pathname;
-          // const loginUrlIndex = findLastIndex(visitedPagesRef.current, item => item.pathname === loginPath);
-          // if (loginUrlIndex !== -1 && loginUrlIndex === visitedPagesRef.current.length - 1) {
-          //   // remove current route '/login', otherwise keep latest visited url
-          //   visitedPagesRef.current.pop();
-          // }
-          // const prevPage = visitedPagesRef.current.pop();
-          // if (prevPage && !includes(ignoredPaths, prevPage.pathname)) {
-          //   history.push(prevPage);
-          // } else {
-          navigate('/');
-          // }
-        }
-      })
-      .catch(() => {
-        if (isMounted.current) {
-          setLoading(false);
-        }
-      });
-    
-  }, [navigate, isMounted, dispatch]);
+        })
+        .catch(() => {
+          if (isMounted.current) {
+            setLoading(false);
+          }
+        });
+    },
+    [navigate, isMounted, dispatch],
+  );
   return {
     loading,
     handleLogin,

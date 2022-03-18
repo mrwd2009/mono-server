@@ -1,12 +1,7 @@
 import store, { AppDispatch, AppRootState } from './store';
 
-export type {
-  AppDispatch,
-  AppRootState,
-};
+export type { AppDispatch, AppRootState };
 
-export {
-  store,
-};
+export { store };
 
 export default store;

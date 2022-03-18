@@ -1,9 +1,9 @@
 import { useState, useCallback } from 'react';
-import useAppSelector from "./useAppSelector";
+import useAppSelector from './useAppSelector';
 import useMounted from './useMounted';
 import { selectDarkMode } from '../store/slice';
 import useAppDisatch from './useAppDispatch';
-import { applyDarkTheme, applyDefaultTheme  } from '../store/slice';
+import { applyDarkTheme, applyDefaultTheme } from '../store/slice';
 
 let defaultTheme: any;
 let darkTheme: any;
@@ -20,70 +20,72 @@ const useTheme = () => {
   const isMounted = useMounted();
   const dispatch = useAppDisatch();
 
-  const fetchTheme = useCallback((isDark) => {
-    // avoid useless processing.
-    if (isCurrentDark === isDark) {
-      return;
-    }
-    isCurrentDark = isDark;
-
-    if (isDark) {
-      if (defaultTheme && darkTheme) {
-        defaultTheme.unuse();
-        darkTheme.use();
-        dispatch(applyDarkTheme());
-      } else {
-        setLoading(true);
-        import('../assets/stylesheets/dark.less')
-          .then((theme) => {
-            if (isMounted.current) {
-              if (defaultTheme) {
-                defaultTheme.unuse();
-              }
-              darkTheme = theme.default;
-              darkTheme.use();
-              dispatch(applyDarkTheme());
-              setLoading(false);
-              setLoaded(true);
-              clearPlaceholder();
-            }
-          })
-          .catch(() => {
-            if (isMounted.current) {
-              setLoading(false);
-            }
-          });
+  const fetchTheme = useCallback(
+    isDark => {
+      // avoid useless processing.
+      if (isCurrentDark === isDark) {
+        return;
       }
-    } else {
-      if (darkTheme && defaultTheme) {
-        darkTheme.unuse();
-        defaultTheme.use();
-        dispatch(applyDefaultTheme());
-      } else {
-        setLoading(true);
-        import('../assets/stylesheets/default.less')
-          .then((theme) => {
-            if (isMounted.current) {
-              if (darkTheme) {
-                darkTheme.unuse();
-              }
-              defaultTheme = theme.default;
-              defaultTheme.use();
-              dispatch(applyDefaultTheme());
-              setLoading(false);
-              setLoaded(true);
-              clearPlaceholder();
-            }
-          })
-          .catch(() => {
-            if (isMounted.current) {
-              setLoading(false);
-            }
-          });
-      }
-    }
-  }, [isMounted, dispatch]);
+      isCurrentDark = isDark;
 
+      if (isDark) {
+        if (defaultTheme && darkTheme) {
+          defaultTheme.unuse();
+          darkTheme.use();
+          dispatch(applyDarkTheme());
+        } else {
+          setLoading(true);
+          import('../assets/stylesheets/dark.less')
+            .then(theme => {
+              if (isMounted.current) {
+                if (defaultTheme) {
+                  defaultTheme.unuse();
+                }
+                darkTheme = theme.default;
+                darkTheme.use();
+                dispatch(applyDarkTheme());
+                setLoading(false);
+                setLoaded(true);
+                clearPlaceholder();
+              }
+            })
+            .catch(() => {
+              if (isMounted.current) {
+                setLoading(false);
+              }
+            });
+        }
+      } else {
+        if (darkTheme && defaultTheme) {
+          darkTheme.unuse();
+          defaultTheme.use();
+          dispatch(applyDefaultTheme());
+        } else {
+          setLoading(true);
+          import('../assets/stylesheets/default.less')
+            .then(theme => {
+              if (isMounted.current) {
+                if (darkTheme) {
+                  darkTheme.unuse();
+                }
+                defaultTheme = theme.default;
+                defaultTheme.use();
+                dispatch(applyDefaultTheme());
+                setLoading(false);
+                setLoaded(true);
+                clearPlaceholder();
+              }
+            })
+            .catch(() => {
+              if (isMounted.current) {
+                setLoading(false);
+              }
+            });
+        }
+      }
+    },
+    [isMounted, dispatch],
+  );
 
   return {
     loading,

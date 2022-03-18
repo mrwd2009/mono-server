@@ -13,6 +13,8 @@
 /public
 /.storybook
 
+.stylelintrc.json
+
 # misc
 .DS_Store
 .env.local

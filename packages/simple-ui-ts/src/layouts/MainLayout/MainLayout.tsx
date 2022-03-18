@@ -1,12 +1,12 @@
 import { FC, memo } from 'react';
-import { Outlet } from 'react-router-dom'
+import { Outlet } from 'react-router-dom';
 import brand from '../../assets/images/brand.png';
 import SystemMenu from './SystemMenu';
 import ThemeSwitch from './ThemeSwitch';
 import UserAction from './UserAction';
 import BC from './BC';
 
-const currentYear = (new Date()).getFullYear();
+const currentYear = new Date().getFullYear();
 
 const MainLayout: FC = () => {
   return (
@@ -15,7 +15,10 @@ const MainLayout: FC = () => {
         <div className="app-ex-layout-main--header">
           <div className="app-ex-layout-main--header-content">
             <div className="app-ex-layout-main--header-brand">
-              <img alt="Energix Brand" src={brand} />
+              <img
+                alt="Energix Brand"
+                src={brand}
+              />
             </div>
             <div className="app-ex-layout-main--header-menu">
               <SystemMenu />

@@ -15,19 +15,25 @@ const InnerContent = () => {
     <div>
       Responsive Container({breakpoint})
       <Row>
-        <Col sm={{ offset: 4 }} md={{ offset: 6 }} lg={{ offset: 8 }}>col</Col>
+        <Col
+          sm={{ offset: 4 }}
+          md={{ offset: 6 }}
+          lg={{ offset: 8 }}
+        >
+          col
+        </Col>
       </Row>
     </div>
   );
 };
 
-const Template: ComponentStory<typeof ResponsiveContainer> = (args) => {
-  
+const Template: ComponentStory<typeof ResponsiveContainer> = args => {
   return (
-    <ResponsiveContainer {...args}><InnerContent /></ResponsiveContainer>
+    <ResponsiveContainer {...args}>
+      <InnerContent />
+    </ResponsiveContainer>
   );
 };
 
 export const Basic = Template.bind({});
-Basic.args = {
-};
+Basic.args = {};

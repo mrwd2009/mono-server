@@ -1,7 +1,7 @@
 import { getRouteInfo, getRoutesMenu, getRouteBC } from './routes-info';
 
 test('get route info', () => {
-  const routes  = [
+  const routes = [
     {
       key: 'forgot-password',
       path: '/forgot-password/new',
@@ -20,12 +20,12 @@ test('get route info', () => {
             {
               key: 'test2',
               path: '/test2',
-              menu: false
-            }
-          ]
-        }
-      ]
-    }
+              menu: false,
+            },
+          ],
+        },
+      ],
+    },
   ];
 
   expect(getRouteInfo('forgot-password', routes)).toEqual({
@@ -48,7 +48,7 @@ test('get route info', () => {
 });
 
 test('get routes menu', () => {
-  const routes  = [
+  const routes = [
     {
       key: 'forgot-password',
       path: '/forgot-password/new',
@@ -69,12 +69,12 @@ test('get routes menu', () => {
             {
               key: 'test2',
               path: '/test2',
-              menu: false
-            }
-          ]
-        }
-      ]
-    }
+              menu: false,
+            },
+          ],
+        },
+      ],
+    },
   ];
 
   expect(getRoutesMenu(routes)).toMatchObject([
@@ -87,14 +87,14 @@ test('get routes menu', () => {
           title: 'test',
           key: 'test',
           path: '/test',
-        }
-      ]
-    }
+        },
+      ],
+    },
   ]);
 });
 
 test('get route bc', () => {
-  const routes  = [
+  const routes = [
     {
       title: 'rest pass',
       key: 'reset-password',
@@ -110,12 +110,12 @@ test('get route bc', () => {
             {
               key: 'test2',
               path: '/reset-password/test/test2',
-              menu: false
-            }
-          ]
-        }
-      ]
-    }
+              menu: false,
+            },
+          ],
+        },
+      ],
+    },
   ];
 
   expect(getRouteBC('/reset-password/test', routes)).toMatchObject([
@@ -128,6 +128,6 @@ test('get route bc', () => {
       title: 'test',
       key: 'test',
       path: '/reset-password/test',
-    }
+    },
   ]);
 });

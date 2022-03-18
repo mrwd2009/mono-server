@@ -1,7 +1,4 @@
-import useLogin from "./useLogin";
-import useLogout from "./useLogout";
+import useLogin from './useLogin';
+import useLogout from './useLogout';
 
-export {
-  useLogin,
-  useLogout,
-};
+export { useLogin, useLogout };

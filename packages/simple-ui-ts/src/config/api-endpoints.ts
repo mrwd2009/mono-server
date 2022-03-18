@@ -1,4 +1,3 @@
-
 const NODE_ENV = process.env.NODE_ENV;
 
 let baseURL = '';
@@ -9,13 +8,11 @@ if (NODE_ENV === 'production') {
   }
 } else {
   const DEV_API_PORT = process.env.DEV_API_PORT || '4100';
-  const DEV_API_SCHEME = process.env.DEV_API_SCHEME || 'http://'
+  const DEV_API_SCHEME = process.env.DEV_API_SCHEME || 'http://';
   baseURL = `${DEV_API_SCHEME}localhost:${DEV_API_PORT}/api/`;
 }
 
-export {
-  baseURL,
-};
+export { baseURL };
 
 const endpoints = {
   auth: {
@@ -23,8 +20,8 @@ const endpoints = {
     logout: '/auth/logout',
   },
   system: {
-    info: '/system/info'
-  }
+    info: '/system/info',
+  },
 };
 
 export default endpoints;

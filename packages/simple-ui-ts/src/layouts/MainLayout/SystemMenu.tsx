@@ -1,8 +1,8 @@
 import { FC, memo } from 'react';
 import { Menu } from 'antd';
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom';
 import map from 'lodash/map';
-import { getRoutesMenu, RouteMenuInfo } from '../../config/routes-info'
+import { getRoutesMenu, RouteMenuInfo } from '../../config/routes-info';
 import { useAppSelector } from '../../hooks';
 import { selectDarkMode } from '../../store/slice';
 
@@ -10,7 +10,7 @@ const { Item, SubMenu } = Menu;
 const menuList = getRoutesMenu();
 
 const getMenuItems = (list: RouteMenuInfo[]) => {
-  return map(list, (item) => {
+  return map(list, item => {
     if (item.children?.length) {
       return (
         <SubMenu
@@ -26,7 +26,7 @@ const getMenuItems = (list: RouteMenuInfo[]) => {
       <Item key={item.path}>
         <Link to={item.path}>{item.title}</Link>
       </Item>
-    )
+    );
   });
 };
 

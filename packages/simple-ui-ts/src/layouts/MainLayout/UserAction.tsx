@@ -4,30 +4,43 @@ import Icon, { CaretDownOutlined, LogoutOutlined, SettingOutlined } from '@ant-d
 import { useAppSelector } from '../../hooks';
 import { selectUserInfo } from '../../views/Auth/slice';
 import { useLogout } from '../../views/Auth/hooks';
-import { ReactComponent as UserIcon } from '../../assets/images/user.svg'
+import { ReactComponent as UserIcon } from '../../assets/images/user.svg';
 
 const UserAction: FC = () => {
   const userInfo = useAppSelector(selectUserInfo);
-  const {
-    loading,
-    handleLogout,
-  } = useLogout();
+  const { loading, handleLogout } = useLogout();
 
   const actions = [
-    <span role="button" key="setting" tabIndex={0} className="text-nowrap">
+    <span
+      role="button"
+      key="setting"
+      tabIndex={0}
+      className="text-nowrap"
+    >
       &nbsp;
       <SettingOutlined />
       &nbsp;Setting
     </span>,
-    <span role="button" key="logout" tabIndex={0} className="text-nowrap" onClick={handleLogout}>
+    <span
+      role="button"
+      key="logout"
+      tabIndex={0}
+      className="text-nowrap"
+      onClick={handleLogout}
+    >
       &nbsp;
       <LogoutOutlined />
       &nbsp;Sign Out
-    </span>
+    </span>,
   ];
   const content = (
     <Spin spinning={loading}>
-      <Card size="small" className="app-ex-user-action-content" bordered={false} actions={actions}>
+      <Card
+        size="small"
+        className="app-ex-user-action-content"
+        bordered={false}
+        actions={actions}
+      >
         <Card.Grid className="app-ex-user-action-grid">
           <Card.Meta
             title="User"
@@ -37,11 +50,19 @@ const UserAction: FC = () => {
         </Card.Grid>
       </Card>
     </Spin>
-  )
+  );
   return (
-    <Popover content={content} placement="bottomRight" trigger="click">
+    <Popover
+      content={content}
+      placement="bottomRight"
+      trigger="click"
+    >
       <span className="app-ex-user-action">
-        <Button type="primary" icon={<Icon component={UserIcon}/>} shape="circle" />
+        <Button
+          type="primary"
+          icon={<Icon component={UserIcon} />}
+          shape="circle"
+        />
         <CaretDownOutlined />
       </span>
     </Popover>

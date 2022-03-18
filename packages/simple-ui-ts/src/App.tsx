@@ -7,15 +7,11 @@ import Initializer from './config/initializers';
 import { useTheme } from './hooks';
 
 const AppContent: FC<{ children: ReactElement[] }> = ({ children }) => {
-  const {
-    loaded,
-    darkMode,
-    fetchTheme,
-  } = useTheme();
+  const { loaded, darkMode, fetchTheme } = useTheme();
 
   useEffect(() => {
     fetchTheme(darkMode);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!loaded) {

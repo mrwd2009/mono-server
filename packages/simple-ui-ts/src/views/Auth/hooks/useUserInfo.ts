@@ -12,16 +12,17 @@ const useUserInfo = () => {
 
   const fetchUserInfo = useCallback(() => {
     setLoading(true);
-    axios.get(apiEndpoints.system.info)
-      .then((result: any) => {
-        if(isMounted.current) {
-          dipatch(updateUserInfo({
+    axios.get(apiEndpoints.system.info).then((result: any) => {
+      if (isMounted.current) {
+        dipatch(
+          updateUserInfo({
             user: result.user,
             permissions: result.permissions,
-          }));
-          setLoading(false);
-        }
-      });
+          }),
+        );
+        setLoading(false);
+      }
+    });
   }, [isMounted, dipatch]);
 
   return {

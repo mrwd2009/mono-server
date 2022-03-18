@@ -3,7 +3,7 @@ import type { AppRootState } from '../store';
 
 type ThemeType = 'dark' | 'default';
 interface GlobalSetting {
-  theme: ThemeType,
+  theme: ThemeType;
 }
 
 const themeItemKey = 'app-ex-theme';
@@ -18,28 +18,25 @@ if (!defaultTheme) {
 }
 
 const initialState: GlobalSetting = {
-  theme: defaultTheme as ('dark' | 'default'),
+  theme: defaultTheme as 'dark' | 'default',
 };
 
 export const globalSettingSlice = createSlice({
   name: 'global/setting',
   initialState,
   reducers: {
-    applyDarkTheme: (state) => {
+    applyDarkTheme: state => {
       state.theme = 'dark';
       localStorage.setItem(themeItemKey, 'dark');
     },
-    applyDefaultTheme: (state) => {
+    applyDefaultTheme: state => {
       state.theme = 'default';
       localStorage.setItem(themeItemKey, 'default');
-    }
+    },
   },
 });
 
-export const {
-  applyDarkTheme,
-  applyDefaultTheme,
-} = globalSettingSlice.actions;
+export const { applyDarkTheme, applyDefaultTheme } = globalSettingSlice.actions;
 
 export const selectDarkMode = (state: AppRootState) => state.globalSetting.theme === 'dark';
 

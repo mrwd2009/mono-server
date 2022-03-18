@@ -1,4 +1,4 @@
-import forEach from 'lodash/forEach'
+import forEach from 'lodash/forEach';
 import isArray from 'lodash/isArray';
 
 export interface RouteInfo {
@@ -6,8 +6,8 @@ export interface RouteInfo {
   key: string;
   path: string;
   menu: boolean;
-  children?: RouteInfo[],
-};
+  children?: RouteInfo[];
+}
 
 // Software Quality Control:
 // "The function of software quality that checks that the project follows its standards, processes, and procedures, and that the project produces the required internal and external (deliverable) products"
@@ -33,8 +33,8 @@ const routesInfo: RouteInfo[] = [
         key: 'Seller',
         path: '/participant/seller',
         menu: true,
-      }
-    ]
+      },
+    ],
   },
   {
     title: 'Contract',
@@ -71,8 +71,8 @@ const routesInfo: RouteInfo[] = [
         key: 'compute-node',
         path: '/debug/compute-node',
         menu: true,
-      }
-    ]
+      },
+    ],
   },
   {
     title: 'Report',
@@ -127,7 +127,7 @@ const routesInfo: RouteInfo[] = [
         key: 'bill-impact',
         path: '/report/bill-impact',
         menu: true,
-      }
+      },
     ],
   },
   {
@@ -148,7 +148,7 @@ const routesInfo: RouteInfo[] = [
         path: '/queue/task',
         menu: true,
       },
-    ]
+    ],
   },
   {
     title: 'Administration',
@@ -192,7 +192,7 @@ const routesInfo: RouteInfo[] = [
         path: '/admin/price-upload',
         menu: true,
       },
-    ]
+    ],
   },
   {
     title: 'Monitoring',
@@ -212,7 +212,7 @@ const routesInfo: RouteInfo[] = [
         path: '/monitoring/Error',
         menu: true,
       },
-    ]
+    ],
   },
   {
     title: 'System',
@@ -244,7 +244,7 @@ const routesInfo: RouteInfo[] = [
         path: '/system/setting',
         menu: true,
       },
-    ]
+    ],
   },
   {
     key: 'login',
@@ -270,7 +270,7 @@ const routesInfo: RouteInfo[] = [
     key: '403',
     path: '/403',
     menu: false,
-  }
+  },
 ];
 
 export const getRouteInfo = (keys: string | string[], routes = routesInfo) => {
@@ -303,8 +303,8 @@ export interface RouteMenuInfo {
   title: string;
   key: string;
   path: string;
-  children?: RouteMenuInfo[],
-};
+  children?: RouteMenuInfo[];
+}
 
 export const getRoutesMenu = (routes = routesInfo) => {
   let newRoutes: RouteMenuInfo[] = [];
@@ -315,7 +315,7 @@ export const getRoutesMenu = (routes = routesInfo) => {
       path: routeInfo.path,
     };
     if (routeInfo.menu) {
-      newRoutes.push(newRouteInfo)
+      newRoutes.push(newRouteInfo);
     }
     if (routeInfo.children?.length) {
       const newChildren = getRoutesMenu(routeInfo.children);
@@ -331,7 +331,7 @@ export interface RouteBCInfo {
   title: string;
   key: string;
   path: string;
-};
+}
 
 export const getRouteBC = (path: string, routes = routesInfo): RouteBCInfo[] => {
   let bcList: RouteBCInfo[] = [];
@@ -346,11 +346,14 @@ export const getRouteBC = (path: string, routes = routesInfo): RouteBCInfo[] => 
         });
       } else if (routeInfo.children?.length) {
         const subBCList = getRouteBC(path, routeInfo.children);
-        bcList = bcList.concat({
-          title: routeInfo.title!,
-          key: routeInfo.key,
-          path: routeInfo.path,
-        }, subBCList);
+        bcList = bcList.concat(
+          {
+            title: routeInfo.title!,
+            key: routeInfo.key,
+            path: routeInfo.path,
+          },
+          subBCList,
+        );
       }
       return false;
     }
@@ -358,6 +361,5 @@ export const getRouteBC = (path: string, routes = routesInfo): RouteBCInfo[] => 
 
   return bcList;
 };
-
 
 export default routesInfo;

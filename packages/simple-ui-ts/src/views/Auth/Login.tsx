@@ -18,53 +18,101 @@ const Login: FC = () => {
       header={{
         help: "Don't have an account?",
         title: 'Sign up',
-        path: registerRoute!.path
+        path: registerRoute!.path,
       }}
     >
       <div className="app-ex-auth">
         <div className="app-ex-auth--logo">
-          <img alt="Energix Logo" src={brand} />
-          <Typography.Title >Contract Management</Typography.Title>
+          <img
+            alt="Energix Logo"
+            src={brand}
+          />
+          <Typography.Title>Contract Management</Typography.Title>
         </div>
-        <Form size="large" onFinish={handleLogin}>
-          <Form.Item name="Email" rules={[
-            {
-              required: true,
-              type: 'email',
-              message: 'Please provide your email',
-            },
-          ]}
+        <Form
+          size="large"
+          onFinish={handleLogin}
+        >
+          <Form.Item
+            name="Email"
+            rules={[
+              {
+                required: true,
+                type: 'email',
+                message: 'Please provide your email',
+              },
+            ]}
           >
-            <Input prefix={<UserOutlined style={{ marginRight: 4 }} />} placeholder="Enter your email address" />
+            <Input
+              prefix={<UserOutlined style={{ marginRight: 4 }} />}
+              placeholder="Enter your email address"
+            />
           </Form.Item>
-          <Form.Item name="Password" rules={[
-            {
-              required: true,
-              message: 'Please provide your password',
-            },
-          ]}>
-            <Input.Password prefix={<LockOutlined style={{ marginRight: 4 }} />} type="password" placeholder="Enter your password" />
+          <Form.Item
+            name="Password"
+            rules={[
+              {
+                required: true,
+                message: 'Please provide your password',
+              },
+            ]}
+          >
+            <Input.Password
+              prefix={<LockOutlined style={{ marginRight: 4 }} />}
+              type="password"
+              placeholder="Enter your password"
+            />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" block loading={loading}>Log In</Button>
+            <Button
+              type="primary"
+              htmlType="submit"
+              block
+              loading={loading}
+            >
+              Log In
+            </Button>
           </Form.Item>
           <Divider dashed />
           <Form.Item>
-            <Button block htmlType="button" icon={<AmazonOutlined />}>Sign In with Amazon</Button>
+            <Button
+              block
+              htmlType="button"
+              icon={<AmazonOutlined />}
+            >
+              Sign In with Amazon
+            </Button>
           </Form.Item>
           <Form.Item>
-            <Button block htmlType="button" icon={<GoogleOutlined />}>Sign In with Google</Button>
+            <Button
+              block
+              htmlType="button"
+              icon={<GoogleOutlined />}
+            >
+              Sign In with Google
+            </Button>
           </Form.Item>
           <Form.Item>
-            <Button block htmlType="button" icon={<FacebookOutlined />}>Sign In with Facebook</Button>
+            <Button
+              block
+              htmlType="button"
+              icon={<FacebookOutlined />}
+            >
+              Sign In with Facebook
+            </Button>
           </Form.Item>
           <Form.Item>
-            <Link to={fogotRoute!.path} className="route-link">Forgot Password?</Link>
+            <Link
+              to={fogotRoute!.path}
+              className="route-link"
+            >
+              Forgot Password?
+            </Link>
           </Form.Item>
         </Form>
       </div>
     </AuthLayout>
   );
-}
+};
 
 export default memo(Login);

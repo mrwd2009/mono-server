@@ -1,13 +1,10 @@
 import { FC, memo, useEffect } from 'react';
-import { Outlet } from 'react-router-dom'
+import { Outlet } from 'react-router-dom';
 import { Skeleton } from 'antd';
 import useUserInfo from '../views/Auth/hooks/useUserInfo';
 
 const RouteGuarder: FC = () => {
-  const {
-    loading,
-    fetchUserInfo,
-  } = useUserInfo();
+  const { loading, fetchUserInfo } = useUserInfo();
 
   useEffect(() => {
     fetchUserInfo();
@@ -21,7 +18,7 @@ const RouteGuarder: FC = () => {
           avatar
           loading
           paragraph={{
-            rows: 6
+            rows: 6,
           }}
           round
           title
@@ -30,9 +27,7 @@ const RouteGuarder: FC = () => {
     );
   }
 
-  return (
-    <Outlet />
-  );
+  return <Outlet />;
 };
 
 export default memo(RouteGuarder);

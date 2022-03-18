@@ -1,7 +1,5 @@
-import Contract from "./Contract";
+import Contract from './Contract';
 
-export {
-  Contract
-};
+export { Contract };
 
 export default Contract;

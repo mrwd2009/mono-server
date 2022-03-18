@@ -10,6 +10,6 @@ export const useMounted = () => {
   }, []);
 
   return isMounted;
-}
+};
 
 export default useMounted;

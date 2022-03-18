@@ -12,10 +12,6 @@ export const Initializer: FC = () => {
   return null;
 };
 
-
-export {
-  axios,
-  dayjs,
-};
+export { axios, dayjs };
 
 export default memo(Initializer);

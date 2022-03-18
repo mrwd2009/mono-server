@@ -1,6 +1,6 @@
 import { FC, memo } from 'react';
 
-const Contract:FC = () => {
+const Contract: FC = () => {
   return <span>Contract</span>;
 };
 

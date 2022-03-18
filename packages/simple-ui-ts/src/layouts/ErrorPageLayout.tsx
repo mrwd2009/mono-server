@@ -1,8 +1,8 @@
 import { FC, memo } from 'react';
-import { Outlet } from 'react-router-dom'
+import { Outlet } from 'react-router-dom';
 import brand from '../assets/images/brand.png';
 
-const currentYear = (new Date()).getFullYear();
+const currentYear = new Date().getFullYear();
 
 const ErrorPageLayout: FC = () => {
   return (
@@ -11,7 +11,10 @@ const ErrorPageLayout: FC = () => {
         <div className="app-ex-layout-error-page--header">
           <div className="app-ex-layout-error-page--header-content">
             <div className="app-ex-layout-error-page--header-brand">
-              <img alt="Energix Brand" src={brand} />
+              <img
+                alt="Energix Brand"
+                src={brand}
+              />
             </div>
           </div>
         </div>

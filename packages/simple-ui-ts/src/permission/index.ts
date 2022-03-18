@@ -1,8 +1,6 @@
-import permission from "./permission";
-import RouteGuarder from "./RouteGuarder";
+import permission from './permission';
+import RouteGuarder from './RouteGuarder';
 
-export {
-  RouteGuarder,
-};
+export { RouteGuarder };
 
 export default permission;

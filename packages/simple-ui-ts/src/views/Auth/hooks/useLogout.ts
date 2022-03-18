@@ -15,9 +15,10 @@ const useLogout = () => {
 
   const handleLogout = useCallback(() => {
     setLoading(true);
-    axios.get(apiEndpoints.auth.logout)
+    axios
+      .get(apiEndpoints.auth.logout)
       .then(() => {
-        if(isMounted.current) {
+        if (isMounted.current) {
           setLoading(false);
           dipatch(clearUserInfo());
           navigate(getRouteInfo('login')!.path);
@@ -28,7 +29,6 @@ const useLogout = () => {
           setLoading(false);
         }
       });
-    
   }, [navigate, isMounted, dipatch]);
 
   return {
