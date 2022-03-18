@@ -37,6 +37,7 @@ const SystemMenu: FC = () => {
     <Menu
       mode="horizontal"
       className="app-ex-system-menu"
+      overflowedIndicatorPopupClassName="app-ex-system-sub-menu"
       selectedKeys={[location.pathname]}
       triggerSubMenuAction="click"
       theme={isDark ? 'dark' : 'light'}

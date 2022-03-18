@@ -37,7 +37,7 @@
     img {
       position: relative;
       top: 6px;
-      max-width: 120px;
+      max-width: 100px;
     }
   }
   &--header-menu {
@@ -84,11 +84,13 @@
   }
 }
 
-.app-ex-system-sub-menu .ant-menu-item {
-  font-size: @font-size-lg;
-  font-weight: 500;
-  height: 38px;
-  line-height: 38px;
+.app-ex-system-sub-menu {
+  .ant-menu-submenu, .ant-menu-item {
+    font-size: @font-size-lg;
+    font-weight: 500;
+    height: ceil((@font-size-lg / 12) * 32px);
+    line-height: ceil((@font-size-lg / 12) * 32px);
+  }
 }
 
 .app-ex-user-action-content {
