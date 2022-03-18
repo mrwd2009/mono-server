@@ -9,18 +9,20 @@ const BC: FC = () => {
   const location = useLocation();
   const bcList = getRouteBC(location.pathname);
   return (
-    <Breadcrumb className="app-ex-breadcrumb">
-      <Breadcrumb.Item>
-       <HomeOutlined />
-      </Breadcrumb.Item>
-      {map(bcList, bc => {
-        return (
-          <Breadcrumb.Item key={bc.key}>
-            {bc.title}
-          </Breadcrumb.Item>
-        );
-      })}
-    </Breadcrumb>
+    <div className="app-ex-breadcrumb">
+      <Breadcrumb>
+            <Breadcrumb.Item>
+            <HomeOutlined />
+            </Breadcrumb.Item>
+            {map(bcList, bc => {
+              return (
+                <Breadcrumb.Item key={bc.key}>
+                  {bc.title}
+                </Breadcrumb.Item>
+              );
+            })}
+      </Breadcrumb>
+    </div>
   );
 };
 

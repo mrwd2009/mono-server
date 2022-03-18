@@ -20,6 +20,7 @@
       bottom: 0;
       left: 0;
       background-color: #2e5263;
+      .background-transition();
       opacity: 0.19;
     }
     & when (@theme = dark) {
@@ -51,7 +52,8 @@
     height: @app-ex-header-height;
     padding-left: @app-ex-layout-h-padding;
     padding-right: @app-ex-layout-h-padding;
-    background: @popover-background;;
+    background: @popover-background;
+    .background-transition();
     z-index: 2;
     box-shadow: @shadow-1-down;
   }
@@ -86,7 +88,7 @@
     padding-right: @app-ex-layout-h-padding;
     justify-content: flex-end;
     align-items: center;
-    height: 32px;
+    height: @app-ex-footer-height;
     color: rgba(255, 255, 255, 0.85);
     font-size: @font-size-lg;
   }

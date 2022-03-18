@@ -18,11 +18,12 @@ const useTheme = () => {
   const isMounted = useMounted();
 
   const fetchTheme = useCallback((isDark) => {
+    // avoid useless processing.
     if (isCurrentDark === isDark) {
       return;
     }
     isCurrentDark = isDark;
-    
+
     if (isDark) {
       if (defaultTheme && darkTheme) {
         defaultTheme.unuse();

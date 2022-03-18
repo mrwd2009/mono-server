@@ -13,12 +13,12 @@ const UserAction: FC = () => {
   } = useLogout();
 
   const actions = [
-    <span role="button" key="setting" tabIndex={0} className="nowrap">
+    <span role="button" key="setting" tabIndex={0} className="text-nowrap">
       &nbsp;
       <SettingOutlined />
       &nbsp;Setting
     </span>,
-    <span role="button" key="logout" tabIndex={0} className="nowrap" onClick={handleLogout}>
+    <span role="button" key="logout" tabIndex={0} className="text-nowrap" onClick={handleLogout}>
       &nbsp;
       <LogoutOutlined />
       &nbsp;Sign Out

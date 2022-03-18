@@ -27,6 +27,7 @@
     padding-left: @app-ex-layout-h-padding;
     padding-right: @app-ex-layout-h-padding;
     background: @popover-background;
+    .background-transition();
     z-index: 2;
     box-shadow: @shadow-1-down;
   }
@@ -50,12 +51,14 @@
     flex-direction: column;
     flex: auto;
     background-color: @layout-body-background;
+    .background-transition();
     padding: 0 @app-ex-layout-h-padding;
   }
 
   &--content {
     flex: auto;
     background: @component-background;
+    .background-transition();
   }
 
   &--footer {
@@ -65,8 +68,9 @@
     padding-right: @app-ex-layout-h-padding;
     justify-content: flex-end;
     align-items: center;
-    height: 32px;
+    height: @app-ex-footer-height;
     background-color: @layout-body-background;
+    .background-transition();
     color: @text-color;
     font-size: @font-size-lg;
   }
@@ -104,5 +108,7 @@
 }
 
 .app-ex-breadcrumb {
-  margin: 6px 0;
+  height: @app-ex-bc-height;
+  display: flex;
+  align-items: center;
 }

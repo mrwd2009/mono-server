@@ -22,6 +22,7 @@
     padding-left: @app-ex-layout-h-padding;
     padding-right: @app-ex-layout-h-padding;
     background: @popover-background;
+    .background-transition();
     z-index: 2;
     box-shadow: @shadow-1-down;
   }
@@ -39,6 +40,7 @@
     justify-content: center;
     align-items: center;
     background-color: @layout-body-background;
+    .background-transition();
   }
   
   &--footer {
@@ -48,8 +50,9 @@
     padding-right: @app-ex-layout-h-padding;
     justify-content: flex-end;
     align-items: center;
-    height: 32px;
+    height: @app-ex-footer-height;
     background-color: @layout-body-background;
+    .background-transition();
     color: @text-color;
     font-size: @font-size-lg;
   }
