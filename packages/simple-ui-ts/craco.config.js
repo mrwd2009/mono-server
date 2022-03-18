@@ -1,6 +1,5 @@
 const { getLoaders, loaderByName } = require('@craco/craco');
 const CracoLessPlugin = require('craco-less');
-const fs = require('fs');
 
 module.exports = {
   plugins: [
