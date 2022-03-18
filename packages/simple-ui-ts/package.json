@@ -32,7 +32,8 @@
     "storybook": "start-storybook -p 5102 -s public",
     "build-storybook": "build-storybook -s public",
     "lint:style": "stylelint './**/*.less' --fix",
-    "prettier": "prettier --write --ignore-unknown ./src"
+    "prettier": "prettier --write --ignore-unknown ./src",
+    "format": "npm run lint:style && npm run prettier"
   },
   "eslintConfig": {
     "extends": [
