@@ -153,6 +153,9 @@ A general component directory structure. Unused directories can be omitted.\
 `style/index.less` should be imported in `./src/views/style/index.less`.
 ```
 Auth
+  contexts
+    index.ts
+    xxxx.ts
   hooks
     index.ts
     useLogin.ts
