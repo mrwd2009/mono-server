@@ -23,7 +23,7 @@ Open [http://localhost:5102](http://localhost:5102) to view it in the browser.
 
 Runs `stylelint` to format your less files.
 
-### `yarn prettiere`
+### `yarn prettier`
 
 Runs `prettier` to format your typescript files.
 
@@ -53,7 +53,7 @@ Builds the component stories for production to the `build` folder.
 
 ### 1. Format Source Code
 
-Before you commmit any source code, please run `yarn format` at first.
+Before you commit any source code, please run `yarn format` at first.
 
 ### 2. Route Definition
 
