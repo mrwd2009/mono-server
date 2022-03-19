@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import useAxios from 'axios-hooks';
 import apiEndpoints from '../../../config/api-endpoints';
-import { updateUserInfo } from '../slice';
+import { updateUserInfo } from '../slices';
 import { useAppDispatch } from '../../../hooks';
 
 const useUserInfo = () => {
@@ -16,7 +16,7 @@ const useUserInfo = () => {
           permissions: result.permissions,
         }),
       );
-    })
+    });
   }, [request, dipatch]);
 
   return {

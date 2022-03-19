@@ -1,5 +1,5 @@
-import { userInfoReducer } from '../views/Auth/slice';
-import { globalSettingReducer } from './slice/global-setting-slice';
+import { userInfoReducer } from '../views/Auth/slices';
+import { globalSettingReducer } from './slices/global-setting-slice';
 
 const reducer = {
   userInfo: userInfoReducer,

@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import map from 'lodash/map';
 import { getRoutesMenu, RouteMenuInfo } from '../../config/routes-info';
 import { useAppSelector } from '../../hooks';
-import { selectDarkMode } from '../../store/slice';
+import { selectDarkMode } from '../../store/slices';
 
 const { Item, SubMenu } = Menu;
 const menuList = getRoutesMenu();

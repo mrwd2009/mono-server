@@ -5,7 +5,7 @@ import useAxios from 'axios-hooks';
 import { useNavigate } from 'react-router-dom';
 import apiEndpoints from '../../../config/api-endpoints';
 import { getRouteInfo } from '../../../config/routes-info';
-import { updateUserInfo } from '../slice';
+import { updateUserInfo } from '../slices';
 import { useAppDispatch } from '../../../hooks';
 
 // TODO add login redirection

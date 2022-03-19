@@ -15,7 +15,7 @@ export interface RouteInfo {
 // Software Quality Assurance:
 // "The function of software quality that assures that the standards, processes, and procedures are appropriate for the project and are correctly implemented"
 
-const routesInfo: RouteInfo[] = [
+export const routesInfo: RouteInfo[] = [
   {
     title: 'Participant',
     key: 'participant',

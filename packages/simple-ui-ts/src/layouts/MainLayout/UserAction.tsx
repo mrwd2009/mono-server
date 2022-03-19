@@ -2,7 +2,7 @@ import { FC, memo } from 'react';
 import { Card, Popover, Avatar, Button, Spin } from 'antd';
 import Icon, { CaretDownOutlined, LogoutOutlined, SettingOutlined } from '@ant-design/icons';
 import { useAppSelector } from '../../hooks';
-import { selectUserInfo } from '../../views/Auth/slice';
+import { selectUserInfo } from '../../views/Auth/slices';
 import { useLogout } from '../../views/Auth/hooks';
 import { ReactComponent as UserIcon } from '../../assets/images/user.svg';
 

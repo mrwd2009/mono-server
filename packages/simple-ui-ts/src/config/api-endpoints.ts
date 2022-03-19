@@ -14,7 +14,7 @@ if (NODE_ENV === 'production') {
 
 export { baseURL };
 
-const endpoints = {
+export const apiEndpoints = {
   auth: {
     login: '/auth/login',
     logout: '/auth/logout',
@@ -24,4 +24,4 @@ const endpoints = {
   },
 };
 
-export default endpoints;
+export default apiEndpoints;

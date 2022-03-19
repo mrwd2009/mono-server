@@ -1,5 +1,5 @@
-import axios, { AxiosResponse} from 'axios';
-import { configure} from 'axios-hooks';
+import axios, { AxiosResponse } from 'axios';
+import { configure } from 'axios-hooks';
 import assign from 'lodash/assign';
 import { useNavigate, NavigateFunction, useLocation, Location } from 'react-router-dom';
 import { notification } from 'antd';
@@ -121,12 +121,9 @@ const requestErrorInterceptor = (err: any) => {
   }
   // for local test, show something on UI
   return Promise.reject(err);
-}
+};
 // intercept response
-axios.interceptors.response.use(
-  requestSuccessInterceptor,
-  requestErrorInterceptor,
-);
+axios.interceptors.response.use(requestSuccessInterceptor, requestErrorInterceptor);
 
 function showAdvancedError(message: string, internalMessage: string) {
   // // match uuid from message like [reference code:c574ca54-6c6c-4bec-ab81-4ed6d5708ea8]
@@ -149,17 +146,14 @@ const hookAxios = axios.create({
   useAxiosHook: true,
 });
 // intercept response
-hookAxios.interceptors.response.use(
-  requestSuccessInterceptor,
-  requestErrorInterceptor,
-);
+hookAxios.interceptors.response.use(requestSuccessInterceptor, requestErrorInterceptor);
 configure({
   cache: false,
   axios: hookAxios,
   defaultOptions: {
     manual: true,
     useCache: false,
-  }
+  },
 });
 
 export const useInitializer = () => {
