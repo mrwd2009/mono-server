@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { unstable_batchedUpdates } from 'react-dom';
 import useAppSelector from './useAppSelector';
 import useMounted from './useMounted';
 import { selectDarkMode } from '../store/slice';
@@ -43,10 +44,12 @@ const useTheme = () => {
                 }
                 darkTheme = theme.default;
                 darkTheme.use();
-                dispatch(applyDarkTheme());
-                setLoading(false);
-                setLoaded(true);
-                clearPlaceholder();
+                unstable_batchedUpdates(() => {
+                  dispatch(applyDarkTheme());
+                  setLoading(false);
+                  setLoaded(true);
+                  clearPlaceholder();
+                });
               }
             })
             .catch(() => {
@@ -70,10 +73,12 @@ const useTheme = () => {
                 }
                 defaultTheme = theme.default;
                 defaultTheme.use();
-                dispatch(applyDefaultTheme());
-                setLoading(false);
-                setLoaded(true);
-                clearPlaceholder();
+                unstable_batchedUpdates(() => {
+                  dispatch(applyDefaultTheme());
+                  setLoading(false);
+                  setLoaded(true);
+                  clearPlaceholder();
+                });
               }
             })
             .catch(() => {
