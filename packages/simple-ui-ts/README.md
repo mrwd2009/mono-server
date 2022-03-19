@@ -194,7 +194,7 @@ const [{ loading }, request] = useAxios({ url: apiEndpoints.auth.login, showErro
 
 We have two approaches to send ajax request. We prefer use `axios-hooks`.
 
-1. axios
+1. axios\
 If you use axios directly, please use hook `./src/hooks/useMounted.ts` to check whether React component destroyed after receiving response.
 ```
 import axios from 'axios';
@@ -225,8 +225,7 @@ const handleLogout = useCallback(() => {
 }, [navigate, isMounted, dipatch]);
 ```
 
-2. axios-hooks
-
+2. axios-hooks\
 In this approach, our request is cancelled after Reactcomponent destroyed. It's much simple.
 We prefer this way.
 ```
@@ -249,3 +248,18 @@ const handleLogout = useCallback(() => {
 ### 15. Initialization
 
 If you have some special logic needed to execute before React rendering, please add them in `./src/config/initializers`. You can refer `dayjs.ts` or `axios.ts`.
+
+### 16. Permission Checking
+
+TODO
+
+### 17. Environment Variable
+
+Backend api port in development mode.\
+**DEV_API_PORT=4100**
+
+Backend api protocol in development mode.\
+**DEV_API_SCHEME=http://**
+
+Backend api address in production mode.\
+PROD_API_URL=xxxx
