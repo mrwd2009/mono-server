@@ -8,11 +8,12 @@ interface Props {
   index?: number;
   initialSize: string | number;
   minSize?: string;
+  fixedSize?: string;
   maxSize?: string;
 }
 
-function PaneStyle({ split, initialSize, size, minSize, maxSize, resizersSize }: any) {
-  const value = size || initialSize;
+function PaneStyle({ split, initialSize, fixedSize, size, minSize, maxSize, resizersSize }: any) {
+  const value =fixedSize || size || initialSize;
   const vertical = split === 'vertical';
   const styleProp = {
     minSize: vertical ? 'minWidth' : 'minHeight',

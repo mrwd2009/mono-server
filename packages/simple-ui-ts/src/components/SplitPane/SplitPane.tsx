@@ -14,7 +14,7 @@ interface Props {
   resizerSize?: number;
   onResizeStart?: () => void;
   onResizeEnd?: (size: number[]) => void;
-  onChange?: (size: number[]) => void;
+  onChange?: (size: number[], resizerIndex: number) => void;
   style?: CSSProperties;
 }
 
@@ -329,7 +329,7 @@ class SplitPane extends PureComponent<Props, any> {
       }
     }
 
-    onChange && onChange(sizes);
+    onChange && onChange(sizes, resizerIndex);
 
     this.setState({
       sizes

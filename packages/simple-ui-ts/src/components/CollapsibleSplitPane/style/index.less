@@ -1,0 +1,57 @@
+.app-ex-collapsible-split-pane {
+  > div {
+    position: relative;
+  }
+
+  &__sider {
+    width: 100%;
+    padding: @app-ex-content-padding;
+    overflow: auto;
+    transition: all 0.3s ease-in-out;
+
+    &.left {
+      .three-col-layout__sider-body {
+        padding: 16px 0 16px 16px;
+      }
+
+    }
+
+    &.right {
+      .three-col-layout__sider-body {
+        padding: 16px 16px 16px 0;
+      }
+    }
+
+    &.inline {
+      visibility: hidden;
+      opacity: 0;
+    }
+  }
+
+  &__toggle {
+    position: absolute;
+
+    &.left {
+      top: 24px;
+      right: -10px;
+      z-index: 1;
+      width: 16px;
+      min-width: 16px;
+      height: 16px;
+    }
+
+    &.right {
+      top: 24px;
+      left: -10px;
+      z-index: 1;
+      width: 16px;
+      min-width: 16px;
+      height: 16px;
+    }
+  }
+
+  &__content {
+    width: 100%;
+    padding: @app-ex-content-padding;
+  }
+}
