@@ -5,20 +5,35 @@
 
   &__sider {
     width: 100%;
-    padding: @app-ex-content-padding;
+    padding: 0;
     overflow: auto;
     transition: all 0.3s ease-in-out;
 
     &.left {
-      .three-col-layout__sider-body {
-        padding: 16px 0 16px 16px;
+      padding-right: @app-ex-content-padding;
+      
+      > .app-ex-panel > .ant-card {
+        > .ant-card-head {
+          padding-right: 0;
+        }
+  
+        > .ant-card-body {
+          padding-right: 0;
+        }
       }
-
     }
 
     &.right {
-      .three-col-layout__sider-body {
-        padding: 16px 16px 16px 0;
+      padding-left: @app-ex-content-padding;
+
+      > .app-ex-panel > .ant-card {
+        > .ant-card-head {
+          padding-left: 0;
+        }
+  
+        > .ant-card-body {
+          padding-left: 0;
+        }
       }
     }
 
@@ -33,7 +48,7 @@
 
     &.left {
       top: 24px;
-      right: -10px;
+      right: -11px;
       z-index: 1;
       width: 16px;
       min-width: 16px;
@@ -42,7 +57,7 @@
 
     &.right {
       top: 24px;
-      left: -10px;
+      left: -11px;
       z-index: 1;
       width: 16px;
       min-width: 16px;
@@ -52,6 +67,25 @@
 
   &__content {
     width: 100%;
-    padding: @app-ex-content-padding;
+    padding: 0;
+
+    &.left {
+      padding-left: @app-ex-content-padding;
+    }
+
+    &.right {
+      padding-right: @app-ex-content-padding;
+    }
+
+    > .app-ex-panel > .ant-card {
+      > .ant-card-head {
+        padding: 0;
+      }
+
+      > .ant-card-body {
+        padding-right: 0;
+        padding-left: 0;
+      }
+    }
   }
 }

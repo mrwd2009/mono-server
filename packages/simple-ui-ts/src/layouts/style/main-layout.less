@@ -68,6 +68,10 @@
     flex: auto;
     background: @component-background;
     .background-transition();
+    // in order to keep same transition during changing theme
+    .ant-card {
+      .background-transition();
+    }
   }
 
   &--footer {

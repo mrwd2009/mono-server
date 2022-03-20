@@ -7,6 +7,7 @@ import { NotFound, Forbidden } from './views/ErrorPage';
 import MainLayout from './layouts/MainLayout';
 import { RouteGuarder } from './permission';
 import { Contract } from './views/Contract';
+import { Setting } from './views/System';
 
 const defaultPath = getRouteInfo('contract')!.path;
 
@@ -34,6 +35,10 @@ const routes: RouteObject[] = [
             path: defaultPath,
             element: <Contract />,
           },
+          {
+            path: getRouteInfo(['system', 'setting'])!.path,
+            element: <Setting />,
+          }
         ],
       },
     ],

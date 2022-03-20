@@ -167,7 +167,7 @@ class CollapsibleSplitPane extends PureComponent<Props, State> {
       <SplitPane className={`app-ex-collapsible-split-pane ${className || ''}`} onChange={(sizes, resizerIndex) => this.setState({ changedSizeInfo: { sizes, resizerIndex }})}>
         {leftSiderEle}
         <Pane>
-          <div className="app-ex-collapsible-split-pane__content">
+          <div className={`app-ex-collapsible-split-pane__content ${mainClasses}`}>
             {children}
           </div>
         </Pane>
