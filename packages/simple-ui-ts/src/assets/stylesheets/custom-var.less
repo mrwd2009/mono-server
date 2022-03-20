@@ -7,3 +7,7 @@
 @app-ex-bc-height: 32px;
 // layout footer height
 @app-ex-footer-height: 32px;
+// rest parts height except layout content
+@app-ex-extra-height: @app-ex-header-height + @app-ex-bc-height + @app-ex-footer-height;
+// min layout content height
+@app-ex-content-min-height: calc(100vh - @app-ex-extra-height);

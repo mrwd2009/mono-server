@@ -4,7 +4,7 @@ import { Skeleton } from 'antd';
 import useUserInfo from '../views/Auth/hooks/useUserInfo';
 
 const RouteGuarder: FC = () => {
-  const { loading, fetchUserInfo } = useUserInfo();
+  const { loading, loaded, fetchUserInfo } = useUserInfo();
 
   useEffect(() => {
     fetchUserInfo();
@@ -25,6 +25,10 @@ const RouteGuarder: FC = () => {
         />
       </div>
     );
+  }
+
+  if (!loaded) {
+    return null;
   }
 
   return <Outlet />;
