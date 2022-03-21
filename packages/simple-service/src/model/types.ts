@@ -2,6 +2,7 @@
 // we must import declaration
 import './gateway';
 import './main';
+import './matrix';
 // this is just a type placeholder for each sequelize model definition to inject property.
 // Please refer ./gateway/Agent
 export interface AppModels {}
