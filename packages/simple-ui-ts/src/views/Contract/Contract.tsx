@@ -1,16 +1,13 @@
 import { FC, memo } from 'react';
 import Panel from '../../components/Panel';
 import CollapsibleSplitPane from '../../components/CollapsibleSplitPane';
+import ContractList from './ContractList';
 
 const Contract: FC = () => {
   return (
     <CollapsibleSplitPane
       className="app-ex-min-content-h"
-      leftSider={{ content: (
-        <Panel tabList={[{ tab: "tab1", key: '1'}, { tab: "tab2", key: '2'}]}>
-          left content
-        </Panel>
-      )}}
+      leftSider={{ content: <ContractList /> }}
       rightSider={{ content: (
         <Panel title="roght">
         right content

@@ -1,0 +1,134 @@
+
+.contract-draggable-list {
+  margin: 0;
+  overflow: auto;
+
+  &__item-container {
+    padding: 2px 0;
+  }
+
+  &__item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 30px;
+    padding: 4px 4px 4px 30px;
+    overflow: hidden;
+    font-size: @font-size-base;
+    line-height: ceil((@font-size-base / 12) * 22px);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    word-break: keep-all;
+    list-style: none;
+    border: 1px solid @border-color-base;
+    border-radius: 4px;
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      background-color: @select-item-active-bg;
+    }
+
+    &.selected {
+      color: @select-item-selected-color;
+      font-weight: @select-item-selected-font-weight;
+      background-color: @select-item-selected-bg;
+    }
+
+    &.has-timestamp {
+      .contract-draggable-list__label {
+        margin-top: -2px;
+        font-size: @font-size-base;
+        line-height: normal;
+      }
+    }
+
+    &.component-contract {
+      cursor: move;
+
+      // .contract-draggable-list__icon {
+      //   background: top left / cover no-repeat url('/assets/images/contract/contract.svg');
+      // }
+    }
+
+    &.component-subcontract {
+      cursor: move;
+
+      // .contract-draggable-list__icon {
+      //   background: top left / cover no-repeat url('/assets/images/contract/group.svg');
+      // }
+    }
+
+    &.component-charge {
+      cursor: move;
+
+      // .contract-draggable-list__icon {
+      //   background: top left / cover no-repeat url('/assets/images/contract/charge.svg')
+      // }
+    }
+
+    &.component-reroute {
+      cursor: move;
+
+      // .contract-draggable-list__icon {
+      //   background: top left / cover no-repeat url('/assets/images/contract/line.svg');
+      // }
+    }
+
+    &.component-rule {
+      cursor: move;
+
+      // .contract-draggable-list__icon {
+      //   background: top left / cover no-repeat url('../../../assets/images/Component-Red.png')
+      // }
+    }
+
+    &.contract-root {
+      cursor: pointer;
+
+      // .contract-draggable-list__icon {
+      //   background: top left / cover no-repeat url('../../../assets/images/Component-Blue.png')
+      // }
+    }
+
+    &.umc-charge-root {
+      cursor: pointer;
+
+      // .contract-draggable-list__icon {
+      //   background: top left / cover no-repeat url('../../../assets/images/UMC-Orange.png')
+      // }
+    }
+
+    &.umc-no-charge-root {
+      cursor: pointer;
+
+      // .contract-draggable-list__icon {
+      //   background: top left / cover no-repeat url('../../../assets/images/UMC-Green.png')
+      // }
+    }
+  }
+
+  &__icon {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    // background: top left / cover no-repeat url('../../../assets/images/Component-Blue.png');
+    border-radius: 4px;
+
+    svg {
+      width: 22px;
+      height: 22px;
+      color: @primary-color;
+    }
+  }
+
+  &__timestamp {
+    font-size: @font-size-base;
+    line-height: normal;
+    transform: scale(0.8);
+    transform-origin: left top;
+    opacity: 0.8;
+  }
+}

@@ -26,7 +26,7 @@ const Panel: FC<Props> = ({
         bordered={false}
         size="small"
         className={classNames(className, 'app-ex-panel__card', { 'no-tabs': !restProps.tabList })}
-        tabProps={{ size: 'small' }}
+        tabProps={{ size: 'small', tabBarGutter: 16 }}
       >
         {children}
       </Card>

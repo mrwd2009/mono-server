@@ -147,7 +147,9 @@ ResponsiveContainer
 
 ### 10. Business View
 
-All business related views should be placed in `./src/views`. You can do any business related operations in view.
+All business related views should be placed in `./src/views`. You can do any business related operations in view.\
+
+Please use `./src/components/Panel` to wrap you view component.
 
 A general component directory structure. Unused directories can be omitted.\
 `style/index.less` should be imported in `./src/views/style/index.less`.
