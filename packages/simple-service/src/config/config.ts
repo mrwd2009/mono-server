@@ -3,31 +3,31 @@ import fs from 'fs';
 import _ from 'lodash';
 
 export type GatewayENV = NodeJS.ProcessEnv & {
-  JWT_SECRET?: string,
-  TRACE_KNOWN_ERROR_IN_DEV?: string,
-  MAIN_REDIS_URL?: string,
-  ENABLE_APP_LOG_IPC?: string,
-  WINSTON_LOG_DIR?: string,
-  WINSTON_LOG_FILENAME?: string,
-  WINSTON_LOG_ERROR_FILENAME?: string,
-  WINSTON_LOG_EXCEPTION_FILENAME?: string,
-  APP_ENV?: string,
-  MAIN_DB_USER?: string,
-  MAIN_DB_PASS?: string,
-  MAIN_DB_HOST?: string,
-  QUEUE_REDIS_URL?: string,
-  GATEWAY_DB_USER?: string,
-  GATEWAY_DB_PASS?: string,
-  GATEWAY_DB_HOST?: string,
-  GITHUB_USERNAME?: string,
-  GITHUB_PASSWORD?: string,
-  DEPLOYMENT_ADMIN_HOST?: string,
-  DEPLOYMENT_CLIENT?: string,
+  JWT_SECRET?: string;
+  TRACE_KNOWN_ERROR_IN_DEV?: string;
+  MAIN_REDIS_URL?: string;
+  ENABLE_APP_LOG_IPC?: string;
+  WINSTON_LOG_DIR?: string;
+  WINSTON_LOG_FILENAME?: string;
+  WINSTON_LOG_ERROR_FILENAME?: string;
+  WINSTON_LOG_EXCEPTION_FILENAME?: string;
+  APP_ENV?: string;
+  MAIN_DB_USER?: string;
+  MAIN_DB_PASS?: string;
+  MAIN_DB_HOST?: string;
+  QUEUE_REDIS_URL?: string;
+  GATEWAY_DB_USER?: string;
+  GATEWAY_DB_PASS?: string;
+  GATEWAY_DB_HOST?: string;
+  GITHUB_USERNAME?: string;
+  GITHUB_PASSWORD?: string;
+  DEPLOYMENT_ADMIN_HOST?: string;
+  DEPLOYMENT_CLIENT?: string;
   TEMP_FILE_DIR?: string;
-}
+};
 
 export interface GatewayConfig {
-  address: string,
+  address: string;
 }
 
 const envObj: GatewayENV = process.env;
@@ -38,7 +38,7 @@ const isDev = nodeEnv !== 'production';
 // get app config
 const appConfigFiles = fs.readdirSync(path.join(__dirname, 'env'));
 let appConfig: GatewayConfig;
-if (_.find(appConfigFiles, item => item.includes(appEnv))) {
+if (_.find(appConfigFiles, (item) => item.includes(appEnv))) {
   appConfig = require(path.join(__dirname, 'env', appEnv)).default;
 } else {
   appConfig = require('./env/dev').default;
@@ -48,7 +48,11 @@ const defaultRedisUrl = 'redis://localhost:6379';
 const commonPrefix = `simple-service-${nodeEnv}-${appEnv}`;
 
 // where to store winston log
-const logFileDir = path.join(envObj.WINSTON_LOG_DIR || path.join(__dirname, '..', '..', 'log', 'winston'), nodeEnv, appEnv);
+const logFileDir = path.join(
+  envObj.WINSTON_LOG_DIR || path.join(__dirname, '..', '..', 'log', 'winston'),
+  nodeEnv,
+  appEnv,
+);
 if (!fs.existsSync(logFileDir)) {
   // create log directory automatically
   fs.mkdirSync(logFileDir, { recursive: true });
@@ -67,7 +71,7 @@ if (!fs.existsSync(tempFileDir)) {
 const config = {
   appEnv,
   isDev,
-  traceKnownErrorInDev: isDev ? (envObj.TRACE_KNOWN_ERROR_IN_DEV === 'true') : false,
+  traceKnownErrorInDev: isDev ? envObj.TRACE_KNOWN_ERROR_IN_DEV === 'true' : false,
   cookie: {
     keys: cookieKeys,
   },
@@ -90,14 +94,16 @@ const config = {
     cookieExpiredDay: 7,
     points: 60,
     duration: 10,
-    byIP: { // limited by ip
+    byIP: {
+      // limited by ip
       points: 100 * 60, // times
       duration: 60, // second
     },
-    byID: { // limited by id from cookie
+    byID: {
+      // limited by id from cookie
       points: 50 * 60, // times
       duration: 60, // second
-    }
+    },
   },
   redis: {
     main: {
@@ -142,13 +148,13 @@ const config = {
       url: envObj.QUEUE_REDIS_URL || defaultRedisUrl,
     },
     options: {
-      prefix: `${commonPrefix}-queue-`
+      prefix: `${commonPrefix}-queue-`,
     },
     dashboard: {
-      basePath: '/dashboard'
-    }
+      basePath: '/dashboard',
+    },
   },
-  github:{
+  github: {
     username: envObj.GITHUB_USERNAME || '',
     password: envObj.GITHUB_PASSWORD || '',
   },
@@ -157,7 +163,7 @@ const config = {
     isClient: envObj.DEPLOYMENT_CLIENT === 'true',
     updateInternal: 10000,
   },
-  ...appConfig
+  ...appConfig,
 };
 
 export default config;

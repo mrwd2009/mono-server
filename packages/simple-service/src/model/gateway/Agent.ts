@@ -1,8 +1,15 @@
-import { Sequelize, DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional } from '@sequelize/core';
+import {
+  Sequelize,
+  DataTypes,
+  Model,
+  InferAttributes,
+  InferCreationAttributes,
+  CreationOptional,
+} from '@sequelize/core';
 
 declare module '../types' {
   interface AppModels {
-    Agent: typeof Agent
+    Agent: typeof Agent;
   }
   type AgentModel = Agent;
 }
@@ -17,23 +24,26 @@ export class Agent extends Model<InferAttributes<Agent>, InferCreationAttributes
 }
 
 export const initialize = (sequelize: Sequelize) => {
-  Agent.init({
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
+  Agent.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      name: DataTypes.STRING,
+      ip: DataTypes.STRING,
+      status: DataTypes.STRING,
+      created_at: DataTypes.DATE,
+      updated_at: DataTypes.DATE,
     },
-    name: DataTypes.STRING,
-    ip: DataTypes.STRING,
-    status: DataTypes.STRING,
-    created_at: DataTypes.DATE,
-    updated_at: DataTypes.DATE,
-  }, {
-    sequelize,
-    tableName: 'agents',
-    modelName: 'Agent',
-    timestamps: false,
-  });
+    {
+      sequelize,
+      tableName: 'agents',
+      modelName: 'Agent',
+      timestamps: false,
+    },
+  );
 
   return Agent;
 };

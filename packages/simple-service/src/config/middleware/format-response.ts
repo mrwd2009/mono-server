@@ -4,7 +4,7 @@ declare module 'koa' {
   interface DefaultContext {
     gateway?: {
       sendJSON?: (result: unknown) => void;
-    },
+    };
   }
 }
 
@@ -18,7 +18,7 @@ export const formatResponse: Middleware = async (context, next) => {
         code: 200,
       },
       data: result,
-    }
+    };
   };
   await next();
 };

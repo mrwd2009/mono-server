@@ -19,11 +19,8 @@ class BackendError extends GatewayError {
     if (error.response?.data?.meta) {
       const {
         data: {
-          meta: {
-            message,
-            publicMessage,
-          },
-        }
+          meta: { message, publicMessage },
+        },
       } = error.response;
       // message field maybe empty
       this.message = message || publicMessage;

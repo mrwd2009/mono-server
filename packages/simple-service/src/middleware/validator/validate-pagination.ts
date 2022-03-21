@@ -3,8 +3,8 @@ import { Middleware } from '@koa/router';
 import { validator, SchemaGroup } from './validator';
 
 interface Options {
-  filter?: (Schema: typeof Joi) => SchemaGroup,
-  sorter?: Array<string>,
+  filter?: (Schema: typeof Joi) => SchemaGroup;
+  sorter?: Array<string>;
 }
 export const validatePagination = (options: Options = {}): Middleware => {
   let filter: ObjectSchema;
@@ -25,7 +25,6 @@ export const validatePagination = (options: Options = {}): Middleware => {
         field: options.sorter ? Schema.string().valid(options.sorter) : Schema.string(),
         order: Schema.string().valid('ASC', 'DESC', 'asc', 'desc'),
       }).optional(),
-    })
+    });
   });
 };
-

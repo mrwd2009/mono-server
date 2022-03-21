@@ -11,5 +11,4 @@ test('get user list', async () => {
   const user = await User.findOne();
   expect(user?.Email).toBeDefined();
   await db.sequelize.close();
-})
-
+});

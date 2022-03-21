@@ -3,7 +3,7 @@ import forEach from 'lodash/forEach';
 
 export function getLocalIPs(): string[] {
   const interfaces = os.networkInterfaces();
-  const ips:string[] = [];
+  const ips: string[] = [];
   forEach(interfaces, (items) => {
     forEach(items, (item) => {
       if (!item.internal && item.family === 'IPv4') {

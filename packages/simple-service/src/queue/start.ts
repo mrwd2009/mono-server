@@ -7,7 +7,7 @@ const initialize = () => {
     require('./job');
     return;
   }
-  
+
   if (isWorker) {
     require('./job');
     return;
@@ -15,11 +15,10 @@ const initialize = () => {
   const logger = require('../lib/logger').default;
   const size = process.env.QUEUE_WORKERS || cpus().length;
   const createWorker = () => {
-    fork()
-    .on('error', (error) => {
+    fork().on('error', (error) => {
       logger.error(error.message, { response: error });
     });
-  }
+  };
   for (let i = 0; i < size; i++) {
     createWorker();
   }
@@ -27,6 +26,6 @@ const initialize = () => {
     logger.error(`Queue(exit): worker(${worker.process.pid}) died with code(${code}) and signal(${signal})`);
     createWorker();
   });
-}
+};
 
 initialize();

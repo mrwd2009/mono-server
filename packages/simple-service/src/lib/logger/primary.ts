@@ -13,7 +13,7 @@ const logger = createLogger({
   ...baseOpts,
   format: fullFormats,
   exceptionHandlers: getExceptionTransports(),
-   // rejectionHandlers: getExceptionTransports(),
+  // rejectionHandlers: getExceptionTransports(),
   exitOnError: true,
 });
 // used by primary process or log server

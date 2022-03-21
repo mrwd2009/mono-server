@@ -4,21 +4,20 @@ import config from '../../config/config';
 import { DataError } from '../error';
 
 export interface MemoizedDataProvider {
-  cachedKey: string,
-  value: () => Promise<unknown>,
-  id: (value?: unknown) => string, // used to generate hash for this value
+  cachedKey: string;
+  value: () => Promise<unknown>;
+  id: (value?: unknown) => string; // used to generate hash for this value
 }
 
 export interface MemoizedData {
-  get: () => Promise<unknown>
+  get: () => Promise<unknown>;
 }
 
 export class RedisFactory {
   private redisClient: Redis | undefined;
-  private cachedStore: Map<string, {id: string, value: unknown}> = new Map();
+  private cachedStore: Map<string, { id: string; value: unknown }> = new Map();
 
-  constructor(private url: string, private prefix: string, private expired: number) {
-  }
+  constructor(private url: string, private prefix: string, private expired: number) {}
 
   // for special purpose, otherwise use instance methods directly.
   public getClient(): Redis {
@@ -52,7 +51,7 @@ export class RedisFactory {
     return;
   }
 
-  async del(key: string ): Promise<void> {
+  async del(key: string): Promise<void> {
     if (config.isDev) {
       return;
     }
@@ -102,13 +101,14 @@ export class RedisFactory {
         id: localId,
         value: localValue,
       });
-      await client.multi()
+      await client
+        .multi()
         .hset(provider.cachedKey, 'id', localId, 'value', JSON.stringify(localValue))
         .expire(provider.cachedKey, expired)
         .exec();
       return localValue;
     };
-    
+
     return {
       get,
     };

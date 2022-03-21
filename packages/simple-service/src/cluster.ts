@@ -3,9 +3,7 @@ import cluster, { fork, isWorker } from 'cluster';
 import { cpus } from 'os';
 import config from './config/config';
 const {
-  logger: {
-    ipc,
-  },
+  logger: { ipc },
 } = config;
 
 const initialize = () => {
@@ -13,10 +11,10 @@ const initialize = () => {
     require('./index');
     return;
   }
-  
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let logger: any = null;
-  // if log server is created, we need to skip requiring 'primary'. 
+  // if log server is created, we need to skip requiring 'primary'.
   // Because we don't want log server and master process to manage log together.
   if (!ipc.enabled) {
     // logger will receive logs generated from worker.
@@ -26,12 +24,11 @@ const initialize = () => {
 
   const size = process.env.CLUSTER_WORKERS || cpus().length;
   const createWorker = () => {
-    fork()
-    .on('error', (error) => {
+    fork().on('error', (error) => {
       logger?.error(error.message, { response: error });
       console.error(error.stack);
     });
-  }
+  };
   for (let i = 0; i < size; i++) {
     createWorker();
   }
@@ -41,6 +38,6 @@ const initialize = () => {
     console.error(msg);
     createWorker();
   });
-}
+};
 
 initialize();

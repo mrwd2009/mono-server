@@ -4,9 +4,7 @@ import config from '../../config/config';
 import { pureLogger } from './primary';
 
 const {
-  logger: {
-    ipc,
-  },
+  logger: { ipc },
 } = config;
 
 const initialize = () => {
@@ -30,10 +28,7 @@ const initialize = () => {
         cacheBuf = Buffer.concat([cacheBuf, buf]);
         let splitIndex = cacheBuf.indexOf('\n');
         while (splitIndex !== -1) {
-          const {
-            type,
-            payload,
-          } = JSON.parse(cacheBuf.slice(0, splitIndex).toString());
+          const { type, payload } = JSON.parse(cacheBuf.slice(0, splitIndex).toString());
           if (type === 'log') {
             pureLogger.log(payload);
           }
@@ -60,7 +55,7 @@ const initialize = () => {
     .on('close', () => {
       pureLogger.info('IPC server has been closed.');
     });
-  
+
   ipcServer.listen(ipcOptions);
 };
 

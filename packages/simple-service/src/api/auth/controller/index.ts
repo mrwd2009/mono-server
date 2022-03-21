@@ -4,10 +4,12 @@ import config from '../../../config';
 import { validator } from '../../../middleware';
 
 export const login: Array<Middleware> = [
-  validator(Schema => Schema.object({
-    Email: Schema.string(),
-    Password: Schema.string(),
-  })),
+  validator((Schema) =>
+    Schema.object({
+      Email: Schema.string(),
+      Password: Schema.string(),
+    }),
+  ),
   async (context) => {
     const { token, user } = await userModel.login(context.request.body);
     context.cookies.set(config.jwt.cookieKey, token, {
@@ -16,7 +18,7 @@ export const login: Array<Middleware> = [
       signed: true,
     });
     context.gateway!.sendJSON!({ user });
-  }
+  },
 ];
 
 export const logout: Middleware = async (context) => {
@@ -25,4 +27,3 @@ export const logout: Middleware = async (context) => {
     success: true,
   };
 };
-

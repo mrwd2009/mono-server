@@ -10,9 +10,7 @@ declare module 'koa' {
 export const mergedParams: Middleware = async (context, next) => {
   const {
     query,
-    request: {
-      body,
-    },
+    request: { body },
     params,
   } = context;
   context.mergedParams = {

@@ -3,9 +3,7 @@ import * as ctrl from './controller';
 import { middleware } from '../../config';
 import { registerPublicRouter } from '../../config/router';
 const {
-  passport: {
-    jwtAuth,
-  }
+  passport: { jwtAuth },
 } = middleware;
 
 const router = new Router({

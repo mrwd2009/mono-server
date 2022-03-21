@@ -5,9 +5,7 @@ import * as lib from '../../lib';
 import logger from '../../lib/logger';
 
 const {
-  error: {
-    GatewayError,
-  }
+  error: { GatewayError },
 } = lib;
 
 export const handleError: Middleware = async (context, next) => {
@@ -43,7 +41,7 @@ export const handleError: Middleware = async (context, next) => {
       }
       logger.error(error.message, { response: error, user: context.state.user?.email || 'ananymity' });
     }
-    
+
     switch (error.code) {
       case 'AuthError': {
         context.status = 401;
@@ -61,7 +59,7 @@ export const handleError: Middleware = async (context, next) => {
         context.body = {
           meta: {
             code: 500,
-            message: config.isDev ? (error.message || error.publicMessage) : error.publicMessage,
+            message: config.isDev ? error.message || error.publicMessage : error.publicMessage,
           },
           data: null,
         };
@@ -78,7 +76,7 @@ export const handleError: Middleware = async (context, next) => {
             message: error.message,
           },
           data: null,
-        }
+        };
         break;
       }
       default: {
@@ -89,7 +87,7 @@ export const handleError: Middleware = async (context, next) => {
             message: config.isDev ? error.message : 'Internal Error',
           },
           data: null,
-        }
+        };
       }
     }
   }

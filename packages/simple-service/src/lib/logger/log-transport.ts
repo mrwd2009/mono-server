@@ -16,14 +16,7 @@ const {
   isDev,
   logger: {
     ipc,
-    rotateOptions: {
-      fileDir,
-      maxSize,
-      maxFiles,
-      logInfoFileName,
-      logErrorFileName,
-      logExceptionFileName,
-    }
+    rotateOptions: { fileDir, maxSize, maxFiles, logInfoFileName, logErrorFileName, logExceptionFileName },
   },
 } = config;
 const { DailyRotateFile } = transports;
@@ -38,7 +31,7 @@ export class WorkerTransport extends Transport {
   constructor(opt?: TransportStreamOptions) {
     super(opt);
     if (!isWorker) {
-      throw new Error("WorkerTransport must be used in a cluster worker.");
+      throw new Error('WorkerTransport must be used in a cluster worker.');
     }
     if (ipc.enabled) {
       this.ipcClient = net.createConnection(ipc.path);
@@ -106,7 +99,7 @@ export class EnhancedConsole extends Transport {
       this.emit('logged', info);
     });
     const print = (type: 'error' | 'log'): void => {
-      const color = (str: string) => process.stdout.isTTY ? this.colorFormat.colorize(info[LEVEL], str) : str;
+      const color = (str: string) => (process.stdout.isTTY ? this.colorFormat.colorize(info[LEVEL], str) : str);
       let msg = `level: ${color(info.level)}`;
       if (info.timestamp) {
         msg = `${msg}\ntimestamp: ${color(info.timestamp)}`;
@@ -119,20 +112,18 @@ export class EnhancedConsole extends Transport {
       }
       msg = `${msg}\nmessage: ${color(info.message)}`;
       if (info.response) {
-        const {
-          message,
-          stack,
-          ...rest
-        } = JSON.parse(info.response);
+        const { message, stack, ...rest } = JSON.parse(info.response);
         // it's an error object
         if (message && stack) {
-          msg = `${msg}\nresponse.message: ${color(message)}\nresponse.stack: ${color(stack)}\nresponse(rest): ${color(JSON.stringify(rest, null, 2))}`;
+          msg = `${msg}\nresponse.message: ${color(message)}\nresponse.stack: ${color(stack)}\nresponse(rest): ${color(
+            JSON.stringify(rest, null, 2),
+          )}`;
         } else {
           msg = `${msg}\nresponse: ${color(JSON.stringify(JSON.parse(info.response), null, 2))}`;
         }
       }
       console[type](`${msg}\n`);
-    }
+    };
     // level may contain special color character
     if (info.level.includes('error')) {
       print('error');
@@ -147,9 +138,7 @@ export class EnhancedConsole extends Transport {
 let workerTransports: Array<Transport> = [];
 export const getWorkerTransports = () => {
   if (!workerTransports.length) {
-    workerTransports = [
-      new WorkerTransport(),
-    ];
+    workerTransports = [new WorkerTransport()];
   }
   return workerTransports;
 };

@@ -7,19 +7,17 @@ import config from '../../config';
 import * as lib from '../../lib';
 
 const {
-  error: {
-    LogicError,
-  }
+  error: { LogicError },
 } = lib;
 
-export type Permissions = Array<{ code: string, url?: string }>;
+export type Permissions = Array<{ code: string; url?: string }>;
 
 // add a cache to be allowed to save items with fixed max count.
 export const getAllAPIPermissions = async (): Promise<Permissions> => {
   return [
-    { code: '9b667fd9', url: 'POST /api/auth/logout'},
-    { code: 'bce2016e', url: 'ALL /api/auth'},
-    { code: 'f7a864ba', url: 'ALL /api/deploy'},
+    { code: '9b667fd9', url: 'POST /api/auth/logout' },
+    { code: 'bce2016e', url: 'ALL /api/auth' },
+    { code: 'f7a864ba', url: 'ALL /api/deploy' },
   ];
 };
 

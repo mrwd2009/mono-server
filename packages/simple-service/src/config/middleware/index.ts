@@ -11,14 +11,7 @@ import * as helmet from './helmet';
 import * as compress from './compress';
 import * as rateLimiter from './rate-limiter';
 
-export {
-  bodyParser,
-  passport,
-  formatResponse,
-  handleError,
-  measure,
-  mergedParams,
-};
+export { bodyParser, passport, formatResponse, handleError, measure, mergedParams };
 
 export const initialize = async (app: Koa): Promise<void> => {
   await helmet.initialize(app);

@@ -4,9 +4,7 @@ import './gateway';
 import './main';
 // this is just a type placeholder for each sequelize model definition to inject property.
 // Please refer ./gateway/Agent
-export interface AppModels {
-
-}
+export interface AppModels {}
 
 // Other model classes are injected from definitin file
 // Please refer example from './gateway/Agent
@@ -17,6 +15,6 @@ export interface AppModels {
  *   }
  *   type AgentModel = Agent;
  * }
- * 
- * 
+ *
+ *
  */

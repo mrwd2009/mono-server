@@ -4,4 +4,4 @@ import gateway from './gateway';
 export default {
   main,
   gateway,
-}
+};

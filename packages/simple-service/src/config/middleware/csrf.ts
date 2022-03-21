@@ -6,9 +6,9 @@ import { Middleware } from 'koa';
  * We use cookie to store csrf secret which is used to compare with received one.
  * If we are using separation of UI and API, we don't need to use this middleware.
  * Because cors(middleware) checking is enough.
- * 
+ *
  * Refer https://segmentfault.com/a/1190000024490213
- * 
+ *
  * If you want to use this middleware, you need to call method context.generateCSRFToken?.() to get csrf token.
  * Then save this token in you client and add this token in http header 'csrf-token' before sending any ajax request.
  */
@@ -16,13 +16,16 @@ import { Middleware } from 'koa';
 // Refer from https://github.com/koajs/csrf
 const createCSRFMiddleware = (options: Options = {}): Middleware => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const opts: any = Object.assign({
-    invalidTokenMessage: 'Invalid CSRF token',
-    csrfSecretCookieKey: 'csrf-secret',
-    invalidTokenStatusCode: 403,
-    excludedMethods: ['GET', 'HEAD', 'OPTIONS'],
-    disableQuery: false
-  }, options);
+  const opts: any = Object.assign(
+    {
+      invalidTokenMessage: 'Invalid CSRF token',
+      csrfSecretCookieKey: 'csrf-secret',
+      invalidTokenStatusCode: 403,
+      excludedMethods: ['GET', 'HEAD', 'OPTIONS'],
+      disableQuery: false,
+    },
+    options,
+  );
   const tokens = new Tokens(opts);
 
   return async (ctx, next) => {
@@ -44,10 +47,7 @@ const createCSRFMiddleware = (options: Options = {}): Middleware => {
       return await next();
     }
 
-    const bodyToken =
-      ctx.request.body && typeof ctx.request.body._csrf === 'string'
-        ? ctx.request.body._csrf
-        : false;
+    const bodyToken = ctx.request.body && typeof ctx.request.body._csrf === 'string' ? ctx.request.body._csrf : false;
 
     const token =
       bodyToken ||
@@ -60,18 +60,14 @@ const createCSRFMiddleware = (options: Options = {}): Middleware => {
     if (!token) {
       return ctx.throw(
         opts.invalidTokenStatusCode,
-        typeof opts.invalidTokenMessage === 'function'
-          ? opts.invalidTokenMessage(ctx)
-          : opts.invalidTokenMessage
+        typeof opts.invalidTokenMessage === 'function' ? opts.invalidTokenMessage(ctx) : opts.invalidTokenMessage,
       );
     }
 
     if (!tokens.verify(secret!, token)) {
       return ctx.throw(
         opts.invalidTokenStatusCode,
-        typeof opts.invalidTokenMessage === 'function'
-          ? opts.invalidTokenMessage(ctx)
-          : opts.invalidTokenMessage
+        typeof opts.invalidTokenMessage === 'function' ? opts.invalidTokenMessage(ctx) : opts.invalidTokenMessage,
       );
     }
 

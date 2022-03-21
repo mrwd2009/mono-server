@@ -13,4 +13,3 @@ if (fs.existsSync(dbPath)) {
 }
 
 export default appDB;
-

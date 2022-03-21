@@ -7,11 +7,7 @@ import logger from '../../../lib/logger';
 
 const {
   gateway: {
-    models: {
-      Agent,
-      Service,
-      DeploymentLog,
-    },
+    models: { Agent, Service, DeploymentLog },
   },
 } = appDB;
 
@@ -26,7 +22,7 @@ test('run service successfully', async () => {
   });
   DeploymentLog.create = jest.fn().mockResolvedValue({});
   DeploymentLog.findOne = jest.fn().mockResolvedValue(null);
-  await runService({ serviceId: 2, email: 'di@gridx.cn'});
+  await runService({ serviceId: 2, email: 'di@gridx.cn' });
   const log = DeploymentLog.create.mock.calls[0][0];
   expect(log.agent_id).toBe(1);
   expect(log.service_id).toBe(2);
@@ -38,8 +34,7 @@ test('run service without agent', async () => {
   Service.findOne = jest.fn().mockResolvedValue({
     id: 2,
   });
-  await expect(async () => await runService({ serviceId: 2, email: 'di@gridx.cn'}))
-  .rejects.toThrow('Agent(');
+  await expect(async () => await runService({ serviceId: 2, email: 'di@gridx.cn' })).rejects.toThrow('Agent(');
 });
 
 test('run service without servoce', async () => {
@@ -47,8 +42,7 @@ test('run service without servoce', async () => {
     id: 1,
   });
   Service.findOne = jest.fn().mockResolvedValue(null);
-  await expect(async () => await runService({ serviceId: 2, email: 'di@gridx.cn'}))
-  .rejects.toThrow('Service(2');
+  await expect(async () => await runService({ serviceId: 2, email: 'di@gridx.cn' })).rejects.toThrow('Service(2');
 });
 
 test('running successfully', async () => {
@@ -56,9 +50,9 @@ test('running successfully', async () => {
     update: jest.fn().mockResolvedValue({}),
     Service: {
       command: JSON.stringify([
-        { type: 'git-pull', value: 'git pull USERNAME:PASSWORD'},
+        { type: 'git-pull', value: 'git pull USERNAME:PASSWORD' },
         { type: 'bash', value: 'cd .' },
-        { type: 'test', value: 'test'},
+        { type: 'test', value: 'test' },
       ]),
     },
   };
@@ -73,20 +67,18 @@ test('running successfully', async () => {
   bashRunner.BashRunner = jest.fn().mockImplementation(() => {
     return runner;
   });
-  DeploymentLog.findOne = jest.fn()
-    .mockResolvedValueOnce(log)
-    .mockResolvedValueOnce(null);
+  DeploymentLog.findOne = jest.fn().mockResolvedValueOnce(log).mockResolvedValueOnce(null);
   await running();
   expect(log.update.mock.calls[0][0].status).toBe('in progress');
   expect(runner.exec.mock.calls[0][0]).toBe('git pull di:pass');
   expect(runner.exec.mock.calls[1][0]).toBe('cd .');
   expect(log.update.mock.calls[1][0]).toEqual({
     output: 'git pull USERNAME:PASSWORD\ngit pull di:pass',
-    percentage: Math.floor(1 / 3 * 100),
+    percentage: Math.floor((1 / 3) * 100),
   });
   expect(log.update.mock.calls[2][0]).toEqual({
     output: 'git pull USERNAME:PASSWORD\ngit pull di:pass\ncd .\ncd .',
-    percentage: Math.floor(2 / 3 * 100),
+    percentage: Math.floor((2 / 3) * 100),
   });
   expect(log.update.mock.calls[3][0]).toEqual({
     output: 'git pull USERNAME:PASSWORD\ngit pull di:pass\ncd .\ncd .\ntest\n',
@@ -100,9 +92,9 @@ test('running a command with stderrr', async () => {
     update: jest.fn().mockResolvedValue({}),
     Service: {
       command: JSON.stringify([
-        { type: 'git-pull', value: 'git pull USERNAME:PASSWORD'},
+        { type: 'git-pull', value: 'git pull USERNAME:PASSWORD' },
         { type: 'bash', value: 'cd .' },
-        { type: 'bash', value: 'test'},
+        { type: 'bash', value: 'test' },
       ]),
     },
   };
@@ -122,20 +114,18 @@ test('running a command with stderrr', async () => {
   bashRunner.BashRunner = jest.fn().mockImplementation(() => {
     return runner;
   });
-  DeploymentLog.findOne = jest.fn()
-    .mockResolvedValueOnce(log)
-    .mockResolvedValueOnce(null);
+  DeploymentLog.findOne = jest.fn().mockResolvedValueOnce(log).mockResolvedValueOnce(null);
   await running();
   expect(log.update.mock.calls[0][0].status).toBe('in progress');
   expect(runner.exec.mock.calls[0][0]).toBe('git pull di:pass');
   expect(runner.exec.mock.calls[1][0]).toBe('cd .');
   expect(log.update.mock.calls[1][0]).toEqual({
     output: 'git pull USERNAME:PASSWORD\ngit pull di:pass',
-    percentage: Math.floor(1 / 3 * 100),
+    percentage: Math.floor((1 / 3) * 100),
   });
   expect(log.update.mock.calls[2][0]).toEqual({
     output: 'git pull USERNAME:PASSWORD\ngit pull di:pass\ncd .\ncd .',
-    percentage: Math.floor(2 / 3 * 100),
+    percentage: Math.floor((2 / 3) * 100),
   });
   expect(log.update.mock.calls[3][0]).toEqual({
     output: 'git pull USERNAME:PASSWORD\ngit pull di:pass\ncd .\ncd .\ntest\nfailed',
@@ -149,9 +139,9 @@ test('running a command with error', async () => {
     update: jest.fn().mockResolvedValue({}),
     Service: {
       command: JSON.stringify([
-        { type: 'git-pull', value: 'git pull USERNAME:PASSWORD'},
+        { type: 'git-pull', value: 'git pull USERNAME:PASSWORD' },
         { type: 'bash', value: 'cd .' },
-        { type: 'bash', value: 'test'},
+        { type: 'bash', value: 'test' },
       ]),
     },
   };
@@ -171,20 +161,18 @@ test('running a command with error', async () => {
   bashRunner.BashRunner = jest.fn().mockImplementation(() => {
     return runner;
   });
-  DeploymentLog.findOne = jest.fn()
-    .mockResolvedValueOnce(log)
-    .mockResolvedValueOnce(null);
+  DeploymentLog.findOne = jest.fn().mockResolvedValueOnce(log).mockResolvedValueOnce(null);
   await running();
   expect(log.update.mock.calls[0][0].status).toBe('in progress');
   expect(runner.exec.mock.calls[0][0]).toBe('git pull di:pass');
   expect(runner.exec.mock.calls[1][0]).toBe('cd .');
   expect(log.update.mock.calls[1][0]).toEqual({
     output: 'git pull USERNAME:PASSWORD\ngit pull di:pass',
-    percentage: Math.floor(1 / 3 * 100),
+    percentage: Math.floor((1 / 3) * 100),
   });
   expect(log.update.mock.calls[2][0]).toEqual({
     output: 'git pull USERNAME:PASSWORD\ngit pull di:pass\ncd .\ncd .',
-    percentage: Math.floor(2 / 3 * 100),
+    percentage: Math.floor((2 / 3) * 100),
   });
   expect(log.update.mock.calls[3][0]).toEqual({
     output: 'git pull USERNAME:PASSWORD\ngit pull di:pass\ncd .\ncd .\ntest\nfrom error',
@@ -197,9 +185,9 @@ test('running a command with error in middle', async () => {
     update: jest.fn().mockResolvedValue({}),
     Service: {
       command: JSON.stringify([
-        { type: 'git-pull', value: 'git pull USERNAME:PASSWORD'},
+        { type: 'git-pull', value: 'git pull USERNAME:PASSWORD' },
         { type: 'bash', value: 'cd .' },
-        { type: 'bash', value: 'test'},
+        { type: 'bash', value: 'test' },
       ]),
     },
   };
@@ -219,16 +207,14 @@ test('running a command with error in middle', async () => {
   bashRunner.BashRunner = jest.fn().mockImplementation(() => {
     return runner;
   });
-  DeploymentLog.findOne = jest.fn()
-    .mockResolvedValueOnce(log)
-    .mockResolvedValueOnce(null);
+  DeploymentLog.findOne = jest.fn().mockResolvedValueOnce(log).mockResolvedValueOnce(null);
   await running();
   expect(log.update.mock.calls[0][0].status).toBe('in progress');
   expect(runner.exec.mock.calls[0][0]).toBe('git pull di:pass');
   expect(runner.exec.mock.calls[1][0]).toBe('cd .');
   expect(log.update.mock.calls[1][0]).toEqual({
     output: 'git pull USERNAME:PASSWORD\ngit pull di:pass',
-    percentage: Math.floor(1 / 3 * 100),
+    percentage: Math.floor((1 / 3) * 100),
   });
   expect(log.update.mock.calls[2][0]).toEqual({
     output: 'git pull USERNAME:PASSWORD\ngit pull di:pass\ncd .\nfrom error',
@@ -241,9 +227,9 @@ test('running a command with unknown error', async () => {
     update: jest.fn().mockResolvedValue({}),
     Service: {
       command: JSON.stringify([
-        { type: 'git-pull', value: 'git pull USERNAME:PASSWORD'},
+        { type: 'git-pull', value: 'git pull USERNAME:PASSWORD' },
         { type: 'bash', value: 'cd .' },
-        { type: 'bash', value: 'test'},
+        { type: 'bash', value: 'test' },
       ]),
     },
   };
@@ -252,19 +238,15 @@ test('running a command with unknown error', async () => {
   bashRunner.BashRunner = jest.fn().mockImplementation(() => {
     throw new Error('unknown');
   });
-  DeploymentLog.findOne = jest.fn()
-    .mockResolvedValue(log)
+  DeploymentLog.findOne = jest.fn().mockResolvedValue(log);
   await expect(async () => await running()).rejects.toThrow('unknown');
 });
 
 test('running a command with unknown error', async () => {
   const findOne = jest.fn().mockResolvedValue(null);
-  DeploymentLog.findOne = findOne
-    
-  await Promise.all([
-    running(),
-    running(),
-  ]);
+  DeploymentLog.findOne = findOne;
+
+  await Promise.all([running(), running()]);
   expect(findOne.mock.calls.length).toBe(1);
 });
 

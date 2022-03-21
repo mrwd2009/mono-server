@@ -15,7 +15,7 @@ const loadModuleRouter = () => {
     if (entity.isDirectory()) {
       const moduleContents = fs.readdirSync(path.join(modulePath, entity.name), { encoding: 'utf-8' });
       // load index.ts
-      if (_.some(moduleContents, name => _.startsWith(name, 'index.'))) {
+      if (_.some(moduleContents, (name) => _.startsWith(name, 'index.'))) {
         require(path.join(modulePath, entity.name, 'index'));
       }
     }
@@ -31,8 +31,7 @@ const publicRouter = new Router({
 });
 const authCheckingRouter = new Router({
   prefix: commonPrefix,
-})
-  .use(passport.jwtAuth);
+}).use(passport.jwtAuth);
 
 const dispatch = async (app: Koa): Promise<void> => {
   _.forEach(getPublicRouters(), (router) => {
@@ -41,11 +40,9 @@ const dispatch = async (app: Koa): Promise<void> => {
   // including authentication checking logic
   _.forEach(getRouters(), (router) => {
     authCheckingRouter.use(router.routes());
-  })
+  });
 
-  app
-    .use(publicRouter.routes())
-    .use(authCheckingRouter.routes());
+  app.use(publicRouter.routes()).use(authCheckingRouter.routes());
 };
 
 export default dispatch;

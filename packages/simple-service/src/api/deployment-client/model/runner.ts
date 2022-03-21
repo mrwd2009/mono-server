@@ -10,17 +10,15 @@ import logger from '../../../lib/logger';
 import { userHelper } from '../../auth/helper/index';
 
 const {
-  gateway: {
-    models,
-  }
+  gateway: { models },
 } = appDB;
 const DeploymentLog = models.DeploymentLog;
 const Service = models.Service;
 const Agent = models.Agent;
 
 interface Command {
-  type: string,
-  value: string,
+  type: string;
+  value: string;
 }
 
 let processing = false;
@@ -59,7 +57,9 @@ export async function running() {
     });
     const commands: Array<Command> = JSON.parse(log.Service!.command);
     runner = new bashRunner.BashRunner();
-    const { github: { username, password } } = config;
+    const {
+      github: { username, password },
+    } = config;
     let output = '';
     for (let i = 0; i < commands.length; i++) {
       const command = commands[i];
@@ -80,7 +80,7 @@ export async function running() {
         } else {
           await log.update({
             output,
-            percentage: Math.floor((i + 1) / commands.length * 100),
+            percentage: Math.floor(((i + 1) / commands.length) * 100),
           });
         }
       } catch (error) {
@@ -89,14 +89,14 @@ export async function running() {
           output = `${output}${output ? '\n' : ''}${command.value}\n${error}`;
           await log.update({
             output,
-            percentage: Math.floor((i + 1) / commands.length * 100),
+            percentage: Math.floor(((i + 1) / commands.length) * 100),
             status: 'failed',
           });
           break;
         }
         await log.update({
           status: 'failed',
-          output: `${output}${output ? '\n' : ''}${command.value}\n${(error as Error).message}`
+          output: `${output}${output ? '\n' : ''}${command.value}\n${(error as Error).message}`,
         });
         logger.error((error as Error).message, { response: error });
         break;
@@ -112,24 +112,20 @@ export async function running() {
   await running();
 }
 
-
 export async function runService(params: MergedParams): Promise<void> {
-  const {
-    serviceId,
-    email,
-  } = params;
+  const { serviceId, email } = params;
   const localIp = ip.getLocalIPs()[0];
   const [agent, service] = await Promise.all([
     Agent.findOne({
       where: {
         ip: localIp,
-      }
+      },
     }),
     Service.findOne({
       where: {
         id: serviceId,
-      }
-    })
+      },
+    }),
   ]);
   if (!agent) {
     throw new DataError(`Agent(${localIp}) is not found.`);
@@ -149,8 +145,8 @@ export async function runService(params: MergedParams): Promise<void> {
 }
 
 let apiToken: {
-  token: string,
-  expired: number,
+  token: string;
+  expired: number;
 };
 export async function getAPIToken(): Promise<string> {
   if (!apiToken || apiToken.expired < dayjs().unix()) {
@@ -172,14 +168,18 @@ export async function registerSelf(): Promise<void> {
   }
   const hostname = ip.getLocalHostName();
   const authInfo = await getAPIToken();
-  await axios.post(`${config.deployment.adminHost}/api/deployment-server/agent`, {
-    name: hostname,
-    ip: ipAddress,
-  }, {
-    headers: {
-      Cookie: authInfo,
-    }
-  });
+  await axios.post(
+    `${config.deployment.adminHost}/api/deployment-server/agent`,
+    {
+      name: hostname,
+      ip: ipAddress,
+    },
+    {
+      headers: {
+        Cookie: authInfo,
+      },
+    },
+  );
 }
 
 const intervalRegister = async (): Promise<void> => {
@@ -188,7 +188,7 @@ const intervalRegister = async (): Promise<void> => {
   } catch (error) {
     logger.error(error);
   }
-}
+};
 
 if (config.deployment.isClient) {
   const runRegister = async (): Promise<void> => {

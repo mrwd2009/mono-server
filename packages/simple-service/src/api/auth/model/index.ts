@@ -1,5 +1,3 @@
 import * as userModel from './user';
 
-export {
-  userModel,
-};
+export { userModel };

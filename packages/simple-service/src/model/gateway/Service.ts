@@ -1,8 +1,15 @@
-import { Sequelize, DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional } from '@sequelize/core';
+import {
+  Sequelize,
+  DataTypes,
+  Model,
+  InferAttributes,
+  InferCreationAttributes,
+  CreationOptional,
+} from '@sequelize/core';
 
 declare module '../types' {
   interface AppModels {
-    Service: typeof Service
+    Service: typeof Service;
   }
   type ServiceModel = Service;
 }
@@ -18,24 +25,27 @@ export class Service extends Model<InferAttributes<Service>, InferCreationAttrib
 }
 
 export const initialize = (sequelize: Sequelize) => {
-  Service.init({
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
+  Service.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      name: DataTypes.STRING,
+      category: DataTypes.STRING,
+      description: DataTypes.STRING,
+      command: DataTypes.STRING,
+      created_at: DataTypes.DATE,
+      updated_at: DataTypes.DATE,
     },
-    name: DataTypes.STRING,
-    category: DataTypes.STRING,
-    description: DataTypes.STRING,
-    command: DataTypes.STRING,
-    created_at: DataTypes.DATE,
-    updated_at: DataTypes.DATE,
-  }, {
-    sequelize,
-    tableName: 'services',
-    modelName: 'Service',
-    timestamps: false,
-  });
+    {
+      sequelize,
+      tableName: 'services',
+      modelName: 'Service',
+      timestamps: false,
+    },
+  );
 
   return Service;
 };

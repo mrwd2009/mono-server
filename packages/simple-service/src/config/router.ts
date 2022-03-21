@@ -1,4 +1,4 @@
-import Router from '@koa/router'
+import Router from '@koa/router';
 
 // routers needed to check identification.
 const authenticatedRouters: Array<Router> = [];

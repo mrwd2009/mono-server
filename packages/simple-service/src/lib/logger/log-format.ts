@@ -2,11 +2,7 @@ import { format } from 'winston';
 import stringify from 'safe-stable-stringify';
 import { TransformableInfo, FormatWrap } from 'logform';
 
-const {
-  timestamp,
-  combine,
-  json,
-} = format;
+const { timestamp, combine, json } = format;
 
 export const errorReponse: FormatWrap = format((info: TransformableInfo): TransformableInfo | boolean => {
   if (info.response instanceof Error) {
@@ -23,9 +19,4 @@ export const errorReponse: FormatWrap = format((info: TransformableInfo): Transf
   return info;
 });
 
-export const fullFormats = combine(
-  timestamp(),
-  errorReponse(),
-  json(),
-);
-
+export const fullFormats = combine(timestamp(), errorReponse(), json());

@@ -5,13 +5,6 @@ import DataError from './data-error';
 import LogicError from './logic-error';
 import ParamError from './param-error';
 
-export {
-  AuthError,
-  BackendError,
-  GatewayError,
-  DataError,
-  LogicError,
-  ParamError,
-};
+export { AuthError, BackendError, GatewayError, DataError, LogicError, ParamError };
 
 export default GatewayError;

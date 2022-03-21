@@ -5,9 +5,9 @@ beforeEach(() => {
   process.env = {
     ...oldEnv,
     NODE_ENV: 'production',
-    JWT_SECRET: "test",
-    TRACE_KNOWN_ERROR_IN_DEV: "false",
-    MAIN_REDIS_URL: "redis://localhost:6379"
+    JWT_SECRET: 'test',
+    TRACE_KNOWN_ERROR_IN_DEV: 'false',
+    MAIN_REDIS_URL: 'redis://localhost:6379',
   };
 });
 
@@ -20,11 +20,7 @@ test('Simple get set del operation', async () => {
   const config = require('../../config/config').default;
   const {
     redis: {
-      main: {
-        url,
-        prefix,
-        expired,
-      },
+      main: { url, prefix, expired },
     },
   } = config;
   const client = new RedisFactory(url, prefix, expired);
@@ -50,11 +46,7 @@ test('Test memoized data', async () => {
   const config = require('../../config/config').default;
   const {
     redis: {
-      main: {
-        url,
-        prefix,
-        expired,
-      },
+      main: { url, prefix, expired },
     },
   } = config;
   const client = new RedisFactory(url, prefix, expired);
@@ -90,11 +82,7 @@ test('Dev simple get set del operation', async () => {
   const config = require('../../config/config').default;
   const {
     redis: {
-      main: {
-        url,
-        prefix,
-        expired,
-      },
+      main: { url, prefix, expired },
     },
   } = config;
   const client = new RedisFactory(url, prefix, expired);
@@ -123,11 +111,7 @@ test('Dev test memoized data', async () => {
   const config = require('../../config/config').default;
   const {
     redis: {
-      main: {
-        url,
-        prefix,
-        expired,
-      },
+      main: { url, prefix, expired },
     },
   } = config;
   const client = new RedisFactory(url, prefix, expired);

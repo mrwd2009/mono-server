@@ -4,13 +4,8 @@ import appDB from '../../../config/model/app';
 
 const {
   gateway: {
-    models: {
-      Service,
-      AgentService,
-      Agent,
-      DeploymentLog,
-    },
-  }
+    models: { Service, AgentService, Agent, DeploymentLog },
+  },
 } = appDB;
 
 test('create service', async () => {
@@ -29,17 +24,19 @@ test('create service', async () => {
 
 test('return service list', async () => {
   const result = {
-    rows: [new Service({
-      id: 1,
-      name: 'test name',
-      category: 'test category',
-      description: 'test description',
-      command: '',
-      created_at: new Date(),
-      updated_at: new Date(),
-    })],
+    rows: [
+      new Service({
+        id: 1,
+        name: 'test name',
+        category: 'test category',
+        description: 'test description',
+        command: '',
+        created_at: new Date(),
+        updated_at: new Date(),
+      }),
+    ],
     count: 1,
-  }
+  };
   const spy = jest.spyOn(Service, 'findAndCountAll').mockImplementation(async () => {
     return result;
   });
@@ -49,11 +46,8 @@ test('return service list', async () => {
       pageSize: 10,
     },
   };
-  
-  const {
-    list,
-    total,
-  } = await getServiceList(params);
+
+  const { list, total } = await getServiceList(params);
   expect(total).toBe(1);
   expect(list.length).toBe(1);
   expect(list[0].name).toBe('test name');
@@ -64,12 +58,12 @@ test('assign agent throw', async () => {
   const result = [
     new AgentService({
       agent_id: 1,
-      status: 'completed'
+      status: 'completed',
     }),
     new AgentService({
       agent_id: 2,
       status: 'in progress',
-    })
+    }),
   ];
   const spy = jest.spyOn(AgentService, 'count').mockImplementation(async () => {
     return 2;
@@ -82,12 +76,12 @@ test('assign agent', async () => {
   const result = [
     new AgentService({
       agent_id: 1,
-      status: 'completed'
+      status: 'completed',
     }),
     new AgentService({
       agent_id: 2,
       status: 'failed',
-    })
+    }),
   ];
   const spy = jest.spyOn(AgentService, 'findAll').mockImplementation(async () => {
     return result;
@@ -111,23 +105,25 @@ test('assign agent', async () => {
 
 test('return agent list', async () => {
   const result = {
-    rows: [ new Agent({
-      id: 1,
-      name: 'test name',
-      ip: '10.100.10.1',
-      status: 'active',
-    })],
+    rows: [
+      new Agent({
+        id: 1,
+        name: 'test name',
+        ip: '10.100.10.1',
+        status: 'active',
+      }),
+    ],
     count: 1,
   };
   let inputOpt: any;
-  const spy = jest.spyOn(Agent, 'findAndCountAll').mockImplementation( async (opt) => {
+  const spy = jest.spyOn(Agent, 'findAndCountAll').mockImplementation(async (opt) => {
     inputOpt = opt;
     return result;
   });
   const params = {
     sorter: {
       field: 'name',
-      order: 'asc'
+      order: 'asc',
     },
     filter: {
       ip: '10',
@@ -137,10 +133,7 @@ test('return agent list', async () => {
       pageSize: 10,
     },
   };
-  const {
-    total,
-    list,
-  } = await getAgentList(params);
+  const { total, list } = await getAgentList(params);
   expect(total).toBe(1);
   expect(list.length).toBe(1);
   expect(list[0].name).toBe('test name');
@@ -151,29 +144,31 @@ test('return agent list', async () => {
 
 test('return log list', async () => {
   const result = {
-    rows: [ {
-      id: 1,
-      agent_id: 2,
-      Agent: {
-        name: 'agent',
+    rows: [
+      {
+        id: 1,
+        agent_id: 2,
+        Agent: {
+          name: 'agent',
+        },
+        service_id: 2,
+        Service: {
+          name: 'service',
+        },
+        status: 'active',
       },
-      service_id: 2,
-      Service: {
-        name: 'service',
-      },
-      status: 'active',
-    }],
+    ],
     count: 1,
   };
   let inputOpt: any;
-  const spy = jest.spyOn(DeploymentLog, 'findAndCountAll').mockImplementation( async (opt) => {
+  const spy = jest.spyOn(DeploymentLog, 'findAndCountAll').mockImplementation(async (opt) => {
     inputOpt = opt;
     return result;
   });
   const params = {
     sorter: {
       field: 'agent_id',
-      order: 'asc'
+      order: 'asc',
     },
     filter: {
       agent_id: 2,
@@ -183,10 +178,7 @@ test('return log list', async () => {
       pageSize: 10,
     },
   };
-  const {
-    total,
-    list,
-  } = await getLogList(params);
+  const { total, list } = await getLogList(params);
   expect(total).toBe(1);
   expect(list.length).toBe(1);
   expect(list[0].agent_id).toBe(2);

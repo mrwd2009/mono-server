@@ -3,12 +3,8 @@ import config from '../../config/config';
 
 const {
   redis: {
-    main: {
-      url,
-      prefix,
-      expired,
-    }
-  }
+    main: { url, prefix, expired },
+  },
 } = config;
 
 const main = new RedisFactory(url!, prefix, expired);

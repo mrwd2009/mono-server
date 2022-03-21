@@ -2,7 +2,7 @@ import logger from './primary';
 
 test('test console log transport', async () => {
   const spy = jest.spyOn(console, 'log');
-  logger.info('with error response', { response: new Error('error')});
+  logger.info('with error response', { response: new Error('error') });
   expect(spy).toHaveBeenCalledTimes(1);
   expect(spy.mock.calls[0][0].includes('response.message')).toBe(true);
   logger.info('without error response');
@@ -13,7 +13,7 @@ test('test console log transport', async () => {
 
 test('test console error transport', async () => {
   const spy = jest.spyOn(console, 'error');
-  logger.error('with error response', { response: new Error('error')});
+  logger.error('with error response', { response: new Error('error') });
   expect(spy).toHaveBeenCalledTimes(1);
   expect(spy.mock.calls[0][0].includes('response.message')).toBe(true);
   logger.error('without error response');

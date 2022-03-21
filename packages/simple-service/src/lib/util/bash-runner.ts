@@ -14,12 +14,12 @@ export class BashRunner {
     this.bash = spawn('bash');
     this.creating = new Promise((resolve, reject) => {
       this.bash
-      .on('error', (error) => {
-        reject(error);
-      })
-      .on('spawn', () => {
-        resolve();
-      });
+        .on('error', (error) => {
+          reject(error);
+        })
+        .on('spawn', () => {
+          resolve();
+        });
     });
     let outStr = '';
     let errStr = '';
@@ -56,7 +56,9 @@ export class BashRunner {
     }
     return await new Promise((resolve, reject) => {
       this.queue.push([command, resolve, reject]);
-      this.bash.stdin?.write(`${command}\nretVal=$?\nif [ $retVal -ne 0 ]; then\necho ${this.boundary} >&2\nelse\necho ${this.boundary}\nfi\n`);
+      this.bash.stdin?.write(
+        `${command}\nretVal=$?\nif [ $retVal -ne 0 ]; then\necho ${this.boundary} >&2\nelse\necho ${this.boundary}\nfi\n`,
+      );
     });
   }
 

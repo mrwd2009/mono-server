@@ -1,5 +1,3 @@
 import * as deploymentModel from './deployment';
 
-export {
-  deploymentModel,
-};
+export { deploymentModel };

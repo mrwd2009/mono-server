@@ -4,9 +4,7 @@ import { v4 as uuidV4 } from 'uuid';
 import { mainRedis } from '../../lib/redis';
 import config from '../config';
 
-const {
-  rateLimiter: opts,
-} = config;
+const { rateLimiter: opts } = config;
 
 const rateLimiter = (): Middleware => {
   let ipLimiter: RateLimiterAbstract;
@@ -47,7 +45,7 @@ const rateLimiter = (): Middleware => {
     }
     ctx.set('X-RateLimit-Limit', `${info.remainingPoints + info.consumedPoints}`);
     ctx.set('X-RateLimit-Remaining', `${info.remainingPoints}`);
-    ctx.set('X-RateLimit-Reset', `${Math.ceil((new Date()).getTime() / 1000 + info.msBeforeNext / 1000)}`);
+    ctx.set('X-RateLimit-Reset', `${Math.ceil(new Date().getTime() / 1000 + info.msBeforeNext / 1000)}`);
   };
 
   return async (ctx, next) => {
@@ -60,7 +58,11 @@ const rateLimiter = (): Middleware => {
         fromCookie = true;
       } else {
         // add id to track api call
-        ctx.cookies.set(opts.cookieKey, uuidV4(), { httpOnly: true, maxAge: opts.cookieExpiredDay * 24 * 3600 * 1000, signed: true });
+        ctx.cookies.set(opts.cookieKey, uuidV4(), {
+          httpOnly: true,
+          maxAge: opts.cookieExpiredDay * 24 * 3600 * 1000,
+          signed: true,
+        });
       }
       const info = await getLimiter(fromCookie).consume(uuid);
       updateLimitHeader(info, ctx);
@@ -77,7 +79,7 @@ const rateLimiter = (): Middleware => {
     }
 
     await next();
-  }
+  };
 };
 
 export const initialize = async (app: Koa): Promise<void> => {

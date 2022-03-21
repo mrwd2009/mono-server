@@ -34,9 +34,9 @@ export const getQueue = (name: string) => {
   //     delete tempCache[name];
   //   }, tempQueue.idle);
   // }
-}
+};
 
 export const enqueue = async (name: string, payload: any, jobOptions?: JobOptions): Promise<Job> => {
   const queue = getQueue(name);
   return await queue.add(payload, jobOptions);
-}
+};

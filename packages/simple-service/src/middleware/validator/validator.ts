@@ -5,7 +5,7 @@ import get from 'lodash/get';
 import { ParamError } from '../../lib/error';
 
 interface _SchemaGroup {
-  [index: string]: Schema,
+  [index: string]: Schema;
 }
 
 export type SchemaGroup = _SchemaGroup | Schema;
@@ -29,7 +29,7 @@ export const validator = (schemaC: SchemaConstructor, opts: AsyncValidationOptio
       }
       await next();
     } catch (error) {
-      if (Joi.isError(error))  {
+      if (Joi.isError(error)) {
         throw new ParamError(error.message);
       }
       throw error;
@@ -38,4 +38,3 @@ export const validator = (schemaC: SchemaConstructor, opts: AsyncValidationOptio
 };
 
 export default validator;
-

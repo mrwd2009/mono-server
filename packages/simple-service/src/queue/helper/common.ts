@@ -6,26 +6,26 @@ import config from '../../config/config';
 const getClientRedis = memoizeOne(() => {
   return new Redis(config.queue.redis.url, {
     maxRetriesPerRequest: null,
-    enableReadyCheck: false
+    enableReadyCheck: false,
   });
 });
 
 const getSubscriberRedis = memoizeOne(() => {
   return new Redis(config.queue.redis.url, {
     maxRetriesPerRequest: null,
-    enableReadyCheck: false
+    enableReadyCheck: false,
   });
 });
 
 const getDefaultRedis = () => {
   return new Redis(config.queue.redis.url, {
     maxRetriesPerRequest: null,
-    enableReadyCheck: false
+    enableReadyCheck: false,
   });
 };
 
 //https://github.com/OptimalBits/bull/blob/master/PATTERNS.md#reusing-redis-connections
-export const createQueue =(name: string, options: QueueOptions = {}): QueueType => {
+export const createQueue = (name: string, options: QueueOptions = {}): QueueType => {
   const createClient = (type: string) => {
     switch (type) {
       case 'client': {
@@ -44,14 +44,13 @@ export const createQueue =(name: string, options: QueueOptions = {}): QueueType 
     ...options,
     createClient: createClient as QueueOptions['createClient'],
   });
-}
+};
 
 // todo support close connection automatically.
 export class QueueGetter {
   private cache?: QueueType;
 
-  constructor(public name: string) {
-  }
+  constructor(public name: string) {}
 
   getQueue = (): QueueType => {
     // lazy creating
@@ -59,6 +58,5 @@ export class QueueGetter {
       this.cache = createQueue(this.name);
     }
     return this.cache;
-  }
+  };
 }
-

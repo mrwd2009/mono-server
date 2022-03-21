@@ -7,5 +7,5 @@ if (!isWorker) {
 } else {
   logger.error('from worker error');
   logger.info('from worker info');
-  logger.error('from worker error with response', { response: new Error('error obj')});
+  logger.error('from worker error with response', { response: new Error('error obj') });
 }

@@ -5,9 +5,11 @@ import './job';
 
 const initialize = async () => {
   const list = getJobList();
-  await Promise.all(_.map(list, job => {
-    return job(Schedule);
-  }));
+  await Promise.all(
+    _.map(list, (job) => {
+      return job(Schedule);
+    }),
+  );
 };
 
 initialize();

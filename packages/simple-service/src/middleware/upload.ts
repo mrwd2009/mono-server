@@ -16,28 +16,24 @@ const lgUpload = multer({
   dest: config.upload.path,
   limits: {
     fileSize: 1024 * 1024 * 60,
-    files: 1
-  }
+    files: 1,
+  },
 }).any();
 
 const mdUpload = multer({
   dest: config.upload.path,
   limits: {
     fileSize: 1024 * 1024 * 30,
-    files: 1
-  }
+    files: 1,
+  },
 }).any();
 
 const smUpload = multer({
   dest: config.upload.path,
   limits: {
     fileSize: 1024 * 1024 * 5,
-    files: 1
-  }
+    files: 1,
+  },
 }).any();
 
-export {
-  lgUpload,
-  mdUpload,
-  smUpload,
-};
+export { lgUpload, mdUpload, smUpload };

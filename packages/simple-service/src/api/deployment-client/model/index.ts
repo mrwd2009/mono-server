@@ -1,5 +1,3 @@
 import * as runnerModel from './runner';
 
-export {
-  runnerModel,
-};
+export { runnerModel };

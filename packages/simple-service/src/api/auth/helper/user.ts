@@ -4,9 +4,7 @@ import config from '../../../config/config';
 import * as lib from '../../../lib';
 
 const {
-  error: {
-    GatewayError,
-  },
+  error: { GatewayError },
 } = lib;
 
 export const createJwtToken = async (email: string): Promise<string> => {
@@ -23,12 +21,17 @@ export const createJwtToken = async (email: string): Promise<string> => {
       }
       return resolve(token);
     };
-    jwt.sign({
-      sub: email,
-      exp: dayjs().add(config.jwt.expireHour, 'hours').unix(),
-    }, config.jwt.secret, {
-      issuer: config.jwt.issuer,
-      audience: config.jwt.audience,
-    }, callback);
+    jwt.sign(
+      {
+        sub: email,
+        exp: dayjs().add(config.jwt.expireHour, 'hours').unix(),
+      },
+      config.jwt.secret,
+      {
+        issuer: config.jwt.issuer,
+        audience: config.jwt.audience,
+      },
+      callback,
+    );
   });
 };

@@ -1,4 +1,4 @@
-import { createBullBoard } from '@bull-board/api'
+import { createBullBoard } from '@bull-board/api';
 import { BullAdapter } from '@bull-board/api/bullAdapter';
 import { KoaAdapter } from '@bull-board/koa';
 import Koa from 'koa';
@@ -6,10 +6,7 @@ import * as job from './job';
 import config from '../config/config';
 
 const getQueues = () => {
-  return [
-    new BullAdapter(job.job1.queue),
-    new BullAdapter(job.job2.queue),
-  ];
+  return [new BullAdapter(job.job1.queue), new BullAdapter(job.job2.queue)];
 };
 
 export const initialize = async (app: Koa): Promise<Koa> => {
