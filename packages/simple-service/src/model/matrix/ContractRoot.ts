@@ -14,6 +14,7 @@ declare module '../types' {
     ContractRoot: typeof ContractRoot;
   }
   type ContractRootModel = ContractRoot;
+  type ContractRootModelDef = typeof ContractRoot;
 }
 
 export class ContractRoot extends Model<InferAttributes<ContractRoot>, InferCreationAttributes<ContractRoot>> {

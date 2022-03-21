@@ -1,3 +1,3 @@
-import ContentSizeContext from './ContenttSizeContext';
+import ContentSizeContext from './ContentSizeContext';
 
 export { ContentSizeContext };

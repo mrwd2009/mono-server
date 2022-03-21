@@ -14,6 +14,7 @@ declare module '../types' {
     ContractBody: typeof ContractBody;
   }
   type ContractBodyModel = ContractBody;
+  type ContractBodyModelDef = typeof ContractBody;
 }
 
 export class ContractBody extends Model<InferAttributes<ContractBody>, InferCreationAttributes<ContractBody>> {
@@ -106,6 +107,8 @@ export const initialize = (sequelize: Sequelize) => {
       timestamps: false,
     },
   );
+
+  return ContractBody;
 };
 
 export default ContractBody;

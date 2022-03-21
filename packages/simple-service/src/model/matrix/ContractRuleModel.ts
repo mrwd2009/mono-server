@@ -14,6 +14,7 @@ declare module '../types' {
     ContractRuleModel: typeof ContractRuleModel;
   }
   type ContractRuleModelModel = ContractRuleModel;
+  type ContractRuleModelModelDef = typeof ContractRuleModel;
 }
 
 export class ContractRuleModel extends Model<

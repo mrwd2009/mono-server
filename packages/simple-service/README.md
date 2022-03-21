@@ -86,6 +86,9 @@ moduleA
   route // Optional: all available routes
   index.ts // export all routes
 ```
+The unnecessary directories can be removed.
+The `index.ts` file will be loaded automatically.
+
 **Caution**: Do not call any function from other module directory. Shared functions across system should be placed in `./src/lib` directory.
 
 ### 3. Source Code Format

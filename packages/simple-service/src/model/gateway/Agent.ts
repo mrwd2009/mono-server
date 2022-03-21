@@ -12,6 +12,7 @@ declare module '../types' {
     Agent: typeof Agent;
   }
   type AgentModel = Agent;
+  type AgentModelDef = typeof Agent;
 }
 
 export class Agent extends Model<InferAttributes<Agent>, InferCreationAttributes<Agent>> {

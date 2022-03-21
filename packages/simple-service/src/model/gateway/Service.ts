@@ -12,6 +12,7 @@ declare module '../types' {
     Service: typeof Service;
   }
   type ServiceModel = Service;
+  type ServiceModelDef = typeof Service;
 }
 
 export class Service extends Model<InferAttributes<Service>, InferCreationAttributes<Service>> {

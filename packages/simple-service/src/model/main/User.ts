@@ -14,6 +14,7 @@ declare module '../types' {
     User: typeof User;
   }
   type UserModel = User;
+  type UserModelDef = typeof User;
 }
 
 const hashPasword = async (user: any) => {

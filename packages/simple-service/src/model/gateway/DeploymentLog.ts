@@ -14,6 +14,7 @@ declare module '../types' {
     DeploymentLog: typeof DeploymentLog;
   }
   type DeploymentLogModel = DeploymentLog;
+  type DeploymentLogModelDef = typeof DeploymentLog;
 }
 
 export class DeploymentLog extends Model<InferAttributes<DeploymentLog>, InferCreationAttributes<DeploymentLog>> {

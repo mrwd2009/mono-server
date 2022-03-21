@@ -14,6 +14,7 @@ declare module '../types' {
     ContractParameter: typeof ContractParameter;
   }
   type ContractParameterModel = ContractParameter;
+  type ContractParameterModelDef = typeof ContractParameter;
 }
 
 export class ContractParameter extends Model<
