@@ -52,8 +52,7 @@ export const createAgentHandler: Array<Middleware> = [
     }),
   })),
   async (context) => {
-    const cookieObj = cookie.parse(context.request.header.cookie as string);
-    console.log(cookieObj[config.jwt.cookieKey]);
+    // const cookieObj = cookie.parse(context.request.header.cookie as string);
     context.gateway?.sendJSON?.(await deploymentModel.createAgent(context.mergedParams));
   }
 ];

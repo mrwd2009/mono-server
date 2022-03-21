@@ -1,6 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 .history
+log
+temp
 
 # dependencies
 /node_modules
@@ -29,5 +31,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-craco.config.js
+tsconfig.*
 tsconfig.json
+
+babel.config.js
+.eslintrc.js

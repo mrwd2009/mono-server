@@ -37,7 +37,6 @@ const rateLimiter = (): Middleware => {
   }
 
   const getLimiter = (fromCookie: boolean): RateLimiterAbstract => {
-    console.log(`fromCookie${fromCookie}`)
     return fromCookie ? idLimiter : ipLimiter;
   };
 
