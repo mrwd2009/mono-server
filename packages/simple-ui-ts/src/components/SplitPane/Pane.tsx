@@ -2,9 +2,9 @@ import React, { ReactNode, LegacyRef } from 'react';
 import { getUnit, convertSizeToCssValue } from './SplitPane';
 
 interface Props {
-  children?: ReactNode,
-  className?: string,
-  innerRef?: LegacyRef<HTMLDivElement>,
+  children?: ReactNode;
+  className?: string;
+  innerRef?: LegacyRef<HTMLDivElement>;
   index?: number;
   initialSize: string | number;
   minSize?: string;
@@ -13,23 +13,23 @@ interface Props {
 }
 
 function PaneStyle({ split, initialSize, fixedSize, size, minSize, maxSize, resizersSize }: any) {
-  const value =fixedSize || size || initialSize;
+  const value = fixedSize || size || initialSize;
   const vertical = split === 'vertical';
   const styleProp = {
     minSize: vertical ? 'minWidth' : 'minHeight',
     maxSize: vertical ? 'maxWidth' : 'maxHeight',
-    size: vertical ? 'width' : 'height'
+    size: vertical ? 'width' : 'height',
   };
 
   let style: any = {
     display: 'flex',
-    outline: 'none'
+    outline: 'none',
   };
 
   style[styleProp.minSize] = convertSizeToCssValue(minSize, resizersSize);
   style[styleProp.maxSize] = convertSizeToCssValue(maxSize, resizersSize);
 
-  switch(getUnit(value)) {
+  switch (getUnit(value)) {
     case 'ratio':
       style.flex = value;
       break;
@@ -42,7 +42,6 @@ function PaneStyle({ split, initialSize, fixedSize, size, minSize, maxSize, resi
 
   return style;
 }
-
 
 class Pane extends React.PureComponent<Props> {
   static defaultProps = {

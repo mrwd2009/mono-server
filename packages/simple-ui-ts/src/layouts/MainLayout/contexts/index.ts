@@ -1,5 +1,3 @@
-import ContentSizeContext from "./ContenttSizeContext";
+import ContentSizeContext from './ContenttSizeContext';
 
-export {
-  ContentSizeContext,
-};
+export { ContentSizeContext };

@@ -12,13 +12,17 @@ import { ContentSizeContext } from './contexts';
 const currentYear = new Date().getFullYear();
 
 const MainLayout: FC = () => {
-  const [size, setSize] = useState<{ width: number, height: number}>({ width: 0, height: 0 });
+  const [size, setSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
   const debounceRef = useRef<any>();
 
   useEffect(() => {
-    const _setResize = debounce((_size) => {
-      setSize(_size);
-    }, 200, { leading: true, trailing: true });
+    const _setResize = debounce(
+      _size => {
+        setSize(_size);
+      },
+      200,
+      { leading: true, trailing: true },
+    );
     debounceRef.current = _setResize;
     return () => {
       _setResize.cancel();
@@ -47,14 +51,16 @@ const MainLayout: FC = () => {
         </div>
         <div className="app-ex-layout-main--body">
           <BC />
-          <ResizeObserver onResize={(rawSize) => {
-            if (rawSize.width !== size.width || rawSize.height !== size.height) {
-              debounceRef.current({
-                width: rawSize.width,
-                height: rawSize.height,
-              });
-            }
-          }}>
+          <ResizeObserver
+            onResize={rawSize => {
+              if (rawSize.width !== size.width || rawSize.height !== size.height) {
+                debounceRef.current({
+                  width: rawSize.width,
+                  height: rawSize.height,
+                });
+              }
+            }}
+          >
             <div className="app-ex-layout-main--content">
               <ContentSizeContext.Provider value={size}>
                 <Outlet />

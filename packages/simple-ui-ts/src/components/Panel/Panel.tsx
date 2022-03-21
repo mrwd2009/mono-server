@@ -14,11 +14,7 @@ interface Props {
   defaultActiveTabKey?: string;
 }
 
-const Panel: FC<Props> = ({
-  children,
-  className,
-  ...restProps
-}) => {
+const Panel: FC<Props> = ({ children, className, ...restProps }) => {
   return (
     <div className="app-ex-panel">
       <Card
@@ -31,7 +27,7 @@ const Panel: FC<Props> = ({
         {children}
       </Card>
     </div>
-  )
+  );
 };
 
 export default memo(Panel);

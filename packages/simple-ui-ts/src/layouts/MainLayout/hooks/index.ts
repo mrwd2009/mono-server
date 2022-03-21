@@ -1,5 +1,3 @@
-import useContentSize from "./useContentSize";
+import useContentSize from './useContentSize';
 
-export {
-  useContentSize,
-};
+export { useContentSize };

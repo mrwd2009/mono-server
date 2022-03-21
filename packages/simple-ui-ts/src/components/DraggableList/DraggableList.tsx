@@ -6,9 +6,7 @@ import identity from 'lodash/identity';
 import filter from 'lodash/filter';
 import includes from 'lodash/includes';
 import toLower from 'lodash/toLower';
-import {
-  FixedSizeList,
-} from 'react-window';
+import { FixedSizeList } from 'react-window';
 import EllipsisTooltip from '../EllipsisTooltip';
 import { ReactComponent as ContractImg } from '../../assets/images/contract/contract.svg';
 import { ReactComponent as GroupImg } from '../../assets/images/contract/group.svg';
@@ -26,12 +24,12 @@ const { Search } = Input;
 
 interface Props {
   dataSource?: Array<{
-    key: string,
-    type: string,
-    label: string,
-    timestamp?:string,
+    key: string;
+    type: string;
+    label: string;
+    timestamp?: string;
   }>;
-  onSelect?: (item: {key: string | number, dataType: string | number | undefined } | null) => void;
+  onSelect?: (item: { key: string | number; dataType: string | number | undefined } | null) => void;
   dataType?: string;
   selectedKey?: string | number;
   draggable?: boolean;
@@ -51,17 +49,14 @@ class DraggableList extends PureComponent<Props, State> {
   static defaultProps = {
     onSearch: null,
     debounce: 0,
-  }
+  };
 
   constructor(props: Props) {
     super(props);
     this.state = {
       searchText: '',
     };
-    const {
-      debounce,
-      search,
-    } = props;
+    const { debounce, search } = props;
 
     if (search && debounce) {
       this.handleFilter = debounceFn(this.handleFilter, debounce);
@@ -72,7 +67,7 @@ class DraggableList extends PureComponent<Props, State> {
     this.setState({
       searchText: value,
     });
-  }
+  };
 
   handleSearch = (value: any) => {
     // clear debounce filter
@@ -82,7 +77,7 @@ class DraggableList extends PureComponent<Props, State> {
     this.setState({
       searchText: value,
     });
-  }
+  };
 
   handleChange = (event: any) => {
     const { searchText } = this.state;
@@ -102,7 +97,7 @@ class DraggableList extends PureComponent<Props, State> {
     if ((this.handleFilter as any).cancel) {
       this.handleFilter(event.target.value);
     }
-  }
+  };
 
   componentWillUnmount() {
     if ((this.handleFilter as any).cancel) {
@@ -111,12 +106,7 @@ class DraggableList extends PureComponent<Props, State> {
   }
 
   selectItem(item: any) {
-    const {
-      onSelect,
-      dataType,
-      selectedKey,
-      itemKey,
-    } = this.props;
+    const { onSelect, dataType, selectedKey, itemKey } = this.props;
     let { key } = item;
     if (itemKey) {
       key = itemKey(item);
@@ -146,15 +136,12 @@ class DraggableList extends PureComponent<Props, State> {
     } = this.props;
     const { searchText } = this.state;
 
-    const filteredData = filter(
-      dataSource,
-      (item) => {
-        if (onSearch) {
-          return onSearch(searchText, item);
-        }
-        return includes(toLower(item.label), toLower(searchText));
-      },
-    );
+    const filteredData = filter(dataSource, item => {
+      if (onSearch) {
+        return onSearch(searchText, item);
+      }
+      return includes(toLower(item.label), toLower(searchText));
+    });
 
     const getRow = ({ index, style }: any) => {
       const item: any = filteredData[index];
@@ -162,7 +149,9 @@ class DraggableList extends PureComponent<Props, State> {
       if (itemKey) {
         key = itemKey(item);
       }
-      const itemClass = `contract-draggable-list__item ${item.timestamp ? 'has-timestamp' : ''} ${item.type} ${selectedKey === key ? 'selected' : ''}`;
+      const itemClass = `contract-draggable-list__item ${item.timestamp ? 'has-timestamp' : ''} ${item.type} ${
+        selectedKey === key ? 'selected' : ''
+      }`;
       const iconClass = `contract-draggable-list__icon ${item.type}`;
       let liProps: any = {
         className: itemClass,
@@ -212,7 +201,14 @@ class DraggableList extends PureComponent<Props, State> {
       searchInput = (
         <Fragment>
           {searchPrefix}
-          <Search placeholder={'Search'} size="small" onChange={this.handleChange} allowClear enterButton onSearch={this.handleSearch} />
+          <Search
+            placeholder={'Search'}
+            size="small"
+            onChange={this.handleChange}
+            allowClear
+            enterButton
+            onSearch={this.handleSearch}
+          />
           <div className="mb-2" />
         </Fragment>
       );

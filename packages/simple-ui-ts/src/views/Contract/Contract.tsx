@@ -8,15 +8,9 @@ const Contract: FC = () => {
     <CollapsibleSplitPane
       className="app-ex-min-content-h"
       leftSider={{ content: <ContractList /> }}
-      rightSider={{ content: (
-        <Panel title="roght">
-        right content
-      </Panel>
-      ) }}
+      rightSider={{ content: <Panel title="roght">right content</Panel> }}
     >
-      <Panel title="Main">
-        main content
-      </Panel>
+      <Panel title="Main">main content</Panel>
     </CollapsibleSplitPane>
   );
 };

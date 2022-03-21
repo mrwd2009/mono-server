@@ -2,19 +2,19 @@ import { PureComponent, ReactNode } from 'react';
 import Icon from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';
 import SplitPane, { Pane } from '../SplitPane';
-import { ReactComponent as  LeftIcon } from '../../assets/images/direction/collapse-left.svg';
-import { ReactComponent as  RightIcon } from '../../assets/images/direction/collapse-right.svg';
+import { ReactComponent as LeftIcon } from '../../assets/images/direction/collapse-left.svg';
+import { ReactComponent as RightIcon } from '../../assets/images/direction/collapse-right.svg';
 
 interface Props {
   className?: string;
   leftSider?: {
-    initialWidth?: number,
-    content: ReactNode,
+    initialWidth?: number;
+    content: ReactNode;
   };
   rightSider?: {
-    initialWidth?: number,
-    content: ReactNode,
-  },
+    initialWidth?: number;
+    content: ReactNode;
+  };
   children?: ReactNode;
 }
 
@@ -40,14 +40,8 @@ class CollapsibleSplitPane extends PureComponent<Props, State> {
   }
 
   componentDidUpdate(prevProps: any, prevState: any) {
-    const {
-      changedSizeInfo: prefInfo,
-    } = prevState;
-    const {
-      changedSizeInfo: info,
-      leftCollapsed: left,
-      rightCollapsed: right,
-    } = this.state;
+    const { changedSizeInfo: prefInfo } = prevState;
+    const { changedSizeInfo: info, leftCollapsed: left, rightCollapsed: right } = this.state;
     if (prefInfo && info && prefInfo !== info) {
       if (left && info.resizerIndex === 0) {
         this.setState({
@@ -86,21 +80,14 @@ class CollapsibleSplitPane extends PureComponent<Props, State> {
   }
 
   render() {
-    const {
-      leftSider,
-      children,
-      rightSider,
-      className,
-    } = this.props;
+    const { leftSider, children, rightSider, className } = this.props;
     const { leftCollapsed, rightCollapsed, leftTooltip, rightTooltip } = this.state;
     let mainClasses = '';
 
     let leftSiderEle = null;
     if (leftSider) {
       mainClasses += ' left ';
-      let {
-        initialWidth = 250,
-      } = leftSider;
+      let { initialWidth = 250 } = leftSider;
       let width: any = '';
       let fixedSize: any;
       if (leftCollapsed) {
@@ -112,11 +99,24 @@ class CollapsibleSplitPane extends PureComponent<Props, State> {
       };
       const inlineClass = leftCollapsed ? 'inline' : '';
       leftSiderEle = (
-        <Pane initialSize={`${initialWidth}px`} minSize="12px" maxSize="30%" fixedSize={fixedSize}>
-          <div className={`app-ex-collapsible-split-pane__sider left ${inlineClass}`} style={headerStyle}>
+        <Pane
+          initialSize={`${initialWidth}px`}
+          minSize="12px"
+          maxSize="30%"
+          fixedSize={fixedSize}
+        >
+          <div
+            className={`app-ex-collapsible-split-pane__sider left ${inlineClass}`}
+            style={headerStyle}
+          >
             {leftSider.content}
           </div>
-          <Tooltip visible={leftTooltip} title={ leftCollapsed ? 'Expand' : 'Collpase' } placement="right" onVisibleChange={visible => this.setState({ leftTooltip: visible })}>
+          <Tooltip
+            visible={leftTooltip}
+            title={leftCollapsed ? 'Expand' : 'Collpase'}
+            placement="right"
+            onVisibleChange={visible => this.setState({ leftTooltip: visible })}
+          >
             <Button
               size="small"
               className={`app-ex-collapsible-split-pane__toggle left ${inlineClass}`}
@@ -132,9 +132,7 @@ class CollapsibleSplitPane extends PureComponent<Props, State> {
     let rightSiderEle = null;
     if (rightSider) {
       mainClasses += ' right ';
-      let {
-        initialWidth = 250,
-      } = rightSider;
+      let { initialWidth = 250 } = rightSider;
       let width: any = '';
       let fixedSize: any;
       if (rightCollapsed) {
@@ -146,11 +144,24 @@ class CollapsibleSplitPane extends PureComponent<Props, State> {
       };
       const inlineClass = rightCollapsed ? 'inline' : '';
       rightSiderEle = (
-        <Pane initialSize={`${initialWidth}px`} minSize="12px" maxSize="30%" fixedSize={fixedSize}>
-          <div className={`app-ex-collapsible-split-pane__sider right ${inlineClass}`} style={headerStyle}>
+        <Pane
+          initialSize={`${initialWidth}px`}
+          minSize="12px"
+          maxSize="30%"
+          fixedSize={fixedSize}
+        >
+          <div
+            className={`app-ex-collapsible-split-pane__sider right ${inlineClass}`}
+            style={headerStyle}
+          >
             {rightSider.content}
           </div>
-          <Tooltip visible={rightTooltip} title={ rightCollapsed ? 'Expand' : 'Collpase' } placement="left" onVisibleChange={visible => this.setState({ rightTooltip: visible })}>
+          <Tooltip
+            visible={rightTooltip}
+            title={rightCollapsed ? 'Expand' : 'Collpase'}
+            placement="left"
+            onVisibleChange={visible => this.setState({ rightTooltip: visible })}
+          >
             <Button
               size="small"
               className={`app-ex-collapsible-split-pane__toggle right ${inlineClass}`}
@@ -164,12 +175,13 @@ class CollapsibleSplitPane extends PureComponent<Props, State> {
     }
 
     return (
-      <SplitPane className={`app-ex-collapsible-split-pane ${className || ''}`} onChange={(sizes, resizerIndex) => this.setState({ changedSizeInfo: { sizes, resizerIndex }})}>
+      <SplitPane
+        className={`app-ex-collapsible-split-pane ${className || ''}`}
+        onChange={(sizes, resizerIndex) => this.setState({ changedSizeInfo: { sizes, resizerIndex } })}
+      >
         {leftSiderEle}
         <Pane>
-          <div className={`app-ex-collapsible-split-pane__content ${mainClasses}`}>
-            {children}
-          </div>
+          <div className={`app-ex-collapsible-split-pane__content ${mainClasses}`}>{children}</div>
         </Pane>
         {rightSiderEle}
       </SplitPane>

@@ -42,8 +42,15 @@ class EllipsisTooltip extends PureComponent<Props, State> {
     const { visible } = this.state;
     const containerClass = `ellipsis-tooltip-container ${className}`;
     return (
-      <Tooltip title={children} onVisibleChange={this.onVisibleChange} visible={visible}>
-        <span className={containerClass} ref={this.spanRef}>
+      <Tooltip
+        title={children}
+        onVisibleChange={this.onVisibleChange}
+        visible={visible}
+      >
+        <span
+          className={containerClass}
+          ref={this.spanRef}
+        >
           {children}
         </span>
       </Tooltip>

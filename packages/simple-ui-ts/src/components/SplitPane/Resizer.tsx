@@ -54,9 +54,15 @@ class Resizer extends React.PureComponent<Props> {
     };
 
     return split === 'vertical' ? (
-      <div className="app-ex-pane-resizer app-ex-v-pane-resizer" {...props} />
+      <div
+        className="app-ex-pane-resizer app-ex-v-pane-resizer"
+        {...props}
+      />
     ) : (
-      <div className="app-ex-pane-resizer app-ex-h-pane-resizer" {...props} />
+      <div
+        className="app-ex-pane-resizer app-ex-h-pane-resizer"
+        {...props}
+      />
     );
   }
 }

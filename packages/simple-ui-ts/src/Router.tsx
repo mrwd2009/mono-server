@@ -38,7 +38,7 @@ const routes: RouteObject[] = [
           {
             path: getRouteInfo(['system', 'setting'])!.path,
             element: <Setting />,
-          }
+          },
         ],
       },
     ],

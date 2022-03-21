@@ -1,5 +1,3 @@
 import useContractList from './useContractList';
 
-export {
-  useContractList,
-};
+export { useContractList };

@@ -24,10 +24,7 @@ export const contractListSlice = createSlice({
   initialState,
   reducers: {
     updateContractList: (state, action: PayloadAction<Partial<ContractList>>) => {
-      const {
-        contractList,
-        savedList,
-      } = action.payload;
+      const { contractList, savedList } = action.payload;
       if (contractList) {
         state.contractList = contractList;
       }
@@ -51,7 +48,3 @@ export const selectSavedList = (state: AppRootState) => state.contractList.saved
 export const contractListReducer = contractListSlice.reducer;
 
 export default contractListReducer;
-
-
-
-

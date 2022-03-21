@@ -1,6 +1,6 @@
 import { FC, memo, useState } from 'react';
 import { Tabs, Collapse, Tooltip } from 'antd';
-import { QuestionCircleOutlined  } from '@ant-design/icons';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import Panel from '../../components/Panel';
 import DraggableList from '../../components/DraggableList';
 
@@ -8,22 +8,22 @@ const template = [
   {
     key: 'contract',
     type: 'component-contract',
-    label: 'Contract'
+    label: 'Contract',
   },
   {
     key: 'subcontract',
     type: 'component-subcontract',
-    label: 'Group'
+    label: 'Group',
   },
   {
     key: 'reroute',
     type: 'component-reroute',
-    label: 'Line'
+    label: 'Line',
   },
   {
     key: 'charge',
     type: 'component-charge',
-    label: 'Charge'
+    label: 'Charge',
   },
 ];
 
@@ -38,48 +38,62 @@ const ContractList: FC = () => {
     <Panel
       activeTabKey={selectedKey}
       onTabChange={setSelectedKey}
-      tabList={[{ tab: "Overview", key: 'overview'}, { tab: "Saved Node", key: 'saved'}]}
+      tabList={[
+        { tab: 'Overview', key: 'overview' },
+        { tab: 'Saved Node', key: 'saved' },
+      ]}
     >
-      <Tabs renderTabBar={(() => null) as any} activeKey={selectedKey}>
+      <Tabs
+        renderTabBar={(() => null) as any}
+        activeKey={selectedKey}
+      >
         <Tabs.TabPane key="overview">
-          <Collapse ghost defaultActiveKey={['component', 'list']}>
+          <Collapse
+            ghost
+            defaultActiveKey={['component', 'list']}
+          >
             <Collapse.Panel
               header={
                 <span className="text-nowrap">
                   Contract Component&nbsp;
                   <Tooltip title="Draggable contract component used to construct contract">
-                    <QuestionCircleOutlined/>
+                    <QuestionCircleOutlined />
                   </Tooltip>
                 </span>
               }
               key="component"
               className="collapse-panel-pt-0"
             >
-              <DraggableList formatTransferData={formatTransferData} dataSource={template} dataType="Component" />
+              <DraggableList
+                formatTransferData={formatTransferData}
+                dataSource={template}
+                dataType="Component"
+              />
             </Collapse.Panel>
             <Collapse.Panel
               header={
                 <span className="text-nowrap">
                   Contract List&nbsp;
                   <Tooltip title="All contracts in system">
-                    <QuestionCircleOutlined/>
+                    <QuestionCircleOutlined />
                   </Tooltip>
                 </span>
               }
               key="list"
               className="collapse-panel-pt-0"
             >
-              <DraggableList formatTransferData={formatTransferData} dataSource={template} dataType="Component" />
+              <DraggableList
+                formatTransferData={formatTransferData}
+                dataSource={template}
+                dataType="Component"
+              />
             </Collapse.Panel>
           </Collapse>
         </Tabs.TabPane>
-        <Tabs.TabPane key="saved">
-          saved list
-        </Tabs.TabPane>
+        <Tabs.TabPane key="saved">saved list</Tabs.TabPane>
       </Tabs>
     </Panel>
   );
 };
 
 export default memo(ContractList);
-

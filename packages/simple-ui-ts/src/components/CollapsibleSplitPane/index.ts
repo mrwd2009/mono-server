@@ -1,7 +1,5 @@
-import CollapsibleSplitPane from "./CollapsibleSplitPane";
+import CollapsibleSplitPane from './CollapsibleSplitPane';
 
-export {
-  CollapsibleSplitPane,
-};
+export { CollapsibleSplitPane };
 
 export default CollapsibleSplitPane;
