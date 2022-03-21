@@ -37,7 +37,7 @@ function toPx(value: any, unit = 'px', size: any) {
 }
 
 function removeNullChildren(children: any) {
-  return React.Children.toArray(children).filter(c => c);
+  return React.Children.toArray(children).filter((c) => c);
 }
 
 export function getUnit(size: any) {
@@ -197,8 +197,8 @@ class SplitPane extends PureComponent<Props, any> {
     const splitPaneSizePx =
       split === 'vertical' ? splitPaneDimensions.width - resizersSize : splitPaneDimensions.height - resizersSize;
 
-    const minSizesPx = minSizes.map(s => convert(s, splitPaneSizePx));
-    const maxSizesPx = maxSizes.map(s => convert(s, splitPaneSizePx));
+    const minSizesPx = minSizes.map((s) => convert(s, splitPaneSizePx));
+    const maxSizesPx = maxSizes.map((s) => convert(s, splitPaneSizePx));
     const sizesPx = paneDimensions.map((d: any) => (split === 'vertical' ? d.width : d.height));
 
     return {

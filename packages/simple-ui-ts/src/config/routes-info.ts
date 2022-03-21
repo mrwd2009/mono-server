@@ -284,7 +284,7 @@ export const getRouteInfo = (keys: string | string[], routes = routesInfo) => {
   }
 
   let info: RouteInfo | undefined;
-  forEach(routes, routeInfo => {
+  forEach(routes, (routeInfo) => {
     if (routeInfo.key === currentKey) {
       if (restKeys.length) {
         if (routeInfo.children?.length) {
@@ -308,7 +308,7 @@ export interface RouteMenuInfo {
 
 export const getRoutesMenu = (routes = routesInfo) => {
   let newRoutes: RouteMenuInfo[] = [];
-  forEach(routes, routeInfo => {
+  forEach(routes, (routeInfo) => {
     let newRouteInfo: RouteMenuInfo = {
       title: routeInfo.title!,
       key: routeInfo.key,
@@ -336,7 +336,7 @@ export interface RouteBCInfo {
 export const getRouteBC = (path: string, routes = routesInfo): RouteBCInfo[] => {
   let bcList: RouteBCInfo[] = [];
 
-  forEach(routes, routeInfo => {
+  forEach(routes, (routeInfo) => {
     if (path.includes(routeInfo.path)) {
       if (path === routeInfo.path) {
         bcList.push({

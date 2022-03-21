@@ -136,7 +136,7 @@ class DraggableList extends PureComponent<Props, State> {
     } = this.props;
     const { searchText } = this.state;
 
-    const filteredData = filter(dataSource, item => {
+    const filteredData = filter(dataSource, (item) => {
       if (onSearch) {
         return onSearch(searchText, item);
       }

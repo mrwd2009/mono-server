@@ -17,7 +17,7 @@ const MainLayout: FC = () => {
 
   useEffect(() => {
     const _setResize = debounce(
-      _size => {
+      (_size) => {
         setSize(_size);
       },
       200,
@@ -52,7 +52,7 @@ const MainLayout: FC = () => {
         <div className="app-ex-layout-main--body">
           <BC />
           <ResizeObserver
-            onResize={rawSize => {
+            onResize={(rawSize) => {
               if (rawSize.width !== size.width || rawSize.height !== size.height) {
                 debounceRef.current({
                   width: rawSize.width,

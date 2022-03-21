@@ -14,7 +14,7 @@ const BC: FC = () => {
         <Breadcrumb.Item>
           <HomeOutlined />
         </Breadcrumb.Item>
-        {map(bcList, bc => {
+        {map(bcList, (bc) => {
           return <Breadcrumb.Item key={bc.key}>{bc.title}</Breadcrumb.Item>;
         })}
       </Breadcrumb>

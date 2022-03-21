@@ -32,7 +32,7 @@ export const contractListSlice = createSlice({
         state.savedList = savedList;
       }
     },
-    clearContractList: state => {
+    clearContractList: (state) => {
       state.contractList = [];
       state.savedList = [];
     },

@@ -16,7 +16,7 @@ const ThemeSwitch: FC = () => {
       <Switch
         loading={loading}
         checked={darkMode}
-        onChange={checked => {
+        onChange={(checked) => {
           if (checked) {
             fetchTheme(true);
           } else {

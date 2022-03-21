@@ -27,7 +27,7 @@ const InnerContent = () => {
   );
 };
 
-const Template: ComponentStory<typeof ResponsiveContainer> = args => {
+const Template: ComponentStory<typeof ResponsiveContainer> = (args) => {
   return (
     <ResponsiveContainer {...args}>
       <InnerContent />

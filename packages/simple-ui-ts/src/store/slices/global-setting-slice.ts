@@ -25,11 +25,11 @@ export const globalSettingSlice = createSlice({
   name: 'global/setting',
   initialState,
   reducers: {
-    applyDarkTheme: state => {
+    applyDarkTheme: (state) => {
       state.theme = 'dark';
       localStorage.setItem(themeItemKey, 'dark');
     },
-    applyDefaultTheme: state => {
+    applyDefaultTheme: (state) => {
       state.theme = 'default';
       localStorage.setItem(themeItemKey, 'default');
     },

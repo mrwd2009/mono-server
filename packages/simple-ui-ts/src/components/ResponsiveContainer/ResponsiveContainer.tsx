@@ -35,7 +35,7 @@ const ResponsiveContainer: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <ResizeObserver
       onResize={({ width }) => {
-        forEach(list, item => {
+        forEach(list, (item) => {
           if (width >= item.range[0] && width < item.range[1]) {
             if (breakpoint !== item.id) {
               setBreakpoint(item.id);

@@ -16,7 +16,7 @@ export const useMergedState = (initial: any) => {
   }, initial);
 
   const setState = useCallback(
-    payload =>
+    (payload) =>
       dispatch({
         type: 'UPDATE',
         payload,

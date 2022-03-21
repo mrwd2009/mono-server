@@ -19,7 +19,7 @@ export const userInfoSlice = createSlice({
       state.user = payload.payload.user;
       state.permissions = payload.payload.permissions;
     },
-    clearUserInfo: state => {
+    clearUserInfo: (state) => {
       state.user = '';
       state.permissions = [];
     },

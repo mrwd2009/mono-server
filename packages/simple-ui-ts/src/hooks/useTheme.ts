@@ -22,7 +22,7 @@ const useTheme = () => {
   const dispatch = useAppDisatch();
 
   const fetchTheme = useCallback(
-    isDark => {
+    (isDark) => {
       // avoid useless processing.
       if (isCurrentDark === isDark) {
         return;
@@ -37,7 +37,7 @@ const useTheme = () => {
         } else {
           setLoading(true);
           import('../assets/stylesheets/dark.less')
-            .then(theme => {
+            .then((theme) => {
               if (isMounted.current) {
                 if (defaultTheme) {
                   defaultTheme.unuse();
@@ -66,7 +66,7 @@ const useTheme = () => {
         } else {
           setLoading(true);
           import('../assets/stylesheets/default.less')
-            .then(theme => {
+            .then((theme) => {
               if (isMounted.current) {
                 if (darkTheme) {
                   darkTheme.unuse();

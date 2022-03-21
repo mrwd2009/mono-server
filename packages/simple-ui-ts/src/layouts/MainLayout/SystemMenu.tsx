@@ -10,7 +10,7 @@ const { Item, SubMenu } = Menu;
 const menuList = getRoutesMenu();
 
 const getMenuItems = (list: RouteMenuInfo[]) => {
-  return map(list, item => {
+  return map(list, (item) => {
     if (item.children?.length) {
       return (
         <SubMenu

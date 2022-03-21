@@ -115,7 +115,7 @@ class CollapsibleSplitPane extends PureComponent<Props, State> {
             visible={leftTooltip}
             title={leftCollapsed ? 'Expand' : 'Collpase'}
             placement="right"
-            onVisibleChange={visible => this.setState({ leftTooltip: visible })}
+            onVisibleChange={(visible) => this.setState({ leftTooltip: visible })}
           >
             <Button
               size="small"
@@ -160,7 +160,7 @@ class CollapsibleSplitPane extends PureComponent<Props, State> {
             visible={rightTooltip}
             title={rightCollapsed ? 'Expand' : 'Collpase'}
             placement="left"
-            onVisibleChange={visible => this.setState({ rightTooltip: visible })}
+            onVisibleChange={(visible) => this.setState({ rightTooltip: visible })}
           >
             <Button
               size="small"
