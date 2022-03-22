@@ -8,6 +8,7 @@ import includes from 'lodash/includes';
 import toLower from 'lodash/toLower';
 import { FixedSizeList } from 'react-window';
 import EllipsisTooltip from '../EllipsisTooltip';
+import ScrollShadow from '../ScrollShadow';
 import { ReactComponent as ContractImg } from '../../assets/images/contract/contract.svg';
 import { ReactComponent as GroupImg } from '../../assets/images/contract/group.svg';
 import { ReactComponent as LineImg } from '../../assets/images/contract/line.svg';
@@ -18,6 +19,7 @@ const imgMap: Record<string, any> = {
   'component-subcontract': GroupImg,
   'component-reroute': LineImg,
   'component-charge': ChargeImg,
+  'contract-root': ContractImg,
 };
 
 const { Search } = Input;
@@ -39,6 +41,7 @@ interface Props {
   formatTransferData?: (item: any) => void;
   itemKey?: (item: any) => void;
   searchPrefix?: string;
+  maxHeight?: number;
 }
 
 interface State {
@@ -133,6 +136,7 @@ class DraggableList extends PureComponent<Props, State> {
       formatTransferData = identity,
       itemKey,
       searchPrefix = null,
+      maxHeight: _maxHeight,
     } = this.props;
     const { searchText } = this.state;
 
@@ -216,21 +220,29 @@ class DraggableList extends PureComponent<Props, State> {
 
     const rowHeight = 34;
     const totalHeight = filteredData.length * rowHeight;
-    const maxHeight = 340;
+    const maxHeight = _maxHeight || 340;
     const height = totalHeight > maxHeight ? maxHeight : totalHeight;
 
     return (
       <Fragment>
         {searchInput}
-        <FixedSizeList
-          className="contract-draggable-list"
-          width="100%"
-          height={height}
-          itemCount={filteredData.length}
-          itemSize={rowHeight}
-        >
-          {getRow}
-        </FixedSizeList>
+        <ScrollShadow>
+          {({ ref, onScroll }) => {
+            return (
+              <FixedSizeList
+                className="contract-draggable-list"
+                width="100%"
+                height={height}
+                itemCount={filteredData.length}
+                itemSize={rowHeight}
+                outerRef={ref}
+                onScroll={onScroll}
+              >
+                {getRow}
+              </FixedSizeList>
+            );
+          }}
+        </ScrollShadow>
       </Fragment>
     );
   }

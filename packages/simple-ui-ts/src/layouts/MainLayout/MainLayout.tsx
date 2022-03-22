@@ -6,10 +6,9 @@ import brand from '../../assets/images/brand.png';
 import SystemMenu from './SystemMenu';
 import ThemeSwitch from './ThemeSwitch';
 import UserAction from './UserAction';
+import FooterContent from '../FooterContent';
 import BC from './BC';
 import { ContentSizeContext } from './contexts';
-
-const currentYear = new Date().getFullYear();
 
 const MainLayout: FC = () => {
   const [size, setSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
@@ -69,7 +68,7 @@ const MainLayout: FC = () => {
           </ResizeObserver>
         </div>
         <div className="app-ex-layout-main--footer">
-          <span>© {currentYear} Energix, inc. All rights reserved.</span>
+          <FooterContent />
         </div>
       </div>
     </div>

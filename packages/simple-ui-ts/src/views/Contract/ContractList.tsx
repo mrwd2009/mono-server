@@ -1,14 +1,20 @@
-import { FC, memo, useState } from 'react';
+import { FC, memo, useEffect, useState, useMemo } from 'react';
 import { Tabs, Collapse, Tooltip } from 'antd';
+import map from 'lodash/map';
+import includes from 'lodash/includes';
+import toLower from 'lodash/toLower';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import Panel from '../../components/Panel';
 import DraggableList from '../../components/DraggableList';
+import { useContractList } from './hooks';
+import { useAppSelector } from '../../hooks';
+import { selectContractList, selectSavedList } from './slices';
 
 const template = [
   {
     key: 'contract',
     type: 'component-contract',
-    label: 'Contract',
+    label: 'Root',
   },
   {
     key: 'subcontract',
@@ -32,8 +38,37 @@ const formatTransferData = (data: any) => ({
   data: data.key,
 });
 
+const itemKey = (item: any) => item.extraData.contractRoot;
+
+const filterList = (text: any, item: any) => {
+  const labelMatch = includes(toLower(item.label), toLower(text));
+  const rootMatch = includes(`${item.extraData.contractRoot}`, text);
+  return labelMatch || rootMatch;
+};
+
 const ContractList: FC = () => {
   const [selectedKey, setSelectedKey] = useState('overview');
+  const {
+    loading,
+    fetchList,
+  } = useContractList();
+
+  useEffect(() => {
+    fetchList();
+  }, [fetchList]);
+
+  const _contractList = useAppSelector(selectContractList);
+  const contractList = useMemo(() => {
+    return map(_contractList, (item: any) => {
+      return {
+        key: item.id,
+        type: 'contract-root',
+        label: item.name,
+        extraData: item,
+      };
+    });
+  }, [_contractList]);
+
   return (
     <Panel
       activeTabKey={selectedKey}
@@ -42,6 +77,7 @@ const ContractList: FC = () => {
         { tab: 'Overview', key: 'overview' },
         { tab: 'Saved Node', key: 'saved' },
       ]}
+      loading={loading}
     >
       <Tabs
         renderTabBar={(() => null) as any}
@@ -83,9 +119,16 @@ const ContractList: FC = () => {
               className="collapse-panel-pt-0"
             >
               <DraggableList
-                formatTransferData={formatTransferData}
-                dataSource={template}
-                dataType="Component"
+                draggable={false}
+                dataSource={contractList}
+                itemKey={itemKey}
+                search
+                debounce={300}
+                maxHeight={400}
+                onSearch={filterList}
+                dataType="Contract"
+                // onSelect={onSelect}
+                selectedKey={''}
               />
             </Collapse.Panel>
           </Collapse>

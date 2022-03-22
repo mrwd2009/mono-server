@@ -22,6 +22,11 @@ export const apiEndpoints = {
   system: {
     info: '/system/info',
   },
+  contract: {
+    list: '/contract/list',
+    savedNodes: '/contract/saved-list',
+    tree: '/contract/tree',
+  },
 };
 
 export default apiEndpoints;

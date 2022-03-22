@@ -1,8 +1,7 @@
 import { FC, memo } from 'react';
 import { Outlet } from 'react-router-dom';
 import brand from '../assets/images/brand.png';
-
-const currentYear = new Date().getFullYear();
+import FooterContent from './FooterContent';
 
 const ErrorPageLayout: FC = () => {
   return (
@@ -22,7 +21,7 @@ const ErrorPageLayout: FC = () => {
           <Outlet />
         </div>
         <div className="app-ex-layout-error-page--footer">
-          <span>© {currentYear} Energix, inc. All rights reserved.</span>
+          <FooterContent />
         </div>
       </div>
     </div>

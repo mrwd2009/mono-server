@@ -1,13 +1,12 @@
 import { FC, memo, ReactElement } from 'react';
 import { Link } from 'react-router-dom';
+import FooterContent from './FooterContent';
 import bg500 from '../assets/images/auth-bg/bg-500.jpeg';
 import bg750 from '../assets/images/auth-bg/bg-750.jpeg';
 import bg1000 from '../assets/images/auth-bg/bg-1000.jpeg';
 import bg1500 from '../assets/images/auth-bg/bg-1500.jpeg';
 import bg2500 from '../assets/images/auth-bg/bg-2500.jpeg';
 import brand from '../assets/images/brand.png';
-
-const currentYear = new Date().getFullYear();
 
 export interface HeaderExtra {
   title: string;
@@ -51,7 +50,7 @@ const AuthLayout: FC<{ header?: HeaderExtra; children: ReactElement }> = ({ head
         </div>
         <div className="app-ex-layout-auth--body">{children}</div>
         <div className="app-ex-layout-auth--footer">
-          <span>© {currentYear} Energix, inc. All rights reserved.</span>
+          <FooterContent />
         </div>
       </div>
     </div>

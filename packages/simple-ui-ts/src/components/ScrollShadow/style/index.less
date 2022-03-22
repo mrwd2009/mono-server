@@ -1,0 +1,60 @@
+.scroll-shadow-container {
+  position: relative;
+
+  .scroll-shadow-content {
+    overflow: auto;
+  }
+
+  .top,
+  .bottom,
+  .left,
+  .right {
+    position: absolute;
+    transition: box-shadow .3s;
+  }
+
+  .top {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 30px;
+
+    &.shadow {
+      box-shadow: inset 0 10px 8px -8px @shadow-color;
+    }
+  }
+
+  .bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 30px;
+
+    &.shadow {
+      box-shadow: inset 0 -10px 8px -8px @shadow-color;
+    }
+  }
+
+  .left {
+    top: 0;
+    left: 0;
+    width: 30px;
+    height: 100%;
+
+    &.shadow {
+      box-shadow: inset 10px 0 8px -8px @shadow-color;
+    }
+  }
+
+  .right {
+    top: 0;
+    right: 0;
+    width: 30px;
+    height: 100%;
+
+    &.shadow {
+      box-shadow: inset -10px 0 8px -8px @shadow-color;
+    }
+  }
+}
