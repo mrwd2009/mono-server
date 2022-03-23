@@ -2,9 +2,9 @@ import axios, { AxiosResponse } from 'axios';
 import { configure } from 'axios-hooks';
 import assign from 'lodash/assign';
 import { useNavigate, NavigateFunction, useLocation, Location } from 'react-router-dom';
-import { notification } from 'antd';
 import { baseURL } from '../api-endpoints';
 import { getRouteInfo } from '../routes-info';
+import util from '../../util';
 
 declare module 'axios' {
   export interface AxiosRequestConfig {
@@ -38,11 +38,7 @@ const requestSuccessInterceptor = (response: AxiosResponse) => {
       // for error which response code is not 200
       let error: any = new Error(publicMessage || message || response.data.message);
       error.displayed = true;
-      notification.error({
-        message: 'Error',
-        description: error.message,
-        duration: 0,
-      });
+      util.showError(error.message, 'axios-non-200-error');
       return Promise.reject(error);
     }
     data = response.data.data;
@@ -99,11 +95,7 @@ const requestErrorInterceptor = (err: any) => {
               throw err;
             },
             (exception: Error) => {
-              notification.error({
-                message: 'Error',
-                description: exception.message,
-                duration: 0,
-              });
+              util.showError(exception.message, 'axios-blob-error');
               throw exception;
             },
           );
@@ -113,11 +105,7 @@ const requestErrorInterceptor = (err: any) => {
     }
   } else {
     err.displayed = true;
-    notification.error({
-      message: 'Error',
-      description: 'Connection error, please try it later.',
-      duration: 0,
-    });
+    util.showError('Connection error, please try it later.', 'axios-connection-error');
   }
   // for local test, show something on UI
   return Promise.reject(err);
@@ -136,11 +124,7 @@ function showAdvancedError(message: string, internalMessage: string) {
   //     duration: 0,
   //   });
   // }
-  return notification.error({
-    message: 'Error',
-    description: message,
-    duration: 0,
-  });
+  return util.showError(message, 'axios-advanced-error');
 }
 const hookAxios = axios.create({
   useAxiosHook: true,

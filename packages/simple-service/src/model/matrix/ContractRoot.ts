@@ -30,7 +30,7 @@ export class ContractRoot extends Model<InferAttributes<ContractRoot>, InferCrea
   declare ContractScope: CreationOptional<string>;
   declare ContratClass: CreationOptional<string>;
   declare SubMarketplace: CreationOptional<string>;
-  declare ActionVersion: CreationOptional<number>;
+  declare ActiveVersion: CreationOptional<number>;
   declare SID: CreationOptional<number>;
   declare UID: CreationOptional<string>;
   declare ContractBodies?: NonAttribute<ContractBodyModel[]>;
@@ -52,7 +52,7 @@ export const initialize = (sequelize: Sequelize) => {
       ContractScope: DataTypes.STRING,
       ContratClass: DataTypes.STRING,
       SubMarketplace: DataTypes.STRING,
-      ActionVersion: DataTypes.INTEGER,
+      ActiveVersion: DataTypes.INTEGER,
       SID: DataTypes.INTEGER,
       UID: DataTypes.STRING,
     },

@@ -1,9 +1,10 @@
 import { useCallback } from 'react';
 import useAxios from 'axios-hooks';
+import some from 'lodash/some';
 import apiEndpoints from '../../../config/api-endpoints';
 import { useAppDispatch } from '../../../hooks';
 import { updateContractTree, clearContractTree } from '../slices';
-import { version } from 'os';
+import util from '../../../util';
 
 export const useContractVersionList = () => {
   const [{ loading }, request ] = useAxios({ url: apiEndpoints.contract.treeVersionList });
@@ -13,6 +14,7 @@ export const useContractVersionList = () => {
     return request({ params: { root } })
       .then((res) => {
         dispatch(updateContractTree({ versionList: res.data }));
+        return res.data;
       });
   }, [request, dispatch]);
 
@@ -43,18 +45,23 @@ export const useContractTree = () => {
       dispatch(clearContractTree());
     } else {
       fetchContractVersionList(saved.root)
-        .then(() => {
-          // todo check valid version
-          dispatch(updateContractTree({ selectedVersion: saved.version }));
-          return fetchContractTree(saved);
+        .then((list) => {
+          if (some(list, item => item.version === saved.version)) {
+            dispatch(updateContractTree({ selectedVersion: saved.version }));
+          }
         });
     }
-  }, [fetchContractVersionList, fetchContractTree, dispatch])
+  }, [fetchContractVersionList, dispatch]);
+
+  const selectVersion  = useCallback((version) => {
+    dispatch(updateContractTree({ selectedVersion: version }));
+  }, [dispatch]);
 
   return {
     loading: loading || vLoading,
     fetchContractTree,
     loadSavedContract,
+    selectVersion,
   };
 };
 

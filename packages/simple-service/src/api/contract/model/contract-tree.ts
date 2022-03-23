@@ -29,7 +29,7 @@ export const getContractVersionList = async ({ root }: { root: number }) => {
     },
     order: [['Version', 'asc']],
   });
-  
+
   const getActiveVersion = ContractRoot.findOne({
     attributes: ['ActiveVersion'],
     where: {
@@ -43,7 +43,7 @@ export const getContractVersionList = async ({ root }: { root: number }) => {
     return {
       version: item.Version,
       type: item.Version_Type,
-      active: item.Version === active?.ActionVersion,
+      active: item.Version === active?.ActiveVersion,
     };
   });
 };
