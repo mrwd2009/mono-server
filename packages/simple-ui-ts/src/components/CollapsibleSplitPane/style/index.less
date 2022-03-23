@@ -9,6 +9,17 @@
     overflow: auto;
     transition: all 0.3s ease-in-out;
 
+    .ant-collapse.ant-collapse-ghost > .ant-collapse-item > .ant-collapse-header {
+      padding-right: 0;
+      padding-left: 0;
+    }
+
+    .ant-collapse-ghost > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
+      padding-top: 0;
+      padding-right: 8px;
+      padding-left: 8px;
+    }
+
     &.left {
       padding-right: @app-ex-content-padding;
 

@@ -1,14 +1,13 @@
-import { FC, memo, useEffect, useState, useMemo } from 'react';
+import { FC, memo, useEffect, useState } from 'react';
 import { Tabs, Collapse, Tooltip } from 'antd';
-import map from 'lodash/map';
 import includes from 'lodash/includes';
 import toLower from 'lodash/toLower';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import Panel from '../../components/Panel';
 import DraggableList from '../../components/DraggableList';
 import { useContractList } from './hooks';
-import { useAppSelector } from '../../hooks';
-import { selectContractList, selectSavedList } from './slices';
+import { useAppSelector, useAppDispatch } from '../../hooks';
+import { selectContractList, selectSavedList, selectSelectedId, updateSelectedId } from './slices';
 
 const template = [
   {
@@ -38,16 +37,17 @@ const formatTransferData = (data: any) => ({
   data: data.key,
 });
 
-const itemKey = (item: any) => item.extraData.contractRoot;
+const itemKey = (item: any) => item.extraData.root;
 
 const filterList = (text: any, item: any) => {
   const labelMatch = includes(toLower(item.label), toLower(text));
-  const rootMatch = includes(`${item.extraData.contractRoot}`, text);
+  const rootMatch = includes(`${item.extraData.root}`, text);
   return labelMatch || rootMatch;
 };
 
 const ContractList: FC = () => {
   const [selectedKey, setSelectedKey] = useState('overview');
+  const dispatch = useAppDispatch();
   const {
     loading,
     fetchList,
@@ -57,17 +57,12 @@ const ContractList: FC = () => {
     fetchList();
   }, [fetchList]);
 
-  const _contractList = useAppSelector(selectContractList);
-  const contractList = useMemo(() => {
-    return map(_contractList, (item: any) => {
-      return {
-        key: item.id,
-        type: 'contract-root',
-        label: item.name,
-        extraData: item,
-      };
-    });
-  }, [_contractList]);
+  const contractList = useAppSelector(selectContractList);
+  const savedList = useAppSelector(selectSavedList);
+
+  const selectedItemKey = useAppSelector(selectSelectedId);
+
+  const handleSelect = (info: any, item: any) => dispatch(updateSelectedId( item && { root: item.extraData.root, version: item.extraData.version }));
 
   return (
     <Panel
@@ -98,7 +93,6 @@ const ContractList: FC = () => {
                 </span>
               }
               key="component"
-              className="collapse-panel-pt-0"
             >
               <DraggableList
                 formatTransferData={formatTransferData}
@@ -116,7 +110,6 @@ const ContractList: FC = () => {
                 </span>
               }
               key="list"
-              className="collapse-panel-pt-0"
             >
               <DraggableList
                 draggable={false}
@@ -127,13 +120,26 @@ const ContractList: FC = () => {
                 maxHeight={400}
                 onSearch={filterList}
                 dataType="Contract"
-                // onSelect={onSelect}
-                selectedKey={''}
+                onSelect={handleSelect}
+                selectedKey={selectedItemKey}
               />
             </Collapse.Panel>
           </Collapse>
         </Tabs.TabPane>
-        <Tabs.TabPane key="saved">saved list</Tabs.TabPane>
+        <Tabs.TabPane key="saved">
+          <DraggableList
+            draggable={false}
+            dataSource={savedList}
+            itemKey={itemKey}
+            search
+            debounce={300}
+            maxHeight={600}
+            onSearch={filterList}
+            dataType="Contract"
+            onSelect={handleSelect}
+            selectedKey={selectedItemKey}
+          />
+        </Tabs.TabPane>
       </Tabs>
     </Panel>
   );

@@ -21,3 +21,14 @@ export const getContractTreeHandler: Middleware[] = [
     context.gateway!.sendJSON!(await contractTreeModel.getContractTree(context.mergedParams));
   },
 ];
+
+export const getContractVersionsHandler: Middleware[] = [
+  validator((Joi) => {
+    return Joi.object({
+      root: Joi.number().integer().required(),
+    });
+  }),
+  async (context) => {
+    context.gateway!.sendJSON!(await contractTreeModel.getContractVersionList(context.mergedParams));
+  },
+];

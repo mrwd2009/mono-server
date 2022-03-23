@@ -2,6 +2,7 @@ import { FC, memo } from 'react';
 import Panel from '../../components/Panel';
 import CollapsibleSplitPane from '../../components/CollapsibleSplitPane';
 import ContractList from './ContractList';
+import ContractTree from './ContractTree';
 
 const Contract: FC = () => {
   return (
@@ -10,7 +11,7 @@ const Contract: FC = () => {
       leftSider={{ content: <ContractList /> }}
       rightSider={{ content: <Panel title="roght">right content</Panel> }}
     >
-      <Panel title="Main">main content</Panel>
+      <ContractTree />
     </CollapsibleSplitPane>
   );
 };

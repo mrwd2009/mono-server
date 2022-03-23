@@ -20,6 +20,8 @@ const imgMap: Record<string, any> = {
   'component-reroute': LineImg,
   'component-charge': ChargeImg,
   'contract-root': ContractImg,
+  'subcontract': GroupImg,
+  'charge': ChargeImg,
 };
 
 const { Search } = Input;
@@ -31,7 +33,7 @@ interface Props {
     label: string;
     timestamp?: string;
   }>;
-  onSelect?: (item: { key: string | number; dataType: string | number | undefined } | null) => void;
+  onSelect?: (item: { key: string | number; dataType: string | number | undefined } | null, def: any) => void;
   dataType?: string;
   selectedKey?: string | number;
   draggable?: boolean;
@@ -115,12 +117,12 @@ class DraggableList extends PureComponent<Props, State> {
       key = itemKey(item);
     }
     if (selectedKey === key) {
-      onSelect!(null);
+      onSelect!(null, null);
     } else {
       onSelect!({
         key,
         dataType,
-      });
+      }, item);
     }
   }
 

@@ -9,5 +9,6 @@ const router = new Router({
 router.get('/list', ctrl.getContractListHandler);
 router.get('/saved-list', ctrl.getSavedNodeListHandler);
 router.post('/tree', ...ctrl.getContractTreeHandler);
+router.get('/tree/version-list', ...ctrl.getContractVersionsHandler);
 
 registerRouter(router);
