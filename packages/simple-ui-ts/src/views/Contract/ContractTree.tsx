@@ -4,13 +4,14 @@ import { PlusOutlined } from '@ant-design/icons';
 import Panel from '../../components/Panel';
 import Empty from '../../components/Empty';
 import { useAppSelector, useAppDispatch } from '../../hooks';
-import { selectSelectedItem, selectContractTree } from './slices';
+import { selectSelectedItem, selectContractTree, selectSelectedId } from './slices';
 import { useContractTree } from './hooks';
 
 const ContractTree: FC = () => {
   const selected = useAppSelector(selectSelectedItem);
   const { loading, loadSavedContract } = useContractTree();
   const tree = useAppSelector(selectContractTree);
+  const selectedRoot = useAppSelector(selectSelectedId);
 
   useEffect(() => {
     loadSavedContract(selected);
@@ -29,11 +30,9 @@ const ContractTree: FC = () => {
   }
 
   return (
-    <Spin spinning={loading}>
-      <Panel title="Main">
-        main
-      </Panel>
-    </Spin>
+    <Panel title={<>{tree.name}<span className="text-secondary text-small">(ID: {selectedRoot})</span></>}>
+      <Spin spinning={loading}>main</Spin>
+    </Panel>
   );
 };
 

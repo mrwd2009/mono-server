@@ -45,6 +45,8 @@ export const { updateContractTree, clearContractTree } = contractTreeSlice.actio
 
 export const selectContractTree = (state: AppRootState) => state.contractTree.tree;
 
+export const selectSelectedVersion = (state: AppRootState) => state.contractTree.selectedVersion;
+
 export const contractTreeReducer = contractTreeSlice.reducer;
 
 export default contractTreeReducer;
