@@ -1,11 +1,5 @@
 import React, { PureComponent, ReactNode } from 'react';
-import {
-  Tooltip,
-  Dropdown,
-  Menu,
-  Input,
-  Button,
-} from 'antd';
+import { Tooltip, Dropdown, Menu, Input, Button } from 'antd';
 import { DownOutlined, UpOutlined, CloseOutlined, SearchOutlined, ReloadOutlined } from '@ant-design/icons';
 import { hierarchy, tree } from 'd3-hierarchy';
 import { select } from 'd3-selection';
@@ -44,53 +38,53 @@ interface Node {
 }
 
 interface Props {
-  dataSource?: Node | null,
+  dataSource?: Node | null;
   contextMenus?: Array<{
-    key: string,
-    label: string,
-    onClick: (node: any) => void,
-    disabled: (data: any) => boolean,
-  }>,
-  showInternalMenu?: boolean,
+    key: string;
+    label: string;
+    onClick: (node: any) => void;
+    disabled: (data: any) => boolean;
+  }>;
+  showInternalMenu?: boolean;
   internalMenuStatus?: {
-    cutDisabled?: (data: any) => boolean,
-    pasteDisabled?: (data: any, extra: any) => boolean,
-  },
-  height?: number | string,
+    cutDisabled?: (data: any) => boolean;
+    pasteDisabled?: (data: any, extra: any) => boolean;
+  };
+  height?: number | string;
   width?: number | string;
   minHeight?: number | string;
   defaultOptions?: {
-    hasConditionalLink: boolean,
-    hasContextMenu: boolean,
-    hasRerouteNode: boolean,
-  },
+    hasConditionalLink: boolean;
+    hasContextMenu: boolean;
+    hasRerouteNode: boolean;
+  };
   /** Callback for reparent and drop. */
-  onDrop?: (event: any) => void | Promise<void>,
+  onDrop?: (event: any) => void | Promise<void>;
   /** Callback for select node. */
-  onSelect?:(event: any) => void,
+  onSelect?: (event: any) => void;
   /** Callback for select node link. */
-  onSelectLink?: (event: any) => void,
+  onSelectLink?: (event: any) => void;
   /** Function to get node key. */
-  nodeKey?: (event: any) => void,
+  nodeKey?: (event: any) => void;
   /** determine whether display node and related link. */
-  nodeVisible?: (event: any) => boolean,
+  nodeVisible?: (event: any) => boolean;
   /** add custom class like { 'class a': function } */
-  nodeClasses?: any,
+  nodeClasses?: any;
   /** Selected node key. */
-  selectedKey?: number | string,
+  selectedKey?: number | string;
   /** Node which is displayed on page center at beginning. */
-  defaultCenteredKey?: number,
+  defaultCenteredKey?: number;
   /** Readonly status. */
-  readonly?: boolean,
+  readonly?: boolean;
   /** Only show empty tree, accept external drop. */
-  placeholderMode?: boolean,
+  placeholderMode?: boolean;
   /** Add custom toolbar button at top right corner. */
   toolbar?: Array<{
-    key: string
-    icon: ReactNode,
-    onClick: (event: any) => void,
-    title: string,
-  }>,
+    key: string;
+    icon: ReactNode;
+    onClick: (event: any) => void;
+    title: string;
+  }>;
   className?: string;
 }
 
@@ -127,14 +121,17 @@ class ModelTree extends PureComponent<Props, any> {
   constructor(props: Props) {
     super(props);
     const { defaultOptions } = props;
-    this.defaultOptions = assign({
-      // Remove hover style and click logic, if tree don't have conditional link.
-      hasConditionalLink: false,
-      // Remove unused contextmenu event, if tree don't need any menu.
-      hasContextMenu: true,
-      // Remove unused circle element, if tree don't have reroute node.
-      hasRerouteNode: true,
-    }, defaultOptions);
+    this.defaultOptions = assign(
+      {
+        // Remove hover style and click logic, if tree don't have conditional link.
+        hasConditionalLink: false,
+        // Remove unused contextmenu event, if tree don't need any menu.
+        hasContextMenu: true,
+        // Remove unused circle element, if tree don't have reroute node.
+        hasRerouteNode: true,
+      },
+      defaultOptions,
+    );
     // svg element
     this.svgRef = React.createRef();
     // input element for search function.
@@ -286,12 +283,8 @@ class ModelTree extends PureComponent<Props, any> {
     this.updateModelTreeState();
     this.renderModelTree();
 
-    const {
-      defaultCenteredKey,
-    } = this.props;
-    const {
-      duration,
-    } = this.transition;
+    const { defaultCenteredKey } = this.props;
+    const { duration } = this.transition;
     if (defaultCenteredKey) {
       // wait node animation stopped, then change target node position into center.
       this.defaultCenteredTimer = setTimeout(() => {
@@ -313,21 +306,13 @@ class ModelTree extends PureComponent<Props, any> {
   }
 
   componentDidUpdate(prevProps: any, prevState: any) {
-    const {
-      dataSource: prevDataSource,
-      selectedKey: prevSelectedKey,
-    } = prevProps;
-    const {
-      searchVisible: prevSearchVisible,
-    } = prevState;
+    const { dataSource: prevDataSource, selectedKey: prevSelectedKey } = prevProps;
+    const { searchVisible: prevSearchVisible } = prevState;
 
     const { dataSource, selectedKey } = this.props;
     const { searchVisible } = this.state;
     // focus search input after input display.
-    if (searchVisible
-      && searchVisible !== prevSearchVisible
-      && this.searchInputRef.current
-    ) {
+    if (searchVisible && searchVisible !== prevSearchVisible && this.searchInputRef.current) {
       this.searchInputRef.current.focus();
     }
     // render tree after dataSource update.
@@ -335,11 +320,7 @@ class ModelTree extends PureComponent<Props, any> {
       const prevRoot = this.root;
       this.updateModelTreeState();
       const currentRoot = this.root;
-      if (
-        prevRoot
-        && currentRoot
-        && this.getNodeKey(prevRoot) === this.getNodeKey(currentRoot)
-      ) {
+      if (prevRoot && currentRoot && this.getNodeKey(prevRoot) === this.getNodeKey(currentRoot)) {
         // if refresh same model tree, don't reset
         this.renderModelTree(false);
       } else {
@@ -359,8 +340,7 @@ class ModelTree extends PureComponent<Props, any> {
   addDraggingClass() {
     const { draggingClass, containerClass } = this.classMap;
     const svg = select(this.svgRef.current);
-    svg.select(`.${containerClass}`)
-      .classed(draggingClass, true);
+    svg.select(`.${containerClass}`).classed(draggingClass, true);
   }
 
   /**
@@ -369,8 +349,7 @@ class ModelTree extends PureComponent<Props, any> {
   removeDraggingClass() {
     const { draggingClass, containerClass } = this.classMap;
     const svg = select(this.svgRef.current);
-    svg.select(`.${containerClass}`)
-      .classed(draggingClass, false);
+    svg.select(`.${containerClass}`).classed(draggingClass, false);
   }
 
   /**
@@ -379,8 +358,7 @@ class ModelTree extends PureComponent<Props, any> {
   removeDropWantedClass() {
     const { dropWantedClass, nodeClass } = this.classMap;
     const svg = select(this.svgRef.current);
-    svg.selectAll(`.${nodeClass}.${dropWantedClass}`)
-      .classed(dropWantedClass, false);
+    svg.selectAll(`.${nodeClass}.${dropWantedClass}`).classed(dropWantedClass, false);
   }
 
   /**
@@ -411,18 +389,14 @@ class ModelTree extends PureComponent<Props, any> {
    * @param {Event} nativeEvent native dragover event.
    */
   handleNativeDragOver = (nativeEvent: any) => {
-    const {
-      nodeClass,
-      dropWantedClass,
-    } = this.classMap;
+    const { nodeClass, dropWantedClass } = this.classMap;
     const { target } = nativeEvent;
     const $target = select(target);
     const $parent = select(target.parentNode);
     // if dragover event trigger on tree node or tree node children.
     if ($target.classed(nodeClass) || $parent.classed(nodeClass)) {
       // if target tree node don't have dropWantedClass, add it.
-      if (!$target.classed(dropWantedClass)
-        && !$parent.classed(dropWantedClass)) {
+      if (!$target.classed(dropWantedClass) && !$parent.classed(dropWantedClass)) {
         this.removeDropWantedClass();
         if ($target.classed(nodeClass)) {
           $target.classed(dropWantedClass, true);
@@ -442,9 +416,7 @@ class ModelTree extends PureComponent<Props, any> {
    * @param {Event} nativeEvent native dragend event.
    */
   handleNativeDrop = (nativeEvent: any) => {
-    const {
-      nodeClass,
-    } = this.classMap;
+    const { nodeClass } = this.classMap;
     const { onDrop } = this.props;
     this.removeDraggingClass();
     this.removeDropWantedClass();
@@ -490,16 +462,18 @@ class ModelTree extends PureComponent<Props, any> {
    * Get tree toolbar element.
    */
   generateToolbar() {
-    const {
-      toolbar,
-    } = this.props;
+    const { toolbar } = this.props;
     const { resetVisible } = this.state;
     let resetButton = null;
 
     if (resetVisible) {
       resetButton = (
         <Tooltip title="Reset Position">
-          <Button icon={<ReloadOutlined />} size="small" onClick={() => this.resetZoom()} />
+          <Button
+            icon={<ReloadOutlined />}
+            size="small"
+            onClick={() => this.resetZoom()}
+          />
         </Tooltip>
       );
     }
@@ -508,13 +482,18 @@ class ModelTree extends PureComponent<Props, any> {
       <div className="model-tree-toolbar">
         {this.generateSearchElement()}
         {resetButton}
-        {
-          map(toolbar, item => (
-            <Tooltip title={item.title} key={item.key}>
-              <Button icon={item.icon} size="small" onClick={item.onClick} />
-            </Tooltip>
-          ))
-        }
+        {map(toolbar, (item) => (
+          <Tooltip
+            title={item.title}
+            key={item.key}
+          >
+            <Button
+              icon={item.icon}
+              size="small"
+              onClick={item.onClick}
+            />
+          </Tooltip>
+        ))}
       </div>
     );
   }
@@ -528,14 +507,27 @@ class ModelTree extends PureComponent<Props, any> {
     if (!searchVisible) {
       return (
         <Tooltip title="Search">
-          <Button icon={<SearchOutlined />} size="small" onClick={this.openSearch} />
+          <Button
+            icon={<SearchOutlined />}
+            size="small"
+            onClick={this.openSearch}
+          />
         </Tooltip>
       );
     }
     const addons = [
-      <DownOutlined key="down" onClick={this.searchNext} />,
-      <UpOutlined key="up" onClick={this.searchPrevious} />,
-      <CloseOutlined key="close" onClick={this.closeSearch} />,
+      <DownOutlined
+        key="down"
+        onClick={this.searchNext}
+      />,
+      <UpOutlined
+        key="up"
+        onClick={this.searchPrevious}
+      />,
+      <CloseOutlined
+        key="close"
+        onClick={this.closeSearch}
+      />,
     ];
     return (
       <Input
@@ -573,8 +565,7 @@ class ModelTree extends PureComponent<Props, any> {
     const nodes = this.getSearchNodes();
     const svg = select(this.svgRef.current);
     // clear searched node class.
-    svg.selectAll(`.${searchNodeClass}`)
-      .classed(searchNodeClass, false);
+    svg.selectAll(`.${searchNodeClass}`).classed(searchNodeClass, false);
 
     if (nodes.length) {
       // initial search, focus first found node.
@@ -599,7 +590,8 @@ class ModelTree extends PureComponent<Props, any> {
 
       const currentNode = nodes[this.searchCursor];
       // add style to filtered node.
-      const currentNodeEle = svg.selectAll(`.${nodeClass}`)
+      const currentNodeEle = svg
+        .selectAll(`.${nodeClass}`)
         .filter((data: any) => data.data.id === currentNode.data.id)
         .classed(searchNodeClass, true);
       // filtered node translate attribute.
@@ -609,11 +601,7 @@ class ModelTree extends PureComponent<Props, any> {
 
       // get node coordinate on svg coordinate system
       const nodeViewportPos = {
-        x: (
-          transform.x
-          + (nodePos.x + nodeSize.width / 2 - treeOffset.y) * transform.k
-          + treeOffset.y
-        ),
+        x: transform.x + (nodePos.x + nodeSize.width / 2 - treeOffset.y) * transform.k + treeOffset.y,
         y: transform.y + (nodePos.y - treeOffset.x) * transform.k + treeOffset.x,
       };
       const svgRect = svg.node().getBoundingClientRect();
@@ -628,9 +616,7 @@ class ModelTree extends PureComponent<Props, any> {
       const yOffset = targetPos.y - nodeViewportPos.y;
 
       // svg transform information if we want to move node to target position.
-      const newTransform = zoomIdentity
-        .translate(transform.x + xOffset, transform.y + yOffset)
-        .scale(transform.k);
+      const newTransform = zoomIdentity.translate(transform.x + xOffset, transform.y + yOffset).scale(transform.k);
 
       svg
         .transition()
@@ -639,7 +625,7 @@ class ModelTree extends PureComponent<Props, any> {
     }
     // if we can't find any matched node, show an alert message.
     if (this.searchText && !nodes.length && warning) {
-      util.showWarning(`Unable to find "${this.searchText}".`)
+      util.showWarning(`Unable to find "${this.searchText}".`);
     }
   }
 
@@ -718,22 +704,15 @@ class ModelTree extends PureComponent<Props, any> {
     const { searchNodeClass } = this.classMap;
     this.searchNodes = [];
     this.searchCursor = -1;
-    select(this.svgRef.current)
-      .selectAll(`.${searchNodeClass}`)
-      .classed(searchNodeClass, false);
+    select(this.svgRef.current).selectAll(`.${searchNodeClass}`).classed(searchNodeClass, false);
   }
 
   /**
    * Get context menu item.
    */
   generateContextMenu() {
-    const {
-      contextNode,
-    } = this.state;
-    const {
-      contextMenus = [],
-      showInternalMenu = true,
-    } = this.props;
+    const { contextNode } = this.state;
+    const { contextMenus = [], showInternalMenu = true } = this.props;
 
     // custom menu
     let disabled;
@@ -758,8 +737,20 @@ class ModelTree extends PureComponent<Props, any> {
     if (showInternalMenu) {
       // internal cut and paste menu.
       internalMenus = [
-        <Item key="model-tree-cut" disabled={this.isCutDisabled()} onClick={this.handleCutMenu}>Cut</Item>,
-        <Item key="model-tree-paste" disabled={this.isPasteDisabled()} onClick={this.handlePasteMenu}>Paste</Item>,
+        <Item
+          key="model-tree-cut"
+          disabled={this.isCutDisabled()}
+          onClick={this.handleCutMenu}
+        >
+          Cut
+        </Item>,
+        <Item
+          key="model-tree-paste"
+          disabled={this.isPasteDisabled()}
+          onClick={this.handlePasteMenu}
+        >
+          Paste
+        </Item>,
       ];
     }
 
@@ -776,12 +767,8 @@ class ModelTree extends PureComponent<Props, any> {
    * @return {boolean}
    */
   isCutDisabled = () => {
-    const {
-      internalMenuStatus = { },
-    } = this.props;
-    const {
-      contextNode,
-    } = this.state;
+    const { internalMenuStatus = {} } = this.props;
+    const { contextNode } = this.state;
 
     const { cutDisabled } = internalMenuStatus;
 
@@ -795,10 +782,7 @@ class ModelTree extends PureComponent<Props, any> {
    * Cut menu handler.
    */
   handleCutMenu = () => {
-    const {
-      contextNode,
-      cutNode,
-    } = this.state;
+    const { contextNode, cutNode } = this.state;
     if (contextNode !== cutNode) {
       this.setState({
         cutNode: contextNode,
@@ -819,9 +803,7 @@ class ModelTree extends PureComponent<Props, any> {
     const nodeElements = select(this.svgRef.current).selectAll(`.${nodeClass}`);
 
     this.removeNodeCutMarks();
-    nodeElements
-      .filter((data: any) => includes(ids, data.data.id))
-      .classed(cutNodeClass, true);
+    nodeElements.filter((data: any) => includes(ids, data.data.id)).classed(cutNodeClass, true);
   }
 
   /**
@@ -830,8 +812,7 @@ class ModelTree extends PureComponent<Props, any> {
   removeNodeCutMarks() {
     const { cutNodeClass } = this.classMap;
     const svg = select(this.svgRef.current);
-    svg.selectAll(`.${cutNodeClass}`)
-      .classed(cutNodeClass, false);
+    svg.selectAll(`.${cutNodeClass}`).classed(cutNodeClass, false);
   }
 
   /**
@@ -852,13 +833,8 @@ class ModelTree extends PureComponent<Props, any> {
    * Check paste menu disabled status.
    */
   isPasteDisabled = () => {
-    const {
-      internalMenuStatus = { },
-    } = this.props;
-    const {
-      cutNode,
-      contextNode,
-    } = this.state;
+    const { internalMenuStatus = {} } = this.props;
+    const { cutNode, contextNode } = this.state;
 
     const { pasteDisabled } = internalMenuStatus;
 
@@ -879,10 +855,7 @@ class ModelTree extends PureComponent<Props, any> {
   handlePasteMenu = () => {
     this.clearCutNode();
     const { onDrop } = this.props;
-    const {
-      cutNode,
-      contextNode,
-    } = this.state;
+    const { cutNode, contextNode } = this.state;
     if (onDrop) {
       const result = onDrop({
         type: 'internal',
@@ -934,7 +907,8 @@ class ModelTree extends PureComponent<Props, any> {
     const { imageClipID } = this.defsIDMap;
     const { image, borderRadius } = this.sizeMap;
     // clipPath, in order to add border radius for image.
-    svg.append('defs')
+    svg
+      .append('defs')
       .append('clipPath')
       .attr('id', imageClipID)
       .append('rect')
@@ -945,14 +919,11 @@ class ModelTree extends PureComponent<Props, any> {
       .attr('rx', borderRadius)
       .attr('ry', borderRadius);
     // container for links and nodes.
-    const container = svg.append('g')
-      .classed(containerClass, true);
+    const container = svg.append('g').classed(containerClass, true);
     // container for links.
-    container.append('g')
-      .classed(linkContainerClass, true);
+    container.append('g').classed(linkContainerClass, true);
     // container for nodes.
-    container.append('g')
-      .classed(nodeContainerClass, true);
+    container.append('g').classed(nodeContainerClass, true);
   }
 
   /**
@@ -994,9 +965,7 @@ class ModelTree extends PureComponent<Props, any> {
       .on('end', (event) => {
         container.classed(zoomingClass, false);
       });
-    svg
-      .call(zoomBehavior)
-      .on('dblclick.zoom', null); // remove double click scale behavior.
+    svg.call(zoomBehavior).on('dblclick.zoom', null); // remove double click scale behavior.
     this.zoom = zoomBehavior;
   }
 
@@ -1073,36 +1042,36 @@ class ModelTree extends PureComponent<Props, any> {
   removeDraggedDescendants(children: any) {
     const { duration } = this.transition;
     let ids: any = [];
-    forEach(children, child => ids.push(child.data.id));
+    forEach(children, (child) => ids.push(child.data.id));
 
     const { containerClass, nodeClass, linkClass } = this.classMap;
     const svg = select(this.svgRef.current);
     const container = svg.select(`.${containerClass}`);
     // keep dragged node existing.
     const removedNodeIds = slice(ids, 1);
-    const nodes = container.selectAll(`.${nodeClass}`)
-      .filter((data: any) => includes(removedNodeIds, data.data.id));
+    const nodes = container.selectAll(`.${nodeClass}`).filter((data: any) => includes(removedNodeIds, data.data.id));
     // remove all related link.
-    const links = container.selectAll(`.${linkClass}`)
-      .filter((data: any) => includes(ids, data.target.data.id));
+    const links = container.selectAll(`.${linkClass}`).filter((data: any) => includes(ids, data.target.data.id));
 
     // node transition end position.
     const [x, y] = this.getOriginPos();
-    const linkGenerator = linkHorizontal().x((d: any) => d.y).y((d: any) => d.x);
+    const linkGenerator = linkHorizontal()
+      .x((d: any) => d.y)
+      .y((d: any) => d.x);
     const initPath = linkGenerator({ source: { x, y }, target: { x, y } } as any);
     const initTransform = `translate(${y},${x})`;
 
     nodes
       .lower()
       .transition()
-      .duration(duration / 2)// make duration shorter to avoid drop at removed node.
+      .duration(duration / 2) // make duration shorter to avoid drop at removed node.
       .attr('transform', initTransform)
       .remove();
 
     links
       .lower()
       .transition()
-      .duration(duration / 2)// make duration shorter to avoid drop at removed node.
+      .duration(duration / 2) // make duration shorter to avoid drop at removed node.
       .attr('d', initPath)
       .remove();
   }
@@ -1114,8 +1083,7 @@ class ModelTree extends PureComponent<Props, any> {
    */
   dragNode = (node: any, event: any, data: any) => {
     const maxDis = this.dragDistance;
-    if (Math.abs(this.dragStartPos.x - event.x) < maxDis
-      && Math.abs(this.dragStartPos.y - event.y) < maxDis) {
+    if (Math.abs(this.dragStartPos.x - event.x) < maxDis && Math.abs(this.dragStartPos.y - event.y) < maxDis) {
       return;
     }
     if (!this.startDrag) {
@@ -1134,11 +1102,10 @@ class ModelTree extends PureComponent<Props, any> {
     if (dx || dy) {
       const { x, y } = util.getTranslateAttr(node);
       treeNode
-        .raise()// let dragged node above other nodes.
+        .raise() // let dragged node above other nodes.
         .attr('transform', `translate(${x + dx},${y + dy})`);
       const overlapped = this.getOverlappedNode(node);
-      container.selectAll(`.${nodeClass}.${dropWantedClass}`)
-        .classed(dropWantedClass, false);
+      container.selectAll(`.${nodeClass}.${dropWantedClass}`).classed(dropWantedClass, false);
       if (overlapped) {
         // highlight overlapped node.
         select(overlapped.node).classed(dropWantedClass, true);
@@ -1154,19 +1121,12 @@ class ModelTree extends PureComponent<Props, any> {
    */
   endDragNode = (node: any, data: any) => {
     const overlapped = this.getOverlappedNode(node);
-    const {
-      containerClass,
-      draggingClass,
-      draggedClass,
-      nodeClass,
-      dropWantedClass,
-    } = this.classMap;
+    const { containerClass, draggingClass, draggedClass, nodeClass, dropWantedClass } = this.classMap;
     const { onDrop } = this.props;
     const svg = select(this.svgRef.current);
     const container = svg.select(`.${containerClass}`);
     container.classed(draggingClass, false);
-    container.selectAll(`.${nodeClass}.${dropWantedClass}`)
-      .classed(dropWantedClass, false);
+    container.selectAll(`.${nodeClass}.${dropWantedClass}`).classed(dropWantedClass, false);
     select(node).classed(draggedClass, false);
     if (this.startDrag) {
       if (overlapped && onDrop) {
@@ -1179,8 +1139,7 @@ class ModelTree extends PureComponent<Props, any> {
           this.renderModelTree(false);
         } else if (result && result.catch) {
           // Rejected promise means cancel drop operation.
-          result
-            .catch(() => this.renderModelTree(false));
+          result.catch(() => this.renderModelTree(false));
         }
         // otherwise do nothing, because drop operation is accepted and data will refresh,
         // then tree will refresh.
@@ -1203,14 +1162,10 @@ class ModelTree extends PureComponent<Props, any> {
     if (transform && transform !== zoomIdentity.toString()) {
       if (hard) {
         // reset immediately
-        svg
-          .call(this.zoom.transform, zoomIdentity);
+        svg.call(this.zoom.transform, zoomIdentity);
       } else {
         // has an animation.
-        svg
-          .transition()
-          .duration(duration)
-          .call(this.zoom.transform, zoomIdentity);
+        svg.transition().duration(duration).call(this.zoom.transform, zoomIdentity);
       }
     }
   };
@@ -1232,11 +1187,7 @@ class ModelTree extends PureComponent<Props, any> {
       this.links = [];
       return;
     }
-    const {
-      node: nodeSize,
-      nodeGap,
-      treeOffset,
-    } = this.sizeMap;
+    const { node: nodeSize, nodeGap, treeOffset } = this.sizeMap;
     const treeLayout = tree()
       .separation(() => 1) // Reduce subtree gap size.
       .nodeSize([nodeSize.height + nodeGap.y, nodeSize.width + nodeGap.x]);
@@ -1281,45 +1232,36 @@ class ModelTree extends PureComponent<Props, any> {
    */
   renderLinks() {
     const svg = select(this.svgRef.current);
-    const {
-      nodeVisible = returnTrue,
-    } = this.props;
-    const {
-      containerClass,
-      linkContainerClass,
-      linkClass,
-      hasConditionClass,
-    } = this.classMap;
+    const { nodeVisible = returnTrue } = this.props;
+    const { containerClass, linkContainerClass, linkClass, hasConditionClass } = this.classMap;
 
-    const {
-      link: linkSize,
-    } = this.sizeMap;
+    const { link: linkSize } = this.sizeMap;
     const { duration } = this.transition;
     const { hasConditionalLink } = this.defaultOptions;
 
     const container = svg.select(`.${containerClass} .${linkContainerClass}`);
 
     const linkElements = container.selectAll(`.${linkClass}`);
-    const updateLinks: any = linkElements.data(this.links, (link: any) => `${link.source.data.id}-${link.target.data.id}`);
+    const updateLinks: any = linkElements.data(
+      this.links,
+      (link: any) => `${link.source.data.id}-${link.target.data.id}`,
+    );
 
     const [x, y] = this.getOriginPos();
-    const linkGenerator = linkHorizontal().x((d: any) => d.y).y((d: any) => d.x);
+    const linkGenerator = linkHorizontal()
+      .x((d: any) => d.y)
+      .y((d: any) => d.x);
     const initPath = linkGenerator({ source: { x, y }, target: { x, y } } as any);
 
-    const enterLinks = updateLinks.enter()
-      .append('path')
-      .classed(linkClass, true)
-      .attr('d', initPath);
+    const enterLinks = updateLinks.enter().append('path').classed(linkClass, true).attr('d', initPath);
 
     if (hasConditionalLink) {
-      enterLinks
-        .on('click', this.selectLink);
+      enterLinks.on('click', this.selectLink);
     }
     const mergedLinks = enterLinks.merge(updateLinks);
 
     if (hasConditionalLink) {
-      mergedLinks
-        .classed(hasConditionClass, (d: any) => d.target.data.conditional === true);
+      mergedLinks.classed(hasConditionClass, (d: any) => d.target.data.conditional === true);
     }
 
     mergedLinks
@@ -1330,13 +1272,7 @@ class ModelTree extends PureComponent<Props, any> {
       .duration(duration)
       .attr('d', linkGenerator);
 
-    updateLinks
-      .exit()
-      .lower()
-      .transition()
-      .duration(duration)
-      .attr('d', initPath)
-      .remove();
+    updateLinks.exit().lower().transition().duration(duration).attr('d', initPath).remove();
   }
 
   selectLink = (event: any, data: any) => {
@@ -1366,24 +1302,12 @@ class ModelTree extends PureComponent<Props, any> {
       nodeTextClass,
       nodeCircleClass,
     } = this.classMap;
-    const {
-      node: nodeSize,
-      image: imageSize,
-      text: textSize,
-      borderRadius,
-      link: linkSize,
-    } = this.sizeMap;
+    const { node: nodeSize, image: imageSize, text: textSize, borderRadius, link: linkSize } = this.sizeMap;
     const { imageClipID } = this.defsIDMap;
     const { duration } = this.transition;
     const { reroute: rerouteType } = this.nodeTypeMap;
-    const {
-      hasContextMenu,
-      hasRerouteNode,
-    } = this.defaultOptions;
-    const {
-      nodeClasses = null,
-      nodeVisible = returnTrue,
-    } = this.props;
+    const { hasContextMenu, hasRerouteNode } = this.defaultOptions;
+    const { nodeClasses = null, nodeVisible = returnTrue } = this.props;
 
     const container = svg.select(`.${containerClass} .${nodeContainerClass}`);
 
@@ -1407,8 +1331,7 @@ class ModelTree extends PureComponent<Props, any> {
       .call(this.drag);
     // optimization for tree, if tree don't have context menu.
     if (hasContextMenu) {
-      enterNodes
-        .on('contextmenu', this.handleNodeContextMenu);
+      enterNodes.on('contextmenu', this.handleNodeContextMenu);
     }
 
     enterNodes
@@ -1427,11 +1350,7 @@ class ModelTree extends PureComponent<Props, any> {
       .attr('x', imageSize.x)
       .attr('y', imageSize.y)
       .attr('clip-path', `url(#${imageClipID})`);
-    enterNodes
-      .append('text')
-      .attr('x', textSize.x)
-      .attr('y', textSize.y)
-      .classed(nodeTextClass, true);
+    enterNodes.append('text').attr('x', textSize.x).attr('y', textSize.y).classed(nodeTextClass, true);
     // optimization for tree, if tree don't have reroute node.
     if (hasRerouteNode) {
       enterNodes
@@ -1454,8 +1373,7 @@ class ModelTree extends PureComponent<Props, any> {
       .classed(hiddenNodeClass, (node: any) => node.data.hidden);
 
     if (hasRerouteNode) {
-      mergedNodes
-        .classed(rerouteNodeClass, (node: any) => node.data.type === rerouteType);
+      mergedNodes.classed(rerouteNodeClass, (node: any) => node.data.type === rerouteType);
     }
     // The purpose for follow code is to propagate updated data on 'rect' and 'circle'.
     // Otherwise the datum() for 'rect' and 'circle' will return initial data.
@@ -1463,10 +1381,10 @@ class ModelTree extends PureComponent<Props, any> {
     mergedNodes.select('rect');
     mergedNodes.select('circle');
 
-    mergedNodes.select('image')
-      .attr('xlink:href', (node: any) => (this.imageMap[node.data.type] || null));
+    mergedNodes.select('image').attr('xlink:href', (node: any) => this.imageMap[node.data.type] || null);
 
-    mergedNodes.select('text')
+    mergedNodes
+      .select('text')
       .text((node: any) => node.data.name)
       .text(function (this: any, node: any) {
         const result = util.measureSvgText(this, node.data.name, textSize.width);
@@ -1486,13 +1404,7 @@ class ModelTree extends PureComponent<Props, any> {
       .duration(duration)
       .attr('transform', (node: any) => `translate(${node.y},${node.x})`);
 
-    updateNodes
-      .exit()
-      .lower()
-      .transition()
-      .duration(duration)
-      .attr('transform', initTransform)
-      .remove();
+    updateNodes.exit().lower().transition().duration(duration).attr('transform', initTransform).remove();
   }
 
   /**
@@ -1531,21 +1443,18 @@ class ModelTree extends PureComponent<Props, any> {
   updateSelectedNode() {
     const { selectedKey } = this.props;
     const svg = select(this.svgRef.current);
-    const {
-      nodeClass,
-      selectedClass,
-    } = this.classMap;
+    const { nodeClass, selectedClass } = this.classMap;
 
     // clear selected node style.
-    svg.selectAll(`.${nodeClass}.${selectedClass}`)
-      .classed(selectedClass, false);
+    svg.selectAll(`.${nodeClass}.${selectedClass}`).classed(selectedClass, false);
 
     if (selectedKey === null) {
       return;
     }
 
-    svg.selectAll(`.${nodeClass}`)
-      .filter(node => selectedKey === this.getNodeKey(node))
+    svg
+      .selectAll(`.${nodeClass}`)
+      .filter((node) => selectedKey === this.getNodeKey(node))
       .classed(selectedClass, true);
   }
 
@@ -1554,21 +1463,18 @@ class ModelTree extends PureComponent<Props, any> {
     if (!hasConditionalLink) {
       return;
     }
-    const {
-      linkClass,
-      selectedClass,
-    } = this.classMap;
+    const { linkClass, selectedClass } = this.classMap;
     const { selectedKey } = this.props;
     const svg = select(this.svgRef.current);
 
-    svg.selectAll(`.${linkClass}.${selectedClass}`)
-      .classed(selectedClass, false);
+    svg.selectAll(`.${linkClass}.${selectedClass}`).classed(selectedClass, false);
 
     if (!selectedKey) {
       return;
     }
-    svg.selectAll(`.${linkClass}`)
-      .filter(data => selectedKey === this.getLinkKey(data))
+    svg
+      .selectAll(`.${linkClass}`)
+      .filter((data) => selectedKey === this.getLinkKey(data))
       .classed(selectedClass, true);
   }
 
@@ -1609,10 +1515,7 @@ class ModelTree extends PureComponent<Props, any> {
    * @param node
    */
   handleNodeContextMenu = (event: any, node: any) => {
-    const {
-      contextMenus = [],
-      showInternalMenu = true,
-    } = this.props;
+    const { contextMenus = [], showInternalMenu = true } = this.props;
     // display context menu, if tree have menu to display.
     if (contextMenus.length || showInternalMenu) {
       this.setState({
@@ -1628,7 +1531,9 @@ class ModelTree extends PureComponent<Props, any> {
    * @return {{area: Number, data: Node, node: element}} overlapped node.
    */
   getOverlappedNode(sourceNode: any) {
-    const { node: { width, height } } = this.sizeMap;
+    const {
+      node: { width, height },
+    } = this.sizeMap;
     const { nodeClass } = this.classMap;
     const svg = select(this.svgRef.current);
     const nodes = svg.selectAll(`.${nodeClass}`);
@@ -1689,15 +1594,8 @@ class ModelTree extends PureComponent<Props, any> {
   }
 
   render() {
-    const {
-      tooltip,
-      tooltipVisible,
-      tooltipAlign,
-      menuVisible,
-    } = this.state;
-    const {
-      svg: svgSize,
-    } = this.sizeMap;
+    const { tooltip, tooltipVisible, tooltipAlign, menuVisible } = this.state;
+    const { svg: svgSize } = this.sizeMap;
 
     let {
       width = svgSize.width,
@@ -1710,12 +1608,10 @@ class ModelTree extends PureComponent<Props, any> {
 
     if (minHeight) {
       height = '100%';
-      className += ' resizable-vertical '
+      className += ' resizable-vertical ';
     }
 
-    const {
-      hasContextMenu,
-    } = this.defaultOptions;
+    const { hasContextMenu } = this.defaultOptions;
 
     let svgProps = {};
 
@@ -1764,7 +1660,10 @@ class ModelTree extends PureComponent<Props, any> {
       toolbar = this.generateToolbar();
     }
     return (
-      <div className={`model-tree-wrapper ${className}`} style={{ minHeight, height: minHeight }}>
+      <div
+        className={`model-tree-wrapper ${className}`}
+        style={{ minHeight, height: minHeight }}
+      >
         {toolbar}
         {svgElement}
       </div>

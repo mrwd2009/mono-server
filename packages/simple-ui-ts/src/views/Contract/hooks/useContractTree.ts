@@ -7,16 +7,18 @@ import { updateContractTree, clearContractTree } from '../slices';
 import util from '../../../util';
 
 export const useContractVersionList = () => {
-  const [{ loading }, request ] = useAxios({ url: apiEndpoints.contract.treeVersionList });
+  const [{ loading }, request] = useAxios({ url: apiEndpoints.contract.treeVersionList });
   const dispatch = useAppDispatch();
 
-  const fetchContractVersionList = useCallback((root: number) => {
-    return request({ params: { root } })
-      .then((res) => {
+  const fetchContractVersionList = useCallback(
+    (root: number) => {
+      return request({ params: { root } }).then((res) => {
         dispatch(updateContractTree({ versionList: res.data }));
         return res.data;
       });
-  }, [request, dispatch]);
+    },
+    [request, dispatch],
+  );
 
   return {
     loading,
@@ -25,37 +27,41 @@ export const useContractVersionList = () => {
 };
 
 export const useContractTree = () => {
-  const [{ loading }, request ] = useAxios({ url: apiEndpoints.contract.tree, method: 'post' });
+  const [{ loading }, request] = useAxios({ url: apiEndpoints.contract.tree, method: 'post' });
   const dispatch = useAppDispatch();
 
-  const fetchContractTree = useCallback((data) => {
-    return request({ data })
-      .then((res) => {
+  const fetchContractTree = useCallback(
+    (data) => {
+      return request({ data }).then((res) => {
         dispatch(updateContractTree({ tree: res.data }));
       });
-  }, [request, dispatch]);
+    },
+    [request, dispatch],
+  );
 
-  const {
-    loading: vLoading,
-    fetchContractVersionList
-  } = useContractVersionList();
+  const { loading: vLoading, fetchContractVersionList } = useContractVersionList();
 
-  const loadSavedContract = useCallback((saved: { root: number, version: number } | null) => {
-    if (!saved) {
-      dispatch(clearContractTree());
-    } else {
-      fetchContractVersionList(saved.root)
-        .then((list) => {
-          if (some(list, item => item.version === saved.version)) {
+  const loadSavedContract = useCallback(
+    (saved: { root: number; version: number } | null) => {
+      if (!saved) {
+        dispatch(clearContractTree());
+      } else {
+        fetchContractVersionList(saved.root).then((list) => {
+          if (some(list, (item) => item.version === saved.version)) {
             dispatch(updateContractTree({ selectedVersion: saved.version }));
           }
         });
-    }
-  }, [fetchContractVersionList, dispatch]);
+      }
+    },
+    [fetchContractVersionList, dispatch],
+  );
 
-  const selectVersion  = useCallback((version) => {
-    dispatch(updateContractTree({ selectedVersion: version }));
-  }, [dispatch]);
+  const selectVersion = useCallback(
+    (version) => {
+      dispatch(updateContractTree({ selectedVersion: version }));
+    },
+    [dispatch],
+  );
 
   return {
     loading: loading || vLoading,

@@ -1,13 +1,13 @@
 import { FC, memo, DragEventHandler, DragEvent, useState } from 'react';
 import { Empty, EmptyProps } from 'antd';
 import classNames from 'classnames';
-import { ReactComponent as EmptyImg} from '../../assets/images/empty.svg';
+import { ReactComponent as EmptyImg } from '../../assets/images/empty.svg';
 
 interface Props extends EmptyProps {
-    onDrop?: DragEventHandler;
+  onDrop?: DragEventHandler;
 }
 
-const CustomEmpty:FC<Props> = ({ onDrop, description, imageStyle, className, ...restProps }) => {
+const CustomEmpty: FC<Props> = ({ onDrop, description, imageStyle, className, ...restProps }) => {
   const [dragging, setDragging] = useState(false);
   const classStr = classNames('app-ex-empty', className, {
     dragging,
@@ -32,8 +32,16 @@ const CustomEmpty:FC<Props> = ({ onDrop, description, imageStyle, className, ...
     };
   }
   return (
-    <div {...props} className={classStr}>
-      <Empty {...restProps} image={<EmptyImg />} description={description} imageStyle={imageStyle} />
+    <div
+      {...props}
+      className={classStr}
+    >
+      <Empty
+        {...restProps}
+        image={<EmptyImg />}
+        description={description}
+        imageStyle={imageStyle}
+      />
     </div>
   );
 };

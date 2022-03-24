@@ -9,7 +9,7 @@ export const showSuccess = (msg: string, key = '__global_success__') => {
   });
 };
 
-export const showError = (error: Error | string,  key = '__global_error__') => {
+export const showError = (error: Error | string, key = '__global_error__') => {
   let desc = error;
   if (error instanceof Error) {
     desc = error.message;
@@ -30,16 +30,24 @@ export const showWarning = (warning: string, key = '__global_warning__') => {
   });
 };
 
-export const showWarningModal = ({ title, content }: { title: string, content: string }) => {
+export const showWarningModal = ({ title, content }: { title: string; content: string }) => {
   Modal.warning({
     title,
     content,
     okText: 'Ok',
-    centered: true
+    centered: true,
   });
 };
 
-export const showConfirm = ({ title, content, onConfirm }: { title: string, content: string, onConfirm: () => void }) => {
+export const showConfirm = ({
+  title,
+  content,
+  onConfirm,
+}: {
+  title: string;
+  content: string;
+  onConfirm: () => void;
+}) => {
   Modal.confirm({
     title,
     content,
@@ -55,7 +63,7 @@ export const showConfirm = ({ title, content, onConfirm }: { title: string, cont
  * @param {Node} node target node.
  * @return {{x: number, y: number}} Value to return.
  */
- export const getTranslateAttr = (node: HTMLElement) => {
+export const getTranslateAttr = (node: HTMLElement) => {
   const treeNode = select(node);
   const transformText = treeNode.attr('transform');
   // translate css attribute can have \d , . - \s
@@ -70,9 +78,9 @@ export const showConfirm = ({ title, content, onConfirm }: { title: string, cont
   let [x, y] = matches[1].split(/[,\s]+/);
   return {
     x: parseFloat(x),
-    y: parseFloat(y)
+    y: parseFloat(y),
   };
-}
+};
 
 /**
  * Calculate ellipsis text for svg text element.
@@ -81,7 +89,7 @@ export const showConfirm = ({ title, content, onConfirm }: { title: string, cont
  * @param {Number} width max text width.
  * @return {{text: String, ellipsis: boolean}} Calculated result.
  */
- export const measureSvgText = (textEl: SVGTextElement, rawText: string, width: number) => {
+export const measureSvgText = (textEl: SVGTextElement, rawText: string, width: number) => {
   const textNode = select(textEl);
   const currentText = textNode.text();
   textNode.text(rawText);
@@ -124,4 +132,4 @@ export const showConfirm = ({ title, content, onConfirm }: { title: string, cont
     text: truncateText,
     ellipsis,
   };
-}
+};

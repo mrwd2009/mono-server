@@ -48,10 +48,7 @@ const filterList = (text: any, item: any) => {
 const ContractList: FC = () => {
   const [selectedKey, setSelectedKey] = useState('overview');
   const dispatch = useAppDispatch();
-  const {
-    loading,
-    fetchList,
-  } = useContractList();
+  const { loading, fetchList } = useContractList();
 
   useEffect(() => {
     fetchList();
@@ -65,7 +62,7 @@ const ContractList: FC = () => {
   const handleSelect = (info: any, item: any) => {
     // clear selected version to avoid version and root not matched
     dispatch(updateContractTree({ selectedVersion: null }));
-    dispatch(updateSelectedId( item && { root: item.extraData.root, version: item.extraData.version }));
+    dispatch(updateSelectedId(item && { root: item.extraData.root, version: item.extraData.version }));
   };
 
   return (

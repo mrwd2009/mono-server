@@ -1,7 +1,5 @@
-import ScrollShadow from "./ScrollShadow";
+import ScrollShadow from './ScrollShadow';
 
-export {
-  ScrollShadow,
-};
+export { ScrollShadow };
 
 export default ScrollShadow;

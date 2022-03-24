@@ -10,10 +10,10 @@ interface Item {
   type: string;
 }
 
-type SelectedItem = { root: number, version: number } | null;
+type SelectedItem = { root: number; version: number } | null;
 
 interface ContractList {
-  selected: SelectedItem,
+  selected: SelectedItem;
   contractList: Item[];
   savedList: Item[];
 }
@@ -60,7 +60,7 @@ export const selectContractList = createSelector(
         extraData: item,
       };
     });
-  }
+  },
 );
 
 export const selectSavedList = createSelector(
@@ -74,7 +74,7 @@ export const selectSavedList = createSelector(
         extraData: item,
       };
     });
-  }
+  },
 );
 
 export const selectSelectedItem = createSelector(

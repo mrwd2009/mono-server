@@ -12,7 +12,7 @@ export interface Node {
   extraData: {
     type: string;
     contractBody: number;
-  },
+  };
   children: Node[];
 }
 
@@ -62,7 +62,7 @@ export const selectCurrentVersionInfo = createSelector(
     return find(list, (item) => {
       return item.version === selected;
     });
-  }
+  },
 );
 
 export const selectVersionList = createSelector(
@@ -70,7 +70,7 @@ export const selectVersionList = createSelector(
   (list) => {
     let approved: Version[] = [];
     let interim: Version[] = [];
-    forEach(list, item => {
+    forEach(list, (item) => {
       if (item.type === 'approved') {
         approved.push(item);
       } else {

@@ -20,8 +20,8 @@ const imgMap: Record<string, any> = {
   'component-reroute': LineImg,
   'component-charge': ChargeImg,
   'contract-root': ContractImg,
-  'subcontract': GroupImg,
-  'charge': ChargeImg,
+  subcontract: GroupImg,
+  charge: ChargeImg,
 };
 
 const { Search } = Input;
@@ -119,10 +119,13 @@ class DraggableList extends PureComponent<Props, State> {
     if (selectedKey === key) {
       onSelect!(null, null);
     } else {
-      onSelect!({
-        key,
-        dataType,
-      }, item);
+      onSelect!(
+        {
+          key,
+          dataType,
+        },
+        item,
+      );
     }
   }
 

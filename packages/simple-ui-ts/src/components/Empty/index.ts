@@ -1,7 +1,5 @@
-import Empty from "./Empty";
+import Empty from './Empty';
 
-export {
-  Empty,
-};
+export { Empty };
 
 export default Empty;
