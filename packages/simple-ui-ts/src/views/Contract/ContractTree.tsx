@@ -1,10 +1,11 @@
 import { FC, memo, useEffect } from 'react';
-import { Spin, Button, Select, Tag, Space, Tooltip } from 'antd';
+import { Spin, Button, Select, Tag, Space, Tooltip, Tabs } from 'antd';
 import { PlusOutlined, CloseOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import map from 'lodash/map';
 import Panel from '../../components/Panel';
 import Empty from '../../components/Empty';
 import ModelTree from '../../components/ModelTree';
+import TreeComment from './TreeComment';
 import { useAppSelector } from '../../hooks';
 import {
   selectSelectedItem,
@@ -115,6 +116,19 @@ const TreeAction = memo(() => {
   );
 });
 
+const TreeLog = memo(() => {
+  return (
+    <Tabs size="small" className="mt-2">
+      <Tabs.TabPane tab="Commit Log" key="commit">
+        <TreeComment />
+      </Tabs.TabPane>
+      <Tabs.TabPane tab="Approving Log" key="release">
+        <TreeComment initMsg="Update price" />
+      </Tabs.TabPane>
+    </Tabs>
+  )
+});
+
 const ContractTree: FC = () => {
   const selected = useAppSelector(selectSelectedItem);
   const { loading, loadSavedContract, fetchContractTree, selectVersion } = useContractTree();
@@ -217,6 +231,7 @@ const ContractTree: FC = () => {
           tree={tree}
           versionInfo={currentVersionInfo}
         />
+        <TreeLog />
       </Panel>
     </Spin>
   );
