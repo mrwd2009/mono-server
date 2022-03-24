@@ -1,4 +1,4 @@
-import { FC, memo, useEffect } from 'react';
+import { FC, memo } from 'react';
 import { Spin, Button, Select, Tag, Space, Tooltip, Tabs } from 'antd';
 import { PlusOutlined, CloseOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import map from 'lodash/map';
@@ -8,14 +8,14 @@ import ModelTree from '../../components/ModelTree';
 import TreeComment from './TreeComment';
 import { useAppSelector } from '../../hooks';
 import {
-  selectSelectedItem,
   selectContractTree,
   selectSelectedId,
   selectVersionList,
   selectSelectedVersion,
   selectCurrentVersionInfo,
 } from './slices';
-import { Node, Version } from './slices/contract-tree-slice';
+import { Node } from './slices/contract-tree-slice';
+import { Version } from './slices/contract-list-slice';
 import { useContractTree } from './hooks';
 
 const nodeKey = (node: any) => node.data.extraData.contractBody;
@@ -130,28 +130,12 @@ const TreeLog = memo(() => {
 });
 
 const ContractTree: FC = () => {
-  const selected = useAppSelector(selectSelectedItem);
-  const { loading, loadSavedContract, fetchContractTree, selectVersion } = useContractTree();
+  const { loading, fetchContractTree } = useContractTree();
   const tree = useAppSelector(selectContractTree);
   const selectedRoot = useAppSelector(selectSelectedId);
   const versionList = useAppSelector(selectVersionList);
   const selectedVersion = useAppSelector(selectSelectedVersion);
   const currentVersionInfo = useAppSelector(selectCurrentVersionInfo);
-
-  // load tree according to root and version
-  useEffect(() => {
-    if (selectedRoot && selectedVersion) {
-      fetchContractTree({
-        root: selectedRoot,
-        version: selectedVersion,
-      });
-    }
-  }, [fetchContractTree, selectedRoot, selectedVersion]);
-
-  // load saved contract according selected item from left sider
-  useEffect(() => {
-    loadSavedContract(selected);
-  }, [selected, loadSavedContract]);
 
   if (!tree) {
     return (
@@ -179,7 +163,7 @@ const ContractTree: FC = () => {
         size="small"
         style={{ minWidth: 60 }}
         value={selectedVersion}
-        onChange={selectVersion}
+        onChange={(version) => fetchContractTree({ root: selectedRoot!, version })}
       >
         {versionList.approved.length && (
           <Select.OptGroup label="Approved">

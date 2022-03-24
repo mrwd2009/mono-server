@@ -1,4 +1,5 @@
 import useContractList from './useContractList';
-import { useContractTree, useContractVersionList } from './useContractTree';
+import useContractTree from './useContractTree';
+import useContractVersionList from './useContractVersionList';
 
 export { useContractList, useContractTree, useContractVersionList };

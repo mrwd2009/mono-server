@@ -1,5 +1,7 @@
 import { createSlice, PayloadAction, createSelector } from '@reduxjs/toolkit';
 import map from 'lodash/map';
+import forEach from 'lodash/forEach';
+import find from 'lodash/find';
 import type { AppRootState } from '../../../store';
 
 interface Item {
@@ -10,18 +12,26 @@ interface Item {
   type: string;
 }
 
-type SelectedItem = { root: number; version: number } | null;
+export interface Version {
+  version: number;
+  type: string;
+  active: false;
+}
 
 interface ContractList {
-  selected: SelectedItem;
+  selected: number | null;
   contractList: Item[];
   savedList: Item[];
+  selectedVersion: number | null;
+  versionList: Array<Version>;
 }
 
 const initialState: ContractList = {
   selected: null,
   contractList: [],
   savedList: [],
+  selectedVersion: null,
+  versionList: [],
 };
 
 export const contractListSlice = createSlice({
@@ -41,13 +51,25 @@ export const contractListSlice = createSlice({
       state.contractList = [];
       state.savedList = [];
     },
-    updateSelectedId: (state, action: PayloadAction<SelectedItem>) => {
-      state.selected = action.payload;
+    updateVersionList: (state, action: PayloadAction<Array<Version>>) => {
+      state.versionList = action.payload;
     },
+    updateSelectedVersion: (state, action: PayloadAction<number | null>) => {
+      state.selectedVersion = action.payload;
+    },
+    updateSelectedContract: (state, action: PayloadAction<{ root: number, version: number} | null>) => {
+      if (!action.payload) {
+        state.selected = null;
+        state.selectedVersion = null;
+        return;
+      }
+      state.selected = action.payload.root;
+      state.selectedVersion = action.payload.version;
+    }
   },
 });
 
-export const { updateContractList, clearContractList, updateSelectedId } = contractListSlice.actions;
+export const { updateContractList, clearContractList, updateSelectedContract, updateVersionList, updateSelectedVersion } = contractListSlice.actions;
 
 export const selectContractList = createSelector(
   (state: AppRootState) => state.contractList.contractList,
@@ -77,21 +99,39 @@ export const selectSavedList = createSelector(
   },
 );
 
-export const selectSelectedItem = createSelector(
-  (state: AppRootState) => state.contractList.selected?.root,
-  (state: AppRootState) => state.contractList.selected?.version,
-  (root, version) => {
-    if (!root || !version) {
-      return null;
-    }
-    return {
-      root,
-      version,
-    };
+export const selectSelectedId = (state: AppRootState) => state.contractList.selected;
+
+export const selectSelectedVersion = (state: AppRootState) => state.contractList.selectedVersion;
+
+export const selectCurrentVersionInfo = createSelector(
+  (state: AppRootState) => state.contractList.selectedVersion,
+  (state: AppRootState) => state.contractList.versionList,
+  (selected, list) => {
+    return find(list, (item) => {
+      return item.version === selected;
+    });
   },
 );
 
-export const selectSelectedId = (state: AppRootState) => state.contractList.selected?.root;
+export const selectVersionList = createSelector(
+  (state: AppRootState) => state.contractList.versionList,
+  (list) => {
+    let approved: Version[] = [];
+    let interim: Version[] = [];
+    forEach(list, (item) => {
+      if (item.type === 'approved') {
+        approved.push(item);
+      } else {
+        interim.push(item);
+      }
+    });
+
+    return {
+      approved,
+      interim,
+    };
+  },
+);
 
 export const contractListReducer = contractListSlice.reducer;
 

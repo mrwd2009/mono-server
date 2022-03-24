@@ -35,7 +35,7 @@ interface Props {
   }>;
   onSelect?: (item: { key: string | number; dataType: string | number | undefined } | null, def: any) => void;
   dataType?: string;
-  selectedKey?: string | number;
+  selectedKey?: string | number | null;
   draggable?: boolean;
   search?: boolean;
   onSearch?: (text: any, item: any) => void;
