@@ -118,9 +118,72 @@ If you need to add a new theme, please refer `dark.less` or `default.less`.
 
 New globally used less helpers and mixins can be added in `./src/assets/stylesheets/helpers` and `./src/assets/stylesheets/mixins`.
 
+#### 7.1 Commonly Used Less Variable
+Because we support dark mode, we perfer to reuse less variables from Antd. Please search appropriate less variables. Only imports new less variable when you have to.
+
+We list commonly used less variable as following.
+```
+// color derived from primary color
+@primary-color
+@primary-color-hover
+@primary-color-active
+@primary-color-outline
+@primary-1
+@primary-2
+@primary-3
+@primary-4
+@primary-5
+@primary-6
+@primary-7
+@primary-8
+@primary-9
+@primary-10
+
+// font size
+@font-size-base // default size
+@font-size-lg // large size
+@font-size-sm // small size
+
+// default text color and secondary text color
+@text-color
+@text-color-secondary
+
+// Border color
+@border-color-base // base border outline a component
+@border-color-split // split border inside a component
+@border-width-base // width of the border for a component
+@border-style-base // style of a components border
+
+// The background colors for active and hover states for things like
+// list items or table cells.
+@item-active-bg
+@item-hover-bg
+@select-item-selected-font-weight // font weight for selected item
+
+@background-color-light // background of header and selected item
+@background-color-base // Default grey background color
+
+// Base background color for most components
+@component-background
+
+// Shadow
+@shadow-color
+@shadow-1-up
+@shadow-1-down
+@shadow-1-left
+@shadow-1-right
+
+// Animation
+@animation-duration-slow
+@animation-duration-base
+@animation-duration-fast
+@ease-in-out // timing function
+```
+
 ### 8. Component Story
 
 If you want to add a new React component story, please add them in your component directoy. You can refer `./src/components/ResponsiveContainer/ResponsiveContainer.stories.tsx`.
+
 
 ### 9. Reusable Component
 

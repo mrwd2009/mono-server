@@ -68,7 +68,7 @@
 
       &.model-tree-node--reroute {
         circle {
-          fill: #1f1f1f;
+          fill: @app-ex-model-tree-node-dark-bg;
         }
       }
     }
@@ -130,17 +130,17 @@
   &--search {
     .model-tree-node__bg {
       stroke-width: 2px;
-      stroke: orange;
+      stroke: @app-ex-model-tree-filtered-border-color;
     }
 
     &.selected {
       .model-tree-node__bg {
-        stroke: orange;
+        stroke: @app-ex-model-tree-filtered-border-color;
       }
 
       &.model-tree-node--hidden {
         .model-tree-node__bg {
-          stroke: orange;
+          stroke: @app-ex-model-tree-filtered-border-color;
         }
       }
     }
@@ -187,23 +187,23 @@
 
 & when (@theme = dark) {
   .model-tree-node__bg {
-    fill: #1f1f1f;
+    fill: @app-ex-model-tree-node-dark-bg;
   }
 
   .model-tree-container.dragging .model-tree-node.dragged.model-tree-node--reroute .model-tree-node__bg {
-    fill: #1f1f1f;
+    fill:@app-ex-model-tree-node-dark-bg;
   }
 
   .model-tree-node--hidden {
     .model-tree-node__bg {
-      fill: #1f1f1f;
+      fill: @app-ex-model-tree-node-dark-bg;
     }
   }
 
   .model-tree-node--reroute {
     &:not(.selected):hover {
       circle {
-        fill: #1f1f1f;
+        fill: @app-ex-model-tree-node-dark-bg;
       }
     }
   }
