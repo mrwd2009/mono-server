@@ -1,9 +1,10 @@
 import { FC, memo, useEffect } from 'react';
-import { Spin, Button, Select, Tag, Divider } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Spin, Button, Select, Tag } from 'antd';
+import { PlusOutlined, CloseOutlined } from '@ant-design/icons';
 import map from 'lodash/map';
 import Panel from '../../components/Panel';
 import Empty from '../../components/Empty';
+import ModelTree from '../../components/ModelTree';
 import { useAppSelector } from '../../hooks';
 import {
   selectSelectedItem,
@@ -13,7 +14,61 @@ import {
   selectSelectedVersion,
   selectCurrentVersionInfo,
 } from './slices';
+import { Node, Version } from './slices/contract-tree-slice';
 import { useContractTree } from './hooks';
+
+const nodeKey = (node: any) => node.data.extraData.contractBody;
+
+const TreeContent = memo(({ tree, versionInfo }: { tree: Node | null, versionInfo?: Version }) => {
+  const contextMenu = [
+    {
+      label: 'Insert',
+      key: 'insert',
+      disabled: (node: any) => !node || node.data.extraData.type === 'charge',
+      onClick: console.log
+    },
+  ];
+  const menuStatus = {
+    cutDisabled: (node: any) => node.data.extraData.type === 'contract',
+  };
+  const toolbar = [
+    {
+      title: 'Exit',
+      key: 'exit',
+      icon: <CloseOutlined />,
+      onClick: console.log,
+    },
+  ];
+  if (versionInfo?.type === 'approved') {
+    return (
+      <ModelTree
+        minHeight={600}
+        readonly
+        key="readonly"
+        dataSource={tree}
+        // onSelect={}
+        selectedKey={''}
+        nodeKey={nodeKey}
+        toolbar={toolbar}
+      />
+    );
+  }
+  return (
+    <ModelTree
+      minHeight={600}
+      key="editable"
+      dataSource={tree}
+      contextMenus={contextMenu}
+      onDrop={console.log}
+      onSelect={console.log}
+      selectedKey={''}
+      // defaultCenteredKey={}
+      nodeKey={nodeKey}
+      internalMenuStatus={menuStatus}
+      toolbar={toolbar}
+    />
+  );
+});
 
 const ContractTree: FC = () => {
   const selected = useAppSelector(selectSelectedItem);
@@ -55,7 +110,7 @@ const ContractTree: FC = () => {
     <>
       {currentVersionInfo && <Tag color="blue">{currentVersionInfo.type === 'interim' ? 'Interim' : 'Approved'}</Tag>}
       {currentVersionInfo?.active && <Tag color="green">Active</Tag>}
-      <Select size="small" style={{ minWidth: 100 }} value={selectedVersion} onChange={selectVersion}>
+      <Select size="small" style={{ minWidth: 60 }} value={selectedVersion} onChange={selectVersion}>
         {versionList.approved.length && <Select.OptGroup label="Approved">
           {map(versionList.approved, (item) => {
             return <Select.Option className={item.active ? 'text-active' : ''} key={item.version} value={item.version}>Version: {item.version}</Select.Option>
@@ -71,14 +126,14 @@ const ContractTree: FC = () => {
   );
 
   return (
-    <Panel
-      title={<>{tree.name}<span className="text-secondary text-small">(ID: {selectedRoot})</span></>}
-      extra={extra}
-    >
-      <Spin spinning={loading}>
-        main
-      </Spin>
-    </Panel>
+    <Spin spinning={loading}>
+      <Panel
+        title={<>{tree.name}<span className="text-secondary text-small">(ID: {selectedRoot})</span></>}
+        extra={extra}
+      >
+        <TreeContent tree={tree} versionInfo={currentVersionInfo} />
+      </Panel>
+    </Spin>
   );
 };
 

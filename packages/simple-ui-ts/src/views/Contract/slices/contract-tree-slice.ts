@@ -4,7 +4,7 @@ import forEach from 'lodash/forEach';
 import find from 'lodash/find';
 import type { AppRootState } from '../../../store';
 
-interface Node {
+export interface Node {
   id: number;
   name: string;
   hidden: boolean;
@@ -16,7 +16,7 @@ interface Node {
   children: Node[];
 }
 
-interface Version {
+export interface Version {
   version: number;
   type: string;
   active: false;

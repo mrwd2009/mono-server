@@ -1,3 +1,4 @@
+require('dotenv').config()
 const { getLoaders, loaderByName } = require('@craco/craco');
 const CracoLessPlugin = require('craco-less');
 

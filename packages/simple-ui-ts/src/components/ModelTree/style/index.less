@@ -1,0 +1,277 @@
+.model-tree-node {
+  cursor: pointer;
+
+  &__bg {
+    transition: fill 0.3s ease-in-out, stroke 0.3s ease-in-out;
+    fill: @background-color-light;
+    stroke: @primary-5;
+    stroke-width: 1px;
+  }
+  
+  &__text {
+    font-size: @font-size-base - 2px;
+    user-select: none;
+    fill: @text-color;
+  }
+
+  &:not(.selected):hover {
+    .model-tree-node__text {
+      fill: @primary-color;
+    }
+  }
+
+  circle {
+    display: none;
+    transition: r 0.3s ease-in-out, fill 0.3s ease-in-out, stroke 0.3s ease-in-out;
+  }
+
+  &.selected {
+    .model-tree-node__bg {
+      fill: @primary-1;
+      stroke: @primary-color;
+    }
+
+    .model-tree-node__text {
+      // opacity: 1;
+      fill: @primary-color;
+    }
+
+    &.model-tree-node--hidden {
+      .model-tree-node__bg {
+        fill: @gold-1;
+        stroke: @gold-4;
+      }
+    }
+
+    &.model-tree-node--reroute {
+      .model-tree-node__bg {
+        fill: transparent;
+        stroke: transparent;
+      }
+
+      circle {
+        fill: @primary-1;
+        stroke: @primary-color;
+        stroke-width: 2px;
+        r: 4px;
+      }
+    }
+
+    & when (@theme = dark) {
+      .model-tree-node__bg {
+        fill: @primary-color;
+      }
+
+      .model-tree-node__text {
+        fill: @menu-dark-highlight-color;
+      }
+
+      &.model-tree-node--reroute {
+        circle {
+          fill: #1f1f1f;
+        }
+      }
+    }
+  }
+
+  &--hidden {
+    .model-tree-node__bg {
+      fill: @background-color-light;
+      stroke: @gold-4;
+    }
+
+    // .model-tree-node__text, image {
+    //   opacity: 0.5
+    // }
+
+    &:not(.selected):hover {
+      .model-tree-node__text {
+        fill: @primary-color;
+      }
+    }
+  }
+
+  &--reroute {
+    .model-tree-node__bg {
+      fill: transparent;
+      stroke: transparent;
+    }
+
+    .model-tree-node__text, image {
+      display: none;
+    }
+
+    circle {
+      display: block;
+    }
+
+    &:not(.selected):hover {
+      circle {
+        fill: @background-color-light;
+        stroke: @primary-5;
+        stroke-width: 1px;
+        r: 4px;
+      }
+
+      .model-tree-node__bg {
+        fill: transparent;
+        stroke: transparent;
+      }
+    }
+  }
+
+  &--cut {
+    .model-tree-node__bg {
+      stroke-dasharray: 2;
+    }
+  }
+
+  &--search {
+    .model-tree-node__bg {
+      stroke-width: 2px;
+      stroke: orange;
+    }
+
+    &.selected {
+      .model-tree-node__bg {
+        stroke: orange;
+      }
+
+      &.model-tree-node--hidden {
+        .model-tree-node__bg {
+          stroke: orange;
+        }
+      }
+    }
+  }
+}
+
+.model-tree-container {
+  &.dragging {
+    .model-tree-node:not(.dragged) {
+      .model-tree-node__bg {
+        fill: @red-2;
+        stroke: @red-2;
+      }
+
+      &.selected {
+        text {
+          fill: @primary-color;
+        }
+      }
+
+      &.drop-wanted {
+        .model-tree-node__bg {
+          fill: @red-2;
+          stroke: @success-color;
+          stroke-width: 2px;
+        }
+      }
+    }
+
+    .model-tree-node.dragged.model-tree-node--reroute {
+      .model-tree-node__bg {
+        fill: @background-color-light;
+        stroke: @primary-5;
+      }
+    }
+  }
+
+  &.zooming {
+    text {
+      display: none;
+    }
+  }
+}
+
+& when (@theme = dark) {
+  .model-tree-node__bg {
+    fill: #1f1f1f;
+  }
+
+  .model-tree-container.dragging .model-tree-node.dragged.model-tree-node--reroute .model-tree-node__bg {
+    fill: #1f1f1f;
+  }
+
+  .model-tree-node--hidden {
+    .model-tree-node__bg {
+      fill: #1f1f1f;
+    }
+  }
+
+  .model-tree-node--reroute {
+    &:not(.selected):hover {
+      circle {
+        fill: #1f1f1f;
+      }
+    }
+  }
+}
+
+.model-tree-link {
+  transition: stroke 0.1s ease-in-out, stroke-width 0.1s ease-in-out;
+  fill: none;
+  stroke: @border-color-base;
+  stroke-width: 1.5px;
+  
+  &.has-condition {
+    cursor: pointer;
+
+    &:hover {
+      stroke: darken(@border-color-base, 10%);
+      stroke-width: 4px;
+    }
+
+    &.selected {
+      stroke: darken(@border-color-base, 40%);
+    }
+  }
+}
+
+.model-tree-wrapper {
+  position: relative;
+  border: @border-width-base @border-style-base @border-color-split;
+  border-radius: 4px;
+
+  .model-tree-toolbar {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    align-items: center;
+
+    .model-tree-search {
+      width: auto;
+
+      .anticon:not(:last-child) {
+        margin-right: 8px;
+      }
+
+      .ant-input-group-addon {
+        background: @component-background
+      }
+
+      input {
+        width: 100px;
+      }
+
+      .anticon {
+        cursor: pointer;
+        transition: color 0.3s ease-in-out;
+
+        &:hover {
+          color: @primary-color;
+        }
+      }
+    }
+
+    button, .anticon {
+      font-size: @font-size-base;
+    }
+
+    button {
+      margin-left: 8px;
+    }
+  }
+}
+
