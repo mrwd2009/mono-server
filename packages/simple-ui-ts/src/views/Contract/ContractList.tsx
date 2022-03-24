@@ -7,7 +7,7 @@ import Panel from '../../components/Panel';
 import DraggableList from '../../components/DraggableList';
 import { useContractList } from './hooks';
 import { useAppSelector, useAppDispatch } from '../../hooks';
-import { selectContractList, selectSavedList, selectSelectedId, updateSelectedId } from './slices';
+import { selectContractList, selectSavedList, selectSelectedId, updateSelectedId, updateContractTree } from './slices';
 
 const template = [
   {
@@ -62,7 +62,11 @@ const ContractList: FC = () => {
 
   const selectedItemKey = useAppSelector(selectSelectedId);
 
-  const handleSelect = (info: any, item: any) => dispatch(updateSelectedId( item && { root: item.extraData.root, version: item.extraData.version }));
+  const handleSelect = (info: any, item: any) => {
+    // clear selected version to avoid version and root not matched
+    dispatch(updateContractTree({ selectedVersion: null }));
+    dispatch(updateSelectedId( item && { root: item.extraData.root, version: item.extraData.version }));
+  };
 
   return (
     <Panel

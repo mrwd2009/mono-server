@@ -44,7 +44,6 @@ export const useContractTree = () => {
     if (!saved) {
       dispatch(clearContractTree());
     } else {
-      dispatch(updateContractTree({ selectedVersion: null }));
       fetchContractVersionList(saved.root)
         .then((list) => {
           if (some(list, item => item.version === saved.version)) {

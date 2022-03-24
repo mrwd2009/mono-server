@@ -1,6 +1,6 @@
 import { FC, memo, useEffect } from 'react';
-import { Spin, Button, Select, Tag } from 'antd';
-import { PlusOutlined, CloseOutlined } from '@ant-design/icons';
+import { Spin, Button, Select, Tag, Space, Tooltip } from 'antd';
+import { PlusOutlined, CloseOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import map from 'lodash/map';
 import Panel from '../../components/Panel';
 import Empty from '../../components/Empty';
@@ -70,6 +70,20 @@ const TreeContent = memo(({ tree, versionInfo }: { tree: Node | null, versionInf
   );
 });
 
+const TreeAction = memo(() => {
+  return (
+    <Space className="mb-2" wrap>
+      <Button size="small">Approve <Tooltip title="Approve contract interim version"><QuestionCircleOutlined /></Tooltip></Button>
+      <Button size="small">Make Interim <Tooltip title="Copy contract from current approved version into interim veresion"><QuestionCircleOutlined /></Tooltip></Button>
+      <Button size="small">Mark Active</Button>
+      <Button size="small">Mark Obsolete</Button>
+      <Button size="small">Show Rate <Tooltip title="Show all used rate tables"><QuestionCircleOutlined /></Tooltip></Button>
+      <Button size="small">Show Design <Tooltip title="Show current contract version details"><QuestionCircleOutlined /></Tooltip></Button>
+      <Button size="small" danger>Delete <Tooltip title="Only contract having only one interim version can be deleted"><QuestionCircleOutlined /></Tooltip></Button>
+    </Space>
+  );
+});
+
 const ContractTree: FC = () => {
   const selected = useAppSelector(selectSelectedItem);
   const { loading, loadSavedContract, fetchContractTree, selectVersion } = useContractTree();
@@ -131,6 +145,7 @@ const ContractTree: FC = () => {
         title={<>{tree.name}<span className="text-secondary text-small">(ID: {selectedRoot})</span></>}
         extra={extra}
       >
+        <TreeAction />
         <TreeContent tree={tree} versionInfo={currentVersionInfo} />
       </Panel>
     </Spin>
