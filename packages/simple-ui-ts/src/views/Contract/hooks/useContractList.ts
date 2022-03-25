@@ -5,7 +5,7 @@ import apiEndpoints from '../../../config/api-endpoints';
 import { useAppDispatch } from '../../../hooks';
 import useContractVersionList from './useContractVersionList';
 import useContractTree from './useContractTree';
-import { updateContractList, clearContractTree, updateSelectedContract } from '../slices';
+import { updateContractList, clearCurrentTree, updateSelectedContract } from '../slices';
 import util from '../../../util';
 
 const useContractList = () => {
@@ -30,7 +30,7 @@ const useContractList = () => {
   const loadSavedContract = useCallback(
     (saved: { root: number; version: number } | null) => {
       if (!saved) {
-        dispatch(clearContractTree());
+        dispatch(clearCurrentTree());
         dispatch(updateSelectedContract(null));
       } else {
         fetchContractVersionList(saved.root).then((list) => {

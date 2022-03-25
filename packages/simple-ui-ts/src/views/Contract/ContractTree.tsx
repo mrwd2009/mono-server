@@ -13,6 +13,7 @@ import {
   selectVersionList,
   selectSelectedVersion,
   selectCurrentVersionInfo,
+  selectSelectedNodeID,
 } from './slices';
 import { Node } from './slices/contract-tree-slice';
 import { Version } from './slices/contract-list-slice';
@@ -20,7 +21,19 @@ import { useContractTree } from './hooks';
 
 const nodeKey = (node: any) => node.data.extraData.contractBody;
 
-const TreeContent = memo(({ tree, versionInfo }: { tree: Node | null; versionInfo?: Version }) => {
+interface TreeContentProps {
+  tree: Node | null;
+  versionInfo?: Version;
+  fetchContractNode?: (arg: any) => void;
+}
+
+const TreeContent = memo(({
+  tree,
+  versionInfo,
+  fetchContractNode,
+}: TreeContentProps) => {
+  const selectedNodeId = useAppSelector(selectSelectedNodeID);
+
   const contextMenu = [
     {
       label: 'Insert',
@@ -47,8 +60,8 @@ const TreeContent = memo(({ tree, versionInfo }: { tree: Node | null; versionInf
         readonly
         key="readonly"
         dataSource={tree}
-        // onSelect={}
-        selectedKey={''}
+        onSelect={fetchContractNode}
+        selectedKey={selectedNodeId}
         nodeKey={nodeKey}
         toolbar={toolbar}
       />
@@ -61,8 +74,8 @@ const TreeContent = memo(({ tree, versionInfo }: { tree: Node | null; versionInf
       dataSource={tree}
       contextMenus={contextMenu}
       onDrop={console.log}
-      onSelect={console.log}
-      selectedKey={''}
+      onSelect={fetchContractNode}
+      selectedKey={selectedNodeId}
       // defaultCenteredKey={}
       nodeKey={nodeKey}
       internalMenuStatus={menuStatus}
@@ -130,7 +143,7 @@ const TreeLog = memo(() => {
 });
 
 const ContractTree: FC = () => {
-  const { loading, fetchContractTree } = useContractTree();
+  const { loading, fetchContractTree, fetchContractNode } = useContractTree();
   const tree = useAppSelector(selectContractTree);
   const selectedRoot = useAppSelector(selectSelectedId);
   const versionList = useAppSelector(selectVersionList);
@@ -214,6 +227,7 @@ const ContractTree: FC = () => {
         <TreeContent
           tree={tree}
           versionInfo={currentVersionInfo}
+          fetchContractNode={fetchContractNode}
         />
         <TreeLog />
       </Panel>

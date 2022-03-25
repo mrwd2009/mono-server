@@ -19,9 +19,9 @@ import forEach from 'lodash/forEach';
 import slice from 'lodash/slice';
 import maxBy from 'lodash/maxBy';
 import util from '../../util';
-import contractImg from '../../assets/images/contract/contract.svg';
-import groupImg from '../../assets/images/contract/group.svg';
-import chargeImg from '../../assets/images/contract/charge.svg';
+import { ReactComponent as ContractImg } from '../../assets/images/contract/contract.svg';
+import { ReactComponent as GroupImg } from '../../assets/images/contract/group.svg';
+import { ReactComponent as ChargeImg } from '../../assets/images/contract/charge.svg';
 
 const { Item } = Menu;
 
@@ -71,7 +71,7 @@ interface Props {
   /** add custom class like { 'class a': function } */
   nodeClasses?: any;
   /** Selected node key. */
-  selectedKey?: number | string;
+  selectedKey?: number | string | null;
   /** Node which is displayed on page center at beginning. */
   defaultCenteredKey?: number;
   /** Readonly status. */
@@ -117,6 +117,8 @@ class ModelTree extends PureComponent<Props, any> {
   clickDistance: any;
   dragenterCount: any;
   defaultCenteredTimer: any;
+
+  uidStart = 1;
 
   constructor(props: Props) {
     super(props);
@@ -188,6 +190,9 @@ class ModelTree extends PureComponent<Props, any> {
       reroute: 'reroute',
       charge: 'charge',
     };
+    const contractImg = uniqueId('model-tree-contract');
+    const groupImg = uniqueId('model-tree-group-group');
+    const chargeImg = uniqueId('model-tree-group-charge');
     // image path for all node types.
     this.imageMap = {
       root: contractImg,
@@ -912,8 +917,8 @@ class ModelTree extends PureComponent<Props, any> {
       .append('clipPath')
       .attr('id', imageClipID)
       .append('rect')
-      .attr('x', image.x)
-      .attr('y', image.y)
+      .attr('x', 0)
+      .attr('y', 0)
       .attr('width', image.width)
       .attr('height', image.height)
       .attr('rx', borderRadius)
@@ -1343,7 +1348,7 @@ class ModelTree extends PureComponent<Props, any> {
       .attr('height', nodeSize.height);
 
     enterNodes
-      .append('image')
+      .append('use')
       .classed(nodeImageClass, true)
       .attr('width', imageSize.width)
       .attr('height', imageSize.height)
@@ -1381,7 +1386,7 @@ class ModelTree extends PureComponent<Props, any> {
     mergedNodes.select('rect');
     mergedNodes.select('circle');
 
-    mergedNodes.select('image').attr('xlink:href', (node: any) => this.imageMap[node.data.type] || null);
+    mergedNodes.select('use').attr('href', (node: any) => this.imageMap[node.data.type] ? `#${this.imageMap[node.data.type]}` : null);
 
     mergedNodes
       .select('text')
@@ -1637,7 +1642,13 @@ class ModelTree extends PureComponent<Props, any> {
           height={height}
           ref={this.svgRef}
           {...svgProps}
-        />
+        >
+          <defs>
+            <ContractImg id={this.imageMap.root}/>
+            <GroupImg id={this.imageMap.subContract}/>
+            <ChargeImg id={this.imageMap.charge}/>
+          </defs>
+        </svg>
       </Tooltip>
     );
 

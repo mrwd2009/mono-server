@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import assign from 'lodash/assign';
 import type { AppRootState } from '../../../store';
 
 export interface Node {
@@ -28,18 +27,24 @@ export const contractTreeSlice = createSlice({
   name: 'contract/tree',
   initialState,
   reducers: {
-    updateContractTree: (state, action: PayloadAction<Partial<Slice>>) => {
-      assign(state, action.payload);
+    updateContractTree: (state, action: PayloadAction<Node | null>) => {
+      state.tree = action.payload;
     },
-    clearContractTree: (state) => {
-      assign(state, initialState);
+    clearCurrentTree: (state) => {
+      state.tree = null;
+      state.selectedNodeID = null;
+    },
+    updateSelectedNodeID: (state, action: PayloadAction<number | null>) => {
+      state.selectedNodeID = action.payload;
     },
   },
 });
 
-export const { updateContractTree, clearContractTree } = contractTreeSlice.actions;
+export const { updateContractTree, clearCurrentTree, updateSelectedNodeID } = contractTreeSlice.actions;
 
 export const selectContractTree = (state: AppRootState) => state.contractTree.tree;
+
+export const selectSelectedNodeID = (state: AppRootState) => state.contractTree.selectedNodeID;
 
 export const contractTreeReducer = contractTreeSlice.reducer;
 

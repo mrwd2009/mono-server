@@ -14,6 +14,10 @@
     fill: @text-color;
   }
 
+  &__image {
+    fill: @primary-color;
+  }
+
   &:not(.selected):hover {
     .model-tree-node__text {
       fill: @primary-color;
@@ -27,13 +31,16 @@
 
   &.selected {
     .model-tree-node__bg {
-      fill: @primary-1;
+      fill: @primary-color;
       stroke: @primary-color;
     }
 
     .model-tree-node__text {
-      // opacity: 1;
-      fill: @primary-color;
+      fill: @menu-dark-highlight-color;
+    }
+
+    .model-tree-node__image {
+      fill: @menu-dark-highlight-color;
     }
 
     &.model-tree-node--hidden {
@@ -98,7 +105,7 @@
     }
 
     .model-tree-node__text,
-    image {
+    use {
       display: none;
     }
 
