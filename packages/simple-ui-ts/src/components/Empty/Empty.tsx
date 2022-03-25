@@ -5,13 +5,15 @@ import { ReactComponent as EmptyImg } from '../../assets/images/empty.svg';
 
 interface Props extends EmptyProps {
   onDrop?: DragEventHandler;
+  size?: 'small' | 'default'
 }
 
-const CustomEmpty: FC<Props> = ({ onDrop, description, imageStyle, className, ...restProps }) => {
+const CustomEmpty: FC<Props> = ({ onDrop, description, imageStyle, className, size = 'default', ...restProps }) => {
   const [dragging, setDragging] = useState(false);
   const classStr = classNames('app-ex-empty', className, {
     dragging,
     'p-4': !!onDrop,
+    'sm': size === 'small',
   });
   let props = {};
   if (onDrop) {

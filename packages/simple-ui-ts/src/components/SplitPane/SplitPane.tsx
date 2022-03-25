@@ -103,9 +103,13 @@ class SplitPane extends PureComponent<Props, any> {
     };
   }
 
-  // componentWillReceiveProps(nextProps: any) {
-  //   this.setState({sizes: this.getPanePropSize(nextProps)});
-  // }
+  componentDidUpdate(prevProps: any) {
+    const prevLen = removeNullChildren(prevProps.children).length;
+    const curLen = removeNullChildren(this.props.children).length;
+    if (prevLen !== curLen) {
+      this.setState({sizes: this.getPanePropSize(this.props)});
+    }
+  }
 
   componentWillUnmount() {
     document.removeEventListener('mouseup', this.onMouseUp);

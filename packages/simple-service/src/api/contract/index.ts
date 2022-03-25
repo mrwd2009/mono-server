@@ -10,5 +10,6 @@ router.get('/list', ctrl.getContractListHandler);
 router.get('/saved-list', ctrl.getSavedNodeListHandler);
 router.post('/tree', ...ctrl.getContractTreeHandler);
 router.get('/tree/version-list', ...ctrl.getContractVersionsHandler);
+router.get('/tree/node', ...ctrl.getContractNodeHandler);
 
 registerRouter(router);

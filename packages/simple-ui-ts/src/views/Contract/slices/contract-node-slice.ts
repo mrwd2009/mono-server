@@ -36,7 +36,6 @@ export const { updateContractNode, clearCurrentNode } = contractNodeSlice.action
 
 export const selectContractNode = (state: AppRootState) => state.contractNode.node;
 
-
 export const contractNodeReducer = contractNodeSlice.reducer;
 
 export default contractNodeReducer;

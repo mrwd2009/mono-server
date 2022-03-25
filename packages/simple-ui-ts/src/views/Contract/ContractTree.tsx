@@ -60,7 +60,7 @@ const TreeContent = memo(({
         readonly
         key="readonly"
         dataSource={tree}
-        onSelect={fetchContractNode}
+        onSelect={(node) => fetchContractNode!(node?.data.id)}
         selectedKey={selectedNodeId}
         nodeKey={nodeKey}
         toolbar={toolbar}
@@ -74,7 +74,7 @@ const TreeContent = memo(({
       dataSource={tree}
       contextMenus={contextMenu}
       onDrop={console.log}
-      onSelect={fetchContractNode}
+      onSelect={(node) => fetchContractNode!(node?.data.id)}
       selectedKey={selectedNodeId}
       // defaultCenteredKey={}
       nodeKey={nodeKey}

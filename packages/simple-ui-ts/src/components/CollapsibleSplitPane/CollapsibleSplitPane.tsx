@@ -10,11 +10,11 @@ interface Props {
   leftSider?: {
     initialWidth?: number;
     content: ReactNode;
-  };
+  } | null;
   rightSider?: {
     initialWidth?: number;
     content: ReactNode;
-  };
+  } | null;
   children?: ReactNode;
 }
 

@@ -2,7 +2,8 @@ import { useCallback } from 'react';
 import useAxios from 'axios-hooks';
 import apiEndpoints from '../../../config/api-endpoints';
 import { useAppDispatch } from '../../../hooks';
-import { updateContractTree, updateSelectedContract, updateSelectedNodeID } from '../slices';
+import { updateContractTree, updateSelectedContract, updateContractNode } from '../slices';
+import useContractNode from './useContractNode';
 
 export const useContractTree = () => {
   const [{ loading }, request] = useAxios({ url: apiEndpoints.contract.tree, method: 'post' });
@@ -11,19 +12,20 @@ export const useContractTree = () => {
   const fetchContractTree = useCallback(
     (data: { root: number, version: number }) => {
       return request({ data }).then((res) => {
-        dispatch(updateContractTree(res.data));
         dispatch(updateSelectedContract(data));
+        dispatch(updateContractTree(res.data));
+        dispatch(updateContractNode(null));
       });
     },
     [request, dispatch],
   );
-
-  const fetchContractNode = useCallback((node?: any) => {
-    dispatch(updateSelectedNodeID(node?.data.id))
-  }, [dispatch]);
+  const {
+    loading: nodeLoading,
+    fetchContractNode
+  } = useContractNode();
 
   return {
-    loading,
+    loading: loading || nodeLoading,
     fetchContractTree,
     fetchContractNode,
   };
