@@ -1,0 +1,62 @@
+.contract-confirmable-checkbox {
+  > div:first-child {
+    margin-bottom: 4px;
+  }
+
+  > div:last-child {
+    height: 20px;
+  }
+
+  &__content {
+    overflow: hidden;
+    line-height: 1.2;
+
+    .ant-checkbox-wrapper {
+      align-items: center;
+    }
+  }
+
+  &__extra {
+    float: right;
+    margin-left: 4px;
+
+    span {
+      color: @primary-color;
+      cursor: pointer;
+
+      &:not(:last-child) {
+        margin-right: 4px;
+      }
+    }
+
+    .help {
+      vertical-align: bottom;
+      cursor: help;
+    }
+
+    button.ant-btn {
+      position: relative;
+      width: 18px;
+      height: 18px;
+      font-size: @font-size-base;
+      line-height: 1.2;
+      vertical-align: bottom;
+
+      &:not(:last-child) {
+        margin-right: 4px;
+      }
+    }
+  }
+  // checkbox label style
+  label {
+    font-size: @font-size-base;
+
+    .ant-checkbox {
+      top: 0;
+    }
+
+    > span:last-child {
+      vertical-align: middle;
+    }
+  }
+}

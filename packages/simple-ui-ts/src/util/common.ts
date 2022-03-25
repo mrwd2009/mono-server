@@ -133,3 +133,35 @@ export const measureSvgText = (textEl: SVGTextElement, rawText: string, width: n
     ellipsis,
   };
 };
+
+
+let scrollbarWidth: any = null;
+// reference https://stackoverflow.com/questions/13382516/getting-scroll-bar-width-using-javascript
+export const getScrollbarWidth = () => {
+  if (scrollbarWidth !== null) {
+    return scrollbarWidth;
+  }
+  let outer: any = document.createElement('div');
+  outer.style.visibility = 'hidden';
+  outer.style.width = '100px';
+  outer.style.msOverflowStyle = 'scrollbar'; // needed for WinJS apps
+
+  document.body.appendChild(outer);
+
+  let widthNoScroll = outer.offsetWidth;
+  // force scrollbars
+  outer.style.overflow = 'scroll';
+
+  // add innerdiv
+  let inner = document.createElement('div');
+  inner.style.width = '100%';
+  outer.appendChild(inner);
+
+  let widthWithScroll = inner.offsetWidth;
+
+  // remove divs
+  outer.parentNode.removeChild(outer);
+
+  scrollbarWidth = widthNoScroll - widthWithScroll;
+  return scrollbarWidth;
+}

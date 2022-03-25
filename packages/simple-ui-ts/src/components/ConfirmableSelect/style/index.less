@@ -1,0 +1,107 @@
+.contract-confirmable-select {
+  > div:first-child {
+    margin-bottom: 4px;
+  }
+
+  &__content {
+    overflow: hidden;
+    line-height: 1.2;
+
+    .ant-select {
+      width: 100%;
+    }
+
+    &.invalid {
+      .ant-select-selection,
+      .ant-select-selection:focus,
+      .ant-select-selection:active {
+        border-color: @error-color;
+      }
+    }
+
+    .ant-select-search--inline .ant-select-search__field,
+    .ant-select-selection__choice__content {
+      font-size: @font-size-base;
+    }
+
+    &.has-value {
+      // Only valid for single select
+      .ant-select-selection--single {
+        height: auto;
+
+        .ant-select-selection-selected-value {
+          white-space: normal;
+          text-overflow: clip;
+          word-wrap: break-word;
+          word-break: break-all;
+        }
+        
+        .ant-select-selection__rendered {
+          &::after {
+            display: block;
+            clear: both;
+            content: '';
+          }
+        }
+        // In order to show search input at bottom
+        .ant-select-search--inline .ant-select-search__field {
+          position: absolute;
+          bottom: 3px;
+          height: auto;
+        }
+      }
+      // Set content to a non-empty value, to let input display
+      .ant-select-open {
+        .ant-select-selection--single {
+          .ant-select-selection__rendered {
+            &::after {
+              content: '.';
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &__extra {
+    float: right;
+    margin-left: 4px;
+
+    span {
+      color: @primary-color;
+      cursor: pointer;
+
+      &:not(:last-child) {
+        margin-right: 4px;
+      }
+    }
+
+    .help {
+      vertical-align: bottom;
+      cursor: help;
+    }
+
+    .copy {
+      vertical-align: bottom;
+      cursor: pointer;
+    }
+
+    button.ant-btn {
+      position: relative;
+      width: 18px;
+      height: 18px;
+      font-size:  @font-size-base;
+      line-height: 1.2;
+      vertical-align: bottom;
+
+      &:not(:last-child) {
+        margin-right: 4px;
+      }
+    }
+  }
+
+  label {
+    font-weight: @typography-title-font-weight;
+    font-size:  @font-size-base;
+  }
+}

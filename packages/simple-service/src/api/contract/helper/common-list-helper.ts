@@ -9,11 +9,11 @@ export const getChargeTypeList = async ({ ChargeType }: { ChargeType: ChargeType
   });
 
   const charges = _.map(list, 'Charge_Type');
-  const generalIndex = _.findIndex(charges, 'general');
+  const generalIndex = _.indexOf(charges, 'general');
   if (generalIndex !== -1) {
     charges[generalIndex] = charges[0];
     charges[0] = 'general';
   }
-  
+
   return charges;
 }

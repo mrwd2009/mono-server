@@ -1,0 +1,70 @@
+.contract-confirmable-input {
+  > div:first-child {
+    margin-bottom: 4px;
+  }
+
+  &__content {
+    overflow: hidden;
+    line-height: 1.2;
+
+    &.invalid {
+      .ant-input-affix-wrapper:hover .ant-input:not(.ant-input-disabled),
+      input,
+      input:focus,
+      input:hover {
+        border-color: @error-color;
+      }
+
+      .ant-input-number,
+      .ant-input-number:hover
+      {
+        border-color: @error-color;
+      }
+    }
+
+    .ant-input-number {
+      width: 100%;
+    }
+
+    input {
+      font-size: @font-size-base;
+    }
+  }
+
+  &__extra {
+    float: right;
+    margin-left: 4px;
+
+    span {
+      color: @primary-color;
+      cursor: pointer;
+
+      &:not(:last-child) {
+        margin-right: 4px;
+      }
+    }
+
+    .help {
+      vertical-align: bottom;
+      cursor: help;
+    }
+
+    button.ant-btn {
+      width: 18px;
+      min-width: 18px;
+      height: 18px;
+      font-size: @font-size-base;
+      line-height: 1.2;
+      vertical-align: bottom;
+
+      &:not(:last-child) {
+        margin-right: 4px;
+      }
+    }
+  }
+
+  label {
+    font-weight: @typography-title-font-weight;
+    font-size: @font-size-base;
+  }
+}

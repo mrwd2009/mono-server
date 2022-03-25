@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { AppRootState } from '../../../store';
 
-interface Node {
+export interface SelectedNode {
   isRootNode: boolean;
   name: string;
   type: string;
@@ -12,7 +12,7 @@ interface Node {
 }
 
 interface Slice {
-  node: Node | null;
+  node: SelectedNode | null;
 }
 
 const initialState: Slice = {
@@ -23,7 +23,7 @@ export const contractNodeSlice = createSlice({
   name: 'contract/node',
   initialState,
   reducers: {
-    updateContractNode: (state, action: PayloadAction<Node | null>) => {
+    updateContractNode: (state, action: PayloadAction<SelectedNode | null>) => {
       state.node = action.payload;
     },
     clearCurrentNode: (state) => {
