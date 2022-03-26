@@ -1,6 +1,7 @@
 import appDB from '../../../config/model/app';
 import { commonListHelper } from '../helper';
 import { DataError } from '../../../lib/error';
+import { number, string } from 'joi';
 
 const {
   matrix: {
@@ -42,4 +43,22 @@ export const getContractNode = async ({ node }: { node: string}) => {
     chargeTypeList,
     condition: [{ label: 'true', value: 'true'}],
   };
+};
+
+interface NodeParams {
+  node: number;
+  field: string;
+  value: boolean | string | number;
+}
+
+export const updateContractNode = async ({ node, field, value }: NodeParams ) => {
+  const [count] = await ContractBody.update({
+    [field]: value
+  }, {
+    where: {
+      __pk_contractbody: node,
+    },
+  });
+
+  return count;
 };

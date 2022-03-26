@@ -43,3 +43,16 @@ export const getContractNodeHandler: Middleware[] = [
     context.gateway!.sendJSON!(await contractNodeModel.getContractNode(context.mergedParams));
   },
 ];
+
+export const updateContractNodeHandler: Middleware[] = [
+  validator((Joi) => {
+    return Joi.object({
+      node: Joi.number().integer().required(),
+      field: Joi.string().valid('Name').required(),
+      value: Joi.alternatives().try(Joi.number(), Joi.string(), Joi.boolean()).required()
+    });
+  }),
+  async (context) => {
+    context.gateway!.sendJSON!(await contractNodeModel.updateContractNode(context.mergedParams));
+  },
+];

@@ -1,5 +1,8 @@
 import { notification, Modal } from 'antd';
 import { select } from 'd3-selection';
+import isArray from 'lodash/isArray';
+import isFunction from 'lodash/isFunction';
+import slice from 'lodash/slice';
 
 export const showSuccess = (msg: string, key = '__global_success__') => {
   notification.success({
@@ -164,4 +167,40 @@ export const getScrollbarWidth = () => {
 
   scrollbarWidth = widthNoScroll - widthWithScroll;
   return scrollbarWidth;
+}
+
+/**
+ * Find target node in a tree.
+ * @param id - Unique id for node.
+ * @param tree - Tree data structure, perhaps has 'children' property.
+ * @param idPropName {(string|Function)} - Get id.
+ * @return {*} Target node or null.
+ */
+ export const findTreeNode = (id: any, tree: any, idPropName: any = 'id') => {
+  let nodes;
+  let result = null;
+  if (isArray(tree)) {
+    nodes = slice(tree);
+  } else {
+    nodes = [tree];
+  }
+  let index = 0;
+  while (index < nodes.length) {
+    const node = nodes[index];
+    index += 1;
+    if (isFunction(idPropName)) {
+      if (idPropName(node) === id) {
+        result = node;
+        break;
+      }
+    } else if (node[idPropName] === id) {
+      result = node;
+      break;
+    }
+    if (node.children && node.children.length) {
+      nodes.push.apply(nodes, node.children); // eslint-disable-line
+    }
+  }
+
+  return result;
 }

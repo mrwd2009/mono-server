@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { AppRootState } from '../../../store';
+import util from '../../../util';
 
 export interface Node {
   id: number;
@@ -30,6 +31,10 @@ export const contractTreeSlice = createSlice({
     updateContractTree: (state, action: PayloadAction<Node | null>) => {
       state.tree = action.payload;
     },
+    updateContractTreeNodeName: (state, action: PayloadAction<{ node: number, name: string }>) => {
+      let target = util.findTreeNode(action.payload.node, state.tree, (item: any) => item.extraData.contractBody);
+      target.name = action.payload.name;
+    },
     clearCurrentTree: (state) => {
       state.tree = null;
       state.selectedNodeID = null;
@@ -40,7 +45,7 @@ export const contractTreeSlice = createSlice({
   },
 });
 
-export const { updateContractTree, clearCurrentTree, updateSelectedNodeID } = contractTreeSlice.actions;
+export const { updateContractTree, clearCurrentTree, updateSelectedNodeID, updateContractTreeNodeName } = contractTreeSlice.actions;
 
 export const selectContractTree = (state: AppRootState) => state.contractTree.tree;
 

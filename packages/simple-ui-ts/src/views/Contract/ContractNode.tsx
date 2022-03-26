@@ -1,5 +1,5 @@
 import { FC, memo } from 'react';
-import { Collapse, Button, Dropdown, Menu, Select } from 'antd';
+import { Collapse, Button, Dropdown, Menu, Select, Spin } from 'antd';
 import { DownOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import map from 'lodash/map';
 import Panel from '../../components/Panel';
@@ -8,8 +8,9 @@ import ConfirmableInput from '../../components/ConfirmableInput';
 import ConfirmableSelect from '../../components/ConfirmableSelect';
 import ConfirmableCheckbox from '../../components/ConfirmableCheckbox';
 import { useAppSelector } from '../../hooks';
-import { selectContractNode } from './slices';
+import { selectContractNode, selectSelectedNodeID} from './slices';
 import { SelectedNode } from './slices/contract-node-slice';
+import { useContractNodeBasic } from './hooks';
 
 const Action = memo(() => {
   const overlay = (
@@ -37,8 +38,10 @@ const Action = memo(() => {
 });
 
 const Basic = memo(({ node }: { node: SelectedNode }) => {
+  const { loading, updateContractNode } = useContractNodeBasic();
+  const nodeId = useAppSelector(selectSelectedNodeID)!;
   return (
-    <>
+    <Spin spinning={loading}>
       <ConfirmableInput
         className="mb-2"
         label="Name"
@@ -47,6 +50,9 @@ const Basic = memo(({ node }: { node: SelectedNode }) => {
         maxLength={50}
         allowSaveEmpty={false}
         required
+        onChange={(value) => {
+          updateContractNode(nodeId, 'Name', value)
+        }}
       />
       <ConfirmableSelect
         className="mb-2"
@@ -78,7 +84,7 @@ const Basic = memo(({ node }: { node: SelectedNode }) => {
       >
         Mark Boundled
       </ConfirmableCheckbox>
-    </>
+    </Spin>
   )
 });
 

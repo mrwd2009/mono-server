@@ -28,6 +28,7 @@ export const apiEndpoints = {
     tree: '/contract/tree',
     treeVersionList: '/contract/tree/version-list',
     treeNode: '/contract/tree/node',
+    updateNodeBasic: '/contract/tree/node',
   },
 };
 
