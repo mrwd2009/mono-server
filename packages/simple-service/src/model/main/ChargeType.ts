@@ -17,7 +17,7 @@ declare module '../types' {
 
 
 class ChargeType extends Model<InferAttributes<ChargeType>, InferCreationAttributes<ChargeType>> {
-  declare Charge_ID: number;
+  declare Charge_ID: CreationOptional<number>;
   declare Charge_Type: string;
   declare Coexistent_Charge_Type: CreationOptional<string>;
   declare Mutual_Exclusive_Charge_Type: CreationOptional<string>;

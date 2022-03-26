@@ -5,7 +5,7 @@ import apiEndpoints from '../../../config/api-endpoints';
 import { useAppDispatch } from '../../../hooks';
 import useContractVersionList from './useContractVersionList';
 import useContractTree from './useContractTree';
-import { updateContractList, clearCurrentTree, updateSelectedContract } from '../slices';
+import { updateContractList, updateSelectedContract } from '../slices';
 import util from '../../../util';
 
 const useContractList = () => {
@@ -14,7 +14,7 @@ const useContractList = () => {
   const dispatch = useAppDispatch();
 
   const fetchList = useCallback(() => {
-    Promise.all([requestList(), requestSaved()]).then((resList) => {
+    return Promise.all([requestList(), requestSaved()]).then((resList) => {
       dispatch(
         updateContractList({
           contractList: resList[0].data,
@@ -25,12 +25,12 @@ const useContractList = () => {
   }, [requestList, requestSaved, dispatch]);
 
   const { loading: vLoading, fetchContractVersionList } = useContractVersionList();
-  const { loading: tLoading, fetchContractTree } = useContractTree();
+  const { loading: tLoading, fetchContractTree, clearContractTree } = useContractTree();
 
   const loadSavedContract = useCallback(
     (saved: { root: number; version: number } | null) => {
       if (!saved) {
-        dispatch(clearCurrentTree());
+        clearContractTree();
         dispatch(updateSelectedContract(null));
       } else {
         fetchContractVersionList(saved.root).then((list) => {
@@ -42,7 +42,7 @@ const useContractList = () => {
         });
       }
     },
-    [fetchContractVersionList, fetchContractTree,  dispatch],
+    [fetchContractVersionList, fetchContractTree,  dispatch, clearContractTree],
   );
 
   return {

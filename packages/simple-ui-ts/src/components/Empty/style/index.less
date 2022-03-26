@@ -1,6 +1,8 @@
 .app-ex-empty {
-  background: @background-color-light;
-  border: @border-width-base dashed @border-color-base;
+  &.droppable {
+    background: @background-color-light;
+    border: @border-width-base dashed @border-color-base;
+  }
 
   &.dragging {
     border-color: @primary-7;
@@ -16,10 +18,20 @@
 
   &.sm {
     .ant-empty-image  {
-      height: 40px;
+      height: 36px;
   
       svg {
-        width: 40px;
+        width: 36px;
+      }
+    }
+  }
+
+  &.xs {
+    .ant-empty-image  {
+      height: 24px;
+  
+      svg {
+        width: 24px;
       }
     }
   }

@@ -9,8 +9,11 @@ const router = new Router({
 router.get('/list', ctrl.getContractListHandler);
 router.get('/saved-list', ctrl.getSavedNodeListHandler);
 router.post('/tree', ...ctrl.getContractTreeHandler);
+router.delete('/tree', ...ctrl.deleteContractTreeHandler);
 router.get('/tree/version-list', ...ctrl.getContractVersionsHandler);
 router.get('/tree/node', ...ctrl.getContractNodeHandler);
+router.post('/tree/node', ...ctrl.createContractNodeHandler);
 router.put('/tree/node', ...ctrl.updateContractNodeHandler);
+router.delete('/tree/node', ...ctrl.deleteContractNodeHandler);
 
 registerRouter(router);

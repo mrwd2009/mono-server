@@ -24,7 +24,7 @@ export class ContractRuleModel extends Model<
   static associate = (models: AppModels) => {
     ContractRuleModel.belongsTo(models.ContractBody, { foreignKey: '_fk_contractbody', constraints: false });
   };
-  declare __pk_rulemodel: number;
+  declare __pk_rulemodel: CreationOptional<number>;
   declare _fk_contractbody: number;
   declare _fk_parent_rulemodel: number;
   declare Level: CreationOptional<string>;

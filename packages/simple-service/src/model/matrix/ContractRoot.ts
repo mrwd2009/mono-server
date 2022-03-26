@@ -21,7 +21,7 @@ export class ContractRoot extends Model<InferAttributes<ContractRoot>, InferCrea
   static associate = (models: AppModels) => {
     ContractRoot.hasMany(models.ContractBody, { foreignKey: '_fk_contractroot', constraints: false });
   };
-  declare __pk_contractroot: number;
+  declare __pk_contractroot: CreationOptional<number>;
   declare Name: CreationOptional<string>;
   declare Status: CreationOptional<string>;
   declare Type: CreationOptional<string>;

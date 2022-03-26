@@ -5,7 +5,7 @@ import { ReactComponent as EmptyImg } from '../../assets/images/empty.svg';
 
 interface Props extends EmptyProps {
   onDrop?: DragEventHandler;
-  size?: 'small' | 'default'
+  size?: 'small' | 'default' | 'xsmall'
 }
 
 const CustomEmpty: FC<Props> = ({ onDrop, description, imageStyle, className, size = 'default', ...restProps }) => {
@@ -14,6 +14,8 @@ const CustomEmpty: FC<Props> = ({ onDrop, description, imageStyle, className, si
     dragging,
     'p-4': !!onDrop,
     'sm': size === 'small',
+    'xs': size === 'xsmall',
+    droppable: !!onDrop,
   });
   let props = {};
   if (onDrop) {
@@ -39,8 +41,8 @@ const CustomEmpty: FC<Props> = ({ onDrop, description, imageStyle, className, si
       className={classStr}
     >
       <Empty
-        {...restProps}
         image={<EmptyImg />}
+        {...restProps}
         description={description}
         imageStyle={imageStyle}
       />

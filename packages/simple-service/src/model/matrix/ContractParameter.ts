@@ -24,7 +24,7 @@ export class ContractParameter extends Model<
   static associate = (models: AppModels) => {
     ContractParameter.belongsTo(models.ContractBody, { foreignKey: '_fk_contractbody ', constraints: false });
   };
-  declare __pk_parameter: number;
+  declare __pk_parameter: CreationOptional<number>;
   declare _fk_contractbody: number;
   declare Parameter_ID: number;
   declare Parameter_Value: CreationOptional<string>;

@@ -7,12 +7,30 @@ import EllipsisTooltip from '../../components/EllipsisTooltip';
 import ConfirmableInput from '../../components/ConfirmableInput';
 import ConfirmableSelect from '../../components/ConfirmableSelect';
 import ConfirmableCheckbox from '../../components/ConfirmableCheckbox';
+import Empty from '../../components/Empty';
+import { ReactComponent as BlockImg } from '../../assets/images/block.svg';
 import { useAppSelector } from '../../hooks';
-import { selectContractNode, selectSelectedNodeID} from './slices';
+import { selectContractNode, selectSelectedId, selectSelectedNodeID, selectCurrentVersionInfo} from './slices';
 import { SelectedNode } from './slices/contract-node-slice';
-import { useContractNodeBasic } from './hooks';
+import { useContractNodeBasic, useContractNodeDeletion } from './hooks';
 
 const Action = memo(() => {
+  const root = useAppSelector(selectSelectedId);
+  const node = useAppSelector(selectSelectedNodeID);
+  const versionInfo = useAppSelector(selectCurrentVersionInfo);
+  const { loading, deleteContractNode } = useContractNodeDeletion();
+
+  if (versionInfo?.type === 'approved') {
+    return (
+      <Empty
+      className="text-primary"
+      size="xsmall"
+      image={<BlockImg fill="currentColor" />}
+      description="Editing Locked"
+      />
+    );
+  }
+
   const overlay = (
     <Menu>
       <Menu.Item key="node">Reusable Node</Menu.Item>
@@ -30,6 +48,8 @@ const Action = memo(() => {
         icon={<DeleteOutlined />}
         danger
         block
+        loading={loading}
+        onClick={() => deleteContractNode(node!, root!, versionInfo?.version!)}
       >
         Delete
       </Button>
@@ -40,6 +60,8 @@ const Action = memo(() => {
 const Basic = memo(({ node }: { node: SelectedNode }) => {
   const { loading, updateContractNode } = useContractNodeBasic();
   const nodeId = useAppSelector(selectSelectedNodeID)!;
+  const versionInfo = useAppSelector(selectCurrentVersionInfo);
+  const readonly = versionInfo?.type === 'approved';
   return (
     <Spin spinning={loading}>
       <ConfirmableInput
@@ -53,6 +75,7 @@ const Basic = memo(({ node }: { node: SelectedNode }) => {
         onChange={(value) => {
           updateContractNode(nodeId, 'Name', value)
         }}
+        readonly={readonly}
       />
       <ConfirmableSelect
         className="mb-2"
@@ -61,6 +84,7 @@ const Basic = memo(({ node }: { node: SelectedNode }) => {
         mode="multiple"
         confirm
         getPopupContainer={(currentNode: any) => currentNode.parentNode.parentNode}
+        readonly={readonly}
       >
         {
           map(node.chargeTypeList, (item) => {
@@ -75,20 +99,24 @@ const Basic = memo(({ node }: { node: SelectedNode }) => {
       <ConfirmableCheckbox
         className="mb-2"
         value={node.hiddenFlag}
+        readonly={readonly}
       >
-        Mark Ignored
+        Mark As Ignored
       </ConfirmableCheckbox>
       <ConfirmableCheckbox
         // className="mb-2"
         value={node.hiddenFlag}
+        readonly={readonly}
       >
-        Mark Boundled
+        Mark As Boundled
       </ConfirmableCheckbox>
     </Spin>
   )
 });
 
 const Parameter = memo(() => {
+  const versionInfo = useAppSelector(selectCurrentVersionInfo);
+  const readonly = versionInfo?.type === 'approved';
   const options = [
     {
       dictionaryID: 3411,
@@ -222,6 +250,7 @@ const Parameter = memo(() => {
               filterLabel
               allowClear
               getPopupContainer={(node: any) => node.parentNode.parentNode}
+              readonly={readonly}
             >
               {map(param.options, (item) => {
                 return (
@@ -246,6 +275,7 @@ const Parameter = memo(() => {
               trim
               maxLength={500}
               value={param.value}
+              readonly={readonly}
             />
           );
         }
@@ -259,6 +289,7 @@ const Parameter = memo(() => {
             trim
             maxLength={500}
             value={param.value}
+            readonly={readonly}
           />
         );
       })}
@@ -267,6 +298,8 @@ const Parameter = memo(() => {
 });
 
 const ComputeRule = memo(() => {
+  const versionInfo = useAppSelector(selectCurrentVersionInfo);
+  const readonly = versionInfo?.type === 'approved';
   return (
     <>
       <Button
@@ -288,6 +321,7 @@ const ComputeRule = memo(() => {
         block
         type="primary"
         className="mb-2 text-left"
+        disabled={readonly}
       >
         Create Usage Rule
       </Button>

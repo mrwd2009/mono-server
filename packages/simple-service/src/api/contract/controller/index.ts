@@ -22,6 +22,17 @@ export const getContractTreeHandler: Middleware[] = [
   },
 ];
 
+export const deleteContractTreeHandler: Middleware[] = [
+  validator((Joi) => {
+    return Joi.object({
+      root: Joi.number().integer().required(),
+    });
+  }),
+  async (context) => {
+    context.gateway!.sendJSON!(await contractTreeModel.deleteContractTree(context.mergedParams));
+  },
+];
+
 export const getContractVersionsHandler: Middleware[] = [
   validator((Joi) => {
     return Joi.object({
@@ -54,5 +65,30 @@ export const updateContractNodeHandler: Middleware[] = [
   }),
   async (context) => {
     context.gateway!.sendJSON!(await contractNodeModel.updateContractNode(context.mergedParams));
+  },
+];
+
+export const deleteContractNodeHandler: Middleware[] = [
+  validator((Joi) => {
+    return Joi.object({
+      node: Joi.number().integer().required(),
+    });
+  }),
+  async (context) => {
+    context.gateway!.sendJSON!(await contractNodeModel.deleteContractNode(context.mergedParams));
+  },
+];
+
+export const createContractNodeHandler: Middleware[] = [
+  validator((Joi) => {
+    return Joi.object({
+      name: Joi.string().allow('').max(100).optional(),
+      type: Joi.string().required().valid('contract', 'subcontract', 'reroute', 'charge'),
+      sourceType: Joi.string().required().valid('instance', 'pcc', 'umc'),
+      parent: Joi.number().integer().optional(),
+    });
+  }),
+  async (context) => {
+    context.gateway!.sendJSON!(await contractNodeModel.createContractNode(context.mergedParams));
   },
 ];

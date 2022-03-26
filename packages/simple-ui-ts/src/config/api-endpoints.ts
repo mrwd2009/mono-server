@@ -26,9 +26,12 @@ export const apiEndpoints = {
     list: '/contract/list',
     savedNodes: '/contract/saved-list',
     tree: '/contract/tree',
+    deleteTree: '/contract/tree',
     treeVersionList: '/contract/tree/version-list',
     treeNode: '/contract/tree/node',
     updateNodeBasic: '/contract/tree/node',
+    deleteNode: '/contract/tree/node',
+    createNode: '/contract/tree/node',
   },
 };
 

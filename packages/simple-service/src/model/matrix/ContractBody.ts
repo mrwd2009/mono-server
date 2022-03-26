@@ -23,9 +23,9 @@ export class ContractBody extends Model<InferAttributes<ContractBody>, InferCrea
     ContractBody.hasMany(models.ContractParameter, { foreignKey: '_fk_contractbody', constraints: false });
     ContractBody.hasMany(models.ContractRuleModel, { foreignKey: '_fk_contractbody', constraints: false });
   };
-  declare __pk_contractbody: number;
+  declare __pk_contractbody: CreationOptional<number>;
   declare _fk_contractroot: number;
-  declare _fk_parent_contractbody: number;
+  declare _fk_parent_contractbody: CreationOptional<number>;
   declare Name: string;
   declare Type: string;
   declare Branch_Type: CreationOptional<string>;

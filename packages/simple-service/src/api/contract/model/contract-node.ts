@@ -1,13 +1,17 @@
+import _ from 'lodash';
 import appDB from '../../../config/model/app';
 import { commonListHelper } from '../helper';
-import { DataError } from '../../../lib/error';
-import { number, string } from 'joi';
+import { DataError, LogicError } from '../../../lib/error';
+import { ContractRootModel } from '../../../model/types';
 
 const {
   matrix: {
     models: {
       ContractBody,
+      ContractRoot,
+      ContractParameter,
     },
+    sequelize,
   },
   main: {
     models: {
@@ -45,13 +49,13 @@ export const getContractNode = async ({ node }: { node: string}) => {
   };
 };
 
-interface NodeParams {
+interface NodeUpdateParams {
   node: number;
   field: string;
   value: boolean | string | number;
 }
 
-export const updateContractNode = async ({ node, field, value }: NodeParams ) => {
+export const updateContractNode = async ({ node, field, value }: NodeUpdateParams ) => {
   const [count] = await ContractBody.update({
     [field]: value
   }, {
@@ -62,3 +66,140 @@ export const updateContractNode = async ({ node, field, value }: NodeParams ) =>
 
   return count;
 };
+
+export const deleteContractNode = async ({ node }: { node: number }) => {
+  // TODO check version type
+  return await ContractBody.destroy({
+    where: {
+      __pk_contractbody: node,
+    },
+  });
+}
+
+interface NodeCreateParams {
+  name: string;
+  type: string;
+  sourceType: string;
+  parent?: number | null;
+}
+
+export const createContractNode = async (params: NodeCreateParams) => {
+  const {
+    name,
+    type,
+    sourceType,
+    parent,
+  } = params;
+
+  return await sequelize.transaction(async (transaction) => {
+    let root: number;
+    if (type === 'contract') {
+      const rootNode = await ContractRoot.create(
+        {
+          Name: name,
+          Type: 'instance',
+          RootType: type,
+          Status: 'active',
+          ActiveVersion: 1,
+        },
+        {
+          transaction,
+        },
+      );
+      root = rootNode.__pk_contractroot;
+    }
+    
+    let version = null;
+    let sequenceID = null;
+
+    if (type === 'contract') {
+      version = 1;
+      sequenceID = '1';
+    } else {
+      const node = await ContractBody.findOne({
+        where: {
+          __pk_contractbody: parent,
+        },
+        transaction,
+      });
+
+      if (!node) {
+        throw new DataError('Node is not found.');
+      }
+
+      if (node.Version_Type === 'approved') {
+        throw new LogicError('Adding node on approved contract is not allowed.');
+      }
+
+      version = node.Version;
+      root = node._fk_contractroot;
+
+      let parentSequenceID = node.Sequence_ID;
+      if (parentSequenceID === '1') {
+        parentSequenceID = '';
+      }
+
+      const rootNode = await ContractBody.findOne({
+        where: {
+          _fk_parent_contractbody: null,
+          Version: node.Version,
+          _fk_contractroot: node._fk_contractroot,
+        },
+        transaction,
+      });
+
+      if (!rootNode) {
+        throw new DataError('Root node is not found.');
+      }
+      // lock current contract version root.
+      await ContractBody.findOne({
+        where: {
+          __pk_contractbody: rootNode.__pk_contractbody,
+        },
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      });
+
+      const count = await ContractBody.count({
+        where: {
+          _fk_parent_contractbody: parent,
+          _fk_contractroot: root,
+          Version: version,
+        },
+        transaction,
+      });
+
+      if (count >= 99) {
+        throw new LogicError('Maximum child node count is 99');
+      }
+
+      sequenceID = parentSequenceID + _.padStart(`${count + 1}`, 2, '0');
+    }
+
+    await ContractBody.create(
+      {
+        Name: name,
+        Version_Type: 'interim',
+        Hidden_Flag: false,
+        Source_Type: sourceType,
+        Version: version!,
+        Type: type,
+        Charge_Type: type === 'charge' || type === 'contract' ? 'general' : '',
+        _fk_contractroot: root!,
+        _fk_parent_contractbody: parent!,
+        Start_Date: new Date('2000-01-01 00:00:00'),
+        End_Date: new Date('2099-12-31 23:59:59'),
+        Time_Sequence_ID: 1,
+        Sequence_ID: sequenceID,
+      },
+      {
+        transaction,
+      },
+    );
+
+    return {
+      root: root!,
+      version,
+    };
+  });
+}

@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import useAxios from 'axios-hooks';
 import apiEndpoints from '../../../config/api-endpoints';
 import { useAppDispatch } from '../../../hooks';
-import { updateContractTree, updateSelectedContract, updateContractNode } from '../slices';
+import { updateContractTree, updateSelectedContract, updateContractNode, clearCurrentTree } from '../slices';
 import useContractNode from './useContractNode';
 
 export const useContractTree = () => {
@@ -24,10 +24,15 @@ export const useContractTree = () => {
     fetchContractNode
   } = useContractNode();
 
+  const clearContractTree = useCallback(() => {
+    dispatch(clearCurrentTree());
+  }, [dispatch])
+
   return {
     loading: loading || nodeLoading,
     fetchContractTree,
     fetchContractNode,
+    clearContractTree,
   };
 };
 

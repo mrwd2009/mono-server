@@ -6,6 +6,8 @@ import Panel from '../../components/Panel';
 import Empty from '../../components/Empty';
 import ModelTree from '../../components/ModelTree';
 import TreeComment from './TreeComment';
+import { useHookedModal } from '../../components/HookedModal';
+import InsertExternalNode from './InsertExternalNode';
 import { useAppSelector } from '../../hooks';
 import {
   selectContractTree,
@@ -17,7 +19,8 @@ import {
 } from './slices';
 import { Node } from './slices/contract-tree-slice';
 import { Version } from './slices/contract-list-slice';
-import { useContractTree } from './hooks';
+import { useContractDeletion, useContractTree, useInsertInternalNode } from './hooks';
+import { showError } from '../../util/common';
 
 const nodeKey = (node: any) => node.data.extraData.contractBody;
 
@@ -33,6 +36,13 @@ const TreeContent = memo(({
   fetchContractNode,
 }: TreeContentProps) => {
   const selectedNodeId = useAppSelector(selectSelectedNodeID);
+  const insertExternalModal = useHookedModal();
+  const {
+    loading,
+    createContractNode,
+  } = useInsertInternalNode();
+  const root = useAppSelector(selectSelectedId)!;
+  const version = useAppSelector(selectSelectedVersion)!;
 
   const contextMenu = [
     {
@@ -67,37 +77,71 @@ const TreeContent = memo(({
       />
     );
   }
+  const handleDrop = (data: any) => {
+    if (!data.target) {
+      return;
+    }
+    if (data.type === 'external') {
+      if (data.source.type === 'Component') {
+        const tData = data.target.data;
+        if (data.source.data === 'contract' || tData.type === 'root' || tData.type === 'charge') {
+          showError('Invalid Operation.');
+          return;
+        }
+        if (data.source.data === 'reroute') {
+          createContractNode({
+            name: '',
+            type: data.source.data,
+            sourceType: 'instance',
+            parent: data.target.data.id,
+          }, root, version);
+          return;
+        }
+        insertExternalModal.changeVisible(true, {
+          type: data.source.data,
+          sourceType: 'instance',
+          parent: data.target.data.id,
+        });
+        return;
+      }
+      return;
+    }
+  };
   return (
-    <ModelTree
-      minHeight={600}
-      key="editable"
-      dataSource={tree}
-      contextMenus={contextMenu}
-      onDrop={console.log}
-      onSelect={(node) => fetchContractNode!(node?.data.id)}
-      selectedKey={selectedNodeId}
-      // defaultCenteredKey={}
-      nodeKey={nodeKey}
-      internalMenuStatus={menuStatus}
-      toolbar={toolbar}
-    />
+    <Spin spinning={loading}>
+      <ModelTree
+        minHeight={600}
+        key="editable"
+        dataSource={tree}
+        contextMenus={contextMenu}
+        onDrop={handleDrop}
+        onSelect={(node) => fetchContractNode!(node?.data.id)}
+        selectedKey={selectedNodeId}
+        nodeKey={nodeKey}
+        internalMenuStatus={menuStatus}
+        toolbar={toolbar}
+      />
+      <InsertExternalNode hookedModal={insertExternalModal} />
+    </Spin>
   );
 });
 
 const TreeAction = memo(() => {
+  const { loading, deleteContract } = useContractDeletion();
+  const root = useAppSelector(selectSelectedId)!;
   return (
     <Space
       className="mb-2"
       wrap
     >
       <Button size="small">
-        Approve{' '}
+        Approve
         <Tooltip title="Approve contract interim version">
           <QuestionCircleOutlined />
         </Tooltip>
       </Button>
       <Button size="small">
-        Make Interim{' '}
+        Make Interim
         <Tooltip title="Copy contract from current approved version into interim veresion">
           <QuestionCircleOutlined />
         </Tooltip>
@@ -105,13 +149,13 @@ const TreeAction = memo(() => {
       <Button size="small">Mark Active</Button>
       <Button size="small">Mark Obsolete</Button>
       <Button size="small">
-        Show Rate{' '}
+        Show Rate
         <Tooltip title="Show all used rate tables">
           <QuestionCircleOutlined />
         </Tooltip>
       </Button>
       <Button size="small">
-        Show Design{' '}
+        Show Design
         <Tooltip title="Show current contract version details">
           <QuestionCircleOutlined />
         </Tooltip>
@@ -119,8 +163,10 @@ const TreeAction = memo(() => {
       <Button
         size="small"
         danger
+        loading={loading}
+        onClick={() => deleteContract(root)}
       >
-        Delete{' '}
+        Delete
         <Tooltip title="Only contract having only one interim version can be deleted">
           <QuestionCircleOutlined />
         </Tooltip>
@@ -149,11 +195,28 @@ const ContractTree: FC = () => {
   const versionList = useAppSelector(selectVersionList);
   const selectedVersion = useAppSelector(selectSelectedVersion);
   const currentVersionInfo = useAppSelector(selectCurrentVersionInfo);
+  const insertExternalModal = useHookedModal();
 
   if (!tree) {
+    const handleDrop = (data: any) => {
+      const str = data.dataTransfer.getData('Text');
+      if (str) {
+        try {
+          const data = JSON.parse(str);
+          if (data.type === 'Component' && data.data === 'contract') {
+            insertExternalModal.changeVisible(true, {
+              type: 'contract',
+              sourceType: 'instance',
+            });
+          }
+        } catch (error) {
+
+        }
+      }
+    };
     return (
       <Empty
-        onDrop={console.log}
+        onDrop={handleDrop}
         className="mt-5"
         description="You can drag root component over here or click button to create a new contract."
       >
@@ -161,9 +224,16 @@ const ContractTree: FC = () => {
           type="primary"
           shape="round"
           icon={<PlusOutlined />}
+          onClick={() => {
+            insertExternalModal.changeVisible(true, {
+              type: 'contract',
+              sourceType: 'instance',
+            });
+          }}
         >
           New Contract
         </Button>
+        <InsertExternalNode hookedModal={insertExternalModal} />
       </Empty>
     );
   }
