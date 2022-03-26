@@ -32,6 +32,8 @@ export const apiEndpoints = {
     updateNodeBasic: '/contract/tree/node',
     deleteNode: '/contract/tree/node',
     createNode: '/contract/tree/node',
+    reparentTreeNode: '/contract/tree/node/reparent',
+    saveResuableNode: '/contract/tree/node/reusable',
   },
 };
 

@@ -126,14 +126,14 @@ const ContractList: FC = () => {
           </Tabs.TabPane>
           <Tabs.TabPane key="saved">
             <DraggableList
-              draggable={false}
+              draggable
               dataSource={savedList}
               itemKey={itemKey}
               search
               debounce={300}
               maxHeight={600}
               onSearch={filterList}
-              dataType="Contract"
+              dataType="Reusable"
               onSelect={handleSelect}
               selectedKey={selectedItemKey}
             />

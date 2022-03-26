@@ -2,14 +2,12 @@ import _ from 'lodash';
 import appDB from '../../../config/model/app';
 import { commonListHelper } from '../helper';
 import { DataError, LogicError } from '../../../lib/error';
-import { ContractRootModel } from '../../../model/types';
 
 const {
   matrix: {
     models: {
       ContractBody,
       ContractRoot,
-      ContractParameter,
     },
     sequelize,
   },
@@ -55,16 +53,45 @@ interface NodeUpdateParams {
   value: boolean | string | number;
 }
 
-export const updateContractNode = async ({ node, field, value }: NodeUpdateParams ) => {
-  const [count] = await ContractBody.update({
-    [field]: value
-  }, {
+export const updateContractNode = async ({ node, field, value }: NodeUpdateParams) => {
+  const nodeInfo = await ContractBody.findOne({
     where: {
       __pk_contractbody: node,
     },
   });
+  if (!nodeInfo) {
+    throw new DataError('Node is not found.');
+  }
 
-  return count;
+  await sequelize.transaction(async (transaction) => {
+    if (nodeInfo.Sequence_ID === '1' && field === 'Name') {
+      await ContractRoot.update(
+        {
+          Name: value as string,
+        },
+        {
+          where: {
+            __pk_contractroot: nodeInfo._fk_contractroot,
+          },
+          transaction,
+        },
+      );
+    }
+
+    const [count] = await ContractBody.update(
+      {
+        [field]: value,
+      },
+      {
+        where: {
+          __pk_contractbody: node,
+        },
+        transaction,
+      },
+    );
+
+    return count;
+  });
 };
 
 export const deleteContractNode = async ({ node }: { node: number }) => {

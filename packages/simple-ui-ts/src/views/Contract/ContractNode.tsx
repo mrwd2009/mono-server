@@ -7,18 +7,23 @@ import EllipsisTooltip from '../../components/EllipsisTooltip';
 import ConfirmableInput from '../../components/ConfirmableInput';
 import ConfirmableSelect from '../../components/ConfirmableSelect';
 import ConfirmableCheckbox from '../../components/ConfirmableCheckbox';
+import { useHookedModal } from '../../components/HookedModal';
 import Empty from '../../components/Empty';
 import { ReactComponent as BlockImg } from '../../assets/images/block.svg';
 import { useAppSelector } from '../../hooks';
 import { selectContractNode, selectSelectedId, selectSelectedNodeID, selectCurrentVersionInfo} from './slices';
 import { SelectedNode } from './slices/contract-node-slice';
 import { useContractNodeBasic, useContractNodeDeletion } from './hooks';
+import SaveContractNodeAs from './SaveContractNodeAs';
 
 const Action = memo(() => {
   const root = useAppSelector(selectSelectedId);
   const node = useAppSelector(selectSelectedNodeID);
+  const nodeInfo = useAppSelector(selectContractNode);
   const versionInfo = useAppSelector(selectCurrentVersionInfo);
   const { loading, deleteContractNode } = useContractNodeDeletion();
+
+  const saveAsModal = useHookedModal();
 
   if (versionInfo?.type === 'approved') {
     return (
@@ -30,10 +35,18 @@ const Action = memo(() => {
       />
     );
   }
-
+  const handleSaveAs = () => {
+    saveAsModal.changeVisible(true, {
+      name: nodeInfo?.name,
+      type: nodeInfo?.type === 'contract' ? 'instance' : 'umc',
+    });
+  };
   const overlay = (
     <Menu>
-      <Menu.Item key="node">Reusable Node</Menu.Item>
+      <Menu.Item key="node" onClick={handleSaveAs}>
+        {nodeInfo?.type === 'contract' ? 'Contract' : 'Reusable Node'}
+        <SaveContractNodeAs hookedModal={saveAsModal} />
+      </Menu.Item>
     </Menu>
   )
   return (
@@ -338,11 +351,10 @@ const ComputeRule = memo(() => {
 
 const ContractNode: FC = () => {
   const node = useAppSelector(selectContractNode)!;
+  const nodeInfo = useAppSelector(selectContractNode);
 
   return (
-    <Panel
-      title={<EllipsisTooltip>{node.name}</EllipsisTooltip>}
-    >
+    <Panel title={<EllipsisTooltip>{node.name}</EllipsisTooltip>}>
       <Collapse
         ghost
         defaultActiveKey={['action', 'basic']}
@@ -359,34 +371,40 @@ const ContractNode: FC = () => {
         >
           <Basic node={node} />
         </Collapse.Panel>
-        <Collapse.Panel
-          header="Parameter"
-          key="parameter"
-        >
-          <Parameter />
-        </Collapse.Panel>
-        <Collapse.Panel
-          header="Calculation Rule"
-          key="rule"
-        >
-          <ComputeRule />
-        </Collapse.Panel>
-        <Collapse.Panel
-          header="Condition"
-          key="condition"
-        >
-          <ConfirmableInput
-            value="true"
-            buttons={[
-              {
-                key: 'edit',
-                icon: <EditOutlined />,
-                title: 'Edit',
-                onClick: () => {}
-              }
-            ]}
-          />
-        </Collapse.Panel>
+        {(nodeInfo?.type === 'contract' || nodeInfo?.type === 'charge') && (
+            <Collapse.Panel
+              header="Parameter"
+              key="parameter"
+            >
+              <Parameter />
+            </Collapse.Panel>
+          )}
+        {nodeInfo?.type === 'charge' && (
+          <Collapse.Panel
+            header="Calculation Rule"
+            key="rule"
+          >
+            <ComputeRule />
+          </Collapse.Panel>
+        )}
+        {nodeInfo?.type === 'charge' && (
+          <Collapse.Panel
+            header="Condition"
+            key="condition"
+          >
+            <ConfirmableInput
+              value="true"
+              buttons={[
+                {
+                  key: 'edit',
+                  icon: <EditOutlined />,
+                  title: 'Edit',
+                  onClick: () => {},
+                },
+              ]}
+            />
+          </Collapse.Panel>
+        )}
       </Collapse>
     </Panel>
   );

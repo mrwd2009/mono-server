@@ -15,5 +15,7 @@ router.get('/tree/node', ...ctrl.getContractNodeHandler);
 router.post('/tree/node', ...ctrl.createContractNodeHandler);
 router.put('/tree/node', ...ctrl.updateContractNodeHandler);
 router.delete('/tree/node', ...ctrl.deleteContractNodeHandler);
+router.post('/tree/node/reparent', ...ctrl.reparentContractTreeNodeHandler);
+router.post('/tree/node/reusable', ...ctrl.saveContractTreeReusableNodeHandler);
 
 registerRouter(router);

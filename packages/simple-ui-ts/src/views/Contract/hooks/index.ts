@@ -6,6 +6,8 @@ import useContractNodeBasic from './useContractNodeBasic';
 import useContractNodeDeletion from './useContractNodeDeletion';
 import useInsertInternalNode from './useInsertExternalNode';
 import useContractDeletion from './useContractDeletion';
+import useContractNodeReparent from './useContractNodeReparent';
+import useContractNodeSave from './useContractNodeSave';
 
 export {
   useContractList,
@@ -16,4 +18,6 @@ export {
   useContractNodeDeletion,
   useInsertInternalNode,
   useContractDeletion,
+  useContractNodeReparent,
+  useContractNodeSave,
 };

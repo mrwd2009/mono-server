@@ -68,6 +68,32 @@ export const updateContractNodeHandler: Middleware[] = [
   },
 ];
 
+export const reparentContractTreeNodeHandler: Middleware[] = [
+  validator((Joi) => {
+    return Joi.object({
+      position: Joi.string().required().valid('above', 'child', 'below'),
+      sourceID: Joi.number().required(),
+      targetID: Joi.number().required()
+    });
+  }),
+  async (context) => {
+    context.gateway!.sendJSON!(await contractTreeModel.reparentContractTreeNode(context.mergedParams));
+  },
+];
+
+export const saveContractTreeReusableNodeHandler: Middleware[] = [
+  validator((Joi) => {
+    return Joi.object({
+      node: Joi.number().required(),
+      name: Joi.string().required(),
+      type: Joi.string().required().valid('instance', 'umc'),
+    });
+  }),
+  async (context) => {
+    context.gateway!.sendJSON!(await contractTreeModel.saveContractTreeReusableNode(context.mergedParams));
+  },
+];
+
 export const deleteContractNodeHandler: Middleware[] = [
   validator((Joi) => {
     return Joi.object({
@@ -84,7 +110,7 @@ export const createContractNodeHandler: Middleware[] = [
     return Joi.object({
       name: Joi.string().allow('').max(100).optional(),
       type: Joi.string().required().valid('contract', 'subcontract', 'reroute', 'charge'),
-      sourceType: Joi.string().required().valid('instance', 'pcc', 'umc'),
+      sourceType: Joi.string().required().valid('instance', 'umc'),
       parent: Joi.number().integer().optional(),
     });
   }),

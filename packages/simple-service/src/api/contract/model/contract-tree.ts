@@ -8,6 +8,7 @@ const {
       ContractBody,
       ContractRoot,
     },
+    sequelize,
   },
 } = appDB;
 
@@ -17,7 +18,26 @@ interface TreeParams {
 }
 
 export const getContractTree = async ({ root, version }: TreeParams) => {
-  return await contractTreeHelper.constructContractTree({ root, version, ContractBody});
+  return await contractTreeHelper.constructContractTree({ root, version, ContractBody });
+};
+
+export const reparentContractTreeNode = async (payload: { position: string; sourceID: number; targetID: number }) => {
+  return await sequelize.transaction(async (transaction) => {
+    return await contractTreeHelper.reparentNode({ payload, transaction, ContractBody });
+  });
+};
+
+export const saveContractTreeReusableNode = async (payload: { name: string; node: number; type: string }) => {
+  return await sequelize.transaction(async (transaction) => {
+    return await contractTreeHelper.saveReusableNode({
+      node: payload.node,
+      name: payload.name,
+      type: payload.type,
+      transaction,
+      ContractBody,
+      ContractRoot,
+    });
+  });
 };
 
 export const deleteContractTree = async ({ root }: { root: number }) => {

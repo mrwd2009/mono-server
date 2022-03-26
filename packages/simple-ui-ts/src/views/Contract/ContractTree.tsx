@@ -8,6 +8,7 @@ import ModelTree from '../../components/ModelTree';
 import TreeComment from './TreeComment';
 import { useHookedModal } from '../../components/HookedModal';
 import InsertExternalNode from './InsertExternalNode';
+import InsertInternalNode from './InsertInternalNode';
 import { useAppSelector } from '../../hooks';
 import {
   selectContractTree,
@@ -19,8 +20,8 @@ import {
 } from './slices';
 import { Node } from './slices/contract-tree-slice';
 import { Version } from './slices/contract-list-slice';
-import { useContractDeletion, useContractTree, useInsertInternalNode } from './hooks';
-import { showError } from '../../util/common';
+import { useContractDeletion, useContractList, useContractTree, useInsertInternalNode } from './hooks';
+import { showError, showWarning } from '../../util/common';
 
 const nodeKey = (node: any) => node.data.extraData.contractBody;
 
@@ -37,19 +38,21 @@ const TreeContent = memo(({
 }: TreeContentProps) => {
   const selectedNodeId = useAppSelector(selectSelectedNodeID);
   const insertExternalModal = useHookedModal();
+  const insertInternalModal = useHookedModal();
   const {
     loading,
     createContractNode,
   } = useInsertInternalNode();
   const root = useAppSelector(selectSelectedId)!;
   const version = useAppSelector(selectSelectedVersion)!;
+  const { loadSavedContract } = useContractList();
 
   const contextMenu = [
     {
       label: 'Insert',
       key: 'insert',
       disabled: (node: any) => !node || node.data.extraData.type === 'charge',
-      onClick: console.log,
+      onClick: () => showWarning('In developing.'),
     },
   ];
   const menuStatus = {
@@ -60,7 +63,7 @@ const TreeContent = memo(({
       title: 'Exit',
       key: 'exit',
       icon: <CloseOutlined />,
-      onClick: console.log,
+      onClick: () => loadSavedContract(null),
     },
   ];
   if (versionInfo?.type === 'approved') {
@@ -84,7 +87,7 @@ const TreeContent = memo(({
     if (data.type === 'external') {
       if (data.source.type === 'Component') {
         const tData = data.target.data;
-        if (data.source.data === 'contract' || tData.type === 'root' || tData.type === 'charge') {
+        if (data.source.data === 'contract' || tData.type === 'charge') {
           showError('Invalid Operation.');
           return;
         }
@@ -104,6 +107,20 @@ const TreeContent = memo(({
         });
         return;
       }
+
+      if (data.source.dataType === 'Reusable') {
+        showWarning('In developing');
+        return;
+      }
+      return;
+    }
+
+    if (data.type === 'internal' && data.target && data.source) {
+      insertInternalModal.changeVisible(true, {
+        sourceID: data.source.data.id,
+        targetID: data.target.data.id,
+        targetType: data.target.data.type,
+      });
       return;
     }
   };
@@ -122,6 +139,7 @@ const TreeContent = memo(({
         toolbar={toolbar}
       />
       <InsertExternalNode hookedModal={insertExternalModal} />
+      <InsertInternalNode hookedModal={insertInternalModal} />
     </Spin>
   );
 });

@@ -81,8 +81,8 @@ interface Props {
   /** Add custom toolbar button at top right corner. */
   toolbar?: Array<{
     key: string;
-    icon: ReactNode;
-    onClick: (event: any) => void;
+    icon?: ReactNode;
+    onClick?: (event: any) => void;
     title: string;
   }>;
   className?: string;

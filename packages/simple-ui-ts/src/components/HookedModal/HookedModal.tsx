@@ -13,7 +13,7 @@ const HookedModal: FC<Props> = ({ hookedModal, ...restProps }) => {
       centered
       destroyOnClose
       {...restProps}
-      onCancel={hookedModal ? () => hookedModal.changeVisible(false) : restProps.onCancel}
+      onCancel={hookedModal ? (e: any) => {hookedModal.changeVisible(false); restProps.onCancel?.(e)} : restProps.onCancel}
       visible={hookedModal ? hookedModal.visible : restProps.visible}
     />
   );

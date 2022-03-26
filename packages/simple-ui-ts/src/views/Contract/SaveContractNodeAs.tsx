@@ -1,40 +1,39 @@
 import { FC, memo } from 'react';
-import { Form, Radio } from 'antd';
+import { Form, Input } from 'antd';
 import HookedModal, { HookedModalInstance } from '../../components/HookedModal';
 import { useAppSelector } from '../../hooks';
-import { selectSelectedId, selectSelectedVersion } from './slices';
-import { useContractNodeReparent } from './hooks';
+import { selectSelectedNodeID } from './slices';
+import { useContractNodeSave } from './hooks';
 
 interface Props {
   hookedModal: HookedModalInstance;
 }
 
-const InsertInternalNode: FC<Props> = ({ hookedModal }) => {
+const SaveContractNodeAs: FC<Props> = ({ hookedModal }) => {
   const {
     data,
   } = hookedModal;
   const {
     loading,
-    reparentContractNode,
-    redrawContractTree,
-  } = useContractNodeReparent();
+    saveContractNode
+  } = useContractNodeSave();
+  const nodeId = useAppSelector(selectSelectedNodeID);
 
   return (
     <HookedModal
-      title="Insert"
+      title="Save As"
       hookedModal={hookedModal}
-      onCancel={() => redrawContractTree()}
       modalRender={(node) => {
         return (
           <Form
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 16 }}
             onFinish={(formData) => {
-              reparentContractNode(
+              saveContractNode(
                 { 
-                  position: formData.position,
-                  sourceID: data.sourceID,
-                  targetID: data.targetID,
+                  node: nodeId,
+                  name: formData.name,
+                  type: data.type,
                 },
               )
                 .then(() => {
@@ -51,15 +50,11 @@ const InsertInternalNode: FC<Props> = ({ hookedModal }) => {
         loading,
       }}
     >
-      <Form.Item label="Position" name="position" initialValue="below">
-        <Radio.Group>
-          <Radio value="above">Above</Radio>
-          { data.targetType !== 'charge' && <Radio value="child">Descendant</Radio> }
-          <Radio value="below">Below</Radio>
-        </Radio.Group>
+      <Form.Item initialValue={data.name} label="Name" name="name" rules={[{ required: true, message: 'Name is required.' }]}>
+        <Input />
       </Form.Item>
     </HookedModal>
   );
 };
 
-export default memo(InsertInternalNode);
+export default memo(SaveContractNodeAs);
