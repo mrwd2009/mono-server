@@ -72,6 +72,7 @@ const Action = memo(() => {
 
 const Basic = memo(({ node }: { node: SelectedNode }) => {
   const { loading, updateContractNode } = useContractNodeBasic();
+  // TODO maybe we need to move this state into corresponding hook
   const nodeId = useAppSelector(selectSelectedNodeID)!;
   const versionInfo = useAppSelector(selectCurrentVersionInfo);
   const readonly = versionInfo?.type === 'approved';

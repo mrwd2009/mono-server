@@ -7,7 +7,7 @@ import type { AppRootState } from '../../../store';
 interface Item {
   id: number;
   name: string;
-  contractRoot: number;
+  root: number;
   version: string;
   type: string;
 }
@@ -65,11 +65,24 @@ export const contractListSlice = createSlice({
       }
       state.selected = action.payload.root;
       state.selectedVersion = action.payload.version;
+    },
+    updateSelectedContractName: (state, action: PayloadAction<string>) => {
+      const item = state.contractList.find(cur => cur.root === state.selected) || state.savedList.find(cur => cur.root === state.selected);
+      if (item) {
+        item.name = action.payload;
+      }
     }
   },
 });
 
-export const { updateContractList, clearContractList, updateSelectedContract, updateVersionList, updateSelectedVersion } = contractListSlice.actions;
+export const {
+  updateContractList,
+  clearContractList,
+  updateSelectedContract,
+  updateVersionList,
+  updateSelectedVersion,
+  updateSelectedContractName,
+} = contractListSlice.actions;
 
 export const selectContractList = createSelector(
   (state: AppRootState) => state.contractList.contractList,
