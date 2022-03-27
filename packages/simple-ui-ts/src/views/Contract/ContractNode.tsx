@@ -72,9 +72,12 @@ const Basic = memo(({ node }: { node: SelectedNode }) => {
   const { loading, updateContractNode } = useContractNodeBasic();
   const versionInfo = useAppSelector(selectCurrentVersionInfo);
   const readonly = versionInfo?.type === 'approved';
+  const nodeInfo = useAppSelector(selectContractNode);
+  const showName = nodeInfo?.type !== 'reroute';
+  const showChargeType = nodeInfo?.type === 'charge';
   return (
     <Spin spinning={loading}>
-      <ConfirmableInput
+      {showName && <ConfirmableInput
         className="mb-2"
         label="Name"
         value={node.name}
@@ -86,8 +89,8 @@ const Basic = memo(({ node }: { node: SelectedNode }) => {
           updateContractNode('Name', value)
         }}
         readonly={readonly}
-      />
-      <ConfirmableSelect
+      />}
+      {showChargeType && <ConfirmableSelect
         className="mb-2"
         label="Charge Type"
         value={node.chargeType}
@@ -105,7 +108,7 @@ const Basic = memo(({ node }: { node: SelectedNode }) => {
             )
           })
         }
-      </ConfirmableSelect>
+      </ConfirmableSelect>}
       <ConfirmableCheckbox
         className="mb-2"
         value={node.hiddenFlag}
