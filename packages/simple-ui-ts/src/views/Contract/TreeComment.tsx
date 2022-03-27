@@ -2,6 +2,7 @@ import { ReactNode, PureComponent, ChangeEventHandler, MouseEventHandler } from 
 import { Comment, Avatar, Form, Button, List, Input } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import ResponsiveContainer from '../../components/ResponsiveContainer';
 import { constants } from '../../config';
 
 const { TextArea } = Input;
@@ -23,8 +24,8 @@ const CommentList = ({ comments }: { comments: CommentItem[] }) => (
 );
 
 const Editor = ({ onChange, onSubmit, submitting, value }: { onChange: ChangeEventHandler, onSubmit: MouseEventHandler, submitting: boolean, value: string }) => (
-  <>
-    <Form.Item>
+  <ResponsiveContainer>
+    <Form.Item wrapperCol={{ xs: { span: 24 }, sm: { span: 24}, md: { span: 24 }, lg: { span: 16 }, xl: { span: 12 } }}>
       <TextArea
         rows={4}
         onChange={onChange}
@@ -41,7 +42,7 @@ const Editor = ({ onChange, onSubmit, submitting, value }: { onChange: ChangeEve
         Add Log
       </Button>
     </Form.Item>
-  </>
+  </ResponsiveContainer>
 );
 
 class TreeComment extends PureComponent<{ initMsg?: string }> {

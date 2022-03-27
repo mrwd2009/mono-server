@@ -1,8 +1,8 @@
 import { FC, memo } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Breadcrumb } from 'antd';
+import { Breadcrumb, Button } from 'antd';
 import map from 'lodash/map';
-import { HomeOutlined } from '@ant-design/icons';
+import { HomeOutlined, GlobalOutlined } from '@ant-design/icons';
 import { getRouteBC } from '../../config/routes-info';
 
 const BC: FC = () => {
@@ -18,6 +18,7 @@ const BC: FC = () => {
           return <Breadcrumb.Item key={bc.key}>{bc.title}</Breadcrumb.Item>;
         })}
       </Breadcrumb>
+      <Button size="small" type="text" icon={<GlobalOutlined />}>English (US)</Button>
     </div>
   );
 };
