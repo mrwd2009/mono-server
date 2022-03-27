@@ -1,8 +1,6 @@
 import { FC, memo } from 'react';
 import { Form, Input } from 'antd';
 import HookedModal, { HookedModalInstance } from '../../components/HookedModal';
-import { useAppSelector } from '../../hooks';
-import { selectSelectedNodeID } from './slices';
 import { useContractNodeSave } from './hooks';
 
 interface Props {
@@ -17,7 +15,6 @@ const SaveContractNodeAs: FC<Props> = ({ hookedModal }) => {
     loading,
     saveContractNode
   } = useContractNodeSave();
-  const nodeId = useAppSelector(selectSelectedNodeID);
 
   return (
     <HookedModal
@@ -31,7 +28,6 @@ const SaveContractNodeAs: FC<Props> = ({ hookedModal }) => {
             onFinish={(formData) => {
               saveContractNode(
                 { 
-                  node: nodeId,
                   name: formData.name,
                   type: data.type,
                 },

@@ -1,8 +1,6 @@
 import { FC, memo } from 'react';
 import { Form, Radio } from 'antd';
 import HookedModal, { HookedModalInstance } from '../../components/HookedModal';
-import { useAppSelector } from '../../hooks';
-import { selectSelectedId, selectSelectedVersion } from './slices';
 import { useContractNodeReparent } from './hooks';
 
 interface Props {

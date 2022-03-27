@@ -11,14 +11,12 @@ import { useHookedModal } from '../../components/HookedModal';
 import Empty from '../../components/Empty';
 import { ReactComponent as BlockImg } from '../../assets/images/block.svg';
 import { useAppSelector } from '../../hooks';
-import { selectContractNode, selectSelectedId, selectSelectedNodeID, selectCurrentVersionInfo} from './slices';
+import { selectContractNode, selectCurrentVersionInfo} from './slices';
 import { SelectedNode } from './slices/contract-node-slice';
 import { useContractNodeBasic, useContractNodeDeletion } from './hooks';
 import SaveContractNodeAs from './SaveContractNodeAs';
 
 const Action = memo(() => {
-  const root = useAppSelector(selectSelectedId);
-  const node = useAppSelector(selectSelectedNodeID);
   const nodeInfo = useAppSelector(selectContractNode);
   const versionInfo = useAppSelector(selectCurrentVersionInfo);
   const { loading, deleteContractNode } = useContractNodeDeletion();
@@ -62,7 +60,7 @@ const Action = memo(() => {
         danger
         block
         loading={loading}
-        onClick={() => deleteContractNode(node!, root!, versionInfo?.version!)}
+        onClick={() => deleteContractNode()}
       >
         Delete
       </Button>
@@ -72,8 +70,6 @@ const Action = memo(() => {
 
 const Basic = memo(({ node }: { node: SelectedNode }) => {
   const { loading, updateContractNode } = useContractNodeBasic();
-  // TODO maybe we need to move this state into corresponding hook
-  const nodeId = useAppSelector(selectSelectedNodeID)!;
   const versionInfo = useAppSelector(selectCurrentVersionInfo);
   const readonly = versionInfo?.type === 'approved';
   return (
@@ -87,7 +83,7 @@ const Basic = memo(({ node }: { node: SelectedNode }) => {
         allowSaveEmpty={false}
         required
         onChange={(value) => {
-          updateContractNode(nodeId, 'Name', value)
+          updateContractNode('Name', value)
         }}
         readonly={readonly}
       />

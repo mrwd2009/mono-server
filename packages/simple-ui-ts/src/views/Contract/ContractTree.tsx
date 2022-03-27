@@ -43,8 +43,6 @@ const TreeContent = memo(({
     loading,
     createContractNode,
   } = useInsertInternalNode();
-  const root = useAppSelector(selectSelectedId)!;
-  const version = useAppSelector(selectSelectedVersion)!;
   const { loadSavedContract } = useContractList();
 
   const contextMenu = [
@@ -97,7 +95,7 @@ const TreeContent = memo(({
             type: data.source.data,
             sourceType: 'instance',
             parent: data.target.data.id,
-          }, root, version);
+          });
           return;
         }
         insertExternalModal.changeVisible(true, {
@@ -146,7 +144,6 @@ const TreeContent = memo(({
 
 const TreeAction = memo(() => {
   const { loading, deleteContract } = useContractDeletion();
-  const root = useAppSelector(selectSelectedId)!;
   return (
     <Space
       className="mb-2"
@@ -182,7 +179,7 @@ const TreeAction = memo(() => {
         size="small"
         danger
         loading={loading}
-        onClick={() => deleteContract(root)}
+        onClick={() => deleteContract()}
       >
         Delete
         <Tooltip title="Only contract having only one interim version can be deleted">

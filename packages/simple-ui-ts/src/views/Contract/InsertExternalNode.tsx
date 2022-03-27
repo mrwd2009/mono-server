@@ -1,8 +1,6 @@
 import { FC, memo } from 'react';
 import { Form, Input } from 'antd';
 import HookedModal, { HookedModalInstance } from '../../components/HookedModal';
-import { useAppSelector } from '../../hooks';
-import { selectSelectedId, selectSelectedVersion } from './slices';
 import { useInsertInternalNode } from './hooks';
 
 interface Props {
@@ -17,8 +15,6 @@ const InsertExternalNode: FC<Props> = ({ hookedModal }) => {
     loading,
     createContractNode,
   } = useInsertInternalNode();
-  const root = useAppSelector(selectSelectedId)!;
-  const version = useAppSelector(selectSelectedVersion)!;
 
   return (
     <HookedModal
@@ -37,8 +33,6 @@ const InsertExternalNode: FC<Props> = ({ hookedModal }) => {
                   sourceType: data.sourceType,
                   parent: data.parent,
                 },
-                root,
-                version
               )
                 .then(() => {
                   hookedModal.changeVisible(false);
