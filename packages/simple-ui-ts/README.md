@@ -327,10 +327,10 @@ TODO
 ### 17. Environment Variable
 
 Backend api port in development mode.\
-**DEV_API_PORT=4100**
+**REACT_APP_DEV_API_PORT=4100**
 
 Backend api protocol in development mode.\
-**DEV_API_SCHEME=http://**
+**REACT_APP_DEV_API_SCHEME=http://**
 
 Backend api address in production mode.\
-PROD_API_URL=xxxx
+**REACT_APP_PROD_API_URL=xxxx**
