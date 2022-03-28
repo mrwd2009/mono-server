@@ -1,4 +1,15 @@
-require('dotenv').config()
+const fs = require('fs');
+const path = require('path');
+const dotenv = require('dotenv')
+const NODE_ENV = process.env.NODE_ENV;
+
+const envFile = path.join(__dirname, `.env.${NODE_ENV}`);
+if (fs.existsSync(envFile)) {
+  dotenv.config({ path: envFile});
+} else {
+  dotenv.config();
+}
+
 const { getLoaders, loaderByName } = require('@craco/craco');
 const CracoLessPlugin = require('craco-less');
 
