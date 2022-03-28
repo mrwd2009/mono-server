@@ -295,7 +295,7 @@ const handleLogout = useCallback(() => {
 
 2. axios-hooks\
 In this approach, our request is cancelled after Reactcomponent destroyed. It's much simple.
-We prefer this way.
+We prefer this way for general page.
 ```
 import useAxios from 'axios-hooks';
 ....
@@ -312,6 +312,9 @@ const handleLogout = useCallback(() => {
 }, [navigate, dipatch, request]);
 
 ```
+
+3. RTK Query
+In a complicated page with multiple state slices, I recommend you to use '@reduxjs/toolkit/query/react'. Please refer to demo service in `./src/views/Contract/services`.
 
 ### 15. Initialization
 
