@@ -1,4 +1,4 @@
-import ConfirmableCheckbox from "./ConfirmableCheckbox";
+import ConfirmableCheckbox from './ConfirmableCheckbox';
 
 export { ConfirmableCheckbox };
 

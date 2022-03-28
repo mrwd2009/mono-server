@@ -24,8 +24,18 @@ const BC: FC = () => {
           return <Breadcrumb.Item key={bc.key}>{bc.title}</Breadcrumb.Item>;
         })}
       </Breadcrumb>
-      <Dropdown overlay={langOverlay} placement="bottomRight">
-        <Button size="small" type="text" icon={<GlobalOutlined />}>English (US)</Button>
+      <Dropdown
+        overlay={langOverlay}
+        placement="bottomRight"
+        trigger={['click']}
+      >
+        <Button
+          size="small"
+          type="text"
+          icon={<GlobalOutlined />}
+        >
+          English (US)
+        </Button>
       </Dropdown>
     </div>
   );

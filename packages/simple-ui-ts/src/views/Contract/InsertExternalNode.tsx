@@ -8,13 +8,8 @@ interface Props {
 }
 
 const InsertExternalNode: FC<Props> = ({ hookedModal }) => {
-  const {
-    data,
-  } = hookedModal;
-  const {
-    loading,
-    createContractNode,
-  } = useInsertInternalNode();
+  const { data } = hookedModal;
+  const { loading, createContractNode } = useInsertInternalNode();
 
   return (
     <HookedModal
@@ -26,17 +21,14 @@ const InsertExternalNode: FC<Props> = ({ hookedModal }) => {
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 16 }}
             onFinish={(formData) => {
-              createContractNode(
-                { 
-                  name: formData.name,
-                  type: data.type,
-                  sourceType: data.sourceType,
-                  parent: data.parent,
-                },
-              )
-                .then(() => {
-                  hookedModal.changeVisible(false);
-                });
+              createContractNode({
+                name: formData.name,
+                type: data.type,
+                sourceType: data.sourceType,
+                parent: data.parent,
+              }).then(() => {
+                hookedModal.changeVisible(false);
+              });
             }}
           >
             {node}
@@ -48,7 +40,11 @@ const InsertExternalNode: FC<Props> = ({ hookedModal }) => {
         loading,
       }}
     >
-      <Form.Item label="Name" name="name" rules={[{ required: true, message: 'Name is required.' }]}>
+      <Form.Item
+        label="Name"
+        name="name"
+        rules={[{ required: true, message: 'Name is required.' }]}
+      >
         <Input />
       </Form.Item>
     </HookedModal>

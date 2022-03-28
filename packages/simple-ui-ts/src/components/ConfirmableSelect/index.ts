@@ -1,4 +1,4 @@
-import ConfirmableSelect from "./ConfirmableSelect";
+import ConfirmableSelect from './ConfirmableSelect';
 
 export { ConfirmableSelect };
 

@@ -33,10 +33,10 @@ export const contractTreeSlice = createSlice({
     },
     redrawCurrentContractTree: (state) => {
       if (state.tree) {
-        state.tree = {...state.tree};
+        state.tree = { ...state.tree };
       }
     },
-    updateContractTreeNodeName: (state, action: PayloadAction<{ node: number, name: string }>) => {
+    updateContractTreeNodeName: (state, action: PayloadAction<{ node: number; name: string }>) => {
       let target = util.findTreeNode(action.payload.node, state.tree, (item: any) => item.extraData.contractBody);
       target.name = action.payload.name;
     },
@@ -50,7 +50,13 @@ export const contractTreeSlice = createSlice({
   },
 });
 
-export const { updateContractTree, clearCurrentTree, updateSelectedNodeID, updateContractTreeNodeName, redrawCurrentContractTree } = contractTreeSlice.actions;
+export const {
+  updateContractTree,
+  clearCurrentTree,
+  updateSelectedNodeID,
+  updateContractTreeNodeName,
+  redrawCurrentContractTree,
+} = contractTreeSlice.actions;
 
 export const selectContractTree = (state: AppRootState) => state.contractTree.tree;
 

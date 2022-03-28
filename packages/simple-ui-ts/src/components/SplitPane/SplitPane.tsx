@@ -107,7 +107,7 @@ class SplitPane extends PureComponent<Props, any> {
     const prevLen = removeNullChildren(prevProps.children).length;
     const curLen = removeNullChildren(this.props.children).length;
     if (prevLen !== curLen) {
-      this.setState({sizes: this.getPanePropSize(this.props)});
+      this.setState({ sizes: this.getPanePropSize(this.props) });
     }
   }
 

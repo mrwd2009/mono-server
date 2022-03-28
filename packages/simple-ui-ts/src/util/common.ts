@@ -137,7 +137,6 @@ export const measureSvgText = (textEl: SVGTextElement, rawText: string, width: n
   };
 };
 
-
 let scrollbarWidth: any = null;
 // reference https://stackoverflow.com/questions/13382516/getting-scroll-bar-width-using-javascript
 export const getScrollbarWidth = () => {
@@ -176,7 +175,7 @@ export const getScrollbarWidth = () => {
  * @param idPropName {(string|Function)} - Get id.
  * @return {*} Target node or null.
  */
- export const findTreeNode = (id: any, tree: any, idPropName: any = 'id') => {
+export const findTreeNode = (id: any, tree: any, idPropName: any = 'id') => {
   let nodes;
   let result = null;
   if (isArray(tree)) {

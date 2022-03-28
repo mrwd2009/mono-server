@@ -1,4 +1,4 @@
-import ConfirmableInput from "./ConfirmableInput";
+import ConfirmableInput from './ConfirmableInput';
 
 export { ConfirmableInput };
 

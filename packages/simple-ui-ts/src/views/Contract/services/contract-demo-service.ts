@@ -8,7 +8,7 @@ const contractDemoApi = contractApi.injectEndpoints({
         url: apiEndpoints.contract.list,
       }),
     }),
-  })
+  }),
 });
 
 export const { useGetContractListQuery, useLazyGetContractListQuery } = contractDemoApi;

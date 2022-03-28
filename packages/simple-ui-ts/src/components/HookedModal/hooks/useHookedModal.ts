@@ -1,9 +1,9 @@
 import { useState, useCallback, useMemo } from 'react';
 
 export interface HookedModalInstance {
-  visible: boolean,
-  changeVisible: (vis: boolean, extra?: any) => void,
-  data: any
+  visible: boolean;
+  changeVisible: (vis: boolean, extra?: any) => void;
+  data: any;
 }
 
 const useHookedModal = (): HookedModalInstance => {
@@ -12,10 +12,7 @@ const useHookedModal = (): HookedModalInstance => {
     data: {},
   });
 
-  const {
-    visible,
-    data,
-  } = state;
+  const { visible, data } = state;
 
   const changeVisible = useCallback((vis: boolean, extraData: any = {}) => {
     setState({

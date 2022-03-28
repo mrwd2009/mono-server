@@ -1,5 +1,3 @@
-import axiosBaseQuery from "./axios-base-query";
+import axiosBaseQuery from './axios-base-query';
 
-export {
-  axiosBaseQuery,
-};
+export { axiosBaseQuery };

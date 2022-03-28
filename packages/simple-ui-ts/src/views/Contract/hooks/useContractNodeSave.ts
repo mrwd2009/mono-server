@@ -12,7 +12,7 @@ const useContractNodeSave = () => {
 
   const saveContractNode = useCallback(
     (data: any) => {
-      return request({ data: { node, type: data.type, name: data.name} }).then(() => {
+      return request({ data: { node, type: data.type, name: data.name } }).then(() => {
         return fetchList();
       });
     },

@@ -1386,7 +1386,9 @@ class ModelTree extends PureComponent<Props, any> {
     mergedNodes.select('rect');
     mergedNodes.select('circle');
 
-    mergedNodes.select('use').attr('href', (node: any) => this.imageMap[node.data.type] ? `#${this.imageMap[node.data.type]}` : null);
+    mergedNodes
+      .select('use')
+      .attr('href', (node: any) => (this.imageMap[node.data.type] ? `#${this.imageMap[node.data.type]}` : null));
 
     mergedNodes
       .select('text')
@@ -1644,9 +1646,9 @@ class ModelTree extends PureComponent<Props, any> {
           {...svgProps}
         >
           <defs>
-            <ContractImg id={this.imageMap.root}/>
-            <GroupImg id={this.imageMap.subContract}/>
-            <ChargeImg id={this.imageMap.charge}/>
+            <ContractImg id={this.imageMap.root} />
+            <GroupImg id={this.imageMap.subContract} />
+            <ChargeImg id={this.imageMap.charge} />
           </defs>
         </svg>
       </Tooltip>

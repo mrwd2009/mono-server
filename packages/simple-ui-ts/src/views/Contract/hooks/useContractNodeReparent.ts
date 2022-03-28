@@ -16,12 +16,13 @@ const useContractNodeReparent = () => {
 
   const reparentContractNode = useCallback(
     (data: any) => {
-      return request({ data }).then((res) => {
-        return fetchContractTree(res.data);
-      })
-      .catch(() => {
-        redrawContractTree();
-      });
+      return request({ data })
+        .then((res) => {
+          return fetchContractTree(res.data);
+        })
+        .catch(() => {
+          redrawContractTree();
+        });
     },
     [request, fetchContractTree, redrawContractTree],
   );

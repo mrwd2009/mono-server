@@ -13,20 +13,17 @@ const useContractNodeDeletion = () => {
   const node = useAppSelector(selectSelectedNodeID);
   const version = useAppSelector(selectSelectedVersion);
 
-  const deleteContractNode = useCallback(
-    () => {
-      showConfirm({
-        title: 'Delete',
-        content: 'Are you sure to delete current node?',
-        onConfirm: () => {
-          request({ params: { node }}).then(() => {
-            fetchContractTree({ root: root!, version: version! });
-          });
-        },
-      });
-    },
-    [request, fetchContractTree, node, root, version],
-  );
+  const deleteContractNode = useCallback(() => {
+    showConfirm({
+      title: 'Delete',
+      content: 'Are you sure to delete current node?',
+      onConfirm: () => {
+        request({ params: { node } }).then(() => {
+          fetchContractTree({ root: root!, version: version! });
+        });
+      },
+    });
+  }, [request, fetchContractTree, node, root, version]);
 
   return {
     loading: loading || treeLoading,

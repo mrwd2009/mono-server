@@ -8,13 +8,8 @@ interface Props {
 }
 
 const SaveContractNodeAs: FC<Props> = ({ hookedModal }) => {
-  const {
-    data,
-  } = hookedModal;
-  const {
-    loading,
-    saveContractNode
-  } = useContractNodeSave();
+  const { data } = hookedModal;
+  const { loading, saveContractNode } = useContractNodeSave();
 
   return (
     <HookedModal
@@ -26,15 +21,12 @@ const SaveContractNodeAs: FC<Props> = ({ hookedModal }) => {
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 16 }}
             onFinish={(formData) => {
-              saveContractNode(
-                { 
-                  name: formData.name,
-                  type: data.type,
-                },
-              )
-                .then(() => {
-                  hookedModal.changeVisible(false);
-                });
+              saveContractNode({
+                name: formData.name,
+                type: data.type,
+              }).then(() => {
+                hookedModal.changeVisible(false);
+              });
             }}
           >
             {node}
@@ -46,7 +38,12 @@ const SaveContractNodeAs: FC<Props> = ({ hookedModal }) => {
         loading,
       }}
     >
-      <Form.Item initialValue={data.name} label="Name" name="name" rules={[{ required: true, message: 'Name is required.' }]}>
+      <Form.Item
+        initialValue={data.name}
+        label="Name"
+        name="name"
+        rules={[{ required: true, message: 'Name is required.' }]}
+      >
         <Input />
       </Form.Item>
     </HookedModal>

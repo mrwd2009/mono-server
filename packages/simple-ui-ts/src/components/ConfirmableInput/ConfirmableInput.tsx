@@ -1,10 +1,5 @@
 import { PureComponent } from 'react';
-import {
-  Input,
-  Tooltip,
-  Button,
-  InputNumber,
-} from 'antd';
+import { Input, Tooltip, Button, InputNumber } from 'antd';
 import { QuestionCircleOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import noop from 'lodash/noop';
 import trimStr from 'lodash/trim';
@@ -19,16 +14,16 @@ interface Props {
   readonly?: boolean;
   /** custom buttons */
   buttons?: Array<{
-    type?: any,
-    key: string,
-    icon: any,
-    onClick: () => void,
-    title: string,
+    type?: any;
+    key: string;
+    icon: any;
+    onClick: () => void;
+    title: string;
   }>;
   /** tooltip config for all buttons */
   tooltipProps?: {
-    placement: string,
-    autoAdjustOverflow: boolean,
+    placement: string;
+    autoAdjustOverflow: boolean;
   };
   /** value whether required */
   required?: boolean;
@@ -39,7 +34,7 @@ interface Props {
   /** help information for user */
   help?: string;
   /** change event handler after user click save button */
-  onChange?: (val: any) => void,
+  onChange?: (val: any) => void;
   /** input value */
   value?: string | number | null;
   /** input type text or number */
@@ -69,12 +64,8 @@ class ConfirmableInput extends PureComponent<Props, any> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const {
-      value: prevValue,
-    } = prevProps;
-    const {
-      value,
-    } = this.props;
+    const { value: prevValue } = prevProps;
+    const { value } = this.props;
     // reset user input value after original value changed
     if (value !== prevValue) {
       this.setState({
@@ -88,10 +79,7 @@ class ConfirmableInput extends PureComponent<Props, any> {
    * @return {*}
    */
   getOriginalValue() {
-    const {
-      value,
-      type = 'text',
-    } = this.props;
+    const { value, type = 'text' } = this.props;
     if (type === 'number') {
       if (value === 0) {
         return value;
@@ -106,19 +94,14 @@ class ConfirmableInput extends PureComponent<Props, any> {
    * @param value
    */
   handleChange = (event: any) => {
-    const {
-      type = 'text',
-      maxLength = null,
-    } = this.props;
+    const { type = 'text', maxLength = null } = this.props;
     this.saved = false;
     if (type === 'number') {
       this.setState({
         inputValue: event,
       });
     } else {
-      let {
-        value,
-      } = event.target;
+      let { value } = event.target;
 
       if (maxLength !== null && value && value.length > maxLength) {
         value = value.substring(0, maxLength);
@@ -142,15 +125,8 @@ class ConfirmableInput extends PureComponent<Props, any> {
    * save user change
    */
   handleSave = () => {
-    const {
-      onChange = noop,
-      allowSaveEmpty = true,
-      trim = false,
-      type = 'text',
-    } = this.props;
-    let {
-      inputValue,
-    } = this.state;
+    const { onChange = noop, allowSaveEmpty = true, trim = false, type = 'text' } = this.props;
+    let { inputValue } = this.state;
 
     // already saved by enter button before on blur
     if (this.saved) {
@@ -184,18 +160,19 @@ class ConfirmableInput extends PureComponent<Props, any> {
 
   // call by parent component to update internal temp value
   updateTempValue(value: any) {
-    const {
-      confirm,
-    } = this.props;
+    const { confirm } = this.props;
 
-    this.setState({
-      inputValue: value,
-    }, () => {
-      this.saved = false;
-      if (!confirm) {
-        this.handleSave();
-      }
-    });
+    this.setState(
+      {
+        inputValue: value,
+      },
+      () => {
+        this.saved = false;
+        if (!confirm) {
+          this.handleSave();
+        }
+      },
+    );
   }
 
   render() {
@@ -214,20 +191,27 @@ class ConfirmableInput extends PureComponent<Props, any> {
     } = this.props;
 
     restProps = omit(restProps, ['trim', 'maxLength', 'allowSaveEmpty']) as any;
-    const {
-      inputValue,
-    } = this.state;
+    const { inputValue } = this.state;
 
     let helpEle = null;
     if (help) {
       helpEle = (
-        <Tooltip {...tooltipProps as any} title={help}>
-          <span className="help"><QuestionCircleOutlined /></span>
+        <Tooltip
+          {...(tooltipProps as any)}
+          title={help}
+        >
+          <span className="help">
+            <QuestionCircleOutlined />
+          </span>
         </Tooltip>
       );
     }
-    const extraBtns = map(buttons, btn => (
-      <Tooltip {...tooltipProps as any} key={btn.key} title={btn.title}>
+    const extraBtns = map(buttons, (btn) => (
+      <Tooltip
+        {...(tooltipProps as any)}
+        key={btn.key}
+        title={btn.title}
+      >
         <Button
           shape="circle"
           size="small"
@@ -242,12 +226,18 @@ class ConfirmableInput extends PureComponent<Props, any> {
 
     if (confirm && this.getOriginalValue() !== inputValue) {
       confirmBtns = [
-        <Tooltip title="Cancel" key="cancel">
+        <Tooltip
+          title="Cancel"
+          key="cancel"
+        >
           <span onClick={this.handleCancel}>
             <CloseOutlined />
           </span>
         </Tooltip>,
-        <Tooltip title="Save" key="save">
+        <Tooltip
+          title="Save"
+          key="save"
+        >
           <span onClick={this.handleSave}>
             <CheckOutlined />
           </span>
@@ -321,14 +311,10 @@ class ConfirmableInput extends PureComponent<Props, any> {
             {extraBtns}
             {helpEle}
           </div>
-          <div className="contract-confirmable-input__content">
-            {labelEle}
-          </div>
+          <div className="contract-confirmable-input__content">{labelEle}</div>
         </div>
         <div className="clearfix">
-          <div className="contract-confirmable-input__extra">
-            {confirmBtns}
-          </div>
+          <div className="contract-confirmable-input__extra">{confirmBtns}</div>
           <div
             className={`contract-confirmable-input__content ${invalidClass}`}
             {...inputContainerProps}

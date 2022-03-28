@@ -17,10 +17,9 @@ const useInsertInternalNode = () => {
     (data: any) => {
       return request({ data }).then((res) => {
         if (data.type === 'contract') {
-          return fetchList()
-            .then(() => {
-              return fetchContractTree(res.data);
-            })
+          return fetchList().then(() => {
+            return fetchContractTree(res.data);
+          });
         } else {
           return fetchContractTree({ root: root!, version: version! });
         }

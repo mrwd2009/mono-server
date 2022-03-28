@@ -13,23 +13,21 @@ const useContractDeletion = () => {
   const { clearContractTree } = useContractTree();
   const root = useAppSelector(selectSelectedId);
 
-  const deleteContract = useCallback(
-    () => {
-      showConfirm({
-        title: 'Delete',
-        content: 'Are you sure to delete current interim contract?',
-        onConfirm: () => {
-          request({ params: { root }}).then(() => {
+  const deleteContract = useCallback(() => {
+    showConfirm({
+      title: 'Delete',
+      content: 'Are you sure to delete current interim contract?',
+      onConfirm: () => {
+        request({ params: { root } })
+          .then(() => {
             return fetchList();
           })
-            .then(() => {
-              clearContractTree();
-            });
-        },
-      });
-    },
-    [request, fetchList, clearContractTree, root],
-  );
+          .then(() => {
+            clearContractTree();
+          });
+      },
+    });
+  }, [request, fetchList, clearContractTree, root]);
 
   return {
     loading: loading || listLoading,

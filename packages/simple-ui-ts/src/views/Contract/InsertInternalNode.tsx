@@ -8,14 +8,8 @@ interface Props {
 }
 
 const InsertInternalNode: FC<Props> = ({ hookedModal }) => {
-  const {
-    data,
-  } = hookedModal;
-  const {
-    loading,
-    reparentContractNode,
-    redrawContractTree,
-  } = useContractNodeReparent();
+  const { data } = hookedModal;
+  const { loading, reparentContractNode, redrawContractTree } = useContractNodeReparent();
 
   return (
     <HookedModal
@@ -28,16 +22,13 @@ const InsertInternalNode: FC<Props> = ({ hookedModal }) => {
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 16 }}
             onFinish={(formData) => {
-              reparentContractNode(
-                { 
-                  position: formData.position,
-                  sourceID: data.sourceID,
-                  targetID: data.targetID,
-                },
-              )
-                .then(() => {
-                  hookedModal.changeVisible(false);
-                });
+              reparentContractNode({
+                position: formData.position,
+                sourceID: data.sourceID,
+                targetID: data.targetID,
+              }).then(() => {
+                hookedModal.changeVisible(false);
+              });
             }}
           >
             {node}
@@ -49,10 +40,14 @@ const InsertInternalNode: FC<Props> = ({ hookedModal }) => {
         loading,
       }}
     >
-      <Form.Item label="Position" name="position" initialValue="below">
+      <Form.Item
+        label="Position"
+        name="position"
+        initialValue="below"
+      >
         <Radio.Group>
           <Radio value="above">Above</Radio>
-          { data.targetType !== 'charge' && <Radio value="child">Descendant</Radio> }
+          {data.targetType !== 'charge' && <Radio value="child">Descendant</Radio>}
           <Radio value="below">Below</Radio>
         </Radio.Group>
       </Form.Item>

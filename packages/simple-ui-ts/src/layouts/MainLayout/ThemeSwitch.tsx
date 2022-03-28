@@ -1,7 +1,7 @@
 import { FC, memo, useEffect } from 'react';
-import { Switch, Tooltip, Button, Dropdown, Menu } from 'antd';
+import { Button, Dropdown, Menu } from 'antd';
 import Icon from '@ant-design/icons';
-import { ReactComponent as Auto} from '../../assets/images/theme-icon/os.svg';
+import { ReactComponent as Auto } from '../../assets/images/theme-icon/os.svg';
 import { ReactComponent as Sun } from '../../assets/images/theme-icon/sun.svg';
 import { ReactComponent as Moon } from '../../assets/images/theme-icon/moon.svg';
 import { useTheme } from '../../hooks';
@@ -13,7 +13,7 @@ const ThemeSwitch: FC = () => {
     // change theme dinamically
     if (matchMedia && theme === 'auto') {
       const themeChange = (e: MediaQueryListEvent) => {
-        fetchTheme('auto')
+        fetchTheme('auto');
       };
 
       const mql = matchMedia('(prefers-color-scheme: dark)');
@@ -23,7 +23,7 @@ const ThemeSwitch: FC = () => {
         mql.removeEventListener('change', themeChange);
       };
     }
-  }, [fetchTheme, theme])
+  }, [fetchTheme, theme]);
 
   const iconMap = {
     auto: <Icon component={Auto} />,
@@ -32,17 +32,36 @@ const ThemeSwitch: FC = () => {
   };
 
   const overlay = (
-    <Menu selectedKeys={[theme]} onClick={({ key }) => {
-      fetchTheme(key);
-    }}>
-      <Menu.Item key="auto" icon={iconMap.auto}>Auto</Menu.Item>
-      <Menu.Item key="default" icon={iconMap.default}>Light</Menu.Item>
-      <Menu.Item key="dark" icon={iconMap.dark}>Dark</Menu.Item>
+    <Menu
+      selectedKeys={[theme]}
+      onClick={({ key }) => {
+        fetchTheme(key);
+      }}
+    >
+      <Menu.Item
+        key="auto"
+        icon={iconMap.auto}
+      >
+        Auto
+      </Menu.Item>
+      <Menu.Item
+        key="default"
+        icon={iconMap.default}
+      >
+        Light
+      </Menu.Item>
+      <Menu.Item
+        key="dark"
+        icon={iconMap.dark}
+      >
+        Dark
+      </Menu.Item>
     </Menu>
   );
 
   return (
     <Dropdown
+      trigger={['click']}
       overlay={overlay}
       getPopupContainer={(node) => {
         return node.parentNode?.parentNode as HTMLElement;

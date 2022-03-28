@@ -7,9 +7,9 @@ export interface SelectedNode {
   name: string;
   type: string;
   hiddenFlag: boolean;
-  chargeType: Array<string>
-  chargeTypeList: Array<string>,
-  condition: Array<{ label: string, value: string}>,
+  chargeType: Array<string>;
+  chargeTypeList: Array<string>;
+  condition: Array<{ label: string; value: string }>;
 }
 
 interface Slice {

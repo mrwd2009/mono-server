@@ -1,9 +1,5 @@
 import { PureComponent } from 'react';
-import {
-  Checkbox,
-  Tooltip,
-  Button,
-} from 'antd';
+import { Checkbox, Tooltip, Button } from 'antd';
 import { QuestionCircleOutlined, CloseOutlined, CheckOutlined } from '@ant-design/icons';
 import noop from 'lodash/noop';
 import map from 'lodash/map';
@@ -15,16 +11,16 @@ interface Props {
   readonly?: boolean;
   /** custom buttons */
   buttons?: Array<{
-    type: any,
-    key: string,
-    icon: any,
-    onClick: any,
-    title: string,
+    type: any;
+    key: string;
+    icon: any;
+    onClick: any;
+    title: string;
   }>;
   /** tooltip config for all buttons */
   tooltipProps?: {
-    placement: string,
-    autoAdjustOverflow: boolean,
+    placement: string;
+    autoAdjustOverflow: boolean;
   };
   /** help information for user */
   help?: string;
@@ -43,21 +39,15 @@ class ConfirmableCheckbox extends PureComponent<Props, any> {
 
   constructor(props: Props) {
     super(props);
-    const {
-      value,
-    } = props;
+    const { value } = props;
     this.state = {
       inputValue: value,
     };
   }
 
   componentDidUpdate(prevProps: Props) {
-    const {
-      value: prevValue,
-    } = prevProps;
-    const {
-      value,
-    } = this.props;
+    const { value: prevValue } = prevProps;
+    const { value } = this.props;
     // reset user input value after original value changed
     if (value !== prevValue) {
       this.setState({
@@ -71,25 +61,24 @@ class ConfirmableCheckbox extends PureComponent<Props, any> {
    * @param event
    */
   handleChange = (event: any) => {
-    const {
-      confirm,
-    } = this.props;
-    this.setState({
-      inputValue: event.target.checked,
-    }, () => {
-      if (!confirm) {
-        this.handleSave();
-      }
-    });
+    const { confirm } = this.props;
+    this.setState(
+      {
+        inputValue: event.target.checked,
+      },
+      () => {
+        if (!confirm) {
+          this.handleSave();
+        }
+      },
+    );
   };
 
   /**
    * Cancel user change
    */
   handleCancel = () => {
-    const {
-      value,
-    } = this.props;
+    const { value } = this.props;
     this.setState({
       inputValue: value,
     });
@@ -99,13 +88,8 @@ class ConfirmableCheckbox extends PureComponent<Props, any> {
    * Save user change
    */
   handleSave = () => {
-    const {
-      onChange = noop,
-      value,
-    } = this.props;
-    const {
-      inputValue,
-    } = this.state;
+    const { onChange = noop, value } = this.props;
+    const { inputValue } = this.state;
     if (value === inputValue) {
       return;
     }
@@ -124,19 +108,26 @@ class ConfirmableCheckbox extends PureComponent<Props, any> {
       confirm,
       ...restProps
     } = this.props;
-    const {
-      inputValue,
-    } = this.state;
+    const { inputValue } = this.state;
     let helpEle = null;
     if (help) {
       helpEle = (
-        <Tooltip {...tooltipProps as any} title={help}>
-          <span className="help"><QuestionCircleOutlined /></span>
+        <Tooltip
+          {...(tooltipProps as any)}
+          title={help}
+        >
+          <span className="help">
+            <QuestionCircleOutlined />
+          </span>
         </Tooltip>
       );
     }
-    const extraBtns = map(buttons, btn => (
-      <Tooltip {...tooltipProps as any} key={btn.key} title={btn.title}>
+    const extraBtns = map(buttons, (btn) => (
+      <Tooltip
+        {...(tooltipProps as any)}
+        key={btn.key}
+        title={btn.title}
+      >
         <Button
           shape="circle"
           size="small"
@@ -150,12 +141,18 @@ class ConfirmableCheckbox extends PureComponent<Props, any> {
     let confirmBtns: any = [];
     if (confirm && value !== inputValue) {
       confirmBtns = [
-        <Tooltip title="Cancel" key="cancel">
+        <Tooltip
+          title="Cancel"
+          key="cancel"
+        >
           <span onClick={this.handleCancel}>
             <CloseOutlined />
           </span>
         </Tooltip>,
-        <Tooltip title="Save" key="save">
+        <Tooltip
+          title="Save"
+          key="save"
+        >
           <span onClick={this.handleSave}>
             <CheckOutlined />
           </span>
@@ -172,12 +169,8 @@ class ConfirmableCheckbox extends PureComponent<Props, any> {
           </div>
         </div>
         <div className="clearfix">
-          <div className="contract-confirmable-checkbox__extra">
-            {confirmBtns}
-          </div>
-          <div
-            className="contract-confirmable-checkbox__content"
-          >
+          <div className="contract-confirmable-checkbox__extra">{confirmBtns}</div>
+          <div className="contract-confirmable-checkbox__content">
             <Checkbox
               {...restProps}
               disabled={readonly}

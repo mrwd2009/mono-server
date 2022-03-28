@@ -10,7 +10,7 @@ export const useContractTree = () => {
   const dispatch = useAppDispatch();
 
   const fetchContractTree = useCallback(
-    (data: { root: number, version: number }) => {
+    (data: { root: number; version: number }) => {
       return request({ data }).then((res) => {
         dispatch(updateSelectedContract(data));
         dispatch(updateContractTree(res.data));
@@ -19,14 +19,11 @@ export const useContractTree = () => {
     },
     [request, dispatch],
   );
-  const {
-    loading: nodeLoading,
-    fetchContractNode
-  } = useContractNode();
+  const { loading: nodeLoading, fetchContractNode } = useContractNode();
 
   const clearContractTree = useCallback(() => {
     dispatch(clearCurrentTree());
-  }, [dispatch])
+  }, [dispatch]);
 
   return {
     loading: loading || nodeLoading,

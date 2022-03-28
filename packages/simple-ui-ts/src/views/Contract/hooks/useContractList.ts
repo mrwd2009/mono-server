@@ -42,7 +42,7 @@ const useContractList = () => {
         });
       }
     },
-    [fetchContractVersionList, fetchContractTree,  dispatch, clearContractTree],
+    [fetchContractVersionList, fetchContractTree, dispatch, clearContractTree],
   );
 
   return {

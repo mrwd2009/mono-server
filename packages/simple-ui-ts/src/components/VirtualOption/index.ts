@@ -1,4 +1,4 @@
-import VirtualOption from "./VirtualOption";
+import VirtualOption from './VirtualOption';
 
 export { VirtualOption };
 

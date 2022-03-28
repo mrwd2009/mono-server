@@ -8,6 +8,6 @@ export const createAppApi = (reducerPath: string) => {
   return createApi({
     reducerPath,
     baseQuery: axiosBaseQuery(),
-    endpoints: () => ({})
+    endpoints: () => ({}),
   });
 };

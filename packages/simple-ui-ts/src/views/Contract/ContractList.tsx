@@ -59,7 +59,7 @@ const ContractList: FC = () => {
   const selectedItemKey = useAppSelector(selectSelectedId);
 
   const handleSelect = (info: any, item: any) => {
-    loadSavedContract(item && { root: item.extraData.root, version: item.extraData.version })
+    loadSavedContract(item && { root: item.extraData.root, version: item.extraData.version });
   };
 
   return (

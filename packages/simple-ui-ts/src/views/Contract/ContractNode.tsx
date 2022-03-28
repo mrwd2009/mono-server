@@ -11,7 +11,7 @@ import { useHookedModal } from '../../components/HookedModal';
 import Empty from '../../components/Empty';
 import { ReactComponent as BlockImg } from '../../assets/images/block.svg';
 import { useAppSelector } from '../../hooks';
-import { selectContractNode, selectCurrentVersionInfo} from './slices';
+import { selectContractNode, selectCurrentVersionInfo } from './slices';
 import { SelectedNode } from './slices/contract-node-slice';
 import { useContractNodeBasic, useContractNodeDeletion } from './hooks';
 import SaveContractNodeAs from './SaveContractNodeAs';
@@ -26,10 +26,10 @@ const Action = memo(() => {
   if (versionInfo?.type === 'approved') {
     return (
       <Empty
-      className="text-primary"
-      size="xsmall"
-      image={<BlockImg fill="currentColor" />}
-      description="Editing Locked"
+        className="text-primary"
+        size="xsmall"
+        image={<BlockImg fill="currentColor" />}
+        description="Editing Locked"
       />
     );
   }
@@ -41,16 +41,23 @@ const Action = memo(() => {
   };
   const overlay = (
     <Menu>
-      <Menu.Item key="node" onClick={handleSaveAs}>
+      <Menu.Item
+        key="node"
+        onClick={handleSaveAs}
+      >
         {nodeInfo?.type === 'contract' ? 'Contract' : 'Reusable Node'}
         <SaveContractNodeAs hookedModal={saveAsModal} />
       </Menu.Item>
     </Menu>
-  )
+  );
   return (
     <>
       <Dropdown overlay={overlay}>
-        <Button size="small" block className="mb-2">
+        <Button
+          size="small"
+          block
+          className="mb-2"
+        >
           Save As <DownOutlined />
         </Button>
       </Dropdown>
@@ -77,38 +84,43 @@ const Basic = memo(({ node }: { node: SelectedNode }) => {
   const showChargeType = nodeInfo?.type === 'charge';
   return (
     <Spin spinning={loading}>
-      {showName && <ConfirmableInput
-        className="mb-2"
-        label="Name"
-        value={node.name}
-        trim
-        maxLength={50}
-        allowSaveEmpty={false}
-        required
-        onChange={(value) => {
-          updateContractNode('Name', value)
-        }}
-        readonly={readonly}
-      />}
-      {showChargeType && <ConfirmableSelect
-        className="mb-2"
-        label="Charge Type"
-        value={node.chargeType}
-        mode="multiple"
-        confirm
-        getPopupContainer={(currentNode: any) => currentNode.parentNode.parentNode}
-        readonly={readonly}
-      >
-        {
-          map(node.chargeTypeList, (item) => {
+      {showName && (
+        <ConfirmableInput
+          className="mb-2"
+          label="Name"
+          value={node.name}
+          trim
+          maxLength={50}
+          allowSaveEmpty={false}
+          required
+          onChange={(value) => {
+            updateContractNode('Name', value);
+          }}
+          readonly={readonly}
+        />
+      )}
+      {showChargeType && (
+        <ConfirmableSelect
+          className="mb-2"
+          label="Charge Type"
+          value={node.chargeType}
+          mode="multiple"
+          confirm
+          getPopupContainer={(currentNode: any) => currentNode.parentNode.parentNode}
+          readonly={readonly}
+        >
+          {map(node.chargeTypeList, (item) => {
             return (
-              <Select.Option key={item} value={item}>
+              <Select.Option
+                key={item}
+                value={item}
+              >
                 {item}
               </Select.Option>
-            )
-          })
-        }
-      </ConfirmableSelect>}
+            );
+          })}
+        </ConfirmableSelect>
+      )}
       <ConfirmableCheckbox
         className="mb-2"
         value={node.hiddenFlag}
@@ -124,7 +136,7 @@ const Basic = memo(({ node }: { node: SelectedNode }) => {
         Mark As Boundled
       </ConfirmableCheckbox>
     </Spin>
-  )
+  );
 });
 
 const Parameter = memo(() => {
@@ -267,7 +279,10 @@ const Parameter = memo(() => {
             >
               {map(param.options, (item) => {
                 return (
-                  <Select.Option key={item.id} value={item.value}>
+                  <Select.Option
+                    key={item.id}
+                    value={item.value}
+                  >
                     {item.label}
                   </Select.Option>
                 );
@@ -346,7 +361,7 @@ const ComputeRule = memo(() => {
         Show Cost Rule
       </Button>
     </>
-  )
+  );
 });
 
 const ContractNode: FC = () => {
@@ -372,13 +387,13 @@ const ContractNode: FC = () => {
           <Basic node={node} />
         </Collapse.Panel>
         {(nodeInfo?.type === 'contract' || nodeInfo?.type === 'charge') && (
-            <Collapse.Panel
-              header="Parameter"
-              key="parameter"
-            >
-              <Parameter />
-            </Collapse.Panel>
-          )}
+          <Collapse.Panel
+            header="Parameter"
+            key="parameter"
+          >
+            <Parameter />
+          </Collapse.Panel>
+        )}
         {nodeInfo?.type === 'charge' && (
           <Collapse.Panel
             header="Calculation Rule"

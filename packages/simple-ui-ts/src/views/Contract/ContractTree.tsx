@@ -31,18 +31,11 @@ interface TreeContentProps {
   fetchContractNode?: (arg: any) => void;
 }
 
-const TreeContent = memo(({
-  tree,
-  versionInfo,
-  fetchContractNode,
-}: TreeContentProps) => {
+const TreeContent = memo(({ tree, versionInfo, fetchContractNode }: TreeContentProps) => {
   const selectedNodeId = useAppSelector(selectSelectedNodeID);
   const insertExternalModal = useHookedModal();
   const insertInternalModal = useHookedModal();
-  const {
-    loading,
-    createContractNode,
-  } = useInsertInternalNode();
+  const { loading, createContractNode } = useInsertInternalNode();
   const { loadSavedContract } = useContractList();
 
   const contextMenu = [
@@ -192,15 +185,24 @@ const TreeAction = memo(() => {
 
 const TreeLog = memo(() => {
   return (
-    <Tabs size="small" className="mt-2">
-      <Tabs.TabPane tab="Commit Log" key="commit">
+    <Tabs
+      size="small"
+      className="mt-2"
+    >
+      <Tabs.TabPane
+        tab="Commit Log"
+        key="commit"
+      >
         <TreeComment />
       </Tabs.TabPane>
-      <Tabs.TabPane tab="Approving Log" key="release">
+      <Tabs.TabPane
+        tab="Approving Log"
+        key="release"
+      >
         <TreeComment initMsg="Update price" />
       </Tabs.TabPane>
     </Tabs>
-  )
+  );
 });
 
 const ContractTree: FC = () => {
@@ -224,9 +226,7 @@ const ContractTree: FC = () => {
               sourceType: 'instance',
             });
           }
-        } catch (error) {
-
-        }
+        } catch (error) {}
       }
     };
     return (

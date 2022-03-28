@@ -23,9 +23,21 @@ const CommentList = ({ comments }: { comments: CommentItem[] }) => (
   />
 );
 
-const Editor = ({ onChange, onSubmit, submitting, value }: { onChange: ChangeEventHandler, onSubmit: MouseEventHandler, submitting: boolean, value: string }) => (
+const Editor = ({
+  onChange,
+  onSubmit,
+  submitting,
+  value,
+}: {
+  onChange: ChangeEventHandler;
+  onSubmit: MouseEventHandler;
+  submitting: boolean;
+  value: string;
+}) => (
   <ResponsiveContainer>
-    <Form.Item wrapperCol={{ xs: { span: 24 }, sm: { span: 24}, md: { span: 24 }, lg: { span: 16 }, xl: { span: 12 } }}>
+    <Form.Item
+      wrapperCol={{ xs: { span: 24 }, sm: { span: 24 }, md: { span: 24 }, lg: { span: 16 }, xl: { span: 12 } }}
+    >
       <TextArea
         rows={4}
         onChange={onChange}
@@ -50,10 +62,16 @@ class TreeComment extends PureComponent<{ initMsg?: string }> {
     comments: [
       {
         author: 'You',
-        avatar: <Avatar icon={<UserOutlined />} alt="User" className="bg-primary" />,
+        avatar: (
+          <Avatar
+            icon={<UserOutlined />}
+            alt="User"
+            className="bg-primary"
+          />
+        ),
         content: <p>{this.props.initMsg || 'Add new logic for climate'}</p>,
         datetime: dayjs().format(constants.dateFormat),
-      }
+      },
     ],
     submitting: false,
     value: '',
@@ -76,7 +94,13 @@ class TreeComment extends PureComponent<{ initMsg?: string }> {
           ...this.state.comments,
           {
             author: 'You',
-            avatar: <Avatar icon={<UserOutlined />} alt="User" className="bg-primary" />,
+            avatar: (
+              <Avatar
+                icon={<UserOutlined />}
+                alt="User"
+                className="bg-primary"
+              />
+            ),
             content: <p>{this.state.value}</p>,
             datetime: dayjs().format(constants.dateFormat),
           },

@@ -1,4 +1,4 @@
-import useHookedModal, { HookedModalInstance } from "./useHookedModal";
+import useHookedModal, { HookedModalInstance } from './useHookedModal';
 
 export { useHookedModal };
 export type { HookedModalInstance };

@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { unstable_batchedUpdates } from 'react-dom';
 import useAppSelector from './useAppSelector';
 import useMounted from './useMounted';
-import { getOSTheme} from '../util';
+import { getOSTheme } from '../util';
 import { selectTheme } from '../store/slices';
 import useAppDisatch from './useAppDispatch';
 import { applyDarkTheme, applyDefaultTheme } from '../store/slices';

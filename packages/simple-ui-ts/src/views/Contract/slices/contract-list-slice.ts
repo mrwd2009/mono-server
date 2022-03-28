@@ -57,7 +57,7 @@ export const contractListSlice = createSlice({
     updateSelectedVersion: (state, action: PayloadAction<number | null>) => {
       state.selectedVersion = action.payload;
     },
-    updateSelectedContract: (state, action: PayloadAction<{ root: number, version: number} | null>) => {
+    updateSelectedContract: (state, action: PayloadAction<{ root: number; version: number } | null>) => {
       if (!action.payload) {
         state.selected = null;
         state.selectedVersion = null;
@@ -67,11 +67,13 @@ export const contractListSlice = createSlice({
       state.selectedVersion = action.payload.version;
     },
     updateSelectedContractName: (state, action: PayloadAction<string>) => {
-      const item = state.contractList.find(cur => cur.root === state.selected) || state.savedList.find(cur => cur.root === state.selected);
+      const item =
+        state.contractList.find((cur) => cur.root === state.selected) ||
+        state.savedList.find((cur) => cur.root === state.selected);
       if (item) {
         item.name = action.payload;
       }
-    }
+    },
   },
 });
 

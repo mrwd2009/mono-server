@@ -1,8 +1,6 @@
 import React, { PureComponent } from 'react';
 import { VariableSizeList } from 'react-window';
-import {
-  Empty,
-} from 'antd';
+import { Empty } from 'antd';
 import includes from 'lodash/includes';
 import filter from 'lodash/filter';
 import concat from 'lodash/concat';
@@ -16,11 +14,11 @@ interface Props {
   height?: number;
   /** list item */
   dataSource?: Array<{
-    id: string | number,
-    tag: string,
-    label:string,
-    value: string | number,
-  }>,
+    id: string | number;
+    tag: string;
+    label: string;
+    value: string | number;
+  }>;
   multiple?: boolean;
   /** user selected value */
   selectedValue?: any;
@@ -68,12 +66,8 @@ class VirtualOption extends PureComponent<Props, any> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const {
-      dataSource: prevDataSource,
-    } = prevProps;
-    const {
-      dataSource,
-    } = this.props;
+    const { dataSource: prevDataSource } = prevProps;
+    const { dataSource } = this.props;
     this.updateHeight();
 
     if (dataSource !== prevDataSource && this.variableListComp.current) {
@@ -84,18 +78,13 @@ class VirtualOption extends PureComponent<Props, any> {
   }
 
   getItemSize = (index: any) => {
-    const {
-      hasScrollbar,
-    } = this.state;
+    const { hasScrollbar } = this.state;
 
     return this.calculateHeight(index, hasScrollbar);
   };
 
   getItemElement = ({ index, style }: any) => {
-    const {
-      dataSource = [],
-      multiple = false,
-    } = this.props;
+    const { dataSource = [], multiple = false } = this.props;
     const item = dataSource[index];
 
     let className = 'virtual-option-item';
@@ -112,7 +101,7 @@ class VirtualOption extends PureComponent<Props, any> {
       <div
         style={style}
         className={className}
-        onMouseDown={event => this.handleItemSelect(index, event)}
+        onMouseDown={(event) => this.handleItemSelect(index, event)}
       >
         {item.tag ? <span className="tag">{item.tag}</span> : null}
         {item.label}
@@ -122,19 +111,14 @@ class VirtualOption extends PureComponent<Props, any> {
   };
 
   handleItemSelect = (index: any, event: any) => {
-    let {
-      dataSource = [],
-      onSelect = noop,
-      multiple = false,
-      selectedValue,
-    } = this.props;
+    let { dataSource = [], onSelect = noop, multiple = false, selectedValue } = this.props;
     const item = dataSource[index];
     if (multiple) {
       // prevent dropdown menu hide
       event.preventDefault();
       if (includes(selectedValue, item.value)) {
         // if already selected, remove it.
-        onSelect(filter(selectedValue, value => value !== item.value));
+        onSelect(filter(selectedValue, (value) => value !== item.value));
       } else {
         // otherwise add it
         // avoid undefined or null initial value
@@ -159,10 +143,7 @@ class VirtualOption extends PureComponent<Props, any> {
   }
 
   isItemSelected(item: any) {
-    const {
-      selectedValue,
-      multiple = false,
-    } = this.props;
+    const { selectedValue, multiple = false } = this.props;
 
     if (multiple) {
       return includes(selectedValue, item.value);
@@ -171,7 +152,6 @@ class VirtualOption extends PureComponent<Props, any> {
     return selectedValue === item.value;
   }
 
-
   /**
    * Calculate each list item height
    * @param index
@@ -179,10 +159,7 @@ class VirtualOption extends PureComponent<Props, any> {
    * @return {number}
    */
   calculateHeight(index: any, hasScrollbar: any) {
-    const {
-      dataSource,
-      multiple = false,
-    } = this.props as any;
+    const { dataSource, multiple = false } = this.props as any;
 
     if (this.innerContainerRef.current) {
       const item = dataSource[index];
@@ -211,13 +188,8 @@ class VirtualOption extends PureComponent<Props, any> {
    * Update dropdown height if provided height large than real dropdown height.
    */
   updateHeight() {
-    const {
-      height = 250,
-      dataSource,
-    } = this.props as any;
-    const {
-      realHeight: prevRealHeight,
-    } = this.state;
+    const { height = 250, dataSource } = this.props as any;
+    const { realHeight: prevRealHeight } = this.state;
 
     const container = this.innerContainerRef.current;
     if (container) {
@@ -253,15 +225,9 @@ class VirtualOption extends PureComponent<Props, any> {
     }
   }
 
-
   render() {
-    const {
-      dataSource = [],
-      multiple = false,
-    } = this.props;
-    const {
-      realHeight,
-    } = this.state;
+    const { dataSource = [], multiple = false } = this.props;
+    const { realHeight } = this.state;
 
     if (!dataSource.length) {
       return (
