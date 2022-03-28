@@ -1,7 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { AppRootState } from '../store';
 
-type ThemeType = 'dark' | 'default';
+type ThemeType = 'dark' | 'default' | 'auto';
 interface GlobalSetting {
   theme: ThemeType;
 }
@@ -9,29 +9,36 @@ interface GlobalSetting {
 const themeItemKey = 'app-ex-theme';
 let defaultTheme: string = localStorage.getItem(themeItemKey)!;
 if (!defaultTheme) {
-  // system supports dark mode
-  if (matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) {
-    defaultTheme = 'dark';
-  } else {
-    defaultTheme = 'default';
-  }
+  defaultTheme = 'auto';
 }
 
 const initialState: GlobalSetting = {
-  theme: defaultTheme as 'dark' | 'default',
+  theme: defaultTheme as ThemeType,
 };
 
 export const globalSettingSlice = createSlice({
   name: 'global/setting',
   initialState,
   reducers: {
-    applyDarkTheme: (state) => {
-      state.theme = 'dark';
-      localStorage.setItem(themeItemKey, 'dark');
+    applyDarkTheme: (state, action: PayloadAction<boolean>) => {
+      // auto dark theme
+      if (action.payload) {
+        state.theme = 'auto';
+        localStorage.removeItem(themeItemKey);
+      } else {
+        state.theme = 'dark';
+        localStorage.setItem(themeItemKey, 'dark');
+      }
     },
-    applyDefaultTheme: (state) => {
-      state.theme = 'default';
-      localStorage.setItem(themeItemKey, 'default');
+    applyDefaultTheme: (state, action: PayloadAction<boolean>) => {
+      // auto light theme
+      if (action.payload) {
+        state.theme = 'auto';
+        localStorage.removeItem(themeItemKey);
+      } else {
+        state.theme = 'default';
+        localStorage.setItem(themeItemKey, 'default');
+      }
     },
   },
 });
@@ -39,6 +46,7 @@ export const globalSettingSlice = createSlice({
 export const { applyDarkTheme, applyDefaultTheme } = globalSettingSlice.actions;
 
 export const selectDarkMode = (state: AppRootState) => state.globalSetting.theme === 'dark';
+export const selectTheme = (state: AppRootState) => state.globalSetting.theme;
 
 export const globalSettingReducer = globalSettingSlice.reducer;
 

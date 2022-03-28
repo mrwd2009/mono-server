@@ -167,7 +167,7 @@ export const getScrollbarWidth = () => {
 
   scrollbarWidth = widthNoScroll - widthWithScroll;
   return scrollbarWidth;
-}
+};
 
 /**
  * Find target node in a tree.
@@ -203,4 +203,15 @@ export const getScrollbarWidth = () => {
   }
 
   return result;
-}
+};
+
+export const getOSTheme = () => {
+  let defaultTheme = 'default';
+  // system supports dark mode
+  if (matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) {
+    defaultTheme = 'dark';
+  } else {
+    defaultTheme = 'default';
+  }
+  return defaultTheme;
+};
