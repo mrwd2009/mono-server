@@ -4,3 +4,4 @@ dist
 babel.config.js
 pm2.config.js
 src/**/*.test.ts
+.history

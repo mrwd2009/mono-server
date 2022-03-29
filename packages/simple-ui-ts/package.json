@@ -48,8 +48,8 @@
     "format": "npm run lint:style && npm run prettier",
     "build-image:prod": "yarn build && docker build -t app-ui:${APP_VERSION:-1.0.0} . ",
     "image-cli:prod": "docker run -it --rm app-ui:${APP_VERSION:-1.0.0} sh",
-    "run-image:prod": "docker run --name ${APP_CONAINER_NAME:-app-ui-container} --rm  -p ${APP_PORT:-5200}:5200 -d app-ui:${APP_VERSION:-1.0.0}",
-    "rm-image:prod": "docker rm -f ${APP_CONAINER_NAME:-app-ui-container}"
+    "run-container:prod": "docker run --name ${APP_CONAINER_NAME:-app-ui-container} --env-file .env -d  -p ${APP_PORT:-5200}:5200  app-ui:${APP_VERSION:-1.0.0}",
+    "remove-container:prod": "docker rm -f ${APP_CONAINER_NAME:-app-ui-container}"
   },
   "eslintConfig": {
     "extends": [

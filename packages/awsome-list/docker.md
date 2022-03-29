@@ -31,3 +31,7 @@
  # limit container memory
  docker run -it -m "300M" --memory-swap "1G" image_name sh
 ```
+
+## NodeJs best practices
+
+https://snyk.io/wp-content/uploads/10-best-practices-to-containerize-Node.js-web-applications-with-Docker.pdf

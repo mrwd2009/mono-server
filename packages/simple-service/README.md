@@ -94,3 +94,57 @@ The `index.ts` file will be loaded automatically.
 ### 3. Source Code Format
 
 Before committing any code, please run `yarn format`.
+
+### 4. Environment Variables
+
+HTTP server port.\
+**PORT=4100**
+
+Wokers number in cluster mode. If omitted, cpu cores number will be used.\
+**CLUSTER_WORKERS=4**
+
+Worker number in queue service. If omitted, cpu cores number will be used.\
+**QUEUE_WORKERS=4**
+
+Bull queue dashboard port.\
+**QUEUE_DASHBOARD_PORT=5379**
+
+Secret keys used to encrypt cookie.\
+**COOKIE_KEYS=sercret1,secret2**
+
+Node environment.\
+**NODE_ENV=development**
+
+Application environment.\
+**APP_ENV=dev**
+
+Winston log directory. Default drectory `log/winston` is under current project.\
+**WINSTON_LOG_DIR=xxx**
+
+Temp directory used to save uploaded file. Default drectory `temp` is under current project.\
+**TEMP_FILE_DIR=xxx**
+
+In development mode, show known error.\
+**TRACE_KNOWN_ERROR_IN_DEV=true**
+
+JWT secret key.\
+**JWT_SECRET=xxx**
+
+Main redis url.\
+**MAIN_REDIS_URL=xxx**
+
+Queue redis url.\
+**QUEUE_REDIS_URL=xxx**
+
+Enable log server.\
+**ENABLE_APP_LOG_IPC=true**
+
+Main database auth.\
+**MAIN_DB_USER=xxx**
+**MAIN_DB_PASS=xxx**
+**MAIN_DB_HOST=xxx**
+
+Gateway databsae auth.\
+**GATEWAY_DB_USER=xxx**
+**GATEWAY_DB_PASS=xxx**
+**GATEWAY_DB_HOST=xxx**

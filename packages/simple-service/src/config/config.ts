@@ -24,6 +24,7 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   DEPLOYMENT_ADMIN_HOST?: string;
   DEPLOYMENT_CLIENT?: string;
   TEMP_FILE_DIR?: string;
+  COOKIE_KEYS?: string;
 };
 
 export interface GatewayConfig {
@@ -59,7 +60,7 @@ if (!fs.existsSync(logFileDir)) {
 }
 
 // secret keys used to create signed cookie.
-const cookieKeys = process.env.COOKIE_KEYS ? process.env.COOKIE_KEYS.split(',') : [];
+const cookieKeys = envObj.COOKIE_KEYS ? envObj.COOKIE_KEYS.split(',') : [];
 
 // where to store temp file
 const tempFileDir = path.join(envObj.TEMP_FILE_DIR || path.join(__dirname, '..', '..', 'temp'), nodeEnv, appEnv);
@@ -77,8 +78,8 @@ const config = {
   },
   jwt: {
     cookieKey: commonPrefix,
-    issuer: 'di@gridx.cn',
-    audience: 'gridx.cn',
+    issuer: 'wudi.link.me@gmail.com',
+    audience: 'gmail.com',
     secret: envObj.JWT_SECRET,
     expireHour: 3,
   },

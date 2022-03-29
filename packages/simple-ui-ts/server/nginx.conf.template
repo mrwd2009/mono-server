@@ -43,7 +43,7 @@ http {
   # REPLACE with your own
   # nodejs app list
   upstream nodejs-api-gateway {
-    server 127.0.0.1:5700;
+    server ${APP_SERVICE_DOMAIN};
   }
 
   # entry point
