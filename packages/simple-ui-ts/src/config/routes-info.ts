@@ -49,6 +49,12 @@ export const routesInfo: RouteInfo[] = [
     menu: true,
     children: [
       {
+        title: 'Dashboard',
+        key: 'dashboard',
+        path: '/debug/dashboard',
+        menu: true,
+      },
+      {
         title: 'Config',
         key: 'config',
         path: '/debug/config',

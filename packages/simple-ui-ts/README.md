@@ -316,15 +316,24 @@ const handleLogout = useCallback(() => {
 3. RTK Query
 In a complicated page with multiple state slices, I recommend you to use '@reduxjs/toolkit/query/react'. Please refer to demo service in `./src/views/Contract/services`.
 
-### 15. Initialization
+### 16. Chart Library
+1. D3
+We imported d3js to develop highly customized chart component, like `./src/components/ModelTree`.
+
+2. Echarts
+For general purpose chart, we can simply use Echarts to finish task. One thing you need to pay attention is we partially import Echarts under `./src/config/initializers/echarts`. \
+Please import new components at here and use **import * as echarts from 'echarts/core'**" to replace **import * as echarts from 'echarts'**" in your component.\
+In general usage, I suggest you to use the custom component `./src/components/CustomECharts/`.
+
+### 17. Initialization
 
 If you have some special logic needed to execute before React rendering, please add them in `./src/config/initializers`. You can refer `dayjs.ts` or `axios.ts`.
 
-### 16. Permission Checking
+### 18. Permission Checking
 
 TODO
 
-### 17. Environment Variable
+### 19. Environment Variable
 
 Backend api port in development mode.\
 **REACT_APP_DEV_API_PORT=4100**

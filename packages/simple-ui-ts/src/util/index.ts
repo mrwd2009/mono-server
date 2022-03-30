@@ -1,6 +1,7 @@
 import * as common from './common';
+export * from './types';
+export * from './common';
 
 export { common };
 
-export * from './common';
 export default common;

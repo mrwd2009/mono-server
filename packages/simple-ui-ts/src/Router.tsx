@@ -8,6 +8,7 @@ import MainLayout from './layouts/MainLayout';
 import { RouteGuarder } from './permission';
 import { Contract } from './views/Contract';
 import { Setting } from './views/System';
+import { Dashboard } from './views/Debug';
 
 const defaultPath = getRouteInfo('contract')!.path;
 
@@ -39,6 +40,10 @@ const routes: RouteObject[] = [
             path: getRouteInfo(['system', 'setting'])!.path,
             element: <Setting />,
           },
+          {
+            path: getRouteInfo(['debug', 'dashboard'])!.path,
+            element: <Dashboard />,
+          }
         ],
       },
     ],
