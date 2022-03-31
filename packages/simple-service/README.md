@@ -148,3 +148,6 @@ Gateway databsae auth.\
 **GATEWAY_DB_USER=xxx**
 **GATEWAY_DB_PASS=xxx**
 **GATEWAY_DB_HOST=xxx**
+
+Allowed cors domains.
+**ALLOWED_DOMAINS=xxx,xxx**

@@ -28,6 +28,9 @@
  # run image with environment
  docker run -it -e "NODE_ENV=production" image_name sh
 
+ # execute bash in a running container
+ docker exec -it container_name bash
+
  # limit container memory
  docker run -it -m "300M" --memory-swap "1G" image_name sh
 ```
@@ -35,3 +38,13 @@
 ## NodeJs best practices
 
 https://snyk.io/wp-content/uploads/10-best-practices-to-containerize-Node.js-web-applications-with-Docker.pdf
+
+## Save image to local file
+```
+docker save -o ./Downloads/app-service.tar app-service:1.0.0
+```
+
+## Load image into docker
+```
+docker load --input app-service:1.0.0
+```

@@ -25,6 +25,7 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   DEPLOYMENT_CLIENT?: string;
   TEMP_FILE_DIR?: string;
   COOKIE_KEYS?: string;
+  ALLOWED_DOMAINS?: string;
 };
 
 export interface GatewayConfig {
@@ -84,7 +85,7 @@ const config = {
     expireHour: 3,
   },
   cors: {
-    allowedDomain: ['localhost'],
+    allowedDomain: envObj.ALLOWED_DOMAINS ? envObj.ALLOWED_DOMAINS.split(',') : [],
   },
   upload: {
     path: tempFileDir,
