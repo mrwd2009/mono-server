@@ -1,4 +1,4 @@
-import { memo, forwardRef, ForwardRefRenderFunction, useRef, useEffect, useImperativeHandle } from 'react';
+import { memo, FC, useRef, useEffect } from 'react';
 import classNames from 'classnames';
 import { EChartsType, init } from 'echarts/core';
 import debounce from 'lodash/debounce';
@@ -11,18 +11,24 @@ interface Props {
   className?: string;
   width?: number;
   height?: number;
+  onChartInit?: (chart: EChartsType) => void;
+  onChartDispose?: (chart: EChartsType) => void;
 }
 
-interface RefObj {
-  getChartIns: () => EChartsType | undefined;
-}
-
-const CustomECharts: ForwardRefRenderFunction<RefObj, Props> = ({ option, className, width, height }, ref) => {
+const CustomECharts: FC<Props> = ({ option, className, width, height, onChartInit, onChartDispose }, ref) => {
   const classNameStr = classNames('app-ex-custom-echarts', className);
   const containerRef = useRef<HTMLDivElement>(null);
   const chartInstanceRef = useRef<EChartsType>();
   const { theme } = useTheme();
   const prevThemeRef = useRef<string>();
+
+  // save callback ref
+  const onChartInitRef = useRef<any>();
+  onChartInitRef.current = onChartInit;
+  const onChartDisposeRef = useRef<any>();
+  onChartDisposeRef.current = onChartDispose;
+
+  // save chart size ref
   const sizeRef = useRef<{ width?: number, height?: number}>();
   sizeRef.current = {
     width,
@@ -31,10 +37,6 @@ const CustomECharts: ForwardRefRenderFunction<RefObj, Props> = ({ option, classN
   const resizeFnRef = useRef(debounce(() => {
     chartInstanceRef.current?.resize();
   }, 200));
-
-  useImperativeHandle(ref, () => ({
-    getChartIns: () => chartInstanceRef.current,
-  }), []);
 
   useEffect(() => {
     if (containerRef.current) {
@@ -45,13 +47,16 @@ const CustomECharts: ForwardRefRenderFunction<RefObj, Props> = ({ option, classN
       };
       if (chartInstanceRef.current) {
         if (prevThemeRef.current !== theme) {
+          onChartDisposeRef.current?.(chartInstanceRef.current);
           chartInstanceRef.current.dispose();
           chartInstanceRef.current = init(containerRef.current, chartTheme, initOpt);
+          onChartInitRef.current?.(chartInstanceRef.current);
         }
       } else {
         chartInstanceRef.current = init(containerRef.current, chartTheme, initOpt);
+        onChartInitRef.current?.(chartInstanceRef.current);
       }
-      prevThemeRef.current = theme;
+      prevThemeRef.current = chartTheme;
       chartInstanceRef.current.setOption(option);
     }
   }, [theme, option]);
@@ -65,6 +70,7 @@ const CustomECharts: ForwardRefRenderFunction<RefObj, Props> = ({ option, classN
   useEffect(() => {
     // only destroy once
     return () => {
+      onChartDisposeRef.current?.(chartInstanceRef.current);
       chartInstanceRef.current?.dispose();
       chartInstanceRef.current = null as any;
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -87,4 +93,4 @@ const CustomECharts: ForwardRefRenderFunction<RefObj, Props> = ({ option, classN
   );
 };
 
-export default memo(forwardRef(CustomECharts));
+export default memo(CustomECharts);
