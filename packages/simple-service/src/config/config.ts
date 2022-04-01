@@ -1,6 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import _ from 'lodash';
+import { GatewayEnvConfig } from '../types';
 
 export type GatewayENV = NodeJS.ProcessEnv & {
   JWT_SECRET?: string;
@@ -32,10 +33,6 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   APP_VALID_EMAIL_DOMAINS?: string;
 };
 
-export interface GatewayConfig {
-  address: string;
-}
-
 const envObj: GatewayENV = process.env;
 const nodeEnv = envObj.NODE_ENV || 'development';
 const appEnv = envObj.APP_ENV || 'dev';
@@ -43,7 +40,7 @@ const isDev = nodeEnv !== 'production';
 
 // get app config
 const appConfigFiles = fs.readdirSync(path.join(__dirname, 'env'));
-let appConfig: GatewayConfig;
+let appConfig: GatewayEnvConfig;
 if (_.find(appConfigFiles, (item) => item.includes(appEnv))) {
   appConfig = require(path.join(__dirname, 'env', appEnv)).default;
 } else {
@@ -177,7 +174,10 @@ const config = {
     isClient: envObj.DEPLOYMENT_CLIENT === 'true',
     updateInternal: 10000,
   },
-  ...appConfig,
 };
 
-export default config;
+export type GatewayConfig = typeof config;
+
+const mergedConfig = _.merge(config, appConfig);
+
+export default mergedConfig;

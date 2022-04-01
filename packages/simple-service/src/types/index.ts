@@ -14,3 +14,7 @@ export interface PageParams {
   };
   [otherKey: string]: any;
 }
+
+export interface GatewayEnvConfig {
+  address?: string;
+}
