@@ -1,23 +1,31 @@
 import { memo, FC, useEffect, ReactElement } from 'react';
 import { BrowserRouter } from 'react-router-dom';
+import { I18nextProvider } from 'react-i18next'
 import Router from './Router';
 import { Provider } from 'react-redux';
 import store from './store';
 import Initializer from './config/initializers';
-import { useTheme } from './hooks';
+import { useTheme, useLang } from './hooks';
 
 const AppContent: FC<{ children: ReactElement[] }> = ({ children }) => {
   const { loaded, theme, fetchTheme } = useTheme();
+  const { loaded: langLoaded, lang, fetchLang, i18n } = useLang();
 
   useEffect(() => {
     fetchTheme(theme);
+    fetchLang(lang);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  if (!loaded) {
+  
+  if (!loaded || !langLoaded) {
     return null;
   }
-  return <>{children}</>;
+
+  return (
+    <I18nextProvider i18n={i18n}>
+      {children}
+    </I18nextProvider>
+  );
 };
 
 function App() {

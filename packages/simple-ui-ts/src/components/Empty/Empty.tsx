@@ -8,7 +8,7 @@ interface Props extends EmptyProps {
   size?: 'small' | 'default' | 'xsmall';
 }
 
-const CustomEmpty: FC<Props> = ({ onDrop, description, imageStyle, className, size = 'default', ...restProps }) => {
+const CustomEmpty: FC<Props> = ({ onDrop, description, imageStyle, style, className, size = 'default', ...restProps }) => {
   const [dragging, setDragging] = useState(false);
   const classStr = classNames('app-ex-empty', className, {
     dragging,
@@ -38,6 +38,7 @@ const CustomEmpty: FC<Props> = ({ onDrop, description, imageStyle, className, si
   return (
     <div
       {...props}
+      style={style}
       className={classStr}
     >
       <Empty

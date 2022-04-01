@@ -11,6 +11,10 @@ export const validateEmailDomains = (options?: Options): Middleware => {
   const error = options?.error;
   const field = options?.field || 'email';
   return async (context, next) => {
+    if (config.isDev) {
+      return await next();
+    }
+    
     const email = context.mergedParams[field];
     const valid = _.some(config.auth.validEmailDomains, (allowed) => {
       return _.endsWith(email, allowed);

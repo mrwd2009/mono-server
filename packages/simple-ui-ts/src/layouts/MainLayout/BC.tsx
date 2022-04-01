@@ -3,14 +3,16 @@ import { useLocation } from 'react-router-dom';
 import { Breadcrumb, Button, Dropdown, Menu } from 'antd';
 import map from 'lodash/map';
 import { HomeOutlined, GlobalOutlined } from '@ant-design/icons';
+import { useLang } from '../../hooks';
 import { getRouteBC } from '../../config/routes-info';
 
 const BC: FC = () => {
   const location = useLocation();
   const bcList = getRouteBC(location.pathname);
+  const { lang, fetchLang } = useLang();
   const langOverlay = (
-    <Menu selectedKeys={['en']}>
-      <Menu.Item key="en">English (US)</Menu.Item>
+    <Menu selectedKeys={[lang]} onClick={({ key }) => fetchLang(key)}>
+      <Menu.Item key="en-US">English (US)</Menu.Item>
     </Menu>
   );
 

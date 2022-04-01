@@ -3,5 +3,6 @@ import useMounted from './useMounted';
 import useAppDispatch from './useAppDispatch';
 import useAppSelector from './useAppSelector';
 import useTheme from './useTheme';
+import useLang from './useLang';
 
-export { useMergedState, useMounted, useAppDispatch, useAppSelector, useTheme };
+export { useMergedState, useMounted, useAppDispatch, useAppSelector, useTheme, useLang };

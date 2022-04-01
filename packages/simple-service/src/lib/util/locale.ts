@@ -1,4 +1,4 @@
-import i18nnext, { i18n } from 'i18next';
+import i18next, { i18n } from 'i18next';
 import locale from '../../config/locale';
 
 export const supportedLangs = ['en-US'];
@@ -18,7 +18,7 @@ export const getI18n = async (lang?: string | null) => {
     return target;
   }
 
-  target = i18nnext.createInstance();
+  target = i18next.createInstance();
   cachedI18n[lang] = target;
 
   await target.init({

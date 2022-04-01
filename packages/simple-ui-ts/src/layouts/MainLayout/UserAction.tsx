@@ -56,6 +56,9 @@ const UserAction: FC = () => {
       content={content}
       placement="bottomRight"
       trigger="click"
+      getPopupContainer={(node) => {
+        return node.parentNode?.parentNode as HTMLElement;
+      }}
     >
       <span className="app-ex-user-action">
         <Button

@@ -230,26 +230,28 @@ const ContractTree: FC = () => {
       }
     };
     return (
-      <Empty
-        onDrop={handleDrop}
-        className="mt-5"
-        description="You can drag root component over here or click button to create a new contract."
-      >
-        <Button
-          type="primary"
-          shape="round"
-          icon={<PlusOutlined />}
-          onClick={() => {
-            insertExternalModal.changeVisible(true, {
-              type: 'contract',
-              sourceType: 'instance',
-            });
-          }}
+      <Panel>
+        <Empty
+          onDrop={handleDrop}
+          className="mt-24"
+          description="You can drag root component over here or click button to create a new contract."
         >
-          New Contract
-        </Button>
-        <InsertExternalNode hookedModal={insertExternalModal} />
-      </Empty>
+          <Button
+            type="primary"
+            shape="round"
+            icon={<PlusOutlined />}
+            onClick={() => {
+              insertExternalModal.changeVisible(true, {
+                type: 'contract',
+                sourceType: 'instance',
+              });
+            }}
+          >
+            New Contract
+          </Button>
+          <InsertExternalNode hookedModal={insertExternalModal} />
+        </Empty>
+      </Panel>
     );
   }
 

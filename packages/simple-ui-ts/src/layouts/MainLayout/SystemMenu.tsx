@@ -41,6 +41,9 @@ const SystemMenu: FC = () => {
       selectedKeys={[location.pathname]}
       triggerSubMenuAction="click"
       theme={isDark ? 'dark' : 'light'}
+      getPopupContainer={(node) => {
+        return node.parentNode?.parentNode as HTMLElement;
+      }}
     >
       {getMenuItems(menuList)}
     </Menu>

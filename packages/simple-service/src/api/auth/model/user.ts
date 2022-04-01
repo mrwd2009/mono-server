@@ -14,26 +14,26 @@ const {
 const UserModel = models.UserS;
 
 type UserParams = {
-  Email: string;
-  Password: string;
+  email: string;
+  password: string;
 };
 
 export const login = async (params: UserParams): Promise<{ token: string; user: string }> => {
-  const { Email, Password } = params;
-  const user = await UserModel.findByPk(Email);
+  const { email, password } = params;
+  const user = await UserModel.findByPk(email);
   if (!user) {
-    logger.error(`User(${Email}) is not found.`);
+    logger.error(`User(${email}) is not found.`);
     throw new AuthError('Incorrect username or password');
   }
-  if (!(await util.password.isPasswordEqual(Password, user.Password))) {
-    logger.error(`Incorrect password(${Password}) of User(${Email}).`);
+  if (!(await util.password.isPasswordEqual(password, user.Password))) {
+    logger.error(`Incorrect password(${password}) of User(${email}).`);
     throw new AuthError('Incorrect username or password');
   }
 
-  const token = await userHelper.createJwtToken(params.Email);
+  const token = await userHelper.createJwtToken(params.email);
   return {
     token,
-    user: params.Email,
+    user: params.email,
   };
 };
 
@@ -44,7 +44,7 @@ type RegisterParams = {
 };
 
 export const register = async (params: RegisterParams) => {
-  
+
   return;
 }
 

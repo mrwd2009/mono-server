@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Form, Input, Button, Divider, Typography } from 'antd';
 import { AmazonOutlined, FacebookOutlined, GoogleOutlined } from '@ant-design/icons';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import { getRouteInfo } from '../../config/routes-info';
 import AuthLayout from '../../layouts/AuthLayout';
 import brand from '../../assets/images/brand.png';
@@ -13,6 +14,7 @@ const fogotRoute = getRouteInfo('forgot-password');
 
 const Login: FC = () => {
   const { loading, handleLogin } = useLogin();
+  const { t: gT } = useTranslation();
   return (
     <AuthLayout
       header={{
@@ -27,7 +29,7 @@ const Login: FC = () => {
             alt="Energix Logo"
             src={brand}
           />
-          <Typography.Title>Contract Management</Typography.Title>
+          <Typography.Title>{gT('common.projectName')}</Typography.Title>
         </div>
         <Form
           size="large"
