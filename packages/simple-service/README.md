@@ -143,11 +143,16 @@ Main database auth.\
 **MAIN_DB_USER=xxx**
 **MAIN_DB_PASS=xxx**
 **MAIN_DB_HOST=xxx**
+**MAIN_DB_PORT=xxx**
 
 Gateway databsae auth.\
 **GATEWAY_DB_USER=xxx**
 **GATEWAY_DB_PASS=xxx**
 **GATEWAY_DB_HOST=xxx**
+**GATEWAY_DB_PORT=xxx**
+
+Default mysql port.\
+**APP_MYSQL_PORT=3306**
 
 Allowed cors domains.
 **ALLOWED_DOMAINS=xxx,xxx**

@@ -15,10 +15,12 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   MAIN_DB_USER?: string;
   MAIN_DB_PASS?: string;
   MAIN_DB_HOST?: string;
+  MAIN_DB_PORT?: string;
   QUEUE_REDIS_URL?: string;
   GATEWAY_DB_USER?: string;
   GATEWAY_DB_PASS?: string;
   GATEWAY_DB_HOST?: string;
+  GATEWAY_DB_PORT?: string;
   GITHUB_USERNAME?: string;
   GITHUB_PASSWORD?: string;
   DEPLOYMENT_ADMIN_HOST?: string;
@@ -26,6 +28,7 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   TEMP_FILE_DIR?: string;
   COOKIE_KEYS?: string;
   ALLOWED_DOMAINS?: string;
+  APP_MYSQL_PORT?: string;
 };
 
 export interface GatewayConfig {
@@ -129,6 +132,9 @@ const config = {
     },
   },
   database: {
+    basic: {
+      port: envObj.APP_MYSQL_PORT || '3306',
+    },
     poolConfig: {
       max: 5,
       min: 0,
@@ -138,11 +144,13 @@ const config = {
       username: envObj.MAIN_DB_USER!,
       password: envObj.MAIN_DB_PASS!,
       host: envObj.MAIN_DB_HOST!,
+      port: envObj.MAIN_DB_PORT!,
     },
     gateway: {
       username: envObj.GATEWAY_DB_USER!,
       password: envObj.GATEWAY_DB_PASS!,
       host: envObj.GATEWAY_DB_HOST!,
+      port: envObj.GATEWAY_DB_PORT!,
     },
   },
   queue: {

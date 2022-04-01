@@ -21,7 +21,7 @@ export interface DatabaseOptions {
   username?: string;
   password?: string;
   host?: string;
-  port?: number;
+  port?: number | string;
   modelDir?: string;
   [otherIndex: string]: any;
 }
@@ -32,10 +32,11 @@ export const connectTo = (options: DatabaseOptions): Database => {
     username = config.database.main.username,
     password = config.database.main.password,
     host = config.database.main.host,
-    port = 3306,
     modelDir = 'main',
     ...restOptions
   } = options;
+  // so strange, I must use any type
+  const port: any = _.parseInt(`${options.port || config.database.main.port || config.database.basic.port}`) as unknown as number;
   const baseDir = path.join(__dirname, modelDir);
   const sequelize = new Sequelize(database, username, password, {
     host,

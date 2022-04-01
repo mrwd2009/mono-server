@@ -20,3 +20,7 @@ mysql --host=localhost --user=root --password
 ```
 systemctl restart httpd
 ```
+
+### Enable SSL on Amazon Linux 2
+
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/SSL-on-amazon-linux-2.html
