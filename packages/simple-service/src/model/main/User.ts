@@ -11,10 +11,10 @@ import { util } from '../../lib';
 
 declare module '../types' {
   interface AppModels {
-    User: typeof User;
+    UserS: typeof User;
   }
-  type UserModel = User;
-  type UserModelDef = typeof User;
+  type UserSModel = User;
+  type UUserSModelDef = typeof User;
 }
 
 const hashPasword = async (user: any) => {
@@ -50,7 +50,7 @@ export const initialize = (sequelize: Sequelize) => {
     {
       sequelize,
       tableName: 'user',
-      modelName: 'User',
+      modelName: 'UserS',
       timestamps: false,
       hooks: {
         beforeCreate: hashPasword,

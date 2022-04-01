@@ -4,3 +4,5 @@ import logger from './logger';
 import * as util from './util';
 
 export { error, redis, logger, util };
+
+export default util;

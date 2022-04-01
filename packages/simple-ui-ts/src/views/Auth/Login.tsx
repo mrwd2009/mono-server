@@ -34,7 +34,7 @@ const Login: FC = () => {
           onFinish={handleLogin}
         >
           <Form.Item
-            name="Email"
+            name="email"
             rules={[
               {
                 required: true,
@@ -49,7 +49,7 @@ const Login: FC = () => {
             />
           </Form.Item>
           <Form.Item
-            name="Password"
+            name="password"
             rules={[
               {
                 required: true,

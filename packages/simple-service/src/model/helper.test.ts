@@ -9,6 +9,6 @@ test('get user list', async () => {
   });
   const User = db.models.User;
   const user = await User.findOne();
-  expect(user?.Email).toBeDefined();
+  expect(user?.email).toBeDefined();
   await db.sequelize.close();
 });

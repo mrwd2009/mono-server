@@ -11,6 +11,7 @@ const router = new Router({
 });
 
 router.post('/login', ...ctrl.login);
+router.post('/register', ...ctrl.register);
 router.get('/logout', jwtAuth, ctrl.logout);
 
 registerPublicRouter(router);

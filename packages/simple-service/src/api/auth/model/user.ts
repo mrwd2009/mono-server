@@ -11,14 +11,14 @@ const {
   main: { models },
 } = appDBs;
 
-const UserModel = models.User;
+const UserModel = models.UserS;
 
 type UserParams = {
   Email: string;
   Password: string;
 };
 
-const login = async (params: UserParams): Promise<{ token: string; user: string }> => {
+export const login = async (params: UserParams): Promise<{ token: string; user: string }> => {
   const { Email, Password } = params;
   const user = await UserModel.findByPk(Email);
   if (!user) {
@@ -37,4 +37,14 @@ const login = async (params: UserParams): Promise<{ token: string; user: string 
   };
 };
 
-export { login };
+type RegisterParams = {
+  email: string;
+  displayName: string;
+  password: string;
+};
+
+export const register = async (params: RegisterParams) => {
+  
+  return;
+}
+

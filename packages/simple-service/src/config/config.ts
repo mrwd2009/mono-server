@@ -29,6 +29,7 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   COOKIE_KEYS?: string;
   ALLOWED_DOMAINS?: string;
   APP_MYSQL_PORT?: string;
+  APP_VALID_EMAIL_DOMAINS?: string;
 };
 
 export interface GatewayConfig {
@@ -79,6 +80,9 @@ const config = {
   traceKnownErrorInDev: isDev ? envObj.TRACE_KNOWN_ERROR_IN_DEV === 'true' : false,
   cookie: {
     keys: cookieKeys,
+  },
+  auth: {
+    validEmailDomains: envObj.APP_VALID_EMAIL_DOMAINS ? envObj.APP_VALID_EMAIL_DOMAINS.split(',') : [],
   },
   jwt: {
     cookieKey: commonPrefix,
