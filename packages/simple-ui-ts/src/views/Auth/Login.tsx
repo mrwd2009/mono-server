@@ -51,6 +51,7 @@ const Login: FC = () => {
               name="username"
               type="email"
               autoComplete="on"
+              maxLength={50}
               prefix={<UserOutlined style={{ marginRight: 4 }} />}
               placeholder={t('inputEmail')}
             />
@@ -68,6 +69,7 @@ const Login: FC = () => {
               id="password"
               name="password"
               autoComplete="on"
+              maxLength={50}
               prefix={<LockOutlined style={{ marginRight: 4 }} />}
               type="password"
               placeholder={t('inputPassword')}

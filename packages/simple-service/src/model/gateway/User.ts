@@ -43,8 +43,9 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare current_sign_in_ip: CreationOptional<string>;
   declare last_sign_in_ip: CreationOptional<string>;
   declare failed_attempts: CreationOptional<number>;
-  declare locked_at: CreationOptional<Date | string>;
-  declare unlock_token: CreationOptional<string>;
+  declare locked_at: CreationOptional<Date | string | null>;
+  declare unlock_token: CreationOptional<string | null>;
+  declare last_change_pass_at: CreationOptional<Date | string | null>;
   declare created_at: CreationOptional<Date | string>;
   declare updated_at: CreationOptional<Date | string>;
   declare UserProfile?: NonAttribute<UserProfileModel>;
@@ -74,6 +75,7 @@ export const initialize = (sequelize: Sequelize) => {
       failed_attempts: DataTypes.INTEGER,
       locked_at: DataTypes.DATE,
       unlock_token: DataTypes.STRING,
+      last_change_pass_at: DataTypes.DATE,
       created_at: DataTypes.DATE,
       updated_at: DataTypes.DATE,
     },

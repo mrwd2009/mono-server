@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import _ from 'lodash';
-import { Transaction, Op, Sequelize } from '@sequelize/core';
-import { ContractBodyModelDef, ContractParameterModelDef, ContractRootModelDef, ContractRuleModelModelDef } from '.././../../model/types';
+import { Transaction, Op } from '@sequelize/core';
+import { ContractBodyModelDef, ContractRootModelDef } from '.././../../model/types';
 import { DataError, LogicError } from '../../../lib/error';
 
 interface TreeParams {

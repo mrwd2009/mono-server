@@ -5,3 +5,5 @@ import './DeploymentLog';
 import './Service';
 import './User';
 import './UserProfile';
+import './UserLoginHistory';
+import './UserToken';

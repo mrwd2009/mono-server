@@ -1,3 +1,3 @@
-import * as userHelper from './user';
+import * as userHelper from './user-helper';
 
 export { userHelper };

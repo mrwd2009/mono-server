@@ -3,7 +3,7 @@ import axios, { AxiosError } from 'axios';
 import { BackendError } from '../../lib/error';
 
 export const initialize = async (): Promise<void> => {
-  axios.defaults.timeout = 60000 * 5;
+  axios.defaults.timeout = 60000 * 3;
   axios.defaults.headers.common['Content-Type'] = 'application/json';
   axios.interceptors.response.use(
     (response) => {

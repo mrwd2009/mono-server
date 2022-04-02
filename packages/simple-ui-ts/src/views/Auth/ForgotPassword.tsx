@@ -47,6 +47,7 @@ const ForgotPassword: FC = () => {
             <Input
               name="username"
               autoComplete="off"
+              maxLength={50}
               placeholder={t('inputEmail')}
             />
           </Form.Item>

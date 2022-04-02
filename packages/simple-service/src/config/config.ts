@@ -31,6 +31,8 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   ALLOWED_DOMAINS?: string;
   APP_MYSQL_PORT?: string;
   APP_VALID_EMAIL_DOMAINS?: string;
+  APP_TRACE_LOGIN?: string;
+  APP_CHECK_EXPIRED_PASS?: string;
 };
 
 const envObj: GatewayENV = process.env;
@@ -72,6 +74,7 @@ if (!fs.existsSync(tempFileDir)) {
 }
 
 const config = {
+  nodeEnv,
   appEnv,
   isDev,
   traceKnownErrorInDev: isDev ? envObj.TRACE_KNOWN_ERROR_IN_DEV === 'true' : false,
@@ -79,6 +82,12 @@ const config = {
     keys: cookieKeys,
   },
   auth: {
+    traceLogin: envObj.APP_TRACE_LOGIN === 'true',
+    checkExpiredPass: envObj.APP_CHECK_EXPIRED_PASS === 'true',
+    maxStrLen: 50, // email, password, display name
+    passwordResetCycle: 180, //days
+    failedAttemptCount: 5,
+    autoUnlockTime: 30, // minutes
     validEmailDomains: envObj.APP_VALID_EMAIL_DOMAINS ? envObj.APP_VALID_EMAIL_DOMAINS.split(',') : [],
     zxcvbn: {
       score: 2,

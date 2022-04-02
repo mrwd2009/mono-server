@@ -7,6 +7,7 @@ import apiEndpoints from '../../../config/api-endpoints';
 import { getRouteInfo } from '../../../config/routes-info';
 import { updateUserInfo } from '../slices';
 import { useAppDispatch } from '../../../hooks';
+import { common } from '../../../util';
 
 // TODO add login redirection
 
@@ -18,7 +19,15 @@ const useLogin = () => {
   const handleLogin = useCallback(
     (params) => {
       request({
-        data: params,
+        data: {
+          ...params,
+          client: {
+            deviceType: common.getDeviceType(),
+            os: common.getOSName(),
+            browser: common.getBrowser(),
+            timeZone: common.getTimezone(),
+          }
+        },
       }).then(({ data: result }) => {
         const { permissions, token, user, resetPassword } = result;
         if (resetPassword) {

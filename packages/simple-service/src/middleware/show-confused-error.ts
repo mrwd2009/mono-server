@@ -14,6 +14,11 @@ export const showConfusedError = (options?: Options): Middleware => {
       if (config.isDev) {
         throw _error;
       }
+      // this error need to dispaly in UI
+      if (_error && (_error as GatewayError).public) {
+        throw _error;
+      }
+
       const i18n = context.i18n;
       if (error && i18n.exists(error)) {
         throw new GatewayError(i18n.t(error));

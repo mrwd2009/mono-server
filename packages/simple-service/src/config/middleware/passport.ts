@@ -1,8 +1,19 @@
 import Koa from 'koa';
 import passport from 'koa-passport';
 import cookie from 'cookie';
-import { Strategy, ExtractJwt, StrategyOptions, VerifyCallback, JwtFromRequestFunction } from 'passport-jwt';
+import { Strategy, ExtractJwt, StrategyOptions, VerifyCallbackWithRequest, JwtFromRequestFunction } from 'passport-jwt';
 import config from '../config';
+import appDBs from '../../config/model/app';
+import { AuthError } from '../../lib/error';
+
+const {
+  gateway: {
+    models: {
+      User,
+      UserToken,
+    },
+  }
+} = appDBs;
 
 const getToken: JwtFromRequestFunction = (req) => {
   const cookies = cookie.parse(req.headers.cookie || '');
@@ -14,10 +25,47 @@ const options: StrategyOptions = {
   secretOrKey: config.jwt.secret,
   issuer: config.jwt.issuer,
   audience: config.jwt.audience,
+  passReqToCallback: true,
 };
 
-const getUser: VerifyCallback = (payload, done) => {
-  done(null, { email: payload.sub });
+const getUser: VerifyCallbackWithRequest = (req, payload, done) => {
+  const token = getToken(req);
+  try {
+    const data = JSON.parse(payload.sub);
+    if (data.type === 'user') {
+      const queryUser = User.findOne({
+        attributes: ['id', 'email'],
+        where: {
+          id: data.id,
+        }
+      })
+      const queryToken = UserToken.findOne({
+        where: {
+          user_id: data.id,
+          token,
+          status: 'enabled'
+        },
+      });
+      return Promise.all([queryUser, queryToken])
+        .then(([user, savedToken]) => {
+          if (!user || !savedToken) {
+            done(new AuthError('Invalid or expired token.'))
+          } else {
+            done(null, {
+              id: user.id,
+              email: user.email,
+            });
+          }
+        })
+        .catch(() => {
+          done(new AuthError('Invalid or expired token.'))
+        });
+    } else {
+      done(null, { id: data.id, email: data.id });
+    }
+  } catch (error) {
+    done(new AuthError('Unknown token.'));
+  }
 };
 
 passport.use(new Strategy(options, getUser));

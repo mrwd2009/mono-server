@@ -44,6 +44,7 @@ const Register: FC = () => {
           >
             <Input
               autoComplete="off"
+              maxLength={50}
               placeholder={t('inputName')}
             />
           </Form.Item>
@@ -61,6 +62,7 @@ const Register: FC = () => {
             <Input
               id="username"
               name="username"
+              maxLength={50}
               autoComplete="off"
               placeholder={t('inputEmail')}
             />
@@ -94,6 +96,7 @@ const Register: FC = () => {
             <Input.Password
               id="password"
               name="password"
+              maxLength={50}
               autoComplete="off"
               type="password"
               placeholder="Enter your password"
@@ -120,6 +123,7 @@ const Register: FC = () => {
             <Input.Password
               id="confirm"
               name="confirm"
+              maxLength={50}
               autoComplete="off"
               type="password"
               placeholder={t('inputConfirmation')}

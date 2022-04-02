@@ -10,8 +10,10 @@ const router = new Router({
   prefix: '/auth',
 });
 
-router.post('/login', ...ctrl.login);
-router.post('/register', ...ctrl.register);
-router.get('/logout', jwtAuth, ctrl.logout);
+router.post('/login', ...ctrl.loginHandler);
+router.post('/register', ...ctrl.registerHandler);
+router.post('/forgot-password', ...ctrl.forgotPasswordHandler);
+router.post('/reset-password', ...ctrl.resetPasswordHandler);
+router.get('/logout', jwtAuth, ctrl.logoutHandler);
 
 registerPublicRouter(router);

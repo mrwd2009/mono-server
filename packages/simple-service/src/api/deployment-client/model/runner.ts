@@ -7,7 +7,6 @@ import { ip, bashRunner, common } from '../../../lib/util';
 import { DataError } from '../../../lib/error';
 import config from '../../../config/config';
 import logger from '../../../lib/logger';
-import { userHelper } from '../../auth/helper/index';
 
 const {
   gateway: { models },
@@ -150,7 +149,7 @@ let apiToken: {
 };
 export async function getAPIToken(): Promise<string> {
   if (!apiToken || apiToken.expired < dayjs().unix()) {
-    const token = await userHelper.createJwtToken(config.jwt.issuer);
+    const token = 'test';
     const expired = dayjs().unix() + config.jwt.expireHour * 3600;
     apiToken = {
       token,

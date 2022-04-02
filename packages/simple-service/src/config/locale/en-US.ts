@@ -6,7 +6,11 @@ const locale = {
     },
     auth: {
       confusedError: 'Invalid parameters.',
-      weekPassword: 'Your password is not strong enough, please select another one like {{password}}.'
+      weekPassword: 'Your password is not strong enough, please select another one like {{password}}.',
+      notFoundEmail: 'Email({{email}}) is not found.',
+      errorPassword: 'Password is not correct',
+      lockedMessage_one: 'Your account has been locked, please wait {{count}} minute to unlock.',
+      lockedMessage_other: 'Your account has been locked, please wait {{count}} minutes to unlock.'
     }
   }
 };

@@ -61,6 +61,7 @@ const ResetPassword: FC = () => {
             <Input.Password
               id="password"
               name="password"
+              maxLength={50}
               autoComplete="off"
               type="password"
               placeholder="Enter your password"
@@ -87,6 +88,7 @@ const ResetPassword: FC = () => {
             <Input.Password
               id="confirm"
               name="confirm"
+              maxLength={50}
               autoComplete="off"
               type="password"
               placeholder={t('inputConfirmation')}

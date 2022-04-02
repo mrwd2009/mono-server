@@ -1,6 +1,4 @@
 import { Middleware } from '@koa/router';
-import cookie from 'cookie';
-import config from '../../../config/config';
 import { validator, validatePagination } from '../../../middleware';
 import { deploymentModel } from '../model';
 
