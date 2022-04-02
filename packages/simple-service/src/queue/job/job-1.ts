@@ -6,4 +6,4 @@ logger.info('test from job 1');
 const queue = job.getQueue('job-1');
 queue.process(processor);
 
-export { queue };
+export default queue;

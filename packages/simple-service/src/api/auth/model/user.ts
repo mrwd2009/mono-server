@@ -1,6 +1,11 @@
 import { userHelper } from '../helper';
+import zxcvbn from 'zxcvbn';
 import * as lib from '../../../lib';
 import appDBs from '../../../config/model/app';
+import type { I18nType } from '../../../types';
+import { randomPassword } from '../../../lib/util/password';
+import { job } from '../../../queue/helper';
+import config from '../../../config/config';
 
 const {
   error: { AuthError },
@@ -9,6 +14,13 @@ const {
 } = lib;
 const {
   main: { models },
+  gateway: {
+    models: {
+      User,
+      UserProfile,
+    },
+    sequelize,
+  }
 } = appDBs;
 
 const UserModel = models.UserS;
@@ -43,8 +55,39 @@ type RegisterParams = {
   password: string;
 };
 
-export const register = async (params: RegisterParams) => {
+export const register = async (params: RegisterParams, i18n: I18nType) => {
+  const {
+    email,
+    displayName,
+    password,
+  } = params;
 
-  return;
+  if (zxcvbn(password).score < 2) {
+    throw new AuthError(i18n.t('auth.weekPassword', { password: randomPassword() }))
+  }
+
+  let userId: number;
+  await sequelize.transaction(async (transaction) => {
+    const user = await User.create({
+      email,
+      password,
+      unconfirmed_email: email,
+    }, {
+      transaction,
+    });
+    userId = user.id;
+    await UserProfile.create({
+      user_id: userId,
+      display_name: displayName
+    }, {
+      transaction,
+    });
+  });
+  
+  if (!config.isDev) {
+    await job.enqueue('auth-confirmation-email', { userId: userId! });
+  }
+
+  return true;
 }
 

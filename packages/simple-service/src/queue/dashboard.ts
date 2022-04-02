@@ -6,7 +6,7 @@ import * as job from './job';
 import config from '../config/config';
 
 const getQueues = () => {
-  return [new BullAdapter(job.job1.queue), new BullAdapter(job.job2.queue)];
+  return [new BullAdapter(job.job1), new BullAdapter(job.job2)];
 };
 
 export const initialize = async (app: Koa): Promise<Koa> => {

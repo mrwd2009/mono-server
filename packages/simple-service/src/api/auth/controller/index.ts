@@ -34,7 +34,7 @@ export const register: Array<Middleware> = [
   ),
   validateEmailDomains(),
   async (context) => {
-    await userModel.register(context.mergedParams);
+    await userModel.register(context.mergedParams, context.i18n);
     context.gateway!.sendJSON!({ done: true });
   },
 ]

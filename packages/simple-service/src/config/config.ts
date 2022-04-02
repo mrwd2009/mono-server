@@ -80,6 +80,10 @@ const config = {
   },
   auth: {
     validEmailDomains: envObj.APP_VALID_EMAIL_DOMAINS ? envObj.APP_VALID_EMAIL_DOMAINS.split(',') : [],
+    zxcvbn: {
+      score: 2,
+      randomPasswordLoop: 4,
+    },
   },
   jwt: {
     cookieKey: commonPrefix,
@@ -102,12 +106,12 @@ const config = {
     duration: 10,
     byIP: {
       // limited by ip
-      points: 100 * 60, // times
+      points: 40 * 60, // times
       duration: 60, // second
     },
     byID: {
       // limited by id from cookie
-      points: 50 * 60, // times
+      points: 10 * 60, // times
       duration: 60, // second
     },
   },

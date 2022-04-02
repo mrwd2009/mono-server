@@ -15,11 +15,12 @@ const fogotRoute = getRouteInfo('forgot-password');
 const Login: FC = () => {
   const { loading, handleLogin } = useLogin();
   const { t: gT } = useTranslation();
+  const { t } = useTranslation('translation', { keyPrefix: 'auth' });
   return (
     <AuthLayout
       header={{
-        help: "Don't have an account?",
-        title: 'Sign up',
+        help: t('notHaveAccount'),
+        title: t('signUp'),
         path: registerRoute!.path,
       }}
     >
@@ -41,13 +42,17 @@ const Login: FC = () => {
               {
                 required: true,
                 type: 'email',
-                message: 'Please provide your email',
+                message: t('requiredEmail'),
               },
             ]}
           >
             <Input
+              id="username"
+              name="username"
+              type="email"
+              autoComplete="on"
               prefix={<UserOutlined style={{ marginRight: 4 }} />}
-              placeholder="Enter your email address"
+              placeholder={t('inputEmail')}
             />
           </Form.Item>
           <Form.Item
@@ -55,14 +60,17 @@ const Login: FC = () => {
             rules={[
               {
                 required: true,
-                message: 'Please provide your password',
+                message: t('requiredPassword'),
               },
             ]}
           >
             <Input.Password
+              id="password"
+              name="password"
+              autoComplete="on"
               prefix={<LockOutlined style={{ marginRight: 4 }} />}
               type="password"
-              placeholder="Enter your password"
+              placeholder={t('inputPassword')}
             />
           </Form.Item>
           <Form.Item>
@@ -72,7 +80,7 @@ const Login: FC = () => {
               block
               loading={loading}
             >
-              Log In
+              {t('logIn')}
             </Button>
           </Form.Item>
           <Divider dashed />
@@ -108,7 +116,7 @@ const Login: FC = () => {
               to={fogotRoute!.path}
               className="route-link"
             >
-              Forgot Password?
+              {t('forgotPassword')}
             </Link>
           </Form.Item>
         </Form>

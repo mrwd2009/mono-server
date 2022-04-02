@@ -30,9 +30,9 @@ const useLang = () => {
         setState({
           i18n: loadedLang[locale],
         });
+        dispatch(changeLang(locale as any));
         return;
       }
-      
       setState({
         loading: true,
       });

@@ -1,7 +1,7 @@
 import { FC, memo } from 'react';
 import { useRoutes, RouteObject, Navigate } from 'react-router-dom';
 import { getRouteInfo } from './config/routes-info';
-import { Login } from './views/Auth';
+import { Login, Register, ForgotPassword, ResetPassword } from './views/Auth';
 import ErrorPageLayout from './layouts/ErrorPageLayout';
 import { NotFound, Forbidden } from './views/ErrorPage';
 import MainLayout from './layouts/MainLayout';
@@ -16,6 +16,18 @@ const routes: RouteObject[] = [
   {
     path: getRouteInfo('login')!.path,
     element: <Login />,
+  },
+  {
+    path: getRouteInfo('register')!.path,
+    element: <Register />,
+  },
+  {
+    path: getRouteInfo('forgot-password')!.path,
+    element: <ForgotPassword />,
+  },
+  {
+    path: getRouteInfo('reset-password')!.path,
+    element: <ResetPassword />,
   },
   {
     element: <RouteGuarder />,

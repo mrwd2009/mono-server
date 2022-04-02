@@ -18,6 +18,9 @@ export const apiEndpoints = {
   auth: {
     login: '/auth/login',
     logout: '/auth/logout',
+    register: '/auth/register',
+    forgotPassword: '/auth/forgot-password',
+    resetPassword: '/auth/reset-password',
   },
   system: {
     info: '/system/info',

@@ -3,3 +3,5 @@ import './Agent';
 import './AgentService';
 import './DeploymentLog';
 import './Service';
+import './User';
+import './UserProfile';
