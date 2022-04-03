@@ -5,6 +5,7 @@ import { Strategy, ExtractJwt, StrategyOptions, VerifyCallbackWithRequest, JwtFr
 import config from '../config';
 import appDBs from '../../config/model/app';
 import { AuthError } from '../../lib/error';
+import util from '../../lib/util';
 
 const {
   gateway: {
@@ -37,18 +38,20 @@ const getUser: VerifyCallbackWithRequest = (req, payload, done) => {
         attributes: ['id', 'email'],
         where: {
           id: data.id,
+        },
+        include: {
+          model: UserToken,
+          attributes: ['id'],
+          where: {
+            user_id: data.id,
+            signature: util.getJwtTokenSignature(token),
+            status: 'enabled'
+          },
         }
       })
-      const queryToken = UserToken.findOne({
-        where: {
-          user_id: data.id,
-          token,
-          status: 'enabled'
-        },
-      });
-      return Promise.all([queryUser, queryToken])
-        .then(([user, savedToken]) => {
-          if (!user || !savedToken) {
+      return queryUser
+        .then((user) => {
+          if (!user || !user.UserTokens?.length) {
             done(new AuthError('Invalid or expired token.'))
           } else {
             done(null, {

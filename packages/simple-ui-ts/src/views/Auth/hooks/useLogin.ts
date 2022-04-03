@@ -29,15 +29,15 @@ const useLogin = () => {
           }
         },
       }).then(({ data: result }) => {
-        const { permissions, token, user, resetPassword } = result;
-        if (resetPassword) {
+        const { permissions, token, email, reset } = result;
+        if (reset) {
           navigate(`${getRouteInfo('reset-password')?.path}?token=${token}`);
           return;
         }
         dispatch(
           updateUserInfo({
             permissions,
-            user,
+            user: email,
           }),
         );
         navigate('/');

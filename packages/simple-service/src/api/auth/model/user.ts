@@ -1,13 +1,15 @@
 import { userHelper } from '../helper';
 import zxcvbn from 'zxcvbn';
 import dayjs from 'dayjs';
-import { v4 as uuidV4 } from 'uuid';
+import { Op } from '@sequelize/core';
 import * as lib from '../../../lib';
 import appDBs from '../../../config/model/app';
 import type { I18nType } from '../../../types';
 import { randomPassword } from '../../../lib/util/password';
 import { job } from '../../../queue/helper';
 import config from '../../../config/config';
+import { DataError } from '../../../lib/error';
+import { getJwtTokenSignature } from '../../../lib/util/common';
 
 const {
   error: { AuthError },
@@ -38,7 +40,11 @@ type UserParams = {
   ip: string;
   userAgent: string;
   referer: string;
+  origin: string;
 };
+
+// because we support multiple app with one user database, we can't simply delete jwt token after login
+// what we need to do is to mark jwt token disabled.
 
 export const login = async (params: UserParams, i18n: I18nType): Promise<{ token: string; reset: boolean, email: string }> => {
   const { email, password } = params;
@@ -51,11 +57,55 @@ export const login = async (params: UserParams, i18n: I18nType): Promise<{ token
       throw new AuthError(i18n.t('auth.notFoundEmail', { email }));
     }
 
+    if (user.unconfirmed_email) {
+      const error = new AuthError(i18n.t('auth.notConfirmed'));
+      error.public = true;
+      throw error;
+    }
+
+    if (!user.enabled) {
+      const error = new AuthError(i18n.t('auth.disabledUser'));
+      error.public = true;
+      throw error;
+    }
+
     user = await userHelper.checkLockStatus({ user, User, i18n, transaction });
 
     if (!user) {
       logger.error(`Checked user(${email}) is not found.`);
       throw new AuthError(i18n.t('auth.notFoundEmail', { email }));
+    }
+
+    const getToken = async () => {
+      return await userHelper.createJwtToken({
+        id: user!.id,
+        type: 'user',
+        transaction,
+        UserToken,
+      });
+    };
+
+    if (await util.password.isPasswordEqual(password, user.password)) {
+      user.sign_in_count += 1;
+      user.last_sign_in_at = user.current_sign_in_at;
+      user.current_sign_in_at = dayjs.utc().format();
+      user.last_sign_in_ip = user.current_sign_in_ip;
+      user.current_sign_in_ip = params.ip;
+      user.failed_attempts = 0;
+      user.locked_at = null;
+      user.unlock_token = null;
+      await user.save({ transaction });
+    } else {
+      user.failed_attempts += 1;
+      if (user.failed_attempts >= config.auth.failedAttemptCount) {
+        const lockToken = await getToken();
+        user.locked_at = dayjs.utc().format();
+        user.unlock_token = lockToken;
+        locked = true;
+        userId = user.id;
+      }
+      await user.save({ transaction });
+      return null;
     }
 
     if (config.auth.traceLogin) {
@@ -76,28 +126,6 @@ export const login = async (params: UserParams, i18n: I18nType): Promise<{ token
       );
     }
 
-    if (await util.password.isPasswordEqual(password, user.password)) {
-      user.sign_in_count += 1;
-      user.last_sign_in_at = user.current_sign_in_at;
-      user.current_sign_in_at = dayjs.utc().format();
-      user.last_sign_in_ip = user.current_sign_in_ip;
-      user.current_sign_in_ip = params.ip;
-      user.failed_attempts = 0;
-      user.locked_at = null;
-      user.unlock_token = null;
-      await user.save({ transaction });
-    } else {
-      user.failed_attempts += 1;
-      if (user.failed_attempts >= config.auth.failedAttemptCount) {
-        user.locked_at = dayjs.utc().format();
-        user.unlock_token = uuidV4();
-        locked = true;
-        userId = user.id;
-      }
-      await user.save({ transaction });
-      return null;
-    }
-
     let reset = false;
     if (config.auth.checkExpiredPass) {
       if (user.last_change_pass_at) {
@@ -107,12 +135,24 @@ export const login = async (params: UserParams, i18n: I18nType): Promise<{ token
       }
     }
 
-    const token = await userHelper.createJwtToken({
-      id: user.id,
-      type: 'user',
-      transaction,
-      UserToken,
-    });
+    const token = await getToken();
+
+    if (reset) {
+      user.reset_password_token = token;
+      await user.save({ transaction });
+    } else {
+      await UserToken.destroy({
+        where: {
+          user_id: user.id,
+          expired_at: {
+            [Op.lte]: dayjs.utc().format(),
+          }
+        },
+        transaction,
+      });
+      user.latest_sign_in_token = token;
+      await user.save({ transaction });
+    }
 
     return {
       token,
@@ -124,7 +164,7 @@ export const login = async (params: UserParams, i18n: I18nType): Promise<{ token
   if (!result) {
     if (locked && !config.isDev) {
       // must be placed outside transaction
-      await job.enqueue('auth-lock-email', { userId: userId! });
+      await job.enqueue('auth-lock-email', { userId: userId!, origin: params.origin });
     }
     logger.error(`Incorrect password(${password}) of User(${email}).`);
     throw new AuthError(i18n.t('auth.errorPassword'));
@@ -137,6 +177,7 @@ type RegisterParams = {
   email: string;
   displayName: string;
   password: string;
+  origin: string;
 };
 
 export const register = async (params: RegisterParams, i18n: I18nType) => {
@@ -144,6 +185,7 @@ export const register = async (params: RegisterParams, i18n: I18nType) => {
     email,
     displayName,
     password,
+    origin,
   } = params;
 
   if (zxcvbn(password).score < 2) {
@@ -167,31 +209,41 @@ export const register = async (params: RegisterParams, i18n: I18nType) => {
     const user = await User.create({
       email,
       password,
-      confirmation_token: uuidV4(),
       unconfirmed_email: email,
       last_change_pass_at: dayjs.utc().format(),
     }, {
       transaction,
     });
 
-    userId = user.id;
-    await UserProfile.create({
-      user_id: userId,
-      display_name: displayName
-    }, {
+    const token = await userHelper.createJwtToken({
+      id: user.id,
+      type: 'user',
       transaction,
+      UserToken,
     });
+    user.confirmation_token = token;
+
+    userId = user.id;
+    await Promise.all([
+      UserProfile.create({
+        user_id: userId,
+        display_name: displayName
+      }, {
+        transaction,
+      }),
+      user.save({ transaction }),
+    ]);
   });
 
   // must be placed outside transaction
   if (!config.isDev) {
-    await job.enqueue('auth-confirmation-email', { userId: userId! });
+    await job.enqueue('auth-confirmation-email', { userId: userId!, origin });
   }
 
   return true;
 };
 
-export const forgotPassword = async ({ email }: { email: string }, i18n: I18nType) => {
+export const forgotPassword = async ({ email, origin }: { email: string, origin?: string }, i18n: I18nType) => {
   let userId: number;
   await sequelize.transaction(async (transaction) => {
     let user = await User.findOne({ where: { email }, transaction });
@@ -201,9 +253,21 @@ export const forgotPassword = async ({ email }: { email: string }, i18n: I18nTyp
     }
     userId = user.id;
     user = await userHelper.checkLockStatus({ user, transaction, i18n, User });
-    await user?.update(
+
+    if (!user) {
+      throw new AuthError(i18n.t('auth.notFoundEmail', { email }));
+    }
+
+    const token = await userHelper.createJwtToken({
+      id: user.id,
+      type: 'user',
+      transaction,
+      UserToken,
+    });
+
+    await user.update(
       {
-        reset_password_token: uuidV4(),
+        reset_password_token: token,
       },
       {
         transaction,
@@ -213,6 +277,162 @@ export const forgotPassword = async ({ email }: { email: string }, i18n: I18nTyp
 
   // must be placed outside transaction
   if (!config.isDev) {
-    await job.enqueue('auth-forgot-email', { userId: userId! });
+    await job.enqueue('auth-forgot-email', { userId: userId!, origin });
   }
 };
+
+interface ResetParams {
+  password: string;
+  token: string;
+}
+export const resetPassword = async (params: ResetParams, i18n: I18nType) => {
+  const id = await userHelper.verfyJwtToken({ token: params.token, UserToken });
+
+  await sequelize.transaction(async (transaction) => {
+    const user = await User.findOne({
+      where: {
+        id,
+      },
+      transaction,
+    });
+  
+    if (!user) {
+      throw new DataError(i18n.t('auth.notFoundUser'));
+    }
+    
+    if (user.reset_password_token !== params.token) {
+      throw new DataError(i18n.t('auth.invalidToken'));
+    }
+
+    if (user.reset_password_token) {
+      await UserToken.destroy(
+        {
+          where: {
+            user_id: user.id,
+            signature: getJwtTokenSignature(user.reset_password_token),
+          },
+          transaction,
+        },
+      );
+    }
+    
+    user.password = params.password;
+    user.reset_password_token = null;
+    user.reset_password_sent_at = null;
+    user.last_change_pass_at = dayjs.utc().format();
+    await user.save({ transaction });
+  })
+
+  return true;
+};
+
+export const unlockUser = async (params: { token: string }, i18n: I18nType) => {
+  const id = await userHelper.verfyJwtToken({ token: params.token, UserToken });
+
+  await sequelize.transaction(async (transaction) => {
+    const user = await User.findOne({
+      where: {
+        id,
+      },
+      transaction,
+    });
+  
+    if (!user) {
+      throw new DataError(i18n.t('auth.notFoundUser'));
+    }
+    
+    if (user.unlock_token !== params.token) {
+      throw new DataError(i18n.t('auth.invalidToken'));
+    }
+
+    if (user.unlock_token) {
+      await UserToken.destroy(
+        {
+          where: {
+            user_id: user.id,
+            signature: getJwtTokenSignature(user.unlock_token),
+          },
+          transaction,
+        },
+      );
+    }
+    
+    user.unlock_token = null;
+    user.locked_at = null;
+    user.failed_attempts = 0;
+    await user.save({ transaction });
+  });
+
+  return true;
+};
+
+export const confirmUser = async (params: { token: string }, i18n: I18nType) => {
+  const id = await userHelper.verfyJwtToken({ token: params.token, UserToken });
+
+  await sequelize.transaction(async (transaction) => {
+    const user = await User.findOne({
+      where: {
+        id,
+      },
+      transaction,
+    });
+  
+    if (!user) {
+      throw new DataError(i18n.t('auth.notFoundUser'));
+    }
+    
+    if (user.confirmation_token !== params.token) {
+      throw new DataError(i18n.t('auth.invalidToken'));
+    }
+
+    if (user.confirmation_token) {
+      await UserToken.destroy(
+        {
+          where: {
+            user_id: user.id,
+            signature: getJwtTokenSignature(user.confirmation_token),
+          },
+          transaction,
+        },
+      );
+    }
+    
+    user.confirmation_token = null;
+    user.confirmed_at = dayjs.utc().format();
+    user.unconfirmed_email = null;
+    await user.save({ transaction });
+  });
+
+  return true;
+};
+
+export const logoutUser = async (userId: number, token: string, i18n: I18nType) => {
+  await sequelize.transaction(async (transaction) => {
+    const user = await User.findOne({
+      attributes: ['id', 'latest_sign_in_token'],
+      where: {
+        id: userId,
+      },
+      transaction,
+    });
+  
+    if (!user) {
+      throw new DataError(i18n.t('auth.notFoundUser'));
+    }
+
+    await UserToken.destroy(
+      {
+        where: {
+          user_id: user.id,
+          signature: getJwtTokenSignature(token),
+        },
+        transaction,
+      },
+    );
+
+    if (user.latest_sign_in_token === token) {
+      user.latest_sign_in_token = null;
+    }
+    await user.save({ transaction });
+  });
+}

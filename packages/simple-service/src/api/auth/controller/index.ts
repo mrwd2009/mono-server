@@ -2,6 +2,7 @@ import { Middleware } from '@koa/router';
 import { userModel } from '../model';
 import config from '../../../config';
 import { validator, validateEmailDomains, showConfusedError } from '../../../middleware';
+import { getJwtTokenFromReq } from '../../../lib/util/common';
 
 const maxStrLen = config.auth.maxStrLen;
 
@@ -34,15 +35,16 @@ export const loginHandler: Array<Middleware> = [
       ip: context.ip,
       userAgent: context.headers['user-agent'],
       referer: context.headers['referer'],
+      origin: context.headers['origin'],
     };
-    
+
     const { token, email: receivedEmail, reset } = await userModel.login(params, context.i18n);
     if (reset) {
-      return {
+      return context.gateway!.sendJSON!({
         reset: true,
         email: receivedEmail,
         token,
-      };
+      });
     }
 
     context.cookies.set(config.jwt.cookieKey, token, {
@@ -65,7 +67,10 @@ export const registerHandler: Array<Middleware> = [
   ),
   validateEmailDomains(),
   async (context) => {
-    await userModel.register(context.mergedParams, context.i18n);
+    await userModel.register({
+      ...context.mergedParams,
+      origin: context.headers['origin'],
+    }, context.i18n);
     context.gateway!.sendJSON!({ done: true });
   },
 ];
@@ -79,25 +84,58 @@ export const forgotPasswordHandler: Array<Middleware> = [
   ),
   validateEmailDomains(),
   async (context) => {
-    await userModel.forgotPassword(context.mergedParams, context.i18n);
+    const origin = context.headers['origin'];
+    await userModel.forgotPassword({
+      email: context.mergedParams.email,
+      origin,
+    }, context.i18n);
     context.gateway!.sendJSON!({ done: true });
   },
 ];
 
 export const resetPasswordHandler: Array<Middleware> = [
-  showConfusedError({ error: 'auth.confusedError' }),
+  showConfusedError({ error: 'auth.invalidToken' }),
   validator((Schema) =>
     Schema.object({
       password: Schema.string().max(maxStrLen),
+      token: Schema.string(),
     })
   ),
   async (context) => {
-    await userModel.register(context.mergedParams, context.i18n);
+    await userModel.resetPassword(context.mergedParams, context.i18n);
+    context.gateway!.sendJSON!({ done: true });
+  },
+];
+
+export const unlockUserHandler: Array<Middleware> = [
+  showConfusedError({ error: 'auth.invalidToken' }),
+  validator((Schema) =>
+    Schema.object({
+      token: Schema.string(),
+    })
+  ),
+  async (context) => {
+    await userModel.unlockUser(context.mergedParams, context.i18n);
+    context.gateway!.sendJSON!({ done: true });
+  },
+];
+
+export const confirmUserHandler: Array<Middleware> = [
+  showConfusedError({ error: 'auth.invalidToken' }),
+  validator((Schema) =>
+    Schema.object({
+      token: Schema.string(),
+    })
+  ),
+  async (context) => {
+    await userModel.confirmUser(context.mergedParams, context.i18n);
     context.gateway!.sendJSON!({ done: true });
   },
 ];
 
 export const logoutHandler: Middleware = async (context) => {
+  const token = getJwtTokenFromReq(context.req);
+  await userModel.logoutUser(context.state.user.id, token, context.i18n);
   context.cookies.set(config.jwt.cookieKey, '', { signed: true });
   context.body = {
     success: true,

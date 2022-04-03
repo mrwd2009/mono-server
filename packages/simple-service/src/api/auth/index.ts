@@ -14,6 +14,8 @@ router.post('/login', ...ctrl.loginHandler);
 router.post('/register', ...ctrl.registerHandler);
 router.post('/forgot-password', ...ctrl.forgotPasswordHandler);
 router.post('/reset-password', ...ctrl.resetPasswordHandler);
+router.get('/unlock', ...ctrl.unlockUserHandler);
+router.get('/confirm', ...ctrl.confirmUserHandler);
 router.get('/logout', jwtAuth, ctrl.logoutHandler);
 
 registerPublicRouter(router);

@@ -8,7 +8,7 @@ import {
   NonAttribute,
 } from '@sequelize/core';
 import lib from '../../lib';
-import { AppModels, UserProfileModel } from '../types';
+import { AppModels, UserProfileModel, UserTokenModel } from '../types';
 
 declare module '../types' {
   interface AppModels {
@@ -27,16 +27,18 @@ const hashPassword = async (user: User) => {
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   static associate = (models: AppModels) => {
     User.hasOne(models.UserProfile, { foreignKey: 'user_id', constraints: false });
+    User.hasMany(models.UserToken,  { foreignKey: 'user_id', constraints: false })
   };
   declare id: CreationOptional<number>;
   declare email: string;
   declare password: CreationOptional<string>;
-  declare reset_password_token: CreationOptional<string>;
-  declare reset_password_sent_at: CreationOptional<Date | string>;
-  declare confirmation_token: CreationOptional<string>;
+  declare reset_password_token: CreationOptional<string | null>;
+  declare reset_password_sent_at: CreationOptional<Date | string | null>;
+  declare confirmation_token: CreationOptional<string | null>;
   declare confirmed_at: CreationOptional<Date | string>;
   declare confirmation_sent_at: CreationOptional<Date | string>;
-  declare unconfirmed_email: CreationOptional<string>;
+  declare unconfirmed_email: CreationOptional<string | null>;
+  declare latest_sign_in_token: CreationOptional<string | null>;
   declare sign_in_count: CreationOptional<number>;
   declare current_sign_in_at: CreationOptional<Date | string>;
   declare last_sign_in_at: CreationOptional<Date | string>;
@@ -46,9 +48,11 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare locked_at: CreationOptional<Date | string | null>;
   declare unlock_token: CreationOptional<string | null>;
   declare last_change_pass_at: CreationOptional<Date | string | null>;
+  declare enabled: CreationOptional<boolean>;
   declare created_at: CreationOptional<Date | string>;
   declare updated_at: CreationOptional<Date | string>;
   declare UserProfile?: NonAttribute<UserProfileModel>;
+  declare UserTokens?: NonAttribute<UserTokenModel[]>;
 }
 
 export const initialize = (sequelize: Sequelize) => {
@@ -67,6 +71,7 @@ export const initialize = (sequelize: Sequelize) => {
       confirmed_at: DataTypes.DATE,
       confirmation_sent_at: DataTypes.DATE,
       unconfirmed_email: DataTypes.STRING,
+      latest_sign_in_token: DataTypes.STRING,
       sign_in_count: DataTypes.INTEGER,
       current_sign_in_at: DataTypes.DATE,
       last_sign_in_at: DataTypes.DATE,
@@ -76,6 +81,7 @@ export const initialize = (sequelize: Sequelize) => {
       locked_at: DataTypes.DATE,
       unlock_token: DataTypes.STRING,
       last_change_pass_at: DataTypes.DATE,
+      enabled: DataTypes.BOOLEAN,
       created_at: DataTypes.DATE,
       updated_at: DataTypes.DATE,
     },

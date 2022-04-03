@@ -5,10 +5,15 @@ import config from '../../../config/config';
 import { UserModel, UserModelDef, UserTokenModelDef } from '.././../../model/types';
 import * as lib from '../../../lib';
 import { I18nType } from '../../../types';
-import { AuthError } from '../../../lib/error';
+import { AuthError, DataError } from '../../../lib/error';
 
 const {
   error: { GatewayError },
+  util: {
+    common: {
+      getJwtTokenSignature,
+    }
+  }
 } = lib;
 
 interface TokenParams {
@@ -33,6 +38,8 @@ export const createJwtToken = async (params: TokenParams): Promise<string> => {
       }
       return resolve(token);
     };
+    // Both Base64 and Base64url 
+    // so signature includes underscore
     jwt.sign(
       {
         sub: JSON.stringify({ id: params.id, type: params.type }),
@@ -49,6 +56,7 @@ export const createJwtToken = async (params: TokenParams): Promise<string> => {
 
   await params.UserToken.create({
     user_id: params.id,
+    signature: getJwtTokenSignature(createdToken),
     token: createdToken,
     status: 'enabled',
     expired_at: expiredDate.format(),
@@ -57,6 +65,55 @@ export const createJwtToken = async (params: TokenParams): Promise<string> => {
   });
 
   return createdToken;
+};
+
+interface VerifyParams {
+  token: string;
+  UserToken: UserTokenModelDef;
+}
+export const verfyJwtToken = async (params: VerifyParams) => {
+  const result: {
+    type: TokenParams['type'],
+    id: number
+  } = await new Promise((resolve, reject) => {
+    jwt.verify(
+      params.token,
+      config.jwt.secret!,
+      {
+        issuer: config.jwt.issuer,
+        audience: config.jwt.audience,
+      },
+      (error, decoded) => {
+        if (error) {
+          return reject(error);
+        }
+        try {
+          resolve(JSON.parse(decoded!.sub as string));
+        } catch (_error) {
+          reject(_error);
+        }
+      },
+    );
+  });
+
+  if (result.type !== 'user') {
+    throw new DataError('Invalid token.');
+  }
+
+  const tokenRecord = await params.UserToken.findOne({
+    attributes: ['id'],
+    where: {
+      user_id: result.id,
+      signature: getJwtTokenSignature(params.token),
+      status: 'enabled'
+    },
+  });
+
+  if (!tokenRecord) {
+    throw new DataError('Invalid token.')
+  }
+
+  return result.id;
 };
 
 interface CheckParams {
