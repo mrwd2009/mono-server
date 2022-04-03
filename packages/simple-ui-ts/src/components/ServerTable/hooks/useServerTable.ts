@@ -16,8 +16,8 @@ interface PostParams {
   filter?: any;
   sorter?: {
     field: string;
-    order: 'ASC' | 'DESC'
-  }
+    order: 'ASC' | 'DESC';
+  };
 }
 
 export interface ServerTableOption {
@@ -26,12 +26,12 @@ export interface ServerTableOption {
     pageSize?: number;
     sorter?: {
       field: string;
-      order: 'ASC' | 'DESC'
-    },
-    beforeRequest?: (data: PostParams) => any | false,
-    afterRequest?: (data: any) => { total: number, list: Array<any> }
-  },
-  [key: string]: any
+      order: 'ASC' | 'DESC';
+    };
+    beforeRequest?: (data: PostParams) => any | false;
+    afterRequest?: (data: any) => { total: number; list: Array<any> };
+  };
+  [key: string]: any;
 }
 
 type RefreshListFunc = (data?: { keepPage?: boolean }) => void;
@@ -39,19 +39,9 @@ type RefreshListFunc = (data?: { keepPage?: boolean }) => void;
 // If inputOptions is a heavy computation, please send a function
 export const useServerTable = (inputOptions: () => ServerTableOption) => {
   const [options] = useState(inputOptions);
-  const {
-    filter: filterOption,
-    table: tableOption,
-  } = options;
-  const {
-    pageSize: initPageSize = 10,
-    sorter: initialSorter = {}
-  } = tableOption || {};
-  const {
-    onSearch: onFilterSearch,
-    onReset: onFilterReset,
-    ...restFilter
-  } = useFilterPanel(filterOption);
+  const { filter: filterOption, table: tableOption } = options;
+  const { pageSize: initPageSize = 10, sorter: initialSorter = {} } = tableOption || {};
+  const { onSearch: onFilterSearch, onReset: onFilterReset, ...restFilter } = useFilterPanel(filterOption);
   const [search, setSearch] = useState({});
   const [pageSize, setPageSize] = useState(initPageSize);
   const [sorter, setSorter] = useState(() => {
@@ -75,13 +65,8 @@ export const useServerTable = (inputOptions: () => ServerTableOption) => {
   // used by auto refresh or first time fetching, avoid update while using fetchList method
   const refreshListRef = useRef<RefreshListFunc>();
   const [_fetchList] = useState(() => {
-    return ({currentSearch, currentSorter, currentPage, currentPageSize, background = false}: any) => {
-      const {
-        url,
-        method = 'post',
-        beforeRequest = identity,
-        afterRequest = identity,
-      } = (tableOption || {}) as any;
+    return ({ currentSearch, currentSorter, currentPage, currentPageSize, background = false }: any) => {
+      const { url, method = 'post', beforeRequest = identity, afterRequest = identity } = (tableOption || {}) as any;
       let postParams: any = {
         pagination: {
           current: currentPage,
@@ -143,10 +128,7 @@ export const useServerTable = (inputOptions: () => ServerTableOption) => {
               if (!background) {
                 setLoading(false);
               }
-              const {
-                total,
-                list,
-              } = afterRequest(data) as any;
+              const { total, list } = afterRequest(data) as any;
               const finalPage = Math.floor(total / currentPageSize) + 1;
               if (currentPage > finalPage) {
                 // page is not matched, refresh table again
@@ -181,65 +163,74 @@ export const useServerTable = (inputOptions: () => ServerTableOption) => {
     };
   });
 
-  const fetchList = useCallback((params) => {
-    let {
-      search: currentSearch = search,
-      sorter: currentSorter = sorter,
-      page: currentPage = page,
-      keepPage = false,
-      pageSize: currentPageSize,
-      ...rest
-    } = params || {};
+  const fetchList = useCallback(
+    (params) => {
+      let {
+        search: currentSearch = search,
+        sorter: currentSorter = sorter,
+        page: currentPage = page,
+        keepPage = false,
+        pageSize: currentPageSize,
+        ...rest
+      } = params || {};
 
-    // don't change page according to page size changing
-    // this is used to restore table state.
-    if (!keepPage) {
-      if (currentPageSize) {
-        // page size has changed
-        if (currentPageSize !== pageSize) {
-          currentPage = 1;
+      // don't change page according to page size changing
+      // this is used to restore table state.
+      if (!keepPage) {
+        if (currentPageSize) {
+          // page size has changed
+          if (currentPageSize !== pageSize) {
+            currentPage = 1;
+          }
+        } else {
+          currentPageSize = pageSize;
         }
-      } else {
-        currentPageSize = pageSize;
       }
-    }
 
-    _fetchList({currentSearch, currentSorter, currentPage, currentPageSize, ...rest});
-  }, [search, sorter, page, pageSize, _fetchList]);
+      _fetchList({ currentSearch, currentSorter, currentPage, currentPageSize, ...rest });
+    },
+    [search, sorter, page, pageSize, _fetchList],
+  );
   refreshListRef.current = fetchList;
 
-  const handleTableChange = useCallback((pagination, filter, currentSorter, { action }) => {
-    let {
-      current,
-      pageSize: _pageSize,
-    } = pagination;
-    // reset page after user click sorting icon
-    if (action !== 'paginate') {
-      current = 1;
-    }
+  const handleTableChange = useCallback(
+    (pagination, filter, currentSorter, { action }) => {
+      let { current, pageSize: _pageSize } = pagination;
+      // reset page after user click sorting icon
+      if (action !== 'paginate') {
+        current = 1;
+      }
 
-    let searchParams = { sorter: currentSorter, page: current, pageSize: _pageSize };
-    // store table header filter
-    if (action === 'filter') {
-      const search = {
-        ...((rawPostData && (rawPostData as any).filter) as any), // perhpas has extra filter field outside table header filter
-        ...filter,
-      };
-      onFilterSearch(search);
-      (searchParams as any).search = search;
-    }
-    (refreshListRef as any).current?.(searchParams);
-  }, [onFilterSearch, rawPostData]);
+      let searchParams = { sorter: currentSorter, page: current, pageSize: _pageSize };
+      // store table header filter
+      if (action === 'filter') {
+        const search = {
+          ...((rawPostData && (rawPostData as any).filter) as any), // perhpas has extra filter field outside table header filter
+          ...filter,
+        };
+        onFilterSearch(search);
+        (searchParams as any).search = search;
+      }
+      (refreshListRef as any).current?.(searchParams);
+    },
+    [onFilterSearch, rawPostData],
+  );
 
-  const handleSearch = useCallback((values) => {
-    onFilterSearch(values);
-    (refreshListRef as any).current?.({ search: values, page: 1 });
-  }, [onFilterSearch]);
+  const handleSearch = useCallback(
+    (values) => {
+      onFilterSearch(values);
+      (refreshListRef as any).current?.({ search: values, page: 1 });
+    },
+    [onFilterSearch],
+  );
 
-  const handleReset = useCallback((values) => {
-    onFilterReset(values);
-    (refreshListRef as any).current?.({ search: values, page: 1 })
-  }, [onFilterReset]);
+  const handleReset = useCallback(
+    (values) => {
+      onFilterReset(values);
+      (refreshListRef as any).current?.({ search: values, page: 1 });
+    },
+    [onFilterReset],
+  );
 
   return {
     filter: {

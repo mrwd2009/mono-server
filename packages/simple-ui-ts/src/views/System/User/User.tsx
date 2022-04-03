@@ -5,8 +5,13 @@ import ServerTable from '../../../components/ServerTable';
 import { useHookedModal } from '../../../components/HookedModal';
 import UserForm from './UserForm';
 import { useUser } from './hooks';
-import { CheckCircleOutlined, CloseCircleOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
-
+import {
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
 
 const getColumns = (userFormModal: any, handleDelete: any): TableColumnsType<any> => {
   return [
@@ -20,12 +25,30 @@ const getColumns = (userFormModal: any, handleDelete: any): TableColumnsType<any
     { title: 'Last Sign In IP', dataIndex: 'last_sign_in_ip' },
     { title: 'Locked At', dataIndex: 'locked_at', cDataType: 'datetime' },
     // { title: 'Last Change Password At', dataIndex: 'last_change_pass_at', cDataType: 'datetime' },
-    { title: 'Account Status', dataIndex: 'enabled', render: (enabled) => {
-      if (enabled) {
-        return <Tag color="success" icon={<CheckCircleOutlined />}>Enabled</Tag>
-      }
-      return <Tag color="error" icon={<CloseCircleOutlined />}>Disabled</Tag>
-    }},
+    {
+      title: 'Account Status',
+      dataIndex: 'enabled',
+      render: (enabled) => {
+        if (enabled) {
+          return (
+            <Tag
+              color="success"
+              icon={<CheckCircleOutlined />}
+            >
+              Enabled
+            </Tag>
+          );
+        }
+        return (
+          <Tag
+            color="error"
+            icon={<CloseCircleOutlined />}
+          >
+            Disabled
+          </Tag>
+        );
+      },
+    },
     { title: 'Updated At', dataIndex: 'updated_at', sorter: true, cDataType: 'datetime' },
     { title: 'Created At', dataIndex: 'created_at', sorter: true, cDataType: 'datetime' },
     {
@@ -40,18 +63,27 @@ const getColumns = (userFormModal: any, handleDelete: any): TableColumnsType<any
           email: row.email,
           displayName: row.UserProfile.display_name,
         };
-        return  (
+        return (
           <Space>
             <Tooltip title="Delete">
-              <Button danger size="small" onClick={() => handleDelete(row.id)} icon={<DeleteOutlined />}  />
+              <Button
+                danger
+                size="small"
+                onClick={() => handleDelete(row.id)}
+                icon={<DeleteOutlined />}
+              />
             </Tooltip>
             <Tooltip title="Edit">
-              <Button size="small" onClick={() => userFormModal.changeVisible(true, data)} icon={<EditOutlined />}  />
+              <Button
+                size="small"
+                onClick={() => userFormModal.changeVisible(true, data)}
+                icon={<EditOutlined />}
+              />
             </Tooltip>
           </Space>
         );
-      }
-    }
+      },
+    },
   ];
 };
 
@@ -61,20 +93,30 @@ const User: FC = () => {
 
   useEffect(() => {
     refreshTable();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <Panel title="Account List">
       <Spin spinning={loading}>
         <div className="table-action">
-          <Button type="primary" size="small" icon={<PlusOutlined />} onClick={() => userFormModal.changeVisible(true, { type: 'add' })}>Add</Button>
+          <Button
+            type="primary"
+            size="small"
+            icon={<PlusOutlined />}
+            onClick={() => userFormModal.changeVisible(true, { type: 'add' })}
+          >
+            Add
+          </Button>
         </div>
         <ServerTable
           columns={getColumns(userFormModal, handleDelete)}
           table={table}
         />
-        <UserForm hookedModal={userFormModal} onSubmitted={refreshTable} />
+        <UserForm
+          hookedModal={userFormModal}
+          onSubmitted={refreshTable}
+        />
       </Spin>
     </Panel>
   );

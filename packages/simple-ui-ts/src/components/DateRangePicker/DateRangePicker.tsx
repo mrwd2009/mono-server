@@ -9,13 +9,25 @@ interface Props {
   className?: string;
 }
 
-const DateRangePicker: FC<Props> = ({value, onChange, format, picker, className}) => {
+const DateRangePicker: FC<Props> = ({ value, onChange, format, picker, className }) => {
   const [start = null, end = null] = value || [];
   return (
     <div className={`separated-range-picker ${className || ''}`}>
-      <DatePicker format={format} picker={picker} placeholder="Start" value={start} onChange={val => onChange([val, end])}/>
+      <DatePicker
+        format={format}
+        picker={picker}
+        placeholder="Start"
+        value={start}
+        onChange={(val) => onChange([val, end])}
+      />
       <span className="separator">~</span>
-      <DatePicker format={format} picker={picker} placeholder="End"  value={end} onChange={val => onChange([start, val])}/>
+      <DatePicker
+        format={format}
+        picker={picker}
+        placeholder="End"
+        value={end}
+        onChange={(val) => onChange([start, val])}
+      />
     </div>
   );
 };

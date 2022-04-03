@@ -7,17 +7,15 @@ import useServerTable from '../../../../components/ServerTable/hooks/useServerTa
 const useUser = () => {
   const {
     table,
-    table: {
-      refreshListRef,
-    },
+    table: { refreshListRef },
   } = useServerTable(() => {
     return {
       table: {
         url: apiEndpoints.system.userList,
         sorter: {
           field: 'created_at',
-          order: 'DESC'
-        }
+          order: 'DESC',
+        },
       },
     };
   });
@@ -28,19 +26,21 @@ const useUser = () => {
     refreshListRef.current?.();
   }, [refreshListRef]);
 
-  const handleDelete = useCallback((id: number) => {
-    showConfirm({
-      title: 'Delete Account',
-      content: 'Are you sure to delete currrent account?',
-      onConfirm: () => {
-        deleteUser({ params: { id }})
-        .then(() => {
-          showSuccess('Delete account successfully.');
-          refreshListRef.current?.();
-        });
-      }
-    });
-  }, [refreshListRef, deleteUser]);
+  const handleDelete = useCallback(
+    (id: number) => {
+      showConfirm({
+        title: 'Delete Account',
+        content: 'Are you sure to delete currrent account?',
+        onConfirm: () => {
+          deleteUser({ params: { id } }).then(() => {
+            showSuccess('Delete account successfully.');
+            refreshListRef.current?.();
+          });
+        },
+      });
+    },
+    [refreshListRef, deleteUser],
+  );
 
   return {
     loading,

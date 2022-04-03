@@ -21,11 +21,14 @@ const getColumns = (): TableColumnsType<any> => {
 };
 
 const LoginHistory: FC = () => {
-  const { table, table: { refreshListRef } } = useLoginHistory();
+  const {
+    table,
+    table: { refreshListRef },
+  } = useLoginHistory();
 
   useEffect(() => {
     refreshListRef.current?.();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

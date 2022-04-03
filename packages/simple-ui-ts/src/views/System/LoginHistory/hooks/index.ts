@@ -1,5 +1,3 @@
-import useLoginHistory from "./useLoginHistory";
+import useLoginHistory from './useLoginHistory';
 
-export {
-  useLoginHistory
-};
+export { useLoginHistory };

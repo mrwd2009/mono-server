@@ -3,9 +3,7 @@ import forEach from 'lodash/forEach';
 
 export const useFilterPanel = (inputOptions: any) => {
   const [options] = useState(inputOptions);
-  const {
-    items,
-  } = options || {};
+  const { items } = options || {};
   const defaultValue = useMemo(() => {
     let val: any = {};
     forEach(items, (item: any) => {

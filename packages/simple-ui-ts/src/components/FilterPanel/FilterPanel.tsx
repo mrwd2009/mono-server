@@ -9,16 +9,17 @@ import useFilterPanel from './hooks/useFilterPanel';
 const { Panel } = Collapse;
 const { Item } = Form;
 const { Option } = Select;
-const FilterPanel = ({ title = 'Filter', allowClear = true, filter, itemCol, className, labelCol, wrapperCol, showLoading = false }: any) => {
-  const {
-    items,
-    defaultValue,
-    value,
-    loading,
-    onChange,
-    onSearch,
-    onReset,
-  } = filter;
+const FilterPanel = ({
+  title = 'Filter',
+  allowClear = true,
+  filter,
+  itemCol,
+  className,
+  labelCol,
+  wrapperCol,
+  showLoading = false,
+}: any) => {
+  const { items, defaultValue, value, loading, onChange, onSearch, onReset } = filter;
   const getItemCol = (index: any) => {
     if (items.length === 1) {
       return { span: 9, offset: 7 };
@@ -38,7 +39,7 @@ const FilterPanel = ({ title = 'Filter', allowClear = true, filter, itemCol, cla
       },
       xxl: {
         span: 6,
-      }
+      },
     };
     if (!itemCol) {
       if (items.length === 3) {
@@ -80,7 +81,7 @@ const FilterPanel = ({ title = 'Filter', allowClear = true, filter, itemCol, cla
           className="w-100"
           placeholder="Please input"
           value={fieldVal}
-          onChange={(val) => onChange({...value, [field]: val})}
+          onChange={(val) => onChange({ ...value, [field]: val })}
         />
       );
     } else if (type === 'select') {
@@ -108,7 +109,7 @@ const FilterPanel = ({ title = 'Filter', allowClear = true, filter, itemCol, cla
         <Select
           className="w-100"
           value={fieldVal}
-          onChange={(val) => onChange({...value, [field]: val})}
+          onChange={(val) => onChange({ ...value, [field]: val })}
           allowClear
           showSearch
           optionFilterProp="children"
@@ -122,51 +123,75 @@ const FilterPanel = ({ title = 'Filter', allowClear = true, filter, itemCol, cla
         <DatePicker
           className="w-100"
           value={fieldVal}
-          onChange={(val) => onChange({...value, [field]: val})}
+          onChange={(val) => onChange({ ...value, [field]: val })}
         />
       );
     } else if (type === 'daterange') {
-      const {
-        format = 'YYYY-MM-DD',
-        picker = 'date',
-      } = item;
+      const { format = 'YYYY-MM-DD', picker = 'date' } = item;
       element = (
         <DateRangePicker
           format={format}
           picker={picker}
           value={fieldVal}
-          onChange={(val: any) => onChange({...value, [field]: val})}
+          onChange={(val: any) => onChange({ ...value, [field]: val })}
         />
       );
     } else {
       element = (
         <Input
           value={fieldVal}
-          onChange={(event) => onChange({...value, [field]: event.target.value})}
+          onChange={(event) => onChange({ ...value, [field]: event.target.value })}
           placeholder="Please input"
         />
       );
     }
 
     return (
-      <Col {...getItemCol(index)} {...colProps} key={field}>
-        <Item label={item.label}>
-          {element}
-        </Item>
+      <Col
+        {...getItemCol(index)}
+        {...colProps}
+        key={field}
+      >
+        <Item label={item.label}>{element}</Item>
       </Col>
-    )
+    );
   });
 
   return (
-    <Collapse defaultActiveKey={['filter']} className={` ${className || ''}`}>
-      <Panel header={title} key="filter">
-        <Form labelCol={labelCol} wrapperCol={wrapperCol}>
-          <Row gutter={8}>
-            {itemElements}
-          </Row>
+    <Collapse
+      defaultActiveKey={['filter']}
+      className={` ${className || ''}`}
+    >
+      <Panel
+        header={title}
+        key="filter"
+      >
+        <Form
+          labelCol={labelCol}
+          wrapperCol={wrapperCol}
+        >
+          <Row gutter={8}>{itemElements}</Row>
           <div className="text-center">
-            <Button type="primary" className={ allowClear ? 'mr-2' : '' } size="small" onClick={() => onSearch(value)} icon={<SearchOutlined />} loading={showLoading && loading}>Search</Button>
-            { allowClear && <Button size="small" onClick={() => onReset(defaultValue)} icon={<CloseOutlined />} loading={showLoading && loading}>Reset</Button> }
+            <Button
+              type="primary"
+              className={allowClear ? 'mr-2' : ''}
+              size="small"
+              onClick={() => onSearch(value)}
+              icon={<SearchOutlined />}
+              loading={showLoading && loading}
+            >
+              Search
+            </Button>
+            {allowClear && (
+              <Button
+                size="small"
+                onClick={() => onReset(defaultValue)}
+                icon={<CloseOutlined />}
+                loading={showLoading && loading}
+              >
+                Reset
+              </Button>
+            )}
           </div>
         </Form>
       </Panel>

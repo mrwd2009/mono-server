@@ -1,5 +1,11 @@
 import React, { memo, useEffect, useState } from 'react';
-import { SearchOutlined, AlertOutlined, WarningOutlined, CheckCircleOutlined, ClockCircleOutlined } from '@ant-design/icons'
+import {
+  SearchOutlined,
+  AlertOutlined,
+  WarningOutlined,
+  CheckCircleOutlined,
+  ClockCircleOutlined,
+} from '@ant-design/icons';
 import { Card, Button, Form, Radio, Row, Col, Tag, Spin } from 'antd';
 import CustomECharts from '../../../components/CustomECharts';
 import DateRangePicker from '../../../components/DateRangePicker';
@@ -7,14 +13,14 @@ import Panel from '../../../components/Panel';
 import useDashboard from './hooks/useDashboard';
 
 let PeriodSelect = ({ className = '', fetchStatistic }: any) => {
-  const [type, setType] = useState('fixed'); 
+  const [type, setType] = useState('fixed');
   const [fixedDay, setFixedDay] = useState(1);
   const [dayRange, setDayRange] = useState([null, null]);
   useEffect(() => {
     // get initial value
-    fetchStatistic({type, fixedDay, dayRange});
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[]);
+    fetchStatistic({ type, fixedDay, dayRange });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   let select = null;
   if (type === 'fixed') {
     const handleDayChange = (event: any) => {
@@ -28,7 +34,11 @@ let PeriodSelect = ({ className = '', fetchStatistic }: any) => {
     };
     select = (
       <Form.Item>
-        <Radio.Group value={fixedDay} buttonStyle="solid" onChange={handleDayChange}>
+        <Radio.Group
+          value={fixedDay}
+          buttonStyle="solid"
+          onChange={handleDayChange}
+        >
           <Radio.Button value={1}>Today</Radio.Button>
           <Radio.Button value={7}>7 days</Radio.Button>
           <Radio.Button value={30}>30 days</Radio.Button>
@@ -42,8 +52,14 @@ let PeriodSelect = ({ className = '', fetchStatistic }: any) => {
     select = (
       <Form.Item>
         <div className="dashboard-day-range">
-          <DateRangePicker value={dayRange} onChange={handleRangeChange} />
-          <Button icon={<SearchOutlined />} onClick={() => fetchStatistic({ type, fixedDay, dayRange })}></Button>
+          <DateRangePicker
+            value={dayRange}
+            onChange={handleRangeChange}
+          />
+          <Button
+            icon={<SearchOutlined />}
+            onClick={() => fetchStatistic({ type, fixedDay, dayRange })}
+          ></Button>
         </div>
       </Form.Item>
     );
@@ -51,19 +67,26 @@ let PeriodSelect = ({ className = '', fetchStatistic }: any) => {
   const handleTypeChange = (event: any) => {
     const val = event.target.value;
     setType(val);
-    fetchStatistic({ type: val, fixedDay, dayRange })
+    fetchStatistic({ type: val, fixedDay, dayRange });
   };
   return (
-    <Form className={`${className}`} layout="inline">
+    <Form
+      className={`${className}`}
+      layout="inline"
+    >
       <Form.Item>
-        <Radio.Group value={type} buttonStyle="solid" onChange={handleTypeChange}>
+        <Radio.Group
+          value={type}
+          buttonStyle="solid"
+          onChange={handleTypeChange}
+        >
           <Radio.Button value="fixed">Days</Radio.Button>
           <Radio.Button value="range">Range</Radio.Button>
         </Radio.Group>
       </Form.Item>
       {select}
     </Form>
-  )
+  );
 };
 PeriodSelect = memo(PeriodSelect) as any;
 
@@ -72,19 +95,39 @@ let StatCard = ({ type, title, value, onClick }: any) => {
   let color: any;
   let colorClass: any;
   if (type === 'exception') {
-    icon = <AlertOutlined className="text-error" style={{ fontSize: '30px' }} />
+    icon = (
+      <AlertOutlined
+        className="text-error"
+        style={{ fontSize: '30px' }}
+      />
+    );
     color = 'error';
     colorClass = 'text-error';
   } else if (type === 'warning') {
-    icon = <WarningOutlined className="text-warning" style={{ fontSize: '30px' }} />;
+    icon = (
+      <WarningOutlined
+        className="text-warning"
+        style={{ fontSize: '30px' }}
+      />
+    );
     color = 'warning';
     colorClass = 'text-warning';
   } else if (type === 'resolved') {
-    icon = <CheckCircleOutlined className="text-success" style={{ fontSize: '30px' }} />;
+    icon = (
+      <CheckCircleOutlined
+        className="text-success"
+        style={{ fontSize: '30px' }}
+      />
+    );
     color = 'success';
     colorClass = 'text-success';
   } else if (type === 'open') {
-    icon = <ClockCircleOutlined className="text-info" style={{ fontSize: '30px' }} />;
+    icon = (
+      <ClockCircleOutlined
+        className="text-info"
+        style={{ fontSize: '30px' }}
+      />
+    );
     color = 'processing';
     colorClass = 'text-info';
   }
@@ -105,12 +148,26 @@ let StatCard = ({ type, title, value, onClick }: any) => {
 
   return (
     <Card size="small">
-      <Row align="middle" justify="start">
+      <Row
+        align="middle"
+        justify="start"
+      >
         <Col flex="auto">
-          <h5 style={{ fontSize: 36, margin: 0, cursor: 'pointer' }} className={colorClass} onClick={onClick}>
+          <h5
+            style={{ fontSize: 36, margin: 0, cursor: 'pointer' }}
+            className={colorClass}
+            onClick={onClick}
+          >
             {value}
           </h5>
-          <Tag className="text-uppercase" color={color} onClick={onClick} style={{ cursor: 'pointer' }}>{title}</Tag>
+          <Tag
+            className="text-uppercase"
+            color={color}
+            onClick={onClick}
+            style={{ cursor: 'pointer' }}
+          >
+            {title}
+          </Tag>
         </Col>
         {cardIcon}
       </Row>
@@ -120,14 +177,8 @@ let StatCard = ({ type, title, value, onClick }: any) => {
 StatCard = memo(StatCard) as any;
 
 let EventPerDayChart = ({ dateTitle, dataSource }: any) => {
-  const {
-    days,
-    exception,
-    warning,
-    resolved,
-    open,
-  } = dataSource;
-  const getSeries = ({name, data}: any): any => {
+  const { days, exception, warning, resolved, open } = dataSource;
+  const getSeries = ({ name, data }: any): any => {
     return {
       data,
       type: 'bar',
@@ -136,64 +187,69 @@ let EventPerDayChart = ({ dateTitle, dataSource }: any) => {
       barMaxWidth: 60,
       itemStyle: {
         borderRadius: 4,
-        borderWidth: 2
+        borderWidth: 2,
       },
     };
   };
   return (
-    <Card size="small" title="Events per Day" extra={dateTitle}>
+    <Card
+      size="small"
+      title="Events per Day"
+      extra={dateTitle}
+    >
       <CustomECharts
         option={{
           tooltip: {
-            trigger: 'axis'
+            trigger: 'axis',
           },
           xAxis: {
             type: 'category',
             data: days,
             axisLine: { onZero: true },
             splitLine: { show: false },
-            splitArea: { show: false }
+            splitArea: { show: false },
           },
           yAxis: {},
           grid: {
             left: 48,
             right: 24,
             top: 48,
-            bottom: 24
+            bottom: 24,
           },
           legend: {
             show: true,
             textStyle: {
               fontFamily: 'Roboto',
-              color: '#989AA9'
-            }
+              color: '#989AA9',
+            },
           },
           series: [
-            getSeries({ name: 'Exceptions', data: exception}), 
+            getSeries({ name: 'Exceptions', data: exception }),
             getSeries({ name: 'Warnings', data: warning }),
             getSeries({ name: 'Resolved', data: resolved }),
-            getSeries({ name: 'Open', data: open })
-          ]
+            getSeries({ name: 'Open', data: open }),
+          ],
         }}
         height={420}
       />
     </Card>
-  )
+  );
 };
 EventPerDayChart = memo(EventPerDayChart) as any;
 
-let EventPerTypeChart = ({dateTitle, dataSource}: any) => {
-  const {
-    level,
-    type,
-  } = dataSource;
+let EventPerTypeChart = ({ dateTitle, dataSource }: any) => {
+  const { level, type } = dataSource;
   return (
-    <Card size="small" title="Exceptions & Warnings by Type" extra={dateTitle}>
+    <Card
+      size="small"
+      title="Exceptions & Warnings by Type"
+      extra={dateTitle}
+    >
       <CustomECharts
         option={{
           tooltip: {
             trigger: 'item',
-            formatter: '{a} <br/>{b}: {c} ({d}%)'
+            formatter: '{a} <br/>{b}: {c} ({d}%)',
           },
           series: [
             {
@@ -203,17 +259,17 @@ let EventPerTypeChart = ({dateTitle, dataSource}: any) => {
               radius: [0, '50%'],
               itemStyle: {
                 borderRadius: 4,
-                borderWidth: 2
+                borderWidth: 2,
               },
               label: {
                 position: 'inner',
                 fontSize: 11,
-                fontWeight: 'bold'
+                fontWeight: 'bold',
               },
               labelLine: {
-                show: false
+                show: false,
               },
-              data: level
+              data: level,
             },
             {
               name: 'Type',
@@ -221,7 +277,7 @@ let EventPerTypeChart = ({dateTitle, dataSource}: any) => {
               radius: ['70%', '85%'],
               itemStyle: {
                 borderRadius: 4,
-                borderWidth: 2
+                borderWidth: 2,
               },
               label: {
                 formatter: '{b|{b}：}{c}\n   {per|{d}%}  ',
@@ -231,21 +287,21 @@ let EventPerTypeChart = ({dateTitle, dataSource}: any) => {
                   b: {
                     fontSize: 14,
                     fontWeight: 'bold',
-                    lineHeight: 33
+                    lineHeight: 33,
                   },
                   c: {
                     padding: [3, 4],
-                    borderRadius: 4
+                    borderRadius: 4,
                   },
                   per: {
                     padding: [3, 4],
-                    borderRadius: 4
-                  }
-                }
+                    borderRadius: 4,
+                  },
+                },
               },
-              data: type
-            }
-          ]
+              data: type,
+            },
+          ],
         }}
         height={420}
       />
@@ -255,14 +311,7 @@ let EventPerTypeChart = ({dateTitle, dataSource}: any) => {
 EventPerTypeChart = memo(EventPerTypeChart) as any;
 
 const Dashboard = () => {
-  const {
-    loading,
-    type,
-    fixedDay,
-    dayRange,
-    statistic,
-    fetchStatistic,
-  } = useDashboard();
+  const { loading, type, fixedDay, dayRange, statistic, fetchStatistic } = useDashboard();
   let statEle = null;
   if (statistic) {
     const cardCol = {
@@ -276,14 +325,7 @@ const Dashboard = () => {
       xl: 12,
     };
     const gutter: any = [16, 16];
-    const {
-      exception,
-      warning,
-      resolved,
-      open,
-      perDay,
-      perType,
-    } = statistic;
+    const { exception, warning, resolved, open, perDay, perType } = statistic;
     let dateTitle = '';
     if (type === 'fixed') {
       dateTitle = `Last ${fixedDay} days`;
@@ -303,26 +345,51 @@ const Dashboard = () => {
     }
     statEle = (
       <>
-        <Row gutter={gutter} className="mb-4">
+        <Row
+          gutter={gutter}
+          className="mb-4"
+        >
           <Col {...cardCol}>
-            <StatCard type="exception" value={exception} title="Exceptions" />
+            <StatCard
+              type="exception"
+              value={exception}
+              title="Exceptions"
+            />
           </Col>
           <Col {...cardCol}>
-            <StatCard type="warning" value={warning} title="Warnings" />
+            <StatCard
+              type="warning"
+              value={warning}
+              title="Warnings"
+            />
           </Col>
           <Col {...cardCol}>
-            <StatCard type="resolved" value={resolved} title="Resolved" />
+            <StatCard
+              type="resolved"
+              value={resolved}
+              title="Resolved"
+            />
           </Col>
           <Col {...cardCol}>
-            <StatCard type="open" value={open} title="Open" />
+            <StatCard
+              type="open"
+              value={open}
+              title="Open"
+            />
           </Col>
         </Row>
         <Row gutter={gutter}>
           <Col {...chartCol}>
-            <EventPerDayChart dateTitle={dateTitle} dataSource={perDay} />
+            <EventPerDayChart
+              dateTitle={dateTitle}
+              dataSource={perDay}
+            />
           </Col>
           <Col {...chartCol}>
-            <EventPerTypeChart dateTitle={dateTitle} dataSource={perType} />
+            <EventPerTypeChart
+              dateTitle={dateTitle}
+              dataSource={perType}
+            />
           </Col>
         </Row>
       </>
@@ -331,7 +398,10 @@ const Dashboard = () => {
   return (
     <Panel>
       <Spin spinning={loading}>
-      <PeriodSelect className="mb-4" fetchStatistic={fetchStatistic} />
+        <PeriodSelect
+          className="mb-4"
+          fetchStatistic={fetchStatistic}
+        />
         {statEle}
       </Spin>
     </Panel>

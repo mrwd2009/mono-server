@@ -1,4 +1,4 @@
-import type { i18n, TFunctionResult, TFunctionKeys, StringMap, TOptions } from 'i18next'
+import type { i18n, TFunctionResult, TFunctionKeys, StringMap, TOptions } from 'i18next';
 
 let _i18n: i18n;
 
@@ -20,7 +20,3 @@ const i18nDelegate = {
 };
 
 export default i18nDelegate;
-
-
-
-

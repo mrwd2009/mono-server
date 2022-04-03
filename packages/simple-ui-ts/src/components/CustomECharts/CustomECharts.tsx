@@ -29,14 +29,16 @@ const CustomECharts: FC<Props> = ({ option, className, width, height, onChartIni
   onChartDisposeRef.current = onChartDispose;
 
   // save chart size ref
-  const sizeRef = useRef<{ width?: number, height?: number}>();
+  const sizeRef = useRef<{ width?: number; height?: number }>();
   sizeRef.current = {
     width,
     height,
   };
-  const resizeFnRef = useRef(debounce(() => {
-    chartInstanceRef.current?.resize();
-  }, 200));
+  const resizeFnRef = useRef(
+    debounce(() => {
+      chartInstanceRef.current?.resize();
+    }, 200),
+  );
 
   useEffect(() => {
     if (containerRef.current) {
@@ -84,9 +86,7 @@ const CustomECharts: FC<Props> = ({ option, className, width, height, onChartIni
         resizeFnRef.current?.();
       }}
     >
-      <div
-        className={classNameStr}
-      >
+      <div className={classNameStr}>
         <div ref={containerRef} />
       </div>
     </ResizeObserver>

@@ -1,5 +1,3 @@
 import { ECOption } from '../config/initializers/echarts';
 
-export type {
-  ECOption,
-};
+export type { ECOption };

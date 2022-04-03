@@ -1,12 +1,5 @@
 import * as echarts from 'echarts/core';
-import {
-  BarChart,
-  BarSeriesOption,
-  LineChart,
-  LineSeriesOption,
-  PieChart,
-  PieSeriesOption,
-} from 'echarts/charts';
+import { BarChart, BarSeriesOption, LineChart, LineSeriesOption, PieChart, PieSeriesOption } from 'echarts/charts';
 import {
   LegendComponent,
   LegendComponentOption,
@@ -21,22 +14,20 @@ import {
   GridComponent,
   GridComponentOption,
 } from 'echarts/components';
-import {
-  SVGRenderer,
-} from 'echarts/renderers';
+import { SVGRenderer } from 'echarts/renderers';
 import darkTheme from './theme-dark';
 import defaultTheme from './theme-default';
 
 export type ECOption = echarts.ComposeOption<
-  BarSeriesOption |
-  LineSeriesOption |
-  PieSeriesOption |
-  LegendComponentOption |
-  ToolboxComponentOption |
-  TitleComponentOption |
-  TooltipComponentOption |
-  DataZoomComponentOption |
-  GridComponentOption
+  | BarSeriesOption
+  | LineSeriesOption
+  | PieSeriesOption
+  | LegendComponentOption
+  | ToolboxComponentOption
+  | TitleComponentOption
+  | TooltipComponentOption
+  | DataZoomComponentOption
+  | GridComponentOption
 >;
 
 echarts.use([

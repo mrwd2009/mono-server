@@ -26,7 +26,7 @@ const useLogin = () => {
             os: common.getOSName(),
             browser: common.getBrowser(),
             timeZone: common.getTimezone(),
-          }
+          },
         },
       }).then(({ data: result }) => {
         const { permissions, token, email, reset } = result;

@@ -7,7 +7,6 @@ const useUserForm = () => {
   const [{ loading: addLoading }, addUser] = useAxios({ url: apiEndpoints.system.addUser, method: 'post' });
   const [{ loading: editLoading }, editUser] = useAxios({ url: apiEndpoints.system.editUser, method: 'put' });
 
-
   const submit = useCallback(
     (data: any, type: string) => {
       if (type === 'add') {

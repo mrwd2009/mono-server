@@ -11,7 +11,10 @@ const BC: FC = () => {
   const bcList = getRouteBC(location.pathname);
   const { lang, fetchLang } = useLang();
   const langOverlay = (
-    <Menu selectedKeys={[lang]} onClick={({ key }) => fetchLang(key)}>
+    <Menu
+      selectedKeys={[lang]}
+      onClick={({ key }) => fetchLang(key)}
+    >
       <Menu.Item key="en-US">English (US)</Menu.Item>
     </Menu>
   );

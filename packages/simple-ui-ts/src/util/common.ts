@@ -215,7 +215,6 @@ export const getOSTheme = () => {
   return defaultTheme;
 };
 
-
 export const getOSName = () => {
   const ua = navigator.userAgent;
   let osName = 'Unknown OS';
@@ -230,7 +229,7 @@ export const getOSName = () => {
   }
 
   return osName;
-}
+};
 
 export const getDeviceType = () => {
   const ua = navigator.userAgent;
@@ -238,14 +237,12 @@ export const getDeviceType = () => {
     return 'Tablet';
   }
   if (
-    /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(
-      ua,
-    )
+    /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(ua)
   ) {
     return 'Mobile';
   }
   return 'Desktop';
-}
+};
 
 export const getTimezone = () => {
   let timezone = null;
@@ -256,10 +253,10 @@ export const getTimezone = () => {
   }
   // return timezone(480) minute offset as fallback
   if (!timezone) {
-    timezone = `${-(new Date().getTimezoneOffset())}`;
+    timezone = `${-new Date().getTimezoneOffset()}`;
   }
   return timezone;
-}
+};
 
 export const getBrowser = () => {
   // store user agent
@@ -286,12 +283,12 @@ export const getBrowser = () => {
     // In MSIE, the true version is after "MSIE" in userAgent
     browserName = 'Microsoft Internet Explorer';
     fullVersion = uAgent.substring(versionOffset + 5);
-  // eslint-disable-next-line no-cond-assign
-  } else if (matched = IE11Reg.exec(uAgent)) {
+    // eslint-disable-next-line no-cond-assign
+  } else if ((matched = IE11Reg.exec(uAgent))) {
     // Matched IE11
     return `IE/${matched[2]}`;
-  // eslint-disable-next-line no-cond-assign
-  } else if (matched = EdgeReg.exec(uAgent)) {
+    // eslint-disable-next-line no-cond-assign
+  } else if ((matched = EdgeReg.exec(uAgent))) {
     // Matched Edge
     return `Edge/${matched[2]}`;
   } else if ((versionOffset = uAgent.indexOf('Chrome')) !== -1) {
@@ -307,8 +304,7 @@ export const getBrowser = () => {
     // In Firefox, the true version is after "Firefox"
     browserName = 'Firefox';
     fullVersion = uAgent.substring(versionOffset + 8);
-  } else if ((nameOffset = uAgent.lastIndexOf(' ') + 1)
-    < (versionOffset = uAgent.lastIndexOf('/'))) {
+  } else if ((nameOffset = uAgent.lastIndexOf(' ') + 1) < (versionOffset = uAgent.lastIndexOf('/'))) {
     // In most other browsers, "name/version" is at the end of userAgent
     browserName = uAgent.substring(nameOffset, versionOffset);
     fullVersion = uAgent.substring(versionOffset + 1);
@@ -323,4 +319,4 @@ export const getBrowser = () => {
   }
 
   return `${browserName}/${fullVersion}`;
-}
+};

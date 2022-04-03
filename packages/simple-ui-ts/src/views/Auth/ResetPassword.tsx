@@ -28,7 +28,7 @@ const ResetPassword: FC = () => {
           <Typography.Title>{t('resetTitle')}</Typography.Title>
         </div>
         <Form
-          layout='vertical'
+          layout="vertical"
           size="large"
           onFinish={handleResetPassword}
         >
@@ -45,17 +45,18 @@ const ResetPassword: FC = () => {
                   if (!value) {
                     return Promise.resolve();
                   }
-                  if (value.length >= 11
-                    && /[A-Z]+/.test(value)
-                    && /[a-z]+/.test(value)
-                    && /[0-9]+/.test(value)
-                    && /[!"#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]+/.test(value)
+                  if (
+                    value.length >= 11 &&
+                    /[A-Z]+/.test(value) &&
+                    /[a-z]+/.test(value) &&
+                    /[0-9]+/.test(value) &&
+                    /[!"#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]+/.test(value)
                   ) {
                     return Promise.resolve();
                   }
                   return Promise.reject(t('passwordHelp'));
                 },
-              }
+              },
             ]}
           >
             <Input.Password

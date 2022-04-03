@@ -1,5 +1,5 @@
 import { memo, useMemo } from 'react';
-import dayjs from 'dayjs'
+import dayjs from 'dayjs';
 import { Table, TableProps, Input, Popover, InputNumber, AutoComplete, Select, Row, Col, Button } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import map from 'lodash/map';
@@ -11,7 +11,7 @@ declare module 'antd/lib/table/interface' {
   interface ColumnType<RecordType> {
     cFilterType?: 'text' | 'number' | 'select' | 'autoComplete';
     cDataType?: 'datetime' | 'lgText';
-    cFilterOptions?: Array<{ label: string, value: string | number } | number | string>;
+    cFilterOptions?: Array<{ label: string; value: string | number } | number | string>;
   }
 }
 
@@ -20,13 +20,28 @@ const lgText = (title: string) => {
     if (!msg || msg.length < 50) {
       return msg;
     }
-    const content = <Input.TextArea style={{ width: '300px'}} readOnly bordered={false} autoSize={{ maxRows: 6 }} value={msg} />;
-    return <Popover content={content} title={title}>{msg.slice(0, 50)}...</Popover>;
+    const content = (
+      <Input.TextArea
+        style={{ width: '300px' }}
+        readOnly
+        bordered={false}
+        autoSize={{ maxRows: 6 }}
+        value={msg}
+      />
+    );
+    return (
+      <Popover
+        content={content}
+        title={title}
+      >
+        {msg.slice(0, 50)}...
+      </Popover>
+    );
   };
 };
 
 export const getFileterDropdown = ({ cFilterType, cFilterOptions = [], title }: any) => {
-  return ({setSelectedKeys, selectedKeys, confirm, clearFilters}: any) => {
+  return ({ setSelectedKeys, selectedKeys, confirm, clearFilters }: any) => {
     let inputEle = null;
     // for different type inputs
     const handleChange = (event: any) => {
@@ -54,7 +69,7 @@ export const getFileterDropdown = ({ cFilterType, cFilterOptions = [], title }: 
     };
     // support [{label: 'label', value: 'value'}] and ['value1', 'value2'] formats;
     const getOptions = () => {
-      return map(cFilterOptions, option => {
+      return map(cFilterOptions, (option) => {
         if (isObject(option)) {
           return option;
         }
@@ -65,25 +80,59 @@ export const getFileterDropdown = ({ cFilterType, cFilterOptions = [], title }: 
       });
     };
     if (cFilterType === 'text') {
-      inputEle = <Input {...inputProps} onPressEnter={handlePressEnter} />;
+      inputEle = (
+        <Input
+          {...inputProps}
+          onPressEnter={handlePressEnter}
+        />
+      );
     } else if (cFilterType === 'number') {
-      inputEle = <InputNumber {...inputProps} onPressEnter={handlePressEnter} />
+      inputEle = (
+        <InputNumber
+          {...inputProps}
+          onPressEnter={handlePressEnter}
+        />
+      );
     } else if (cFilterType === 'select') {
-      inputEle = <Select {...inputProps} options={getOptions()} />;
+      inputEle = (
+        <Select
+          {...inputProps}
+          options={getOptions()}
+        />
+      );
     } else if (cFilterType === 'autoComplete') {
-      inputEle = <AutoComplete {...inputProps} options={getOptions()} />;
+      inputEle = (
+        <AutoComplete
+          {...inputProps}
+          options={getOptions()}
+        />
+      );
     }
     return (
       <div className="server-table-header-filter">
         {inputEle}
         <Row gutter={8}>
           <Col span={12}>
-            <Button type="primary" size="small" block icon={<SearchOutlined />} onClick={() => confirm()}>Search</Button>
+            <Button
+              type="primary"
+              size="small"
+              block
+              icon={<SearchOutlined />}
+              onClick={() => confirm()}
+            >
+              Search
+            </Button>
           </Col>
           <Col span={12}>
-            <Button size="small" block onClick={() => {
-              clearFilters({ closeDropdown: true, confirm: true });
-            }}>Reset</Button>
+            <Button
+              size="small"
+              block
+              onClick={() => {
+                clearFilters({ closeDropdown: true, confirm: true });
+              }}
+            >
+              Reset
+            </Button>
           </Col>
         </Row>
       </div>
@@ -96,21 +145,18 @@ interface ServerTableProps extends TableProps<any> {
   showLoading?: boolean;
 }
 
-let ServerTable = ({table, rowKey = 'id', scroll = {}, className = '', columns, pagination = {}, showLoading = true, ...rest}: ServerTableProps) => {
-  const {
-    sorter,
-    page,
-    pageSize,
-    total,
-    list,
-    loading,
-    onChange,
-    rawPostData,
-  } = table;
-  const {
-    hasFixedCol,
-    newColumns,
-  } = useMemo(() => {
+let ServerTable = ({
+  table,
+  rowKey = 'id',
+  scroll = {},
+  className = '',
+  columns,
+  pagination = {},
+  showLoading = true,
+  ...rest
+}: ServerTableProps) => {
+  const { sorter, page, pageSize, total, list, loading, onChange, rawPostData } = table;
+  const { hasFixedCol, newColumns } = useMemo(() => {
     let _hasFixedCol = false;
     const _newColumns = columns!.map((col: any) => {
       let colDef = col;
@@ -174,7 +220,7 @@ let ServerTable = ({table, rowKey = 'id', scroll = {}, className = '', columns, 
     ...pagination,
     // showQuickJumper: true
   };
-  
+
   // hide pagination according to size changer
   if (!pageProps.showSizeChanger) {
     pageProps.hideOnSinglePage = true;

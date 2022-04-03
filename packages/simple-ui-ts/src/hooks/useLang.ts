@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import i18next from 'i18next';
-import { initReactI18next } from "react-i18next";
+import { initReactI18next } from 'react-i18next';
 import useAppSelector from './useAppSelector';
 import useMounted from './useMounted';
 import useMergedState from './useMergedState';
@@ -15,11 +15,7 @@ const useLang = () => {
     loading: false,
     i18n: null,
   });
-  const {
-    loaded,
-    loading,
-    i18n,
-  } = state;
+  const { loaded, loading, i18n } = state;
   const lang = useAppSelector(selectLang);
   const isMounted = useMounted();
   const dispatch = useAppDisatch();
@@ -41,35 +37,36 @@ const useLang = () => {
       request = import('../locales/en-US');
 
       request
-      .then((res: any) => {
-        if (isMounted.current) {
-          const newI18next = i18next.createInstance();
-          newI18next.use(initReactI18next);
-          return newI18next.init({
-            lng: locale,
-            resources: {
-              [locale]: res.default,
-            },
-          })
-            .then(() => newI18next)
-        }
-      })
-      .then((newI18next: any) => {
-        if (isMounted.current) {
-          loadedLang[locale] = newI18next;
-          setState({
-            loading: false,
-            loaded: true,
-            i18n: newI18next,
-          });
-          dispatch(changeLang(locale as any));
-        }
-      })
-      .catch(() => {
-        if (isMounted.current) {
-          setState({ loading: false });
-        }
-      });
+        .then((res: any) => {
+          if (isMounted.current) {
+            const newI18next = i18next.createInstance();
+            newI18next.use(initReactI18next);
+            return newI18next
+              .init({
+                lng: locale,
+                resources: {
+                  [locale]: res.default,
+                },
+              })
+              .then(() => newI18next);
+          }
+        })
+        .then((newI18next: any) => {
+          if (isMounted.current) {
+            loadedLang[locale] = newI18next;
+            setState({
+              loading: false,
+              loaded: true,
+              i18n: newI18next,
+            });
+            dispatch(changeLang(locale as any));
+          }
+        })
+        .catch(() => {
+          if (isMounted.current) {
+            setState({ loading: false });
+          }
+        });
     },
     [isMounted, dispatch, setState],
   );

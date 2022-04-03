@@ -1,5 +1,3 @@
-import useDashboard from "./useDashboard";
+import useDashboard from './useDashboard';
 
-export {
-  useDashboard,
-};
+export { useDashboard };

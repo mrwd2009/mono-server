@@ -26,10 +26,13 @@ const UserForm: FC<Props> = ({ hookedModal, onSubmitted }) => {
             labelCol={{ span: 9 }}
             wrapperCol={{ span: 15 }}
             onFinish={(formData) => {
-              submit({
-                id,
-                ...formData,
-              }, type).then(() => {
+              submit(
+                {
+                  id,
+                  ...formData,
+                },
+                type,
+              ).then(() => {
                 hookedModal.changeVisible(false);
                 onSubmitted?.();
               });

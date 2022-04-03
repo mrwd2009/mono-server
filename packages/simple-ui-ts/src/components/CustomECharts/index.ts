@@ -1,7 +1,5 @@
-import CustomECharts from "./CustomECharts";
+import CustomECharts from './CustomECharts';
 
-export {
-  CustomECharts,
-};
+export { CustomECharts };
 
 export default CustomECharts;
