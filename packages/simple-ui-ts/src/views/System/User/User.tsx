@@ -15,6 +15,7 @@ import {
 
 const getColumns = (userFormModal: any, handleDelete: any): TableColumnsType<any> => {
   return [
+    { title: 'Name', dataIndex: ['UserProfile', 'display_name'] },
     { title: 'Email', dataIndex: 'email', cFilterType: 'text' },
     // { title: 'Reset Password Sent At', dataIndex: 'reset_password_sent_at', cDataType: 'datetime' },
     // { title: 'Confirmed At', dataIndex: 'confirmed_at', cDataType: 'datetime' },
