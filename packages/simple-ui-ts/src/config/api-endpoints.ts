@@ -24,6 +24,11 @@ export const apiEndpoints = {
   },
   system: {
     info: '/system/info',
+    userList: '/system/user/list',
+    addUser: '/system/user',
+    editUser: '/system/user',
+    deleteUser: '/system/user',
+    userHistoryList: '/system/user/history/list',
   },
   contract: {
     list: '/contract/list',
@@ -37,7 +42,7 @@ export const apiEndpoints = {
     createNode: '/contract/tree/node',
     reparentTreeNode: '/contract/tree/node/reparent',
     saveResuableNode: '/contract/tree/node/reusable',
-  },
+  }
 };
 
 export default apiEndpoints;

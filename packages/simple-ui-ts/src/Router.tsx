@@ -7,7 +7,7 @@ import { NotFound, Forbidden } from './views/ErrorPage';
 import MainLayout from './layouts/MainLayout';
 import { RouteGuarder } from './permission';
 import { Contract } from './views/Contract';
-import { Setting } from './views/System';
+import { Setting, User, LoginHistory } from './views/System';
 import { Dashboard } from './views/Debug';
 
 const defaultPath = getRouteInfo('contract')!.path;
@@ -53,9 +53,17 @@ const routes: RouteObject[] = [
             element: <Setting />,
           },
           {
+            path: getRouteInfo(['system', 'user'])!.path,
+            element: <User />,
+          },
+          {
+            path: getRouteInfo(['system', 'login-history'])!.path,
+            element: <LoginHistory />,
+          },
+          {
             path: getRouteInfo(['debug', 'dashboard'])!.path,
             element: <Dashboard />,
-          }
+          },
         ],
       },
     ],

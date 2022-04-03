@@ -227,9 +227,15 @@ export const routesInfo: RouteInfo[] = [
     menu: true,
     children: [
       {
-        title: 'User',
+        title: 'Account',
         key: 'user',
         path: '/system/user',
+        menu: true,
+      },
+      {
+        title: 'Login History',
+        key: 'login-history',
+        path: '/system/login-history',
         menu: true,
       },
       {

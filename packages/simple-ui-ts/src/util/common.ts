@@ -273,9 +273,9 @@ export const getBrowser = () => {
 
   let matched = null;
   // regexp for Microsoft IE11 browser.
-  const IE11Reg = /(trident).+rv[:\s]([\w\.]+).+like\sgecko/i;
+  const IE11Reg = /(trident).+rv[:\s]([\w.]+).+like\sgecko/i;
   // regexp for Microsoft Edge browser.
-  const EdgeReg = /(edge|edgios|edga|edg)\/((\d+)?[\w\.]+)/i;
+  const EdgeReg = /(edge|edgios|edga|edg)\/((\d+)?[\w.]+)/i;
 
   // In Opera, the true version is after "Opera" or after "Version"
   if ((versionOffset = uAgent.indexOf('Opera')) !== -1) {

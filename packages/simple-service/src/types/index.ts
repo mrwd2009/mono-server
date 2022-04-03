@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { i18n } from "i18next";
+import { Order, WhereOptions, } from '@sequelize/core';
 
 export type MergedParams = any;
 
@@ -14,6 +15,13 @@ export interface PageParams {
     pageSize: number;
   };
   [otherKey: string]: any;
+}
+
+export interface FormattedPageParams {
+  limit: number;
+  offset: number;
+  order: Order;
+  where: WhereOptions;
 }
 
 export interface GatewayEnvConfig {
