@@ -4,10 +4,7 @@ import { contractTreeHelper } from '../helper';
 
 const {
   matrix: {
-    models: {
-      ContractBody,
-      ContractRoot,
-    },
+    models: { ContractBody, ContractRoot },
     sequelize,
   },
 } = appDB;
@@ -61,8 +58,8 @@ export const getContractVersionList = async ({ root }: { root: number }) => {
   const getVersions = ContractBody.findAll({
     attributes: ['Version', 'Version_Type', 'Time_Sequence_ID'],
     where: {
-        _fk_contractroot: root,
-        _fk_parent_contractbody: null,
+      _fk_contractroot: root,
+      _fk_parent_contractbody: null,
     },
     order: [['Version', 'asc']],
   });
@@ -70,12 +67,12 @@ export const getContractVersionList = async ({ root }: { root: number }) => {
   const getActiveVersion = ContractRoot.findOne({
     attributes: ['ActiveVersion'],
     where: {
-        __pk_contractroot: root,
+      __pk_contractroot: root,
     },
   });
 
   const [versions, active] = await Promise.all([getVersions, getActiveVersion]);
-  
+
   return map(versions, (item) => {
     return {
       version: item.Version,

@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { getContractList, getSavedNodeList} from './contract-list';
+import { getContractList, getSavedNodeList } from './contract-list';
 
 // test('test getContractList', async () => {
 //   const list = await getContractList();

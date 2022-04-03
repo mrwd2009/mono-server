@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { i18n } from "i18next";
-import { Order, WhereOptions, } from '@sequelize/core';
+import type { i18n } from 'i18next';
+import { Order, WhereOptions } from '@sequelize/core';
 
 export type MergedParams = any;
 

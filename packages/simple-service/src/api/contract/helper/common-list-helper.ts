@@ -16,4 +16,4 @@ export const getChargeTypeList = async ({ ChargeType }: { ChargeType: ChargeType
   }
 
   return charges;
-}
+};

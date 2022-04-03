@@ -58,19 +58,22 @@ export const validatePagination = (options: Options = {}): Middleware => {
       where,
     };
   };
-  return validator((Schema) => {
-    return Schema.object({
-      pagination: Schema.object({
-        current: Schema.number().integer().min(1),
-        pageSize: Schema.number().integer().min(1).max(100),
-      }),
-      filter,
-      sorter: Schema.object({
-        field: options.sorter ? Schema.string().valid(...options.sorter) : Schema.string(),
-        order: Schema.string().valid('ASC', 'DESC', 'asc', 'desc'),
-      }).optional(),
-    });
-  }, {
-    formatData
-  });
+  return validator(
+    (Schema) => {
+      return Schema.object({
+        pagination: Schema.object({
+          current: Schema.number().integer().min(1),
+          pageSize: Schema.number().integer().min(1).max(100),
+        }),
+        filter,
+        sorter: Schema.object({
+          field: options.sorter ? Schema.string().valid(...options.sorter) : Schema.string(),
+          order: Schema.string().valid('ASC', 'DESC', 'asc', 'desc'),
+        }).optional(),
+      });
+    },
+    {
+      formatData,
+    },
+  );
 };

@@ -1,5 +1,5 @@
 import cookie from 'cookie';
-import { IncomingMessage } from 'http'
+import { IncomingMessage } from 'http';
 import config from '../../config/config';
 
 export async function delay(ms: number): Promise<void> {
@@ -7,7 +7,6 @@ export async function delay(ms: number): Promise<void> {
     setTimeout(() => resolve(), ms);
   });
 }
-
 
 export const getJwtTokenSignature = (token?: string | null) => {
   if (!token) {

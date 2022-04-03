@@ -60,7 +60,7 @@ export const updateContractNodeHandler: Middleware[] = [
     return Joi.object({
       node: Joi.number().integer().required(),
       field: Joi.string().valid('Name').required(),
-      value: Joi.alternatives().try(Joi.number(), Joi.string(), Joi.boolean()).required()
+      value: Joi.alternatives().try(Joi.number(), Joi.string(), Joi.boolean()).required(),
     });
   }),
   async (context) => {
@@ -73,7 +73,7 @@ export const reparentContractTreeNodeHandler: Middleware[] = [
     return Joi.object({
       position: Joi.string().required().valid('above', 'child', 'below'),
       sourceID: Joi.number().required(),
-      targetID: Joi.number().required()
+      targetID: Joi.number().required(),
     });
   }),
   async (context) => {

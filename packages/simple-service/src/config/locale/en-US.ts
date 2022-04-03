@@ -15,8 +15,8 @@ const locale = {
       invalidToken: 'Invalid or expired token.',
       notConfirmed: 'Please check your inbox to complete registration.',
       disabledUser: 'Your account has been disabled, please contact administrator.',
-    }
-  }
+    },
+  },
 };
 
 export default locale;

@@ -1,5 +1,5 @@
 import Joi, { AsyncValidationOptions, Schema } from 'joi';
-import { DefaultContext } from 'koa'
+import { DefaultContext } from 'koa';
 import { Middleware } from '@koa/router';
 import keys from 'lodash/keys';
 import get from 'lodash/get';

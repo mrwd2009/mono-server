@@ -13,7 +13,7 @@ export const getI18n = async (lang?: string | null) => {
     lang = 'en-US';
   }
 
-  let target =  cachedI18n[lang];
+  let target = cachedI18n[lang];
   if (target) {
     return target;
   }
@@ -25,8 +25,8 @@ export const getI18n = async (lang?: string | null) => {
     lng: lang,
     resources: {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      [lang]: (locale as any)[lang]
-    }
+      [lang]: (locale as any)[lang],
+    },
   });
 
   return target;

@@ -18,15 +18,11 @@ export const loginHandler: Array<Middleware> = [
         browser: Joi.string().optional(),
         timeZone: Joi.string().optional(),
       }),
-    })
+    }),
   ),
   validateEmailDomains(),
   async (context) => {
-    const {
-      email,
-      password,
-      client,
-    } = context.mergedParams;
+    const { email, password, client } = context.mergedParams;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const params: any = {
       email,
@@ -63,14 +59,17 @@ export const registerHandler: Array<Middleware> = [
       email: Schema.string().email().max(maxStrLen),
       displayName: Schema.string().max(maxStrLen),
       password: Schema.string().max(maxStrLen),
-    })
+    }),
   ),
   validateEmailDomains(),
   async (context) => {
-    await userModel.register({
-      ...context.mergedParams,
-      origin: context.headers['origin'],
-    }, context.i18n);
+    await userModel.register(
+      {
+        ...context.mergedParams,
+        origin: context.headers['origin'],
+      },
+      context.i18n,
+    );
     context.gateway!.sendJSON!({ done: true });
   },
 ];
@@ -80,15 +79,18 @@ export const forgotPasswordHandler: Array<Middleware> = [
   validator((Schema) =>
     Schema.object({
       email: Schema.string().email().max(maxStrLen),
-    })
+    }),
   ),
   validateEmailDomains(),
   async (context) => {
     const origin = context.headers['origin'];
-    await userModel.forgotPassword({
-      email: context.mergedParams.email,
-      origin,
-    }, context.i18n);
+    await userModel.forgotPassword(
+      {
+        email: context.mergedParams.email,
+        origin,
+      },
+      context.i18n,
+    );
     context.gateway!.sendJSON!({ done: true });
   },
 ];
@@ -99,7 +101,7 @@ export const resetPasswordHandler: Array<Middleware> = [
     Schema.object({
       password: Schema.string().max(maxStrLen),
       token: Schema.string(),
-    })
+    }),
   ),
   async (context) => {
     await userModel.resetPassword(context.mergedParams, context.i18n);
@@ -112,7 +114,7 @@ export const unlockUserHandler: Array<Middleware> = [
   validator((Schema) =>
     Schema.object({
       token: Schema.string(),
-    })
+    }),
   ),
   async (context) => {
     await userModel.unlockUser(context.mergedParams, context.i18n);
@@ -125,7 +127,7 @@ export const confirmUserHandler: Array<Middleware> = [
   validator((Schema) =>
     Schema.object({
       token: Schema.string(),
-    })
+    }),
   ),
   async (context) => {
     await userModel.confirmUser(context.mergedParams, context.i18n);

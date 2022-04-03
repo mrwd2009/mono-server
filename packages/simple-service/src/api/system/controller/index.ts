@@ -14,8 +14,8 @@ export const getUserListHandler: Array<Middleware> = [
   validatePagination({
     sorter: ['created_at', 'updated_at'],
     format: {
-      like: ['email']
-    }
+      like: ['email'],
+    },
   }),
   async (context) => {
     const result = await userModel.getUserList(context.validatorFormattedData);
@@ -29,7 +29,7 @@ export const createUserHandler: Array<Middleware> = [
       email: Schema.string().email().max(maxStrLen),
       displayName: Schema.string().max(maxStrLen),
       password: Schema.string().max(maxStrLen),
-    })
+    }),
   ),
   validateEmailDomains(),
   async (context) => {
@@ -44,7 +44,7 @@ export const editUserHandler: Array<Middleware> = [
       id: Schema.number().integer(),
       displayName: Schema.string().max(maxStrLen),
       password: Schema.string().max(maxStrLen),
-    })
+    }),
   ),
   validateEmailDomains(),
   async (context) => {
@@ -57,7 +57,7 @@ export const deleteUserHandler: Array<Middleware> = [
   validator((Schema) =>
     Schema.object({
       id: Schema.number().integer(),
-    })
+    }),
   ),
   async (context) => {
     await userModel.deleteUser(context.mergedParams, context.i18n);
@@ -69,11 +69,11 @@ export const getUserLoginHistoryListHandler: Array<Middleware> = [
   validatePagination({
     sorter: ['created_at', 'updated_at'],
     format: {
-      like: ['email', 'ip' ]
-    }
+      like: ['email', 'ip'],
+    },
   }),
   async (context) => {
     const result = await userModel.getUserLoginHistoryList(context.validatorFormattedData);
     context.gateway?.sendJSON?.(result);
   },
-]
+];

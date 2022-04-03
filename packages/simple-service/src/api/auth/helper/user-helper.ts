@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import dayjs from 'dayjs';
-import { Transaction } from '@sequelize/core'
+import { Transaction } from '@sequelize/core';
 import config from '../../../config/config';
 import { UserModel, UserModelDef, UserTokenModelDef } from '.././../../model/types';
 import * as lib from '../../../lib';
@@ -10,10 +10,8 @@ import { AuthError, DataError } from '../../../lib/error';
 const {
   error: { GatewayError },
   util: {
-    common: {
-      getJwtTokenSignature,
-    }
-  }
+    common: { getJwtTokenSignature },
+  },
 } = lib;
 
 interface TokenParams {
@@ -38,7 +36,7 @@ export const createJwtToken = async (params: TokenParams): Promise<string> => {
       }
       return resolve(token);
     };
-    // Both Base64 and Base64url 
+    // Both Base64 and Base64url
     // so signature includes underscore
     jwt.sign(
       {
@@ -54,15 +52,18 @@ export const createJwtToken = async (params: TokenParams): Promise<string> => {
     );
   });
 
-  await params.UserToken.create({
-    user_id: params.id,
-    signature: getJwtTokenSignature(createdToken),
-    token: createdToken,
-    status: 'enabled',
-    expired_at: expiredDate.format(),
-  }, {
-    transaction: params.transaction
-  });
+  await params.UserToken.create(
+    {
+      user_id: params.id,
+      signature: getJwtTokenSignature(createdToken),
+      token: createdToken,
+      status: 'enabled',
+      expired_at: expiredDate.format(),
+    },
+    {
+      transaction: params.transaction,
+    },
+  );
 
   return createdToken;
 };
@@ -73,8 +74,8 @@ interface VerifyParams {
 }
 export const verfyJwtToken = async (params: VerifyParams) => {
   const result: {
-    type: TokenParams['type'],
-    id: number
+    type: TokenParams['type'];
+    id: number;
   } = await new Promise((resolve, reject) => {
     jwt.verify(
       params.token,
@@ -105,12 +106,12 @@ export const verfyJwtToken = async (params: VerifyParams) => {
     where: {
       user_id: result.id,
       signature: getJwtTokenSignature(params.token),
-      status: 'enabled'
+      status: 'enabled',
     },
   });
 
   if (!tokenRecord) {
-    throw new DataError('Invalid token.')
+    throw new DataError('Invalid token.');
   }
 
   return result.id;
@@ -122,18 +123,16 @@ interface CheckParams {
   i18n: I18nType;
   User: UserModelDef;
 }
-export const checkLockStatus = async ({user, transaction, i18n, User}: CheckParams) => {
+export const checkLockStatus = async ({ user, transaction, i18n, User }: CheckParams) => {
   const {
-    auth: {
-      autoUnlockTime,
-    }
+    auth: { autoUnlockTime },
   } = config;
   const lockedUser = await User.findOne({
     where: {
-      id: user.id
+      id: user.id,
     },
     transaction,
-    lock: transaction.LOCK.UPDATE
+    lock: transaction.LOCK.UPDATE,
   });
 
   if (!lockedUser) {
@@ -144,7 +143,7 @@ export const checkLockStatus = async ({user, transaction, i18n, User}: CheckPara
     const unlockTime = dayjs.utc(lockedUser.locked_at).add(autoUnlockTime, 'minute');
     const now = dayjs.utc();
     if (unlockTime.isAfter(now)) {
-      const minutes = Math.ceil((unlockTime.unix() - now.unix()) / 60 );
+      const minutes = Math.ceil((unlockTime.unix() - now.unix()) / 60);
       const error = new AuthError(i18n.t('auth.lockedMessage', { count: minutes }));
       error.public = true;
       throw error;
@@ -152,13 +151,13 @@ export const checkLockStatus = async ({user, transaction, i18n, User}: CheckPara
     // clear lock status
     await lockedUser.update(
       {
-      failed_attempts: 0,
-      locked_at: null,
-      unlock_token: null,
+        failed_attempts: 0,
+        locked_at: null,
+        unlock_token: null,
       },
       {
         transaction,
-      }
+      },
     );
   }
 

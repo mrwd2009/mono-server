@@ -34,7 +34,9 @@ test('run service without agent', async () => {
   Service.findOne = jest.fn().mockResolvedValue({
     id: 2,
   });
-  await expect(async () => await runService({ serviceId: 2, email: 'wudi.link.me@gmail.com' })).rejects.toThrow('Agent(');
+  await expect(async () => await runService({ serviceId: 2, email: 'wudi.link.me@gmail.com' })).rejects.toThrow(
+    'Agent(',
+  );
 });
 
 test('run service without servoce', async () => {
@@ -42,7 +44,9 @@ test('run service without servoce', async () => {
     id: 1,
   });
   Service.findOne = jest.fn().mockResolvedValue(null);
-  await expect(async () => await runService({ serviceId: 2, email: 'wudi.link.me@gmail.com' })).rejects.toThrow('Service(2');
+  await expect(async () => await runService({ serviceId: 2, email: 'wudi.link.me@gmail.com' })).rejects.toThrow(
+    'Service(2',
+  );
 });
 
 test('running successfully', async () => {

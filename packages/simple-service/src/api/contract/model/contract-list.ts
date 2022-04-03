@@ -6,10 +6,8 @@ import { ContractBodyModel } from '../../../model/types';
 const {
   matrix: {
     sequelize,
-    models: {
-      ContractBody,
-    }
-  }
+    models: { ContractBody },
+  },
 } = appDB;
 
 export interface ContractItem {

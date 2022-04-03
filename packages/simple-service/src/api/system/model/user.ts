@@ -8,13 +8,9 @@ import { AuthError } from '../../../lib/error';
 
 const {
   gateway: {
-    models: {
-      User,
-      UserLoginHistory,
-      UserProfile,
-    },
+    models: { User, UserLoginHistory, UserProfile },
     sequelize,
-  }
+  },
 } = appDBs;
 
 export const getUserList = async (params: FormattedPageParams) => {
@@ -38,7 +34,7 @@ export const getUserList = async (params: FormattedPageParams) => {
     ],
     include: {
       model: UserProfile,
-      attributes: ['display_name']
+      attributes: ['display_name'],
     },
     ...params,
   });
@@ -47,7 +43,7 @@ export const getUserList = async (params: FormattedPageParams) => {
     total: count,
     list: rows,
   };
-}; 
+};
 
 interface CreateParams {
   email: string;
@@ -55,11 +51,7 @@ interface CreateParams {
   password: string;
 }
 export const createUser = async (params: CreateParams, i18n: I18nType) => {
-  const {
-    email,
-    displayName,
-    password,
-  } = params;
+  const { email, displayName, password } = params;
 
   if (zxcvbn(password).score < 2) {
     const error = new AuthError(i18n.t('auth.weekPassword', { password: randomPassword() }));
@@ -79,22 +71,28 @@ export const createUser = async (params: CreateParams, i18n: I18nType) => {
       throw new AuthError(`User has already existed.`);
     }
 
-    const user = await User.create({
-      email,
-      password,
-      last_change_pass_at: dayjs.utc().format(),
-    }, {
-      transaction,
-    });
+    const user = await User.create(
+      {
+        email,
+        password,
+        last_change_pass_at: dayjs.utc().format(),
+      },
+      {
+        transaction,
+      },
+    );
 
-    await UserProfile.create({
-      user_id: user.id,
-      display_name: displayName
-    }, {
-      transaction,
-    });
+    await UserProfile.create(
+      {
+        user_id: user.id,
+        display_name: displayName,
+      },
+      {
+        transaction,
+      },
+    );
   });
-}
+};
 
 interface EditParams {
   id: number;
@@ -102,11 +100,7 @@ interface EditParams {
   password: string;
 }
 export const editUser = async (params: EditParams, i18n: I18nType) => {
-  const {
-    id,
-    displayName,
-    password,
-  } = params;
+  const { id, displayName, password } = params;
 
   if (zxcvbn(password).score < 2) {
     const error = new AuthError(i18n.t('auth.weekPassword', { password: randomPassword() }));
@@ -122,7 +116,7 @@ export const editUser = async (params: EditParams, i18n: I18nType) => {
       },
       include: {
         attributes: ['id', 'display_name'],
-        model: UserProfile
+        model: UserProfile,
       },
       transaction,
     });
@@ -135,17 +129,12 @@ export const editUser = async (params: EditParams, i18n: I18nType) => {
     const profile = user.UserProfile!;
     profile.display_name = displayName;
 
-    await Promise.all([
-      user.save({ transaction }),
-      profile.save({ transaction }),
-    ]);
+    await Promise.all([user.save({ transaction }), profile.save({ transaction })]);
   });
-}
+};
 
 export const deleteUser = async (params: { id: number }, i18n: I18nType) => {
-  const {
-    id,
-  } = params;
+  const { id } = params;
   const user = await User.findOne({
     attributes: ['id'],
     where: {
@@ -157,7 +146,7 @@ export const deleteUser = async (params: { id: number }, i18n: I18nType) => {
   }
 
   await user.destroy();
-}
+};
 
 export const getUserLoginHistoryList = async (params: FormattedPageParams) => {
   const { rows, count } = await UserLoginHistory.findAndCountAll({
@@ -182,4 +171,4 @@ export const getUserLoginHistoryList = async (params: FormattedPageParams) => {
     total: count,
     list: rows,
   };
-}; 
+};

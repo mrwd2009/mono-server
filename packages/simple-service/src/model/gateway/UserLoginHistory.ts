@@ -15,7 +15,10 @@ declare module '../types' {
   type UserLoginHistoryModelDef = typeof UserLoginHistory;
 }
 
-export class UserLoginHistory extends Model<InferAttributes<UserLoginHistory>, InferCreationAttributes<UserLoginHistory>> {
+export class UserLoginHistory extends Model<
+  InferAttributes<UserLoginHistory>,
+  InferCreationAttributes<UserLoginHistory>
+> {
   declare id: CreationOptional<number>;
   declare node_env: CreationOptional<string>;
   declare app_env: CreationOptional<string>;

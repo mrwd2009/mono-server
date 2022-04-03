@@ -4,8 +4,8 @@ import { ParamError } from '../../lib/error';
 import config from '../../config/config';
 
 interface Options {
-  error?: string,
-  field?: string,
+  error?: string;
+  field?: string;
 }
 export const validateEmailDomains = (options?: Options): Middleware => {
   const error = options?.error;
@@ -26,7 +26,7 @@ export const validateEmailDomains = (options?: Options): Middleware => {
       if (error && i18n.exists(error)) {
         throw new ParamError(i18n.t(error));
       } else {
-        throw new ParamError(i18n.t('common.invalidEmail'))
+        throw new ParamError(i18n.t('common.invalidEmail'));
       }
     }
   };

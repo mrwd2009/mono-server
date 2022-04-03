@@ -120,9 +120,9 @@ export const constructContractTree = async ({ root: rootId, version, ContractBod
 
 interface ReparentParams {
   payload: {
-    position: string,
-    sourceID: number,
-    targetID: number,
+    position: string;
+    sourceID: number;
+    targetID: number;
   };
   transaction: Transaction;
   ContractBody: ContractBodyModelDef;
@@ -429,7 +429,7 @@ export const saveReusableNode = ({ node, type, name, transaction, ContractBody, 
             parentId = null;
             sib.Name = name || sib.Name;
           } else {
-            console.log(`${rootNode.Sequence_ID} - ${sib.Sequence_ID}`)
+            console.log(`${rootNode.Sequence_ID} - ${sib.Sequence_ID}`);
             if (rootNode.Sequence_ID === '1') {
               sequenceId = sib.Sequence_ID;
             } else {
@@ -679,7 +679,7 @@ export const saveReusableNode = ({ node, type, name, transaction, ContractBody, 
           [Op.like]: `${rootNode.Sequence_ID}%`,
         };
       }
-      
+
       return ContractBody.findAll({
         where,
         order: [['Sequence_ID', 'ASC']],
@@ -689,7 +689,7 @@ export const saveReusableNode = ({ node, type, name, transaction, ContractBody, 
     .then((nodes) => {
       return createRoot(transaction).then(() => {
         if (type === 'instance') {
-          const rootIndex = _.findIndex(nodes, item => item.Sequence_ID === '1');
+          const rootIndex = _.findIndex(nodes, (item) => item.Sequence_ID === '1');
           const rootNode = nodes[rootIndex];
           nodes.splice(rootIndex, 1);
           nodes.unshift(rootNode);
@@ -700,5 +700,5 @@ export const saveReusableNode = ({ node, type, name, transaction, ContractBody, 
       //   return createParamsAndRuleModels(transaction);
       // });
     })
-    .then(() => true)
+    .then(() => true);
 };

@@ -9,11 +9,8 @@ import util from '../../lib/util';
 
 const {
   gateway: {
-    models: {
-      User,
-      UserToken,
-    },
-  }
+    models: { User, UserToken },
+  },
 } = appDBs;
 
 const getToken: JwtFromRequestFunction = (req) => {
@@ -45,14 +42,14 @@ const getUser: VerifyCallbackWithRequest = (req, payload, done) => {
           where: {
             user_id: data.id,
             signature: util.getJwtTokenSignature(token),
-            status: 'enabled'
+            status: 'enabled',
           },
-        }
-      })
+        },
+      });
       return queryUser
         .then((user) => {
           if (!user || !user.UserTokens?.length) {
-            done(new AuthError('Invalid or expired token.'))
+            done(new AuthError('Invalid or expired token.'));
           } else {
             done(null, {
               id: user.id,
@@ -61,7 +58,7 @@ const getUser: VerifyCallbackWithRequest = (req, payload, done) => {
           }
         })
         .catch(() => {
-          done(new AuthError('Invalid or expired token.'))
+          done(new AuthError('Invalid or expired token.'));
         });
     } else {
       done(null, { id: data.id, email: data.id });

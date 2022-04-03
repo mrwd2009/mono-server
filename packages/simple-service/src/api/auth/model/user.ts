@@ -18,14 +18,9 @@ const {
 } = lib;
 const {
   gateway: {
-    models: {
-      User,
-      UserProfile,
-      UserLoginHistory,
-      UserToken,
-    },
+    models: { User, UserProfile, UserLoginHistory, UserToken },
     sequelize,
-  }
+  },
 } = appDBs;
 
 type UserParams = {
@@ -46,7 +41,10 @@ type UserParams = {
 // because we support multiple app with one user database, we can't simply delete jwt token after login
 // what we need to do is to mark jwt token disabled.
 
-export const login = async (params: UserParams, i18n: I18nType): Promise<{ token: string; reset: boolean, email: string }> => {
+export const login = async (
+  params: UserParams,
+  i18n: I18nType,
+): Promise<{ token: string; reset: boolean; email: string }> => {
   const { email, password } = params;
   let locked = false;
   let userId: number;
@@ -146,7 +144,7 @@ export const login = async (params: UserParams, i18n: I18nType): Promise<{ token
           user_id: user.id,
           expired_at: {
             [Op.lte]: dayjs.utc().format(),
-          }
+          },
         },
         transaction,
       });
@@ -181,12 +179,7 @@ type RegisterParams = {
 };
 
 export const register = async (params: RegisterParams, i18n: I18nType) => {
-  const {
-    email,
-    displayName,
-    password,
-    origin,
-  } = params;
+  const { email, displayName, password, origin } = params;
 
   if (zxcvbn(password).score < 2) {
     const error = new AuthError(i18n.t('auth.weekPassword', { password: randomPassword() }));
@@ -206,14 +199,17 @@ export const register = async (params: RegisterParams, i18n: I18nType) => {
       throw new AuthError(`User has already existed.`);
     }
 
-    const user = await User.create({
-      email,
-      password,
-      unconfirmed_email: email,
-      last_change_pass_at: dayjs.utc().format(),
-    }, {
-      transaction,
-    });
+    const user = await User.create(
+      {
+        email,
+        password,
+        unconfirmed_email: email,
+        last_change_pass_at: dayjs.utc().format(),
+      },
+      {
+        transaction,
+      },
+    );
 
     const token = await userHelper.createJwtToken({
       id: user.id,
@@ -225,12 +221,15 @@ export const register = async (params: RegisterParams, i18n: I18nType) => {
 
     userId = user.id;
     await Promise.all([
-      UserProfile.create({
-        user_id: userId,
-        display_name: displayName
-      }, {
-        transaction,
-      }),
+      UserProfile.create(
+        {
+          user_id: userId,
+          display_name: displayName,
+        },
+        {
+          transaction,
+        },
+      ),
       user.save({ transaction }),
     ]);
   });
@@ -243,7 +242,7 @@ export const register = async (params: RegisterParams, i18n: I18nType) => {
   return true;
 };
 
-export const forgotPassword = async ({ email, origin }: { email: string, origin?: string }, i18n: I18nType) => {
+export const forgotPassword = async ({ email, origin }: { email: string; origin?: string }, i18n: I18nType) => {
   let userId: number;
   await sequelize.transaction(async (transaction) => {
     let user = await User.findOne({ where: { email }, transaction });
@@ -295,33 +294,31 @@ export const resetPassword = async (params: ResetParams, i18n: I18nType) => {
       },
       transaction,
     });
-  
+
     if (!user) {
       throw new DataError(i18n.t('auth.notFoundUser'));
     }
-    
+
     if (user.reset_password_token !== params.token) {
       throw new DataError(i18n.t('auth.invalidToken'));
     }
 
     if (user.reset_password_token) {
-      await UserToken.destroy(
-        {
-          where: {
-            user_id: user.id,
-            signature: getJwtTokenSignature(user.reset_password_token),
-          },
-          transaction,
+      await UserToken.destroy({
+        where: {
+          user_id: user.id,
+          signature: getJwtTokenSignature(user.reset_password_token),
         },
-      );
+        transaction,
+      });
     }
-    
+
     user.password = params.password;
     user.reset_password_token = null;
     user.reset_password_sent_at = null;
     user.last_change_pass_at = dayjs.utc().format();
     await user.save({ transaction });
-  })
+  });
 
   return true;
 };
@@ -336,27 +333,25 @@ export const unlockUser = async (params: { token: string }, i18n: I18nType) => {
       },
       transaction,
     });
-  
+
     if (!user) {
       throw new DataError(i18n.t('auth.notFoundUser'));
     }
-    
+
     if (user.unlock_token !== params.token) {
       throw new DataError(i18n.t('auth.invalidToken'));
     }
 
     if (user.unlock_token) {
-      await UserToken.destroy(
-        {
-          where: {
-            user_id: user.id,
-            signature: getJwtTokenSignature(user.unlock_token),
-          },
-          transaction,
+      await UserToken.destroy({
+        where: {
+          user_id: user.id,
+          signature: getJwtTokenSignature(user.unlock_token),
         },
-      );
+        transaction,
+      });
     }
-    
+
     user.unlock_token = null;
     user.locked_at = null;
     user.failed_attempts = 0;
@@ -376,27 +371,25 @@ export const confirmUser = async (params: { token: string }, i18n: I18nType) => 
       },
       transaction,
     });
-  
+
     if (!user) {
       throw new DataError(i18n.t('auth.notFoundUser'));
     }
-    
+
     if (user.confirmation_token !== params.token) {
       throw new DataError(i18n.t('auth.invalidToken'));
     }
 
     if (user.confirmation_token) {
-      await UserToken.destroy(
-        {
-          where: {
-            user_id: user.id,
-            signature: getJwtTokenSignature(user.confirmation_token),
-          },
-          transaction,
+      await UserToken.destroy({
+        where: {
+          user_id: user.id,
+          signature: getJwtTokenSignature(user.confirmation_token),
         },
-      );
+        transaction,
+      });
     }
-    
+
     user.confirmation_token = null;
     user.confirmed_at = dayjs.utc().format();
     user.unconfirmed_email = null;
@@ -415,24 +408,22 @@ export const logoutUser = async (userId: number, token: string, i18n: I18nType) 
       },
       transaction,
     });
-  
+
     if (!user) {
       throw new DataError(i18n.t('auth.notFoundUser'));
     }
 
-    await UserToken.destroy(
-      {
-        where: {
-          user_id: user.id,
-          signature: getJwtTokenSignature(token),
-        },
-        transaction,
+    await UserToken.destroy({
+      where: {
+        user_id: user.id,
+        signature: getJwtTokenSignature(token),
       },
-    );
+      transaction,
+    });
 
     if (user.latest_sign_in_token === token) {
       user.latest_sign_in_token = null;
     }
     await user.save({ transaction });
   });
-}
+};

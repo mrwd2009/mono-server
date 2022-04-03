@@ -27,7 +27,7 @@ const hashPassword = async (user: User) => {
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   static associate = (models: AppModels) => {
     User.hasOne(models.UserProfile, { foreignKey: 'user_id', constraints: false });
-    User.hasMany(models.UserToken,  { foreignKey: 'user_id', constraints: false })
+    User.hasMany(models.UserToken, { foreignKey: 'user_id', constraints: false });
   };
   declare id: CreationOptional<number>;
   declare email: string;

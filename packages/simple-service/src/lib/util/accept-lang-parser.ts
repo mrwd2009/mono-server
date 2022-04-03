@@ -31,7 +31,7 @@ export const parse = (al?: string) => {
     .sort((a, b) => {
       return b!.quality - a!.quality;
     });
-}
+};
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const pick = (supportedLanguages: string[], acceptLanguage: any, options?: any) => {
@@ -78,6 +78,6 @@ export const pick = (supportedLanguages: string[], acceptLanguage: any, options?
   }
 
   return null;
-}
+};
 
 export default parse;

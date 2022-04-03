@@ -36,7 +36,9 @@ export const connectTo = (options: DatabaseOptions): Database => {
     ...restOptions
   } = options;
   // so strange, I must use any type
-  const port: any = _.parseInt(`${options.port || config.database.main.port || config.database.basic.port}`) as unknown as number;
+  const port: any = _.parseInt(
+    `${options.port || config.database.main.port || config.database.basic.port}`,
+  ) as unknown as number;
   const baseDir = path.join(__dirname, modelDir);
   const sequelize = new Sequelize(database, username, password, {
     host,

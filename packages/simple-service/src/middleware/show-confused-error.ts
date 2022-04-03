@@ -3,7 +3,7 @@ import { GatewayError } from '../lib/error';
 import config from '../config/config';
 
 interface Options {
-  error?: string,
+  error?: string;
 }
 export const showConfusedError = (options?: Options): Middleware => {
   const error = options?.error;
@@ -23,7 +23,7 @@ export const showConfusedError = (options?: Options): Middleware => {
       if (error && i18n.exists(error)) {
         throw new GatewayError(i18n.t(error));
       } else {
-        throw new GatewayError(i18n.t('common.internalError'))
+        throw new GatewayError(i18n.t('common.internalError'));
       }
     }
   };

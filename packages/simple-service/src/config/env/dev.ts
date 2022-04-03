@@ -1,7 +1,5 @@
-import { GatewayEnvConfig } from "../../types";
+import { GatewayEnvConfig } from '../../types';
 
-const envConfig: GatewayEnvConfig = {
-
-};
+const envConfig: GatewayEnvConfig = {};
 
 export default envConfig;

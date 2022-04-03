@@ -5,30 +5,25 @@ import { DataError, LogicError } from '../../../lib/error';
 
 const {
   matrix: {
-    models: {
-      ContractBody,
-      ContractRoot,
-    },
+    models: { ContractBody, ContractRoot },
     sequelize,
   },
   main: {
-    models: {
-      ChargeType,
-    },
+    models: { ChargeType },
   },
 } = appDB;
 
-export const getContractNode = async ({ node }: { node: string}) => {
+export const getContractNode = async ({ node }: { node: string }) => {
   const body = await ContractBody.findOne({
     where: {
       __pk_contractbody: node,
-    }
+    },
   });
 
   if (!body) {
     throw new DataError(`Contract node is not found.`);
   }
-  
+
   let chargeType: Array<string> = [];
   if (body.Charge_Type) {
     chargeType = body.Charge_Type.split(',');
@@ -43,7 +38,7 @@ export const getContractNode = async ({ node }: { node: string}) => {
     hiddenFlag: body.Hidden_Flag,
     chargeType,
     chargeTypeList,
-    condition: [{ label: 'true', value: 'true'}],
+    condition: [{ label: 'true', value: 'true' }],
   };
 };
 
@@ -101,7 +96,7 @@ export const deleteContractNode = async ({ node }: { node: number }) => {
       __pk_contractbody: node,
     },
   });
-}
+};
 
 interface NodeCreateParams {
   name: string;
@@ -111,12 +106,7 @@ interface NodeCreateParams {
 }
 
 export const createContractNode = async (params: NodeCreateParams) => {
-  const {
-    name,
-    type,
-    sourceType,
-    parent,
-  } = params;
+  const { name, type, sourceType, parent } = params;
 
   return await sequelize.transaction(async (transaction) => {
     let root: number;
@@ -135,7 +125,7 @@ export const createContractNode = async (params: NodeCreateParams) => {
       );
       root = rootNode.__pk_contractroot;
     }
-    
+
     let version = null;
     let sequenceID = null;
 
@@ -229,4 +219,4 @@ export const createContractNode = async (params: NodeCreateParams) => {
       version,
     };
   });
-}
+};
