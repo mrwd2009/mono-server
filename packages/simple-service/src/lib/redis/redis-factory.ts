@@ -2,6 +2,7 @@ import RedisClient, { Redis } from 'ioredis';
 import { createHash } from 'crypto';
 import config from '../../config/config';
 import { DataError } from '../error';
+import { registerSignalHandler, removeSingalHandler } from '../signal/handler';
 
 export interface MemoizedDataProvider {
   cachedKey: string;
@@ -17,7 +18,12 @@ export class RedisFactory {
   private redisClient: Redis | undefined;
   private cachedStore: Map<string, { id: string; value: unknown }> = new Map();
 
-  constructor(private url: string, private prefix: string, private expired: number) {}
+  constructor(private url: string, private prefix: string, private expired: number) {
+    // gracefully close redis client.
+    registerSignalHandler('SIGINT', async () => {
+      await this.close();
+    });
+  }
 
   // for special purpose, otherwise use instance methods directly.
   public getClient(): Redis {
@@ -114,9 +120,18 @@ export class RedisFactory {
     };
   }
 
-  async close(): Promise<void> {
+  handleSignalClose = async () => {
     if (this.redisClient) {
       await this.redisClient.quit();
+      this.redisClient = undefined;
+    }
+  };
+
+  async close(): Promise<void> {
+    if (this.redisClient) {
+      removeSingalHandler('SIGINT', this.handleSignalClose);
+      await this.redisClient.quit();
+      this.redisClient = undefined;
     }
   }
 }

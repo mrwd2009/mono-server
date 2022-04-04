@@ -2,6 +2,7 @@ import Queue, { Queue as QueueType, QueueOptions } from 'bull';
 import Redis from 'ioredis';
 import memoizeOne from 'memoize-one';
 import config from '../../config/config';
+import { registerSignalHandler, removeSingalHandler } from '../../lib/signal/handler';
 
 const getClientRedis = memoizeOne(() => {
   return new Redis(config.queue.redis.url, {
@@ -49,7 +50,16 @@ export const createQueue = (name: string, options: QueueOptions = {}): QueueType
 export class QueueGetter {
   private cache?: QueueType;
 
-  constructor(public name: string) {}
+  constructor(public name: string) {
+    registerSignalHandler('SIGINT', this.handleSignalClose);
+  }
+
+  handleSignalClose = async () => {
+    if (this.cache) {
+      await this.cache.close();
+      this.cache = undefined;
+    }
+  };
 
   getQueue = (): QueueType => {
     // lazy creating
@@ -58,4 +68,12 @@ export class QueueGetter {
     }
     return this.cache;
   };
+
+  async close(): Promise<void> {
+    if (this.cache) {
+      removeSingalHandler('SIGINT', this.handleSignalClose);
+      await this.cache.close();
+      this.cache = undefined;
+    }
+  }
 }

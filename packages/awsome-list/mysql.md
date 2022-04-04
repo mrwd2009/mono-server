@@ -1,3 +1,8 @@
+### Login mysql
+```
+mysql --host=localhost --user=root --password
+```
+
 ### Enable sql log
 ```SQL
 # Enable config
