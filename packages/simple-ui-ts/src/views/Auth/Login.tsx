@@ -85,34 +85,6 @@ const Login: FC = () => {
               {t('logIn')}
             </Button>
           </Form.Item>
-          <Divider dashed />
-          <Form.Item>
-            <Button
-              block
-              htmlType="button"
-              icon={<AmazonOutlined />}
-            >
-              Sign In with Amazon
-            </Button>
-          </Form.Item>
-          <Form.Item>
-            <Button
-              block
-              htmlType="button"
-              icon={<GoogleOutlined />}
-            >
-              Sign In with Google
-            </Button>
-          </Form.Item>
-          <Form.Item>
-            <Button
-              block
-              htmlType="button"
-              icon={<FacebookOutlined />}
-            >
-              Sign In with Facebook
-            </Button>
-          </Form.Item>
           <Form.Item>
             <Link
               to={fogotRoute!.path}
