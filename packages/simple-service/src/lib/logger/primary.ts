@@ -4,7 +4,7 @@ import { createLogger, LoggerOptions } from 'winston';
 import Transport from 'winston-transport';
 import { getPrimaryTransports, getExceptionTransports } from './log-transport';
 import { fullFormats } from './log-format';
-import { registerSignalHandler } from '../signal/handler';
+import { registerCleanupHandler } from '../signal/handler';
 
 const baseOpts: LoggerOptions & { rejectionHandlers?: Array<Transport> } = {
   transports: getPrimaryTransports(),
@@ -21,7 +21,7 @@ const logger = createLogger({
 export const pureLogger = createLogger(baseOpts);
 
 // gracefully close
-registerSignalHandler('SIGINT', async () => {
+registerCleanupHandler(async () => {
   logger.close();
   pureLogger.close();
 });

@@ -5,7 +5,7 @@ import path from 'path';
 import _ from 'lodash';
 import config from '../config/config';
 import { AppModels } from './types';
-import { registerSignalHandler } from '../lib/signal/handler';
+import { registerCleanupHandler } from '../lib/signal/handler';
 
 export interface Database {
   sequelize: Sequelize;
@@ -114,7 +114,7 @@ export const connectTo = (options: DatabaseOptions): Database => {
   };
 
   // register callback to close connection after receive SIGINT
-  registerSignalHandler('SIGINT', async () => {
+  registerCleanupHandler(async () => {
     await sequelize.close();
   });
 

@@ -2,7 +2,7 @@ import RedisClient, { Redis } from 'ioredis';
 import { createHash } from 'crypto';
 import config from '../../config/config';
 import { DataError } from '../error';
-import { registerSignalHandler, removeSingalHandler } from '../signal/handler';
+import { registerCleanupHandler, removeCleanupHandler } from '../signal/handler';
 
 export interface MemoizedDataProvider {
   cachedKey: string;
@@ -20,7 +20,7 @@ export class RedisFactory {
 
   constructor(private url: string, private prefix: string, private expired: number) {
     // gracefully close redis client.
-    registerSignalHandler('SIGINT', async () => {
+    registerCleanupHandler(async () => {
       await this.close();
     });
   }
@@ -129,7 +129,7 @@ export class RedisFactory {
 
   async close(): Promise<void> {
     if (this.redisClient) {
-      removeSingalHandler('SIGINT', this.handleSignalClose);
+      removeCleanupHandler(this.handleSignalClose);
       await this.redisClient.quit();
       this.redisClient = undefined;
     }

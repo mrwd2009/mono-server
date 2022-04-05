@@ -2,7 +2,7 @@ import Queue, { Queue as QueueType, QueueOptions } from 'bull';
 import Redis from 'ioredis';
 import memoizeOne from 'memoize-one';
 import config from '../../config/config';
-import { registerSignalHandler, removeSingalHandler } from '../../lib/signal/handler';
+import { registerCleanupHandler, removeCleanupHandler } from '../../lib/signal/handler';
 
 const getClientRedis = memoizeOne(() => {
   return new Redis(config.queue.redis.url, {
@@ -51,7 +51,7 @@ export class QueueGetter {
   private cache?: QueueType;
 
   constructor(public name: string) {
-    registerSignalHandler('SIGINT', this.handleSignalClose);
+    registerCleanupHandler(this.handleSignalClose);
   }
 
   handleSignalClose = async () => {
@@ -71,7 +71,7 @@ export class QueueGetter {
 
   async close(): Promise<void> {
     if (this.cache) {
-      removeSingalHandler('SIGINT', this.handleSignalClose);
+      removeCleanupHandler(this.handleSignalClose);
       await this.cache.close();
       this.cache = undefined;
     }

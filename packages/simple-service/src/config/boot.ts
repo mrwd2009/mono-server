@@ -6,7 +6,7 @@ import dispatch from './dispatch';
 import { ip } from '../lib/util';
 import config from './config';
 import logger from '../lib/logger';
-import { registerSignalHandler } from '../lib/signal/handler'; // register signal handler
+import { registerCleanupHandler } from '../lib/signal/handler'; // register signal handler
 
 // record all app level errors.
 const catchUnhandledError = async (app: Koa) => {
@@ -40,7 +40,7 @@ const listen = async (app: Koa, port: number | string) => {
       resolve(port);
     });
     // gracefully close server
-    registerSignalHandler('SIGINT', async () => {
+    registerCleanupHandler(async () => {
       await new Promise((resolve, reject) => {
         server.close((error) => {
           if (error) {

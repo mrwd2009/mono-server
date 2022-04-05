@@ -2,34 +2,30 @@ import _ from 'lodash';
 
 export type GatewaySignalHandler = () => Promise<void>;
 
-type GatewaySignal = 'SIGINT';
 
 interface HandlersMap {
-  SIGINT?: GatewaySignalHandler[],
+  cleanup: GatewaySignalHandler[],
 }
-const signalHandlersMap: HandlersMap = {};
+const signalHandlersMap: HandlersMap = { cleanup: [] };
 
-export const registerSignalHandler = (signalName: GatewaySignal, handler: GatewaySignalHandler) => {
-  if (!signalHandlersMap[signalName]) {
-    signalHandlersMap[signalName] = [];
-  }
-  signalHandlersMap[signalName]?.push(handler);
+export const registerCleanupHandler = (handler: GatewaySignalHandler) => {
+  signalHandlersMap.cleanup.push(handler);
 };
 
-export const removeSingalHandler = (signalName: GatewaySignal, handler: GatewaySignalHandler) => {
-  if (!signalHandlersMap[signalName]) {
-    return;
-  }
-  signalHandlersMap[signalName] = _.filter(signalHandlersMap[signalName], (item) => {
+export const removeCleanupHandler = (handler: GatewaySignalHandler) => {
+  signalHandlersMap.cleanup = _.filter(signalHandlersMap.cleanup, (item) => {
     return item !== handler;
   });
 };
 
-process.on('SIGINT', () => {
-  if (!signalHandlersMap.SIGINT) {
+const triggerCleanup = () => {
+  if (!signalHandlersMap.cleanup.length) {
     process.exit();
   }
-  return Promise.all(_.map(signalHandlersMap.SIGINT!, (handler) => {
+  const handlers = signalHandlersMap.cleanup;
+  signalHandlersMap.cleanup = [];
+
+  return Promise.all(_.map(handlers, (handler) => {
     return handler();
   }))
     .then(() => {
@@ -38,4 +34,7 @@ process.on('SIGINT', () => {
     .catch(() => {
       process.exit(1);
     });
-});
+}
+
+process.on('SIGINT', triggerCleanup);
+process.on('SIGTERM', triggerCleanup);
