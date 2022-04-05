@@ -17,6 +17,8 @@
     "dev-queue": "nodemon src/queue.ts",
     "dev-queue-dashboard": "nodemon src/queue-dashboard.ts",
     "dev-schedule": "nodemon src/schedule.ts",
+    "dev-monitor": "docker run --rm -p 9090:9090 -v `pwd`/scripts/prometheus.yml:/etc/prometheus/prometheus.yml ubuntu/prometheus:2.32-20.04_beta",
+    "dev-grafana": "docker run --rm -p 3000:3000 -e GF_AUTH_DISABLE_LOGIN_FORM=true -e GF_AUTH_ANONYMOUS_ENABLED=true -e GF_AUTH_ANONYMOUS_ORG_ROLE=Admin -v `pwd`/scripts/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml ubuntu/grafana:8.1-21.10_beta",
     "build-zip": "npm run build && zip -r app-service.zip dist scripts .dockerignore Dockerfile package.json yarn.lock",
     "build-image:prod": "yarn build && docker build -t app-service:${APP_VERSION:-1.0.0} . ",
     "image-cli:prod": "docker run -it --rm app-service:${APP_VERSION:-1.0.0} sh",

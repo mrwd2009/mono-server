@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 5s
+scrape_configs:
+  - job_name: "app-gateway-development-dev-app"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["192.168.1.4:4000"]
