@@ -1,13 +1,15 @@
 import cluster, { fork, isWorker } from 'cluster';
 import { cpus } from 'os';
 import config from '../config/config';
+import { initialize as initMonitor } from '../lib/monitor/prometheus';
 
-const initialize = () => {
+const initialize = async () => {
   if (config.isDev) {
+    await initMonitor('queue');
     require('./job');
     return;
   }
-
+  await initMonitor('queue', true);
   if (isWorker) {
     require('./job');
     return;

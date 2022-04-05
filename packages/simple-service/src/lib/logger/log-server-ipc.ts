@@ -1,16 +1,19 @@
 import fs from 'fs';
 import net, { Socket } from 'net';
 import config from '../../config/config';
+import { initialize as initMonitor } from '../../lib/monitor/prometheus';
 import { pureLogger } from './primary';
+import { registerCleanupHandler } from '../signal/handler';
 
 const {
   logger: { ipc },
 } = config;
 
-const initialize = () => {
+const initialize = async () => {
   if (!ipc.enabled) {
     return;
   }
+  await initMonitor('log');
   if (fs.existsSync(ipc.path)) {
     fs.unlinkSync(ipc.path);
   }
@@ -57,6 +60,18 @@ const initialize = () => {
     });
 
   ipcServer.listen(ipcOptions);
+
+  // gracefully close server
+  registerCleanupHandler(async () => {
+    await new Promise((resolve, reject) => {
+      ipcServer.close((error) => {
+        if (error) {
+          return reject(error);
+        }
+        return resolve(true);
+      });
+    });
+  });
 };
 
 initialize();

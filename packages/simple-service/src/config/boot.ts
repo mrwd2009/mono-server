@@ -6,7 +6,7 @@ import dispatch from './dispatch';
 import { ip } from '../lib/util';
 import config from './config';
 import logger from '../lib/logger';
-import { registerCleanupHandler } from '../lib/signal/handler'; // register signal handler
+import { registerCleanupHandler, registerInitPromise } from '../lib/signal/handler'; // register signal handler
 
 // record all app level errors.
 const catchUnhandledError = async (app: Koa) => {
@@ -26,18 +26,20 @@ const setCookieKeys = async (app: Koa) => {
 };
 
 const listen = async (app: Koa, port: number | string) => {
-  await new Promise((resolve, reject) => {
+  const initStep = new Promise<Error | boolean>((resolve, reject) => {
     const server = http.createServer(app.callback()).listen(port, () => {
-      console.log('\u001b[38;5;28m--------------------- API Serivce ---------------------\u001b[0m');
-      console.log('The http endpoints are as following.\n');
-      console.log(`\u001b[30;1mLocal:\u001b[0m            http://localhost:\u001b[30;1m${port}\u001b[0m/`);
       if (config.isDev) {
+        console.log('\u001b[38;5;28m--------------------- API Serivce ---------------------\u001b[0m');
+        console.log('The http endpoints are as following.\n');
+        console.log(`\u001b[30;1mLocal:\u001b[0m            http://localhost:\u001b[30;1m${port}\u001b[0m/`);
         console.log(
           `\u001b[30;1mOn Your Network:\u001b[0m  http://${ip.getLocalIPs()[0]}:\u001b[30;1m${port}\u001b[0m/`,
         );
+        console.log('\n');
+        resolve(true);
+      } else {
+        resolve(true);
       }
-      console.log('\n');
-      resolve(port);
     });
     // gracefully close server
     registerCleanupHandler(async () => {
@@ -46,7 +48,7 @@ const listen = async (app: Koa, port: number | string) => {
           if (error) {
             return reject(error);
           }
-          return resolve(error);
+          return resolve(true);
         });
       });
     });
@@ -57,6 +59,8 @@ const listen = async (app: Koa, port: number | string) => {
       }
     });
   });
+  registerInitPromise(initStep);
+  await initStep;
 };
 
 const boot = async (app: Koa, port: number | string): Promise<void> => {

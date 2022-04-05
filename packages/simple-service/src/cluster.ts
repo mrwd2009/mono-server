@@ -2,16 +2,20 @@ import 'dotenv/config';
 import cluster, { fork, isWorker } from 'cluster';
 import { cpus } from 'os';
 import config from './config/config';
+import Application from './application';
+import { initialize as initMonitor } from './lib/monitor/prometheus';
+import { registerCleanupHandler } from './lib/signal/handler';
 const {
   logger: { ipc },
 } = config;
 
-const initialize = () => {
+const initialize = async () => {
+  await initMonitor('cluster', true);
   if (isWorker) {
-    require('./index');
+    const app = new Application();
+    await app.initialize(true);
     return;
   }
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let logger: any = null;
   // if log server is created, we need to skip requiring 'primary'.
@@ -32,11 +36,22 @@ const initialize = () => {
   for (let i = 0; i < size; i++) {
     createWorker();
   }
+  let destroy = false;
   cluster.on('exit', (worker, code, signal) => {
     const msg = `API(exit): worker(${worker.process.pid}) died with code(${code}) and signal(${signal})`;
     logger?.error(msg);
     console.error(msg);
+    if (destroy) {
+      return;
+    }
     createWorker();
+  });
+
+  registerCleanupHandler(async () => {
+    await new Promise((resolve) => {
+      destroy = true;
+      resolve(true);
+    });
   });
 };
 

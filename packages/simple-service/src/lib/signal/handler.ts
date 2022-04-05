@@ -5,8 +5,9 @@ export type GatewaySignalHandler = () => Promise<void>;
 
 interface HandlersMap {
   cleanup: GatewaySignalHandler[],
+  init: Promise<Error | boolean>[],
 }
-const signalHandlersMap: HandlersMap = { cleanup: [] };
+const signalHandlersMap: HandlersMap = { cleanup: [], init: [] };
 
 export const registerCleanupHandler = (handler: GatewaySignalHandler) => {
   signalHandlersMap.cleanup.push(handler);
@@ -38,3 +39,32 @@ const triggerCleanup = () => {
 
 process.on('SIGINT', triggerCleanup);
 process.on('SIGTERM', triggerCleanup);
+
+export const registerInitPromise = (p: Promise<Error | boolean>) => {
+  signalHandlersMap.init.push(p);
+};
+
+export const removeInitPromise = (p: Promise<Error | boolean>) => {
+  signalHandlersMap.init = _.filter(signalHandlersMap.init, (item) => {
+    return item !== p;
+  });
+};
+
+export const triggerInit = () => {
+  if (!signalHandlersMap.init.length) {
+    return;
+  }
+
+  const handlers = signalHandlersMap.init;
+  signalHandlersMap.init = [];
+
+  return Promise.all(handlers)
+    .then(() => {
+      console.log(`API Gateway is initialized successfully.`)
+    })
+    .catch(() => {
+      console.error(`API Gateway is initialized failed.`);
+    });
+}
+
+setTimeout(triggerInit, 0);

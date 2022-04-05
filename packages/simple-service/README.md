@@ -100,6 +100,12 @@ Before committing any code, please run `yarn format`.
 HTTP server port.\
 **PORT=4100**
 
+Prometheus metricx port
+**APP_PROMETHEUS_PORT=4000**
+
+Prometheus api path
+**APP_PROMETHEUS_PATH=/metrics**
+
 Wokers number in cluster mode. If omitted, cpu cores number will be used.\
 **CLUSTER_WORKERS=4**
 
