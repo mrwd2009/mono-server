@@ -67,7 +67,7 @@ export const initialize = async (appName: string, clusterMode = false) => {
       initStep = new Promise<Error | boolean>((resolve) => {
         new AggregatorRegistry();
         globalRegister.setDefaultLabels({
-          app: `app-gateway-${config.nodeEnv}-${config.appEnv}-${appName}}`,
+          app: `${config.monitor.promethuesLabel}-${config.nodeEnv}-${config.appEnv}-${appName}}`,
         });
         client.collectDefaultMetrics({
           gcDurationBuckets: [0.001, 0.01, 0.1, 1, 2, 5], // These are the default buckets.
@@ -80,7 +80,7 @@ export const initialize = async (appName: string, clusterMode = false) => {
       const register = new Registry();
 
       register.setDefaultLabels({
-        app: `app-gateway-${config.nodeEnv}-${config.appEnv}-${appName}}`,
+        app: `${config.monitor.promethuesLabel}-${config.nodeEnv}-${config.appEnv}-${appName}}`,
       });
 
       client.collectDefaultMetrics({ register });

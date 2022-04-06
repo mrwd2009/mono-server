@@ -23,4 +23,6 @@ RUN yarn install --production --frozen-lockfile --silent && yarn cache clean
 
 EXPOSE 5700/tcp
 
-CMD ["/apps/bin/dumb-init", "node", "./main/index.js"]
+ENTRYPOINT ["/apps/bin/dumb-init", "--"]
+
+CMD [ "node", "--max-old-space-size=1024", "--heapsnapshot-signal=SIGUSR2", "--heapsnapshot-near-heap-limit=3", "./main/index.js"]

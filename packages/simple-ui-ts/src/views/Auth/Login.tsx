@@ -1,7 +1,6 @@
 import { FC, memo } from 'react';
 import { Link } from 'react-router-dom';
-import { Form, Input, Button, Divider, Typography } from 'antd';
-import { AmazonOutlined, FacebookOutlined, GoogleOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Divider, Typography, Checkbox } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { getRouteInfo } from '../../config/routes-info';
@@ -9,13 +8,16 @@ import AuthLayout from '../../layouts/AuthLayout';
 import brand from '../../assets/images/brand.png';
 import useLogin from './hooks/useLogin';
 
+const { useForm } = Form;
 const registerRoute = getRouteInfo('register');
 const fogotRoute = getRouteInfo('forgot-password');
-
+const checkedKey = 'app-ex-login-remember';
+const savedKey = 'app-ex-login-email';
 const Login: FC = () => {
   const { loading, handleLogin } = useLogin();
   const { t: gT } = useTranslation();
   const { t } = useTranslation('translation', { keyPrefix: 'auth' });
+  const [form] = useForm();
   return (
     <AuthLayout
       header={{
@@ -34,7 +36,18 @@ const Login: FC = () => {
         </div>
         <Form
           size="large"
-          onFinish={handleLogin}
+          form={form}
+          layout="vertical"
+          onFinish={(values) => {
+            if (values.remember) {
+              localStorage.setItem(savedKey, values.email);
+              localStorage.setItem(checkedKey, 'true');
+            } else {
+              localStorage.removeItem(savedKey);
+              localStorage.removeItem(checkedKey);
+            }
+            handleLogin(values);
+          }}
         >
           <Form.Item
             name="email"
@@ -45,6 +58,7 @@ const Login: FC = () => {
                 message: t('requiredEmail'),
               },
             ]}
+            initialValue={localStorage.getItem(savedKey)}
           >
             <Input
               id="username"
@@ -85,6 +99,20 @@ const Login: FC = () => {
               {t('logIn')}
             </Button>
           </Form.Item>
+          <Form.Item name="remember" noStyle valuePropName="checked" initialValue={!!localStorage.getItem(checkedKey)}>
+            <Checkbox
+              onChange={(event) => {
+                if (!event.target.checked) {
+                  localStorage.removeItem(savedKey);
+                  localStorage.removeItem(checkedKey);
+                } else {
+                  localStorage.setItem(savedKey, form.getFieldValue('email'));
+                  localStorage.setItem(checkedKey, 'true');
+                }
+              }}
+            >Remember me</Checkbox>
+          </Form.Item>
+          <Divider className="app-ex-divider-sm" dashed />
           <Form.Item>
             <Link
               to={fogotRoute!.path}

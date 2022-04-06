@@ -35,6 +35,7 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   APP_CHECK_EXPIRED_PASS?: string;
   APP_PROMETHEUS_PORT?: string;
   APP_PROMETHEUS_PATH?: string;
+  APP_PROMETHEUS_LABEL?: string;
 };
 
 const envObj: GatewayENV = process.env;
@@ -183,6 +184,7 @@ const config = {
   monitor: {
     prometheusPort: parseInt(envObj.APP_PROMETHEUS_PORT || '4000'),
     promethuesPath: envObj.APP_PROMETHEUS_PATH || '/metrics',
+    promethuesLabel: envObj.APP_PROMETHEUS_LABEL || 'app-gateway',
   },
   github: {
     username: envObj.GITHUB_USERNAME || '',

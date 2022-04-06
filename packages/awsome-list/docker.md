@@ -48,3 +48,11 @@ docker save -o ./Downloads/app-service.tar app-service:1.0.0
 ```
 docker load --input app-service:1.0.0
 ```
+
+## Clear unused image
+```
+docker image prune
+
+# To remove all images which are not used by existing containers, use the -a flag:
+docker image prune -a
+```
