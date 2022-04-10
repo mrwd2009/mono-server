@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import appDBs from '../../model/app';
 import { AuthError } from '../../../lib/error';
 import util from '../../../lib/util';
@@ -17,7 +18,7 @@ const checker: Checker = async (payload, token) => {
       },
       include: {
         model: UserToken,
-        attributes: ['id'],
+        attributes: ['id', 'expired_at'],
         where: {
           user_id:  payload.sub,
           signature: util.getJwtTokenSignature(token),
@@ -29,6 +30,7 @@ const checker: Checker = async (payload, token) => {
     if (!user || !user.UserTokens?.length) {
       throw new AuthError('Invalid or expired token.');
     }
+    const tokenObj = user.UserTokens[0];
     return {
       passed: true,
       entity: {
@@ -36,7 +38,8 @@ const checker: Checker = async (payload, token) => {
         email: user.email,
       },
       afterChecker: async () => {
-        console.log('after gateway')
+        // todo, extend active token automatically
+        // tokenObj.expired_at
         return;
       },
     }
