@@ -14,7 +14,9 @@ const locale = {
       lockedMessage_other: 'Your account has been locked, please wait {{count}} minutes to unlock.',
       invalidToken: 'Invalid or expired token.',
       notConfirmed: 'Please check your inbox to complete registration.',
-      disabledUser: 'Your account has been disabled, please contact administrator.',
+      disabledUser: 'Your account has been frozen, please contact administrator.',
+      notSupportSamePassword: 'Please choose an unused password.',
+      completePassReset: 'Please complete your password resetting.',
     },
   },
 };

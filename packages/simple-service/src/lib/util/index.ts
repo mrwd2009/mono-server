@@ -4,7 +4,8 @@ import * as bashRunner from './bash-runner';
 import * as common from './common';
 import * as locale from './locale';
 import * as acceptLangParser from './locale';
+import * as gatewayJwt from './gateway-jwt';
 
-export { password, ip, bashRunner, common, locale, acceptLangParser };
+export { password, ip, bashRunner, common, locale, acceptLangParser, gatewayJwt };
 
 export default common;

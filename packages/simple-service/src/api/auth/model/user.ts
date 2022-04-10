@@ -8,7 +8,7 @@ import type { I18nType } from '../../../types';
 import { randomPassword } from '../../../lib/util/password';
 import { job } from '../../../queue/helper';
 import config from '../../../config/config';
-import { DataError } from '../../../lib/error';
+import { DataError, LogicError } from '../../../lib/error';
 import { getJwtTokenSignature } from '../../../lib/util/common';
 
 const {
@@ -67,6 +67,12 @@ export const login = async (
       throw error;
     }
 
+    if (user.reset_password_token) {
+      const error = new AuthError(i18n.t('auth.completePassReset'));
+      error.public = true;
+      throw error;
+    }
+
     user = await userHelper.checkLockStatus({ user, User, i18n, transaction });
 
     if (!user) {
@@ -81,6 +87,27 @@ export const login = async (
         transaction,
         UserToken,
       });
+    };
+
+    const trackLogin = async (extraInfo?: string) => {
+      if (config.auth.traceLogin) {
+        await UserLoginHistory.create(
+          {
+            node_env: config.nodeEnv,
+            app_env: config.appEnv,
+            email: user!.email,
+            ip: params.ip,
+            user_agent: params.userAgent,
+            referer: params.referer,
+            device_type: params.client?.deviceType,
+            os: params.client?.os,
+            browser: params.client?.browser,
+            timezone: params.client?.timeZone,
+            other: extraInfo || null,
+          },
+          { transaction },
+        );
+      }
     };
 
     if (await util.password.isPasswordEqual(password, user.password)) {
@@ -101,28 +128,13 @@ export const login = async (
         user.unlock_token = lockToken;
         locked = true;
         userId = user.id;
+        trackLogin('Locked');
       }
       await user.save({ transaction });
       return null;
     }
 
-    if (config.auth.traceLogin) {
-      await UserLoginHistory.create(
-        {
-          node_env: config.nodeEnv,
-          app_env: config.appEnv,
-          email: user.email,
-          ip: params.ip,
-          user_agent: params.userAgent,
-          referer: params.referer,
-          device_type: params.client?.deviceType,
-          os: params.client?.os,
-          browser: params.client?.browser,
-          timezone: params.client?.timeZone,
-        },
-        { transaction },
-      );
-    }
+    trackLogin();
 
     let reset = false;
     if (config.auth.checkExpiredPass) {
@@ -301,6 +313,10 @@ export const resetPassword = async (params: ResetParams, i18n: I18nType) => {
 
     if (user.reset_password_token !== params.token) {
       throw new DataError(i18n.t('auth.invalidToken'));
+    }
+    
+    if (await util.password.isPasswordEqual(params.password, user.password)) {
+      throw new LogicError(i18n.t('auth.notSupportSamePassword'));
     }
 
     if (user.reset_password_token) {

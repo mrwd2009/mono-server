@@ -30,7 +30,7 @@ export class UserLoginHistory extends Model<
   declare os: CreationOptional<string>;
   declare browser: CreationOptional<string>;
   declare timezone: CreationOptional<string>;
-  declare other: CreationOptional<string>;
+  declare other: CreationOptional<string | null>;
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;
 }

@@ -45,7 +45,7 @@ const getColumns = (userFormModal: any, handleDelete: any): TableColumnsType<any
             color="error"
             icon={<CloseCircleOutlined />}
           >
-            Disabled
+            Frozen
           </Tag>
         );
       },
