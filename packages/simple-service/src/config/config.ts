@@ -5,6 +5,7 @@ import { GatewayEnvConfig } from '../types';
 
 export type GatewayENV = NodeJS.ProcessEnv & {
   JWT_SECRET?: string;
+  JWT_EXPIRED_HOUR?: string;
   TRACE_KNOWN_ERROR_IN_DEV?: string;
   MAIN_REDIS_URL?: string;
   ENABLE_APP_LOG_IPC?: string;
@@ -36,6 +37,9 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   APP_PROMETHEUS_PORT?: string;
   APP_PROMETHEUS_PATH?: string;
   APP_PROMETHEUS_LABEL?: string;
+  APP_SESSION_AUTO_EXTEND?: string;
+  APP_SESSION_IGNORED_ROUTE?: string;
+  APP_SESSION_RESET_HOUR?: string;
 };
 
 const envObj: GatewayENV = process.env;
@@ -96,13 +100,18 @@ const config = {
       score: 2,
       randomPasswordLoop: 4,
     },
+    session: {
+      autoExtend: envObj.APP_SESSION_AUTO_EXTEND === 'true',
+      ignoredRoute: envObj.APP_SESSION_IGNORED_ROUTE || 'auto-refresh',
+      restHour: parseInt(envObj.APP_SESSION_RESET_HOUR || '1', 10),
+    },
   },
   jwt: {
     cookieKey: commonPrefix,
     issuer: 'wudi.link.me@gmail.com',
     audience: 'gmail.com',
     secret: envObj.JWT_SECRET,
-    expireHour: 3,
+    expireHour: parseInt(envObj.JWT_EXPIRED_HOUR || '3', 10),
   },
   cors: {
     allowedDomain: envObj.ALLOWED_DOMAINS ? envObj.ALLOWED_DOMAINS.split(',') : [],

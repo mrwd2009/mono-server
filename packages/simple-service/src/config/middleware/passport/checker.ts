@@ -1,6 +1,31 @@
 import { Middleware, DefaultContext } from "koa";
+import _ from 'lodash';
+import config from '../../config';
 
 export type AfterChecker = (context: DefaultContext) => Promise<void>;
+
+export interface CheckerResult {
+  passed: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  entity?: any;
+  afterChecker?: AfterChecker;
+}
+
+export const canExtendSession = (context: DefaultContext) => {
+  if (!config.auth.session.autoExtend) {
+    return false;
+  }
+
+  if (context.skipSessionExtend) {
+    return false;
+  }
+
+  if (_.includes(context.path, config.auth.session.ignoredRoute)) {
+    return false;
+  }
+
+  return true;
+}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Checker = (payload: any, token: string) => Promise<{ passed: boolean, entity?: { id: string | number, email: string }, afterChecker?: AfterChecker }>;
@@ -22,7 +47,8 @@ export const executeCheckers = async (payload: any, token: string) => {
 
 export const checkerMiddleware: Middleware = async (context, next) => {
   await next();
-  const afterChecker = (context as unknown as { _passportAfterChecker?: AfterChecker })._passportAfterChecker;
+
+  const afterChecker = context._passportAfterChecker;
   if (afterChecker) {
     await afterChecker(context);
   }

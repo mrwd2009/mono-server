@@ -18,6 +18,8 @@ declare module '../types' {
 export class UserToken extends Model<InferAttributes<UserToken>, InferCreationAttributes<UserToken>> {
   declare id: CreationOptional<number>;
   declare user_id: number;
+  declare parent_token_id: CreationOptional<number | null>;
+  declare child_token_id: CreationOptional<number | null>;
   declare signature: string;
   declare token: string;
   declare status: 'enabled' | 'disabled';
@@ -35,6 +37,8 @@ export const initialize = (sequelize: Sequelize) => {
         autoIncrement: true,
       },
       user_id: DataTypes.INTEGER,
+      parent_token_id: DataTypes.INTEGER,
+      child_token_id: DataTypes.INTEGER,
       signature: DataTypes.STRING,
       token: DataTypes.STRING,
       status: DataTypes.STRING,

@@ -54,7 +54,7 @@ export const createToken = async (params: TokenParams) => {
     );
   });
 
-  await params.UserToken.create(
+  const tokenRecord = await params.UserToken.create(
     {
       user_id: params.id,
       signature: getJwtTokenSignature(createdToken),
@@ -67,7 +67,7 @@ export const createToken = async (params: TokenParams) => {
     },
   );
 
-  return createdToken;
+  return tokenRecord;
 };
 
 interface VerifyParams {

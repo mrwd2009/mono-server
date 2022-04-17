@@ -100,10 +100,10 @@ Before committing any code, please run `yarn format`.
 HTTP server port.\
 **PORT=4100**
 
-Prometheus metricx port
+Prometheus metricx port\
 **APP_PROMETHEUS_PORT=4000**
 
-Prometheus api path
+Prometheus api path\
 **APP_PROMETHEUS_PATH=/metrics**
 
 Wokers number in cluster mode. If omitted, cpu cores number will be used.\
@@ -136,6 +136,9 @@ In development mode, show known error.\
 JWT secret key.\
 **JWT_SECRET=xxx**
 
+JWT token effective hour.\
+**JWT_EXPIRED_HOUR**
+
 Main redis url.\
 **MAIN_REDIS_URL=xxx**
 
@@ -146,19 +149,28 @@ Enable log server.\
 **ENABLE_APP_LOG_IPC=true**
 
 Main database auth.\
-**MAIN_DB_USER=xxx**
-**MAIN_DB_PASS=xxx**
-**MAIN_DB_HOST=xxx**
+**MAIN_DB_USER=xxx**\
+**MAIN_DB_PASS=xxx**\
+**MAIN_DB_HOST=xxx**\
 **MAIN_DB_PORT=xxx**
 
 Gateway databsae auth.\
-**GATEWAY_DB_USER=xxx**
-**GATEWAY_DB_PASS=xxx**
-**GATEWAY_DB_HOST=xxx**
+**GATEWAY_DB_USER=xxx**\
+**GATEWAY_DB_PASS=xxx**\
+**GATEWAY_DB_HOST=xxx**\
 **GATEWAY_DB_PORT=xxx**
 
 Default mysql port.\
 **APP_MYSQL_PORT=3306**
 
-Allowed cors domains.
+Allowed cors domains.\
 **ALLOWED_DOMAINS=xxx,xxx**
+
+Enable ability to extend session effective time.\
+**APP_SESSION_AUTO_EXTEND**
+
+Skip extending session effective time when route contains defined value. Default value is `auto-refresh`. When you have an api that is called periodically in client, you must include this string in your route definition or set `context.skipSessionExtend=true` in your koa router middleware.\
+**APP_SESSION_IGNORED_ROUTE**
+
+How many hours left before extending session effective time\
+**APP_SESSION_RESET_HOUR**

@@ -1,15 +1,65 @@
 import dayjs from 'dayjs';
+import { DefaultContext } from 'koa';
 import appDBs from '../../model/app';
 import { AuthError } from '../../../lib/error';
-import util from '../../../lib/util';
+import util, { gatewayJwt } from '../../../lib/util';
 const {
   gateway: {
     models: { User, UserToken },
+    sequelize,
   },
 } = appDBs;
-import { Checker, registerChecker } from "./checker";
+import config from '../../config';
+import { Checker, registerChecker, CheckerResult, canExtendSession } from "./checker";
 
-const checker: Checker = async (payload, token) => {
+const extendSession = async (tokenId: number) => {
+  return await sequelize.transaction(async (transaction) => {
+    const tokenRecord = await UserToken.findOne({
+      attributes: ['id', 'user_id', 'child_token_id'],
+      where: {
+        id: tokenId
+      },
+      transaction,
+      lock: transaction.LOCK.UPDATE,
+    });
+    if (!tokenRecord) {
+      throw new AuthError('Invalid token.');
+    }
+
+    if (tokenRecord.child_token_id) {
+      const createdRecord = await UserToken.findOne({
+        attributes: ['id', 'token'],
+        where: {
+          id: tokenRecord.child_token_id
+        },
+        transaction
+      });
+      if (!createdRecord) {
+        throw new AuthError('Invalid token.');
+      }
+      return createdRecord.token;
+    }
+
+    const newTokenRecord = await gatewayJwt.createToken({
+      id: tokenRecord.user_id,
+      type: 'user',
+      transaction,
+      UserToken,
+    });
+
+    newTokenRecord.parent_token_id = tokenRecord.id;
+    tokenRecord.child_token_id = newTokenRecord.id;
+
+    await Promise.all([
+      tokenRecord.save({ transaction }),
+      newTokenRecord.save({ transaction }),
+    ]);
+
+    return newTokenRecord.token;
+  });
+};
+
+const checker: Checker = async (payload, token): Promise<CheckerResult> => {
   if (payload?.type === 'user') {
     const user = await User.findOne({
       attributes: ['id', 'email'],
@@ -37,10 +87,21 @@ const checker: Checker = async (payload, token) => {
         id: user.id,
         email: user.email,
       },
-      afterChecker: async () => {
-        // todo, extend active token automatically
-        // tokenObj.expired_at
-        return;
+      afterChecker: async (context: DefaultContext) => {
+        if (!canExtendSession(context)) {
+          return;
+        }
+
+        const extendDate = dayjs(tokenObj.expired_at).subtract(config.auth.session.restHour, 'hour');
+        const currentDate = dayjs();
+        if (currentDate.isAfter(extendDate)) {
+          const newToken = await extendSession(tokenObj.id);
+          context.cookies.set(config.jwt.cookieKey, newToken, {
+            httpOnly: true,
+            maxAge: config.jwt.expireHour * 3600 * 1000,
+            signed: true,
+          });
+        }
       },
     }
   }

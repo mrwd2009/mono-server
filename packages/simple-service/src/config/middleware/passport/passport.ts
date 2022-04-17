@@ -5,7 +5,14 @@ import { Strategy, ExtractJwt, StrategyOptions, VerifyCallbackWithRequest, JwtFr
 import config from '../../config';
 import { AuthError } from '../../../lib/error';
 import './gateway-checker';
-import { executeCheckers, checkerMiddleware } from './checker';
+import { executeCheckers, checkerMiddleware, AfterChecker } from './checker';
+
+declare module 'koa' {
+  interface DefaultContext {
+    _passportAfterChecker?: AfterChecker;
+    skipSessionExtend?: boolean;
+  }
+}
 
 const getToken: JwtFromRequestFunction = (req) => {
   const cookies = cookie.parse(req.headers.cookie || '');
