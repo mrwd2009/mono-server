@@ -7,3 +7,7 @@ import './User';
 import './UserProfile';
 import './UserLoginHistory';
 import './UserToken';
+import './RbacPermission';
+import './RbacRole';
+import './RbacRolePermission';
+import './RbacUserRole';

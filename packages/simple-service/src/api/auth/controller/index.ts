@@ -137,6 +137,7 @@ export const confirmUserHandler: Array<Middleware> = [
 
 export const logoutHandler: Middleware = async (context) => {
   const token = getJwtTokenFromReq(context.req);
+  context.skipSessionExtend = true;
   await userModel.logoutUser(context.state.user.id, token, context.i18n);
   context.cookies.set(config.jwt.cookieKey, '', { signed: true });
   context.body = {
