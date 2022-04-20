@@ -18,6 +18,7 @@ declare module '../types' {
 export class RbacPermission extends Model<InferAttributes<RbacPermission>, InferCreationAttributes<RbacPermission>> {
   declare id: CreationOptional<number>;
   declare parent_id: number | null;
+  declare type: string;
   declare name: string;
   declare sequence_id: string;
   declare description: string;
@@ -34,6 +35,7 @@ export const initialize = (sequelize: Sequelize) => {
         autoIncrement: true,
       },
       parent_id: DataTypes.INTEGER,
+      type: DataTypes.STRING, // 'category', 'permission'
       name: DataTypes.STRING,
       sequence_id: DataTypes.STRING,
       description: DataTypes.STRING,
