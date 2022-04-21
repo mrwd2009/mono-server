@@ -49,4 +49,8 @@ export const initialize = (sequelize: Sequelize) => {
       timestamps: false,
     },
   );
+
+  return RbacRole;
 };
+
+export default RbacRole;

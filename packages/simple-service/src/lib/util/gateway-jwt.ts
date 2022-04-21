@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import dayjs from 'dayjs';
 import { Transaction } from '@sequelize/core';
-import { UserTokenModelDef } from '.././../model/types';
+import { UserTokenModelDef } from '../../model/types';
 import config from '../../config/config';
 import { getJwtTokenSignature } from './common';
 import { GatewayError, DataError } from '../error';
