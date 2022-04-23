@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import _ from 'lodash';
 import { Transaction, Op } from '@sequelize/core';
 import { RbacRoleModelDef, RbacPermissionModelDef, RbacPermissionModel } from '../../model/types';
@@ -38,9 +39,18 @@ export const reparent = async (params: ReparentParams) => {
   let currentNodes = await Model.findAll({
     attributes: ['id', 'parent_id', 'sequence_id'],
     where: {
-      sequence_id: {
-        [Op.like]: `${parentSequenceId}%`,
-      },
+      [Op.and]: [
+        {
+          sequence_id: {
+            [Op.like]: `${parentSequenceId}%`,
+          },
+        },
+        {
+          sequence_id: {
+            [Op.gte]: sourceNode.sequence_id,
+          },
+        },
+      ]
     },
     transaction,
   });
@@ -50,7 +60,7 @@ export const reparent = async (params: ReparentParams) => {
   const sourceNodes: RbacPermissionModel[] = [];
 
   _.forEach(currentNodes, (node) => {
-    if (_.startsWith(node.sequence_id, parentSequenceId) && node.sequence_id > sourceNode.sequence_id && !_.startsWith(node.sequence_id, sourceNode.sequence_id)) {
+    if (node.sequence_id > sourceNode.sequence_id && !_.startsWith(node.sequence_id, sourceNode.sequence_id)) {
       if (node.sequence_id.length === sourceNode.sequence_id.length) {
         belowSiblings.push(node);
       } else {
@@ -108,9 +118,18 @@ export const reparent = async (params: ReparentParams) => {
     currentNodes = await Model.findAll({
       attributes: ['id', 'parent_id', 'sequence_id'],
       where: {
-        sequence_id: {
-          [Op.like]: `${parentSequenceId}%`,
-        },
+        [Op.and]: [
+          {
+            sequence_id: {
+              [Op.like]: `${parentSequenceId}%`,
+            },
+          },
+          {
+            sequence_id: {
+              [Op.gte]: targetNode.sequence_id,
+            },
+          }
+        ]
       },
       transaction,
     });
@@ -135,7 +154,7 @@ export const reparent = async (params: ReparentParams) => {
   } else {
     if (position === 'above') {
       _.forEach(currentNodes, (node) => {
-        if (_.startsWith(node.sequence_id, parentSequenceId) && node.sequence_id >= targetNode.sequence_id) {
+        if (node.sequence_id >= targetNode.sequence_id) {
           if (node.sequence_id.length === targetNode.sequence_id.length) {
             belowSiblings.push(node);
           } else {
@@ -146,7 +165,7 @@ export const reparent = async (params: ReparentParams) => {
       insertPos = targetNode.sequence_id;
     } else {
       _.forEach(currentNodes, (node) => {
-        if (_.startsWith(node.sequence_id, parentSequenceId) && node.sequence_id > targetNode.sequence_id && !_.startsWith(node.sequence_id, targetNode.sequence_id)) {
+        if (node.sequence_id > targetNode.sequence_id && !_.startsWith(node.sequence_id, targetNode.sequence_id)) {
           if (node.sequence_id.length === targetNode.sequence_id.length) {
             belowSiblings.push(node);
           } else {
@@ -187,4 +206,49 @@ export const reparent = async (params: ReparentParams) => {
   await Promise.all(savedNodes);
 
   return true;
+};
+
+interface TreeDataParams {
+  items: Array<{
+    id: number;
+    parent_id: number | null;
+    name: string;
+    sequence_id: string;
+    data: any;
+  }>;
+}
+
+interface TreeItem {
+  key: number;
+  title: string;
+  data: any;
+  children?: TreeItem[];
+}
+
+export const getTreeData = (params: TreeDataParams) => {
+  const items = _.orderBy(params.items, ['sequence_id'], 'asc');
+  const parentMap = new Map<number, TreeItem>();
+  const results: TreeItem[] = [];
+  const keys: number[] = [];
+  
+  _.forEach(items, (item) => {
+    const newItem = {
+      key: item.id,
+      title: item.name,
+      data: item.data,
+      children: [],
+    };
+    keys.push(item.id);
+    if (item.parent_id === null) {
+      results.push(newItem);
+      parentMap.set(item.id, newItem);
+    } else {
+      parentMap.get(item.parent_id)?.children?.push(newItem);
+    }
+  });
+
+  return {
+    keys,
+    roots: results,
+  };
 };
