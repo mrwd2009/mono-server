@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import _ from 'lodash';
-import { Transaction, Op } from '@sequelize/core';
+import { Transaction, Op, fn, col } from '@sequelize/core';
 import { RbacRoleModelDef, RbacPermissionModelDef, RbacPermissionModel } from '../../model/types';
-import { DataError } from '../error';
-
+import { DataError, LogicError } from '../error';
 
 interface ReparentParams {
   sourceId: number;
@@ -205,7 +204,7 @@ export const reparent = async (params: ReparentParams) => {
 
   await Promise.all(savedNodes);
 
-  return true;
+  return insertPos;
 };
 
 interface TreeDataParams {
@@ -252,3 +251,117 @@ export const getTreeData = (params: TreeDataParams) => {
     roots: results,
   };
 };
+
+interface CreateParams {
+  targetId: number;
+  values: any;
+  position: string;
+  Model: RbacPermissionModelDef | RbacRoleModelDef;
+  placeholderLength?: number;
+  transaction?: Transaction;
+}
+export const createTreeItem = async (params: CreateParams) => {
+  const {
+    targetId,
+    values,
+    position,
+    transaction,
+    placeholderLength = 3,
+  } = params;
+  const Model = params.Model as RbacPermissionModelDef;
+  const sequenceRecord = await Model.findOne({
+    attributes: [[fn('max', col('sequence_id')), 'maxSequenceId']],
+    where: {
+      parent_id: null,
+    },
+    transaction,
+  });
+
+  let sequenceId = '001';
+  if (sequenceRecord) {
+    const nextId: number = parseInt(sequenceRecord.get('maxSequenceId') as string) + 1;
+    if (nextId >= Math.pow(10, placeholderLength)) {
+      throw new LogicError('Sequence id reached the limitation.');
+    }
+    sequenceId = _.padStart(`${nextId}`, placeholderLength, '0');
+  }
+
+  const newItem = await Model.create({
+    ...values,
+    parent_id: null,
+    sequence_id: sequenceId,
+  }, {
+    transaction,
+  });
+
+  await reparent({
+    sourceId: newItem.id,
+    targetId,
+    position,
+    Model,
+    placeholderLength,
+    transaction,
+  });
+}
+
+interface DeleteParams {
+  id: number;
+  Model: RbacPermissionModelDef | RbacRoleModelDef;
+  placeholderLength?: number;
+  transaction?: Transaction;
+}
+export const deleteTreeItem = async (params: DeleteParams) => {
+  const {
+    id,
+    placeholderLength = 3,
+    transaction,
+  } = params;
+  const Model = params.Model as RbacPermissionModelDef;
+
+  const count = await Model.count({
+    where: {
+      parent_id: null,
+    },
+    transaction,
+  });
+
+  if (count === 0) {
+    throw new DataError('No available data to delete.');
+  }
+  const sequenceId = _.padStart(`${count}`, placeholderLength, '0');
+
+  const targetNode = await Model.findOne({
+    attributes: ['id'],
+    where: {
+      parent_id: null,
+      sequence_id: sequenceId,
+    },
+    transaction,
+  });
+
+  if (!targetNode) {
+    throw new DataError('No available target node.');
+  }
+
+  const insertedSeq = await reparent({
+    sourceId: id,
+    targetId: targetNode.id,
+    position: 'below',
+    Model,
+    placeholderLength,
+    transaction,
+  });
+
+  await Model.destroy({
+    where: {
+      sequence_id: {
+        [Op.like]: `${insertedSeq}%`,
+      },
+    },
+    transaction,
+  });
+
+  return true;
+};
+
+
