@@ -12,23 +12,25 @@ export const initialize = async (appName: string, clusterMode = false) => {
     if (!isWorker) {
       initStep = new Promise<Error | boolean>((resolve, reject) => {
         const register = new AggregatorRegistry();
-  
+
         client.collectDefaultMetrics({ register });
-  
+
         const server = http.createServer(async (req, res) => {
           if (req.url !== config.monitor.promethuesPath) {
             req.statusCode = 404;
             res.end(JSON.stringify({ meta: { code: 404, message: 'Not supported url.' }, data: null }));
             return;
           }
-  
+
           res.setHeader('Content-Type', register.contentType);
           const metrics = await register.clusterMetrics();
           res.end(metrics);
         });
         server.listen(config.monitor.prometheusPort, () => {
           if (config.isDev) {
-            console.log('\u001b[38;5;28m--------------------- API Prometheus Cluster Serivce ---------------------\u001b[0m');
+            console.log(
+              '\u001b[38;5;28m--------------------- API Prometheus Cluster Serivce ---------------------\u001b[0m',
+            );
             console.log('The http endpoints are as following.\n');
             console.log(
               `\u001b[30;1mLocal:\u001b[0m            http://localhost:\u001b[30;1m${config.monitor.prometheusPort}${config.monitor.promethuesPath}\u001b[0m`,
@@ -44,14 +46,14 @@ export const initialize = async (appName: string, clusterMode = false) => {
             resolve(true);
           }
         });
-  
+
         server.on('error', (error: Error): void => {
           reject(error);
           if (error) {
             console.error(error);
           }
         });
-  
+
         registerCleanupHandler(async () => {
           await new Promise((resolve, reject) => {
             server.close((error) => {

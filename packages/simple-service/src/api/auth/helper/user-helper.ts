@@ -13,7 +13,9 @@ interface TokenParams {
   UserToken: UserTokenModelDef;
 }
 export const createJwtToken = async (params: TokenParams): Promise<string> => {
-  return await (await gatewayJwt.createToken(params)).token;
+  return await (
+    await gatewayJwt.createToken(params)
+  ).token;
 };
 
 interface VerifyParams {

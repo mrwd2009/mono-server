@@ -100,7 +100,7 @@ export const verfyToken = async (params: VerifyParams) => {
         if (decoded) {
           resolve({
             id: (decoded as unknown as { sub: number }).sub,
-            type: (decoded  as unknown as { type: TokenParams['type'] }).type,
+            type: (decoded as unknown as { type: TokenParams['type'] }).type,
           });
         } else {
           reject(new GatewayError('Empty jwt token.'));

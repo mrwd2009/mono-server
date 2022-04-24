@@ -1,4 +1,4 @@
-import { Middleware, DefaultContext } from "koa";
+import { Middleware, DefaultContext } from 'koa';
 import _ from 'lodash';
 import config from '../../config';
 
@@ -25,10 +25,13 @@ export const canExtendSession = (context: DefaultContext) => {
   }
 
   return true;
-}
+};
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Checker = (payload: any, token: string) => Promise<{ passed: boolean, entity?: { id: string | number, email: string }, afterChecker?: AfterChecker }>;
+export type Checker = (
+  payload: any,
+  token: string,
+) => Promise<{ passed: boolean; entity?: { id: string | number; email: string }; afterChecker?: AfterChecker }>;
 export const checkerList: Checker[] = [];
 
 export const registerChecker = (check: Checker) => {

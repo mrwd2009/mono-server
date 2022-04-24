@@ -3,7 +3,7 @@ process.env.GATEWAY_DB_PASS = 'xxx';
 process.env.GATEWAY_DB_HOST = 'localhost';
 import _ from 'lodash';
 import { Sequelize } from '@sequelize/core';
-import { reparent, getTreeData, createTreeItem, deleteTreeItem } from "./database-tree-data";
+import { reparent, getTreeData, createTreeItem, deleteTreeItem } from './database-tree-data';
 
 test('test databaes tree data reparent', async () => {
   // const {
@@ -13,14 +13,12 @@ test('test databaes tree data reparent', async () => {
   //     }
   //   }
   // } =  require("../../config/model/app").default;
-
   // const result = await reparent({
   //   sourceId: 2,
   //   targetId: 8,
   //   position: 'below',
   //   Model: RbacPermission
   // });
-
   // expect(result).toBe(true);
 });
 
@@ -32,7 +30,6 @@ test('test getTreeData', async () => {
   //     }
   //   }
   // } =  require("../../config/model/app").default;
-
   // const items = await RbacPermission.findAll();
   // const treeItems = _.map(items, (item) => {
   //   return {
@@ -45,9 +42,7 @@ test('test getTreeData', async () => {
   //     },
   //   };
   // });
-
   // const result = getTreeData({ items: treeItems });
-
   // console.log(JSON.stringify(result, null, 4));
 });
 
@@ -60,7 +55,6 @@ test('test createTreeItem', async () => {
   //     sequelize,
   //   }
   // } =  require("../../config/model/app").default;
-
   // await (sequelize as Sequelize).transaction(async (transaction) => {
   //   await createTreeItem({
   //     values: {
@@ -74,11 +68,10 @@ test('test createTreeItem', async () => {
   //     transaction,
   //   });
   // });
-
   // expect(true).toBe(true);
 });
 
-test('test createTreeItem', async () => {
+test('test deleteTreeItem', async () => {
   // const {
   //   gateway: {
   //     models: {
@@ -87,7 +80,6 @@ test('test createTreeItem', async () => {
   //     sequelize,
   //   }
   // } =  require("../../config/model/app").default;
-
   // await (sequelize as Sequelize).transaction(async (transaction) => {
   //   await deleteTreeItem({
   //     id: 6,
@@ -95,6 +87,5 @@ test('test createTreeItem', async () => {
   //     transaction,
   //   });
   // });
-
   // expect(true).toBe(true);
 });

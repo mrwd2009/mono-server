@@ -13,12 +13,7 @@ interface ReparentParams {
   transaction?: Transaction;
 }
 export const reparent = async (params: ReparentParams) => {
-  const {
-    sourceId,
-    targetId,
-    transaction,
-    position,
-  } = params;
+  const { sourceId, targetId, transaction, position } = params;
   const placeholderLength = params.placeholderLength || 3;
   const Model = params.Model as RbacPermissionModelDef;
 
@@ -49,7 +44,7 @@ export const reparent = async (params: ReparentParams) => {
             [Op.gte]: sourceNode.sequence_id,
           },
         },
-      ]
+      ],
     },
     transaction,
   });
@@ -76,7 +71,11 @@ export const reparent = async (params: ReparentParams) => {
 
   _.forEach(belowSiblings, (sibling) => {
     const oldId = sibling.sequence_id;
-    const newId = `${parentSequenceId}${_.padStart(`${parseInt(sibling.sequence_id.slice(-placeholderLength), 10) - 1}`, placeholderLength, '0')}`;
+    const newId = `${parentSequenceId}${_.padStart(
+      `${parseInt(sibling.sequence_id.slice(-placeholderLength), 10) - 1}`,
+      placeholderLength,
+      '0',
+    )}`;
     sibling.sequence_id = newId;
     savedNodes.push(sibling.save({ transaction }));
 
@@ -127,8 +126,8 @@ export const reparent = async (params: ReparentParams) => {
             sequence_id: {
               [Op.gte]: targetNode.sequence_id,
             },
-          }
-        ]
+          },
+        ],
       },
       transaction,
     });
@@ -172,14 +171,22 @@ export const reparent = async (params: ReparentParams) => {
           }
         }
       });
-      insertPos = `${parentSequenceId}${_.padStart(`${parseInt(targetNode.sequence_id.slice(-placeholderLength), 10) + 1}`, placeholderLength, '0')}`;
+      insertPos = `${parentSequenceId}${_.padStart(
+        `${parseInt(targetNode.sequence_id.slice(-placeholderLength), 10) + 1}`,
+        placeholderLength,
+        '0',
+      )}`;
     }
 
     parentId = targetNode.parent_id;
 
     _.forEach(belowSiblings, (sibling) => {
       const oldId = sibling.sequence_id;
-      const newId = `${parentSequenceId}${_.padStart(`${parseInt(sibling.sequence_id.slice(-placeholderLength), 10) + 1}`, placeholderLength, '0')}`;
+      const newId = `${parentSequenceId}${_.padStart(
+        `${parseInt(sibling.sequence_id.slice(-placeholderLength), 10) + 1}`,
+        placeholderLength,
+        '0',
+      )}`;
       sibling.sequence_id = newId;
       savedNodes.push(sibling.save({ transaction }));
       belowChildren = _.filter(belowChildren, (child) => {
@@ -229,7 +236,7 @@ export const getTreeData = (params: TreeDataParams) => {
   const parentMap = new Map<number, TreeItem>();
   const results: TreeItem[] = [];
   const keys: number[] = [];
-  
+
   _.forEach(items, (item) => {
     const newItem = {
       key: item.id,
@@ -261,13 +268,7 @@ interface CreateParams {
   transaction?: Transaction;
 }
 export const createTreeItem = async (params: CreateParams) => {
-  const {
-    targetId,
-    values,
-    position,
-    transaction,
-    placeholderLength = 3,
-  } = params;
+  const { targetId, values, position, transaction, placeholderLength = 3 } = params;
   const Model = params.Model as RbacPermissionModelDef;
   const sequenceRecord = await Model.findOne({
     attributes: [[fn('max', col('sequence_id')), 'maxSequenceId']],
@@ -286,13 +287,16 @@ export const createTreeItem = async (params: CreateParams) => {
     sequenceId = _.padStart(`${nextId}`, placeholderLength, '0');
   }
 
-  const newItem = await Model.create({
-    ...values,
-    parent_id: null,
-    sequence_id: sequenceId,
-  }, {
-    transaction,
-  });
+  const newItem = await Model.create(
+    {
+      ...values,
+      parent_id: null,
+      sequence_id: sequenceId,
+    },
+    {
+      transaction,
+    },
+  );
 
   await reparent({
     sourceId: newItem.id,
@@ -302,7 +306,7 @@ export const createTreeItem = async (params: CreateParams) => {
     placeholderLength,
     transaction,
   });
-}
+};
 
 interface DeleteParams {
   id: number;
@@ -311,11 +315,7 @@ interface DeleteParams {
   transaction?: Transaction;
 }
 export const deleteTreeItem = async (params: DeleteParams) => {
-  const {
-    id,
-    placeholderLength = 3,
-    transaction,
-  } = params;
+  const { id, placeholderLength = 3, transaction } = params;
   const Model = params.Model as RbacPermissionModelDef;
 
   const count = await Model.count({
@@ -363,5 +363,3 @@ export const deleteTreeItem = async (params: DeleteParams) => {
 
   return true;
 };
-
-

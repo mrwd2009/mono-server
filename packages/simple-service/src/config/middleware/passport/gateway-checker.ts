@@ -10,14 +10,14 @@ const {
   },
 } = appDBs;
 import config from '../../config';
-import { Checker, registerChecker, CheckerResult, canExtendSession } from "./checker";
+import { Checker, registerChecker, CheckerResult, canExtendSession } from './checker';
 
 const extendSession = async (tokenId: number) => {
   return await sequelize.transaction(async (transaction) => {
     const tokenRecord = await UserToken.findOne({
       attributes: ['id', 'user_id', 'child_token_id'],
       where: {
-        id: tokenId
+        id: tokenId,
       },
       transaction,
       lock: transaction.LOCK.UPDATE,
@@ -30,9 +30,9 @@ const extendSession = async (tokenId: number) => {
       const createdRecord = await UserToken.findOne({
         attributes: ['id', 'token'],
         where: {
-          id: tokenRecord.child_token_id
+          id: tokenRecord.child_token_id,
         },
-        transaction
+        transaction,
       });
       if (!createdRecord) {
         throw new AuthError('Invalid token.');
@@ -50,10 +50,7 @@ const extendSession = async (tokenId: number) => {
     newTokenRecord.parent_token_id = tokenRecord.id;
     tokenRecord.child_token_id = newTokenRecord.id;
 
-    await Promise.all([
-      tokenRecord.save({ transaction }),
-      newTokenRecord.save({ transaction }),
-    ]);
+    await Promise.all([tokenRecord.save({ transaction }), newTokenRecord.save({ transaction })]);
 
     return newTokenRecord.token;
   });
@@ -70,7 +67,7 @@ const checker: Checker = async (payload, token): Promise<CheckerResult> => {
         model: UserToken,
         attributes: ['id', 'expired_at'],
         where: {
-          user_id:  payload.sub,
+          user_id: payload.sub,
           signature: util.getJwtTokenSignature(token),
           status: 'enabled',
         },
@@ -103,7 +100,7 @@ const checker: Checker = async (payload, token): Promise<CheckerResult> => {
           });
         }
       },
-    }
+    };
   }
 
   return {

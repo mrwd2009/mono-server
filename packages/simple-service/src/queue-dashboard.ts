@@ -14,7 +14,7 @@ const initialize = async () => {
   app.use((context) => {
     context.redirect(config.queue.dashboard.basePath);
   });
-  const server = http.createServer(app.callback())
+  const server = http.createServer(app.callback());
   server
     .listen(port, () => {
       console.log('\u001b[38;5;28m--------------------- Queue Dashboard ---------------------\u001b[0m');
@@ -31,8 +31,8 @@ const initialize = async () => {
       console.error(error);
     });
   await initMonitor('queue-dashboard');
-   // gracefully close server
-   registerCleanupHandler(async () => {
+  // gracefully close server
+  registerCleanupHandler(async () => {
     await new Promise((resolve, reject) => {
       server.close((error) => {
         if (error) {

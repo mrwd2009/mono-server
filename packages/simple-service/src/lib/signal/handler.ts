@@ -2,10 +2,9 @@ import _ from 'lodash';
 
 export type GatewaySignalHandler = () => Promise<void>;
 
-
 interface HandlersMap {
-  cleanup: GatewaySignalHandler[],
-  init: Promise<Error | boolean>[],
+  cleanup: GatewaySignalHandler[];
+  init: Promise<Error | boolean>[];
 }
 const signalHandlersMap: HandlersMap = { cleanup: [], init: [] };
 
@@ -26,16 +25,18 @@ const triggerCleanup = () => {
   const handlers = signalHandlersMap.cleanup;
   signalHandlersMap.cleanup = [];
 
-  return Promise.all(_.map(handlers, (handler) => {
-    return handler();
-  }))
+  return Promise.all(
+    _.map(handlers, (handler) => {
+      return handler();
+    }),
+  )
     .then(() => {
       process.exit();
     })
     .catch(() => {
       process.exit(1);
     });
-}
+};
 
 process.on('SIGINT', triggerCleanup);
 process.on('SIGTERM', triggerCleanup);
@@ -60,11 +61,11 @@ export const triggerInit = () => {
 
   return Promise.all(handlers)
     .then(() => {
-      console.log(`API Gateway is initialized successfully.`)
+      console.log(`API Gateway is initialized successfully.`);
     })
     .catch(() => {
       console.error(`API Gateway is initialized failed.`);
     });
-}
+};
 
 setTimeout(triggerInit, 0);

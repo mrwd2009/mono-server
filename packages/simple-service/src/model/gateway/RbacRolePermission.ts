@@ -15,7 +15,10 @@ declare module '../types' {
   type RbacRolePermissionModelDef = typeof RbacRolePermission;
 }
 
-export class RbacRolePermission extends Model<InferAttributes<RbacRolePermission>, InferCreationAttributes<RbacRolePermission>> {
+export class RbacRolePermission extends Model<
+  InferAttributes<RbacRolePermission>,
+  InferCreationAttributes<RbacRolePermission>
+> {
   declare id: CreationOptional<number>;
   declare role_id: number;
   declare permission_id: number;

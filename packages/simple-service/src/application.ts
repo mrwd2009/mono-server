@@ -18,9 +18,6 @@ export default class Application {
   }
 
   async initialize(skipMonitor = false) {
-    await Promise.all([
-      boot(this.app, this.port),
-      !skipMonitor && initialize('app'),
-    ]);
+    await Promise.all([boot(this.app, this.port), !skipMonitor && initialize('app')]);
   }
 }

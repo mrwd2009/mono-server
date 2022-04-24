@@ -314,7 +314,7 @@ export const resetPassword = async (params: ResetParams, i18n: I18nType) => {
     if (user.reset_password_token !== params.token) {
       throw new DataError(i18n.t('auth.invalidToken'));
     }
-    
+
     if (await util.password.isPasswordEqual(params.password, user.password)) {
       throw new LogicError(i18n.t('auth.notSupportSamePassword'));
     }
