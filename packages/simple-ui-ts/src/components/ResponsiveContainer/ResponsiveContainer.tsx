@@ -1,6 +1,7 @@
 import { FC, memo, useState, ReactNode } from 'react';
 import forEach from 'lodash/forEach';
 import ResizeObserver from 'rc-resize-observer';
+import { useMounted } from '../../hooks';
 import BreakpointContext from './contexts/BreakpointContext';
 
 const list = [
@@ -31,10 +32,14 @@ const list = [
 ];
 const ResponsiveContainer: FC<{ children: ReactNode }> = ({ children }) => {
   const [breakpoint, setBreakpoint] = useState('xs');
+  const isMounted = useMounted();
 
   return (
     <ResizeObserver
       onResize={({ width }) => {
+        if (!isMounted.current) {
+          return;
+        }
         forEach(list, (item) => {
           if (width >= item.range[0] && width < item.range[1]) {
             if (breakpoint !== item.id) {

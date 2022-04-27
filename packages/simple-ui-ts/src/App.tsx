@@ -1,7 +1,7 @@
 import { memo, FC, useEffect, ReactElement, useContext } from 'react';
 import { BrowserRouter, UNSAFE_NavigationContext } from 'react-router-dom';
 import { I18nextProvider } from 'react-i18next';
-import { ConfigProvider } from 'antd';
+import { ConfigProvider, Modal, notification, message } from 'antd';
 import Empty from './components/Empty';
 import Router from './Router';
 import { Provider } from 'react-redux';
@@ -44,7 +44,13 @@ const AppContent: FC<{ children: ReactElement[] }> = ({ children }) => {
 
   // record visited route
   useEffect(() => {
-    const unlisten = (navigator as any).listen(({ location }: any) => {
+    const unlisten = (navigator as any).listen((data: any) => {
+      const { location, action } = data;
+      if (action === 'POP' || action === 'PUSH') {
+        Modal.destroyAll();
+        notification.destroy();
+        message.destroy();
+      }
       dispatch(
         pushVisitedPage({
           pathname: location.pathname,

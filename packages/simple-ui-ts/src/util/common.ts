@@ -1,13 +1,13 @@
-import { notification, Modal } from 'antd';
+import { notification, Modal, message } from 'antd';
 import { select } from 'd3-selection';
 import isArray from 'lodash/isArray';
 import isFunction from 'lodash/isFunction';
 import slice from 'lodash/slice';
 
 export const showSuccess = (msg: string, key = '__global_success__') => {
-  notification.success({
-    message: 'Success',
-    description: msg,
+  key && message.destroy(key);
+  message.success({
+    content: msg,
     key,
   });
 };
@@ -17,6 +17,7 @@ export const showError = (error: Error | string, key = '__global_error__') => {
   if (error instanceof Error) {
     desc = error.message;
   }
+  key && notification.close(key);
   notification.error({
     key,
     message: 'Error',
@@ -26,9 +27,9 @@ export const showError = (error: Error | string, key = '__global_error__') => {
 };
 
 export const showWarning = (warning: string, key = '__global_warning__') => {
-  notification.warning({
-    message: 'Warning',
-    description: warning,
+  key && message.destroy(key);
+  message.warning({
+    content: warning,
     key,
   });
 };
