@@ -1,21 +1,28 @@
 import { useCallback } from 'react';
 import useAxios from 'axios-hooks';
-// import findLastIndex from 'lodash/findLastIndex';
-// import includes from 'lodash/includes';
+import filter from 'lodash/filter';
+import includes from 'lodash/includes';
 import { useNavigate } from 'react-router-dom';
 import apiEndpoints from '../../../config/api-endpoints';
-import { getRouteInfo } from '../../../config/routes-info';
+import { getRouteInfo, forEachRouteInfo } from '../../../config/routes-info';
 import { updateUserInfo } from '../slices';
-import { useAppDispatch } from '../../../hooks';
+import { useAppDispatch, useAppSelector } from '../../../hooks';
+import { selectVisitedPages } from '../../../store/slices';
 import { common } from '../../../util';
 
-// TODO add login redirection
+const notSavedPaths: string[] = [];
+forEachRouteInfo((item) => {
+  if (item.notSaveVisitedPage) {
+    notSavedPaths.push(item.path);
+  }
+});
 
 const useLogin = () => {
-  // const { setUserInfo, visitedPagesRef } = useAuth();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const visitedPages = useAppSelector(selectVisitedPages);
   const [{ loading }, request] = useAxios({ url: apiEndpoints.auth.login, showError: true, method: 'post' });
+  
   const handleLogin = useCallback(
     (params) => {
       request({
@@ -40,10 +47,21 @@ const useLogin = () => {
             user: email,
           }),
         );
-        navigate('/');
+        const pages = filter(visitedPages, (page) => {
+          return !includes(notSavedPaths, page.pathname);
+        });
+        const page = pages.pop();
+        if (page) {
+          navigate({
+            pathname: page.pathname,
+            search: page.search,
+          });
+        } else {
+          navigate('/');
+        }
       });
     },
-    [navigate, dispatch, request],
+    [navigate, dispatch, request, visitedPages],
   );
   return {
     loading,

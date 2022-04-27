@@ -1,5 +1,5 @@
-import { memo, FC, useEffect, ReactElement } from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { memo, FC, useEffect, ReactElement, useContext } from 'react';
+import { BrowserRouter, UNSAFE_NavigationContext } from 'react-router-dom';
 import { I18nextProvider } from 'react-i18next';
 import { ConfigProvider } from 'antd';
 import Empty from './components/Empty';
@@ -8,6 +8,8 @@ import { Provider } from 'react-redux';
 import store from './store';
 import Initializer from './config/initializers';
 import { useTheme, useLang } from './hooks';
+import { pushVisitedPage } from './store/slices';
+import { useAppDispatch } from './hooks';
 
 const renderEmpty =
   (componentName?: string): React.ReactNode =>
@@ -31,12 +33,27 @@ const renderEmpty =
 const AppContent: FC<{ children: ReactElement[] }> = ({ children }) => {
   const { loaded, theme, fetchTheme } = useTheme();
   const { loaded: langLoaded, lang, fetchLang, i18n } = useLang();
+  const dispatch = useAppDispatch();
+  const { navigator } = useContext(UNSAFE_NavigationContext);
 
   useEffect(() => {
     fetchTheme(theme);
     fetchLang(lang);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // record visited route
+  useEffect(() => {
+    const unlisten = (navigator as any).listen(({ location }: any) => {
+      dispatch(
+        pushVisitedPage({
+          pathname: location.pathname,
+          search: location.search,
+        }),
+      );
+    });
+    return unlisten;
+  }, [dispatch, navigator]);
 
   if (!loaded || !langLoaded) {
     return null;

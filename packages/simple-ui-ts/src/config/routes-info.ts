@@ -6,6 +6,7 @@ export interface RouteInfo {
   key: string;
   path: string;
   menu: boolean;
+  notSaveVisitedPage?: boolean;
   children?: RouteInfo[];
 }
 
@@ -262,26 +263,31 @@ export const routesInfo: RouteInfo[] = [
     key: 'login',
     path: '/login',
     menu: false,
+    notSaveVisitedPage: true,
   },
   {
     key: 'register',
     path: '/registrations/new',
     menu: false,
+    notSaveVisitedPage: true,
   },
   {
     key: 'forgot-password',
     path: '/forgot-password/new',
     menu: false,
+    notSaveVisitedPage: true,
   },
   {
     key: 'reset-password',
     path: '/reset-password',
     menu: false,
+    notSaveVisitedPage: true,
   },
   {
     key: '403',
     path: '/403',
     menu: false,
+    notSaveVisitedPage: true,
   },
 ];
 
@@ -310,6 +316,42 @@ export const getRouteInfo = (keys: string | string[], routes = routesInfo) => {
   });
   return info;
 };
+
+export const getRouteInfoByPath = (path: string, routes = routesInfo) => {
+  let info: RouteInfo | undefined;
+
+  forEach(routes, (routeInfo) => {
+    if (routeInfo.path === path) {
+      info = routeInfo;
+      return false;
+    }
+    if (routeInfo.children?.length) {
+      info = getRouteInfoByPath(path, routeInfo.children);
+      if (info) {
+        return false;
+      }
+    }
+  });
+  
+  return info;
+};
+
+export const forEachRouteInfo = (iteratee: (item: RouteInfo) => boolean | void, routes = routesInfo) => {
+  let result: boolean | void = true;
+  forEach(routes, (routeInfo) => {
+    result = iteratee(routeInfo);
+    if (result === false) {
+      return false;
+    }
+    if (routeInfo.children?.length) {
+      result = forEachRouteInfo(iteratee, routeInfo.children);
+      if (result === false) {
+        return false;
+      }
+    }
+  });
+  return result;
+}
 
 export interface RouteMenuInfo {
   title: string;

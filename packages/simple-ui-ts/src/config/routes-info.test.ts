@@ -1,4 +1,4 @@
-import { getRouteInfo, getRoutesMenu, getRouteBC } from './routes-info';
+import { getRouteInfo, getRoutesMenu, getRouteBC, getRouteInfoByPath, forEachRouteInfo } from './routes-info';
 
 test('get route info', () => {
   const routes = [
@@ -131,3 +131,70 @@ test('get route bc', () => {
     },
   ]);
 });
+
+test('get route by path', () => {
+  const routes = [
+    {
+      key: 'forgot-password',
+      path: '/forgot-password/new',
+      menu: false,
+    },
+    {
+      key: 'reset-password',
+      path: '/reset-password',
+      menu: false,
+      children: [
+        {
+          key: 'test',
+          path: '/test',
+          menu: false,
+          children: [
+            {
+              key: 'test2',
+              path: '/test2',
+              menu: false,
+            },
+          ],
+        },
+      ],
+    },
+  ];
+
+  expect(getRouteInfoByPath('/test2', routes)).toEqual({
+    key: 'test2',
+    path: '/test2',
+    menu: false,
+  });
+});
+
+test('test for each route info', () => {
+  const routes = [
+    {
+      key: 'forgot-password',
+      path: '/forgot-password/new',
+      menu: false,
+    },
+    {
+      key: 'reset-password',
+      path: '/reset-password',
+      menu: false,
+      children: [
+        {
+          key: 'test',
+          path: '/test',
+          menu: false,
+          children: [
+            {
+              key: 'test2',
+              path: '/test2',
+              menu: false,
+            },
+          ],
+        },
+      ],
+    },
+  ];
+  forEachRouteInfo((item) => {
+    console.log(item.path);
+  }, routes);
+})

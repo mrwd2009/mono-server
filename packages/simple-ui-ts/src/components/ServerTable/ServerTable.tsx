@@ -189,6 +189,7 @@ let ServerTable = ({
       if (colDef.cDataType === 'datetime') {
         colDef.render = (val: any) => val && dayjs(val).format(constants.dateFormat);
       } else if (colDef.cDataType === 'lgText') {
+        colDef.width = 100;
         colDef.render = lgText(colDef.title);
       }
 
