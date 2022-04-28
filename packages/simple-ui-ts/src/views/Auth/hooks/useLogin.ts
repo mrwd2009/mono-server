@@ -5,8 +5,7 @@ import includes from 'lodash/includes';
 import { useNavigate } from 'react-router-dom';
 import apiEndpoints from '../../../config/api-endpoints';
 import { getRouteInfo, forEachRouteInfo } from '../../../config/routes-info';
-import { updateUserInfo } from '../slices';
-import { useAppDispatch, useAppSelector } from '../../../hooks';
+import { useAppSelector } from '../../../hooks';
 import { selectVisitedPages } from '../../../store/slices';
 import { common } from '../../../util';
 
@@ -19,7 +18,6 @@ forEachRouteInfo((item) => {
 
 const useLogin = () => {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const visitedPages = useAppSelector(selectVisitedPages);
   const [{ loading }, request] = useAxios({ url: apiEndpoints.auth.login, showError: true, method: 'post' });
   
@@ -36,17 +34,11 @@ const useLogin = () => {
           },
         },
       }).then(({ data: result }) => {
-        const { permissions, token, email, reset } = result;
+        const { token, reset } = result;
         if (reset) {
           navigate(`${getRouteInfo('reset-password')?.path}?token=${token}`);
           return;
         }
-        dispatch(
-          updateUserInfo({
-            permissions,
-            user: email,
-          }),
-        );
         const pages = filter(visitedPages, (page) => {
           return !includes(notSavedPaths, page.pathname);
         });
@@ -61,7 +53,7 @@ const useLogin = () => {
         }
       });
     },
-    [navigate, dispatch, request, visitedPages],
+    [navigate, request, visitedPages],
   );
   return {
     loading,

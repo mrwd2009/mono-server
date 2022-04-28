@@ -14,6 +14,7 @@ const useUserInfo = () => {
       dipatch(
         updateUserInfo({
           user: result.user,
+          username: result.username,
           permissions: result.permissions,
         }),
       );

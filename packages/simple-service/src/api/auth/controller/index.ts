@@ -34,11 +34,10 @@ export const loginHandler: Array<Middleware> = [
       origin: context.headers['origin'],
     };
 
-    const { token, email: receivedEmail, reset } = await userModel.login(params, context.i18n);
+    const { token, reset } = await userModel.login(params, context.i18n);
     if (reset) {
       return context.gateway!.sendJSON!({
         reset: true,
-        email: receivedEmail,
         token,
       });
     }
@@ -48,7 +47,7 @@ export const loginHandler: Array<Middleware> = [
       maxAge: config.jwt.expireHour * 3600 * 1000,
       signed: true,
     });
-    context.gateway!.sendJSON!({ reset: false, email: receivedEmail });
+    context.gateway!.sendJSON!({ reset: false });
   },
 ];
 

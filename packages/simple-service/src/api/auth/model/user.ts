@@ -44,7 +44,7 @@ type UserParams = {
 export const login = async (
   params: UserParams,
   i18n: I18nType,
-): Promise<{ token: string; reset: boolean; email: string }> => {
+): Promise<{ token: string; reset: boolean }> => {
   const { email, password } = params;
   let locked = false;
   let userId: number;
@@ -167,7 +167,6 @@ export const login = async (
     return {
       token,
       reset,
-      email: user.email,
     };
   });
 
