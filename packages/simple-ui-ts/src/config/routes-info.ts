@@ -332,7 +332,7 @@ export const getRouteInfoByPath = (path: string, routes = routesInfo) => {
       }
     }
   });
-  
+
   return info;
 };
 
@@ -351,7 +351,7 @@ export const forEachRouteInfo = (iteratee: (item: RouteInfo) => boolean | void, 
     }
   });
   return result;
-}
+};
 
 export interface RouteMenuInfo {
   title: string;

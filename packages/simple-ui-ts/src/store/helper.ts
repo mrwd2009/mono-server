@@ -4,9 +4,26 @@ import { axiosBaseQuery } from './helper';
 
 export * from './base-query';
 
-export const createAppApi = (reducerPath: string) => {
+interface ApiOptions {
+  reducerPath: string;
+  tagTypes: string[];
+}
+
+export const createAppApi = (options: ApiOptions | string) => {
+  let reducerPath = '';
+  let tagTypes: string[] = [];
+
+  if (typeof options === 'string') {
+    reducerPath = options;
+    tagTypes = [options];
+  } else {
+    reducerPath = options.reducerPath;
+    tagTypes = options.tagTypes;
+  }
+
   return createApi({
     reducerPath,
+    tagTypes,
     baseQuery: axiosBaseQuery(),
     endpoints: () => ({}),
   });

@@ -20,7 +20,7 @@ const useLogin = () => {
   const navigate = useNavigate();
   const visitedPages = useAppSelector(selectVisitedPages);
   const [{ loading }, request] = useAxios({ url: apiEndpoints.auth.login, showError: true, method: 'post' });
-  
+
   const handleLogin = useCallback(
     (params) => {
       request({

@@ -34,7 +34,7 @@ export interface ServerTableOption {
   [key: string]: any;
 }
 
-type RefreshListFunc = (data?: { keepPage?: boolean }) => void;
+type RefreshListFunc = (data?: { keepPage?: boolean; background?: boolean }) => void;
 
 // If inputOptions is a heavy computation, please send a function
 export const useServerTable = (inputOptions: () => ServerTableOption) => {
@@ -118,7 +118,7 @@ export const useServerTable = (inputOptions: () => ServerTableOption) => {
       axios({
         url,
         method,
-        data,
+        data: background ? { ...data, _refresh: true } : data,
         cancelToken: cancelTokenRef.current.token,
       })
         .then((data) => {

@@ -30,10 +30,12 @@ const maxVisitedPages = 5;
 const initialState: GlobalSetting = {
   theme: defaultTheme as ThemeType,
   lang: defaultLang as LangType,
-  visitedPages: [{
-    pathname: window.location.pathname,
-    search: window.location.search,
-  }],
+  visitedPages: [
+    {
+      pathname: window.location.pathname,
+      search: window.location.search,
+    },
+  ],
 };
 
 export const globalSettingSlice = createSlice({

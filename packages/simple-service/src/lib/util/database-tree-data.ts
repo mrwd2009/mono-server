@@ -247,10 +247,10 @@ export const getTreeData = (params: TreeDataParams) => {
     keys.push(item.id);
     if (item.parent_id === null) {
       results.push(newItem);
-      parentMap.set(item.id, newItem);
     } else {
       parentMap.get(item.parent_id)?.children?.push(newItem);
     }
+    parentMap.set(item.id,newItem);
   });
 
   return {
@@ -297,6 +297,11 @@ export const createTreeItem = async (params: CreateParams) => {
       transaction,
     },
   );
+
+  // root node
+  if (targetId === -1) {
+    return;
+  }
 
   await reparent({
     sourceId: newItem.id,

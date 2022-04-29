@@ -99,7 +99,12 @@ const Login: FC = () => {
               {t('logIn')}
             </Button>
           </Form.Item>
-          <Form.Item name="remember" noStyle valuePropName="checked" initialValue={!!localStorage.getItem(checkedKey)}>
+          <Form.Item
+            name="remember"
+            noStyle
+            valuePropName="checked"
+            initialValue={!!localStorage.getItem(checkedKey)}
+          >
             <Checkbox
               onChange={(event) => {
                 if (!event.target.checked) {
@@ -110,9 +115,14 @@ const Login: FC = () => {
                   localStorage.setItem(checkedKey, 'true');
                 }
               }}
-            >Remember me</Checkbox>
+            >
+              Remember me
+            </Checkbox>
           </Form.Item>
-          <Divider className="app-ex-divider-sm" dashed />
+          <Divider
+            className="app-ex-divider-sm"
+            dashed
+          />
           <Form.Item>
             <Link
               to={fogotRoute!.path}

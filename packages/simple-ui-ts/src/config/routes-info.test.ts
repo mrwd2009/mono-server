@@ -197,4 +197,4 @@ test('test for each route info', () => {
   forEachRouteInfo((item) => {
     console.log(item.path);
   }, routes);
-})
+});

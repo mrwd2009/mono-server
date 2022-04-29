@@ -21,6 +21,7 @@ export const getPermissions = async () => {
         name: row.name,
         sequence_id: row.sequence_id,
         data: {
+          type: row.type,
           description: row.description,
         },
       };

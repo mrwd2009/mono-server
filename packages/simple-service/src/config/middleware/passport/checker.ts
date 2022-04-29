@@ -20,6 +20,11 @@ export const canExtendSession = (context: DefaultContext) => {
     return false;
   }
 
+  // it's an auto refresh request from client
+  if (context.mergedParams?._refresh) {
+    return false;
+  }
+
   if (_.includes(context.path, config.auth.session.ignoredRoute)) {
     return false;
   }

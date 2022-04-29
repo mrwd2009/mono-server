@@ -53,7 +53,12 @@ const UserAction: FC = () => {
         <Card.Grid className="app-ex-user-action-grid">
           <Card.Meta
             title={userInfo.username}
-            avatar={<Avatar size={48} icon={<Icon component={EnergyIcon} />} />}
+            avatar={
+              <Avatar
+                size={48}
+                icon={<Icon component={EnergyIcon} />}
+              />
+            }
             description={userInfo.user}
           />
         </Card.Grid>
