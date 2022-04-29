@@ -12,6 +12,7 @@ import {
 import Panel from '../../../components/Panel';
 import Empty from '../../../components/Empty';
 import { useHookedModal } from '../../../components/HookedModal';
+import ScrollShadow from '../../../components/ScrollShadow';
 import CreatePermission from './CreatePermission';
 import { showConfirm } from '../../../util';
 import {
@@ -236,25 +237,28 @@ const Permission: FC = () => {
             </Row>
           </Col>
           <Col flex="auto">
-            <Tree
-              draggable
-              treeData={roots}
-              showIcon
-              selectedKeys={selectedKeys}
-              onSelect={(keys) => {
-                setSelectedKeys(keys as number[]);
-              }}
-              icon={(props) => {
-                if ((props as any).data.data.type === 'category') {
-                  if (props.expanded) {
-                    return <FolderOpenOutlined />;
+            <ScrollShadow>
+              <Tree
+                className="text-nowrap"
+                draggable
+                treeData={roots}
+                showIcon
+                selectedKeys={selectedKeys}
+                onSelect={(keys) => {
+                  setSelectedKeys(keys as number[]);
+                }}
+                icon={(props) => {
+                  if ((props as any).data.data.type === 'category') {
+                    if (props.expanded) {
+                      return <FolderOpenOutlined />;
+                    }
+                    return <FolderOutlined />;
                   }
-                  return <FolderOutlined />;
-                }
-                return <LockOutlined />;
-              }}
-              onDrop={handleDrop}
-            />
+                  return <LockOutlined />;
+                }}
+                onDrop={handleDrop}
+              />
+            </ScrollShadow>
           </Col>
           <Col flex="none">
             {selected && (
