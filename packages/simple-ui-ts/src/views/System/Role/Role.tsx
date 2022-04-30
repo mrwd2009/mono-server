@@ -1,30 +1,30 @@
 import { FC, memo, useState, useMemo } from 'react';
 import forEach from 'lodash/forEach';
-import { Row, Col, Spin, Button, Tree, Card, Form, Select, Typography, Input, Tooltip } from 'antd';
+import { Row, Col, Spin, Button, Tree, Card, Form, Radio, Typography, Input, Tooltip } from 'antd';
 import {
   PlusOutlined,
-  FolderOutlined,
-  FolderOpenOutlined,
-  LockOutlined,
+  TeamOutlined,
   DeleteOutlined,
   InfoCircleOutlined,
+  LockOutlined,
 } from '@ant-design/icons';
 import Panel from '../../../components/Panel';
 import Empty from '../../../components/Empty';
 import { useHookedModal } from '../../../components/HookedModal';
 import ScrollShadow from '../../../components/ScrollShadow';
-import CreatePermission from './CreatePermission';
+import CreateRole from './CreateRole';
+import AssignPermission from './AssignPermission';
 import { showConfirm } from '../../../util';
 import {
-  useGetPermissionListQuery,
-  useUpdatePermissionMutation,
-  useReparentPermissionMutation,
-  useDeletePermissionMutation,
+  useGetRoleListQuery,
+  useUpdateRoleMutation,
+  useReparentRoleMutation,
+  useDeleteRoleMutation,
 } from './services';
 
-const Detail: FC<{ detail: { key: number; type: string; name: string; description: string } }> = ({ detail }) => {
+const Detail: FC<{ detail: { key: number; enabled: boolean; name: string; description: string } }> = ({ detail }) => {
   const [editing, setEditing] = useState(false);
-  const [updatePermission, { isLoading }] = useUpdatePermissionMutation();
+  const [updateRole, { isLoading }] = useUpdateRoleMutation();
 
   if (editing) {
     return (
@@ -36,9 +36,9 @@ const Detail: FC<{ detail: { key: number; type: string; name: string; descriptio
           wrapperCol={{ span: 16 }}
           labelWrap
           onFinish={(formData) => {
-            updatePermission({
+            updateRole({
               id: detail.key,
-              type: formData.type,
+              enabled: formData.enabled,
               name: formData.name,
               description: formData.description,
             }).then(() => {
@@ -47,20 +47,14 @@ const Detail: FC<{ detail: { key: number; type: string; name: string; descriptio
           }}
         >
           <Form.Item
-            label="Type"
-            initialValue={detail.type}
-            name="type"
+            label="Status"
+            name="enabled"
+            initialValue={detail.enabled}
           >
-            <Select>
-              <Select.Option value="category">
-                <FolderOutlined className="mr-1" />
-                Category
-              </Select.Option>
-              <Select.Option value="permission">
-                <LockOutlined className="mr-1" />
-                Permission
-              </Select.Option>
-            </Select>
+            <Radio.Group>
+              <Radio value={true}>Enabled</Radio>
+              <Radio value={false}>Disabled</Radio>
+            </Radio.Group>
           </Form.Item>
           <Form.Item
             label="Name"
@@ -110,13 +104,12 @@ const Detail: FC<{ detail: { key: number; type: string; name: string; descriptio
         wrapperCol={{ span: 16 }}
         labelWrap
       >
-        <Form.Item label="Type">
+        <Form.Item label="Status">
           <Typography.Paragraph
             className="mb-0"
             editable={{ onStart: () => setEditing(true) }}
           >
-            {detail.type === 'permission' ? <LockOutlined className="mr-1" /> : <FolderOutlined className="mr-1" />}
-            {detail.type === 'permission' ? 'Permission' : 'Category'}
+            {detail.enabled ? 'Enabled' : 'Disabled'}
           </Typography.Paragraph>
         </Form.Item>
         <Form.Item label="Name">
@@ -140,12 +133,13 @@ const Detail: FC<{ detail: { key: number; type: string; name: string; descriptio
   );
 };
 
-const Permission: FC = () => {
-  const { isLoading, data } = useGetPermissionListQuery();
-  const [deletePermission] = useDeletePermissionMutation();
-  const [reparentPermission] = useReparentPermissionMutation();
+const Role: FC = () => {
+  const { isLoading, data } = useGetRoleListQuery();
+  const [deleteRole] = useDeleteRoleMutation();
+  const [reparentRole] = useReparentRoleMutation();
   const [selectedKeys, setSelectedKeys] = useState<Array<number>>([]);
   const modal = useHookedModal();
+  const assignModal = useHookedModal();
 
   const selected = useMemo(() => {
     if (!data) {
@@ -161,7 +155,7 @@ const Permission: FC = () => {
           result = {
             key,
             name: item.title,
-            type: item.data.type,
+            enabled: item.data.enabled,
             description: item.data.description,
           };
           return false;
@@ -184,14 +178,11 @@ const Permission: FC = () => {
     const { keys, roots } = data;
     if (keys.length) {
       const handleDrop = (info: any) => {
-        if (!info.dropToGap && info.node.data.type === 'permission') {
-          return;
-        }
         showConfirm({
           title: 'Reposition',
           content: 'Are you sure to reposition current item?',
           onConfirm: () => {
-            return reparentPermission({
+            return reparentRole({
               sourceId: info.dragNode.key,
               targetId: info.node.key,
               position: info.dropToGap ? 'below' : 'child',
@@ -205,7 +196,6 @@ const Permission: FC = () => {
             <Row justify="end">
               <Col flex="none">
                 <Button
-                  disabled={selected?.type === 'permission'}
                   type="primary"
                   className="mr-2"
                   icon={<PlusOutlined />}
@@ -219,6 +209,18 @@ const Permission: FC = () => {
               <Col flex="none">
                 <Button
                   disabled={!selected}
+                  className="mr-2"
+                  icon={<LockOutlined />}
+                  onClick={() => {
+                    assignModal.changeVisible(true, selected);
+                  }}
+                >
+                  Assign
+                </Button>
+              </Col>
+              <Col flex="none">
+                <Button
+                  disabled={!selected}
                   danger
                   icon={<DeleteOutlined />}
                   onClick={() => {
@@ -226,7 +228,7 @@ const Permission: FC = () => {
                       title: 'Delete',
                       content: 'Are you sure to delete current item?',
                       onConfirm: () => {
-                        return deletePermission(selected.key);
+                        return deleteRole(selected.key);
                       },
                     });
                   }}
@@ -247,15 +249,7 @@ const Permission: FC = () => {
                 onSelect={(keys) => {
                   setSelectedKeys(keys as number[]);
                 }}
-                icon={(props) => {
-                  if ((props as any).data.data.type === 'category') {
-                    if (props.expanded) {
-                      return <FolderOpenOutlined />;
-                    }
-                    return <FolderOutlined />;
-                  }
-                  return <LockOutlined />;
-                }}
+                icon={<TeamOutlined />}
                 onDrop={handleDrop}
               />
             </ScrollShadow>
@@ -272,7 +266,7 @@ const Permission: FC = () => {
       );
     } else {
       content = (
-        <Empty description="No available permissions to show.">
+        <Empty description="No available roles to show.">
           <Button
             type="primary"
             shape="round"
@@ -281,7 +275,7 @@ const Permission: FC = () => {
               modal.changeVisible(true, null);
             }}
           >
-            New Permission
+            New Role
           </Button>
         </Empty>
       );
@@ -294,7 +288,7 @@ const Permission: FC = () => {
     <Panel
       title={
         <span>
-          Permission&nbsp;
+          Role&nbsp;
           <Tooltip
             arrowPointAtCenter
             placement="topLeft"
@@ -308,9 +302,10 @@ const Permission: FC = () => {
       }
     >
       <Spin spinning={isLoading}>{content}</Spin>
-      <CreatePermission hookedModal={modal} />
+      <CreateRole hookedModal={modal} />
+      <AssignPermission hookedModal={assignModal} />
     </Panel>
   );
 };
 
-export default memo(Permission);
+export default memo(Role);

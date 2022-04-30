@@ -39,6 +39,8 @@ export const apiEndpoints = {
     updateRole: '/system/role',
     deleteRole: '/system/role',
     reparentRole: '/system/role/reparent',
+    assignedPermissionList: '/system/role/assigned-permissions',
+    assignPermissions: '/system/role/assigned-permissions',
   },
   contract: {
     list: '/contract/list',

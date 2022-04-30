@@ -279,7 +279,7 @@ export const createTreeItem = async (params: CreateParams) => {
   });
 
   let sequenceId = '001';
-  if (sequenceRecord) {
+  if (sequenceRecord?.get('maxSequenceId')) {
     const nextId: number = parseInt(sequenceRecord.get('maxSequenceId') as string) + 1;
     if (nextId >= Math.pow(10, placeholderLength)) {
       throw new LogicError('Sequence id reached the limitation.');

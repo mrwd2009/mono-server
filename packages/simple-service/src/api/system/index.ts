@@ -26,5 +26,7 @@ router.post('/role', ...ctrl.createRoleHandler);
 router.put('/role', ...ctrl.updateRoleHandler);
 router.put('/role/reparent', ...ctrl.reparentRoleHandler);
 router.delete('/role', ...ctrl.deleteRoleHandler);
+router.get('/role/assigned-permissions', ...ctrl.getAssignedPermissionsHandler);
+router.put('/role/assigned-permissions', ...ctrl.assignPermissionsHandler);
 
 registerRouter(router);

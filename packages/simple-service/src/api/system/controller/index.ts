@@ -201,3 +201,28 @@ export const deleteRoleHandler: Array<Middleware> = [
     context.gateway?.sendJSON?.(result);
   },
 ];
+
+export const getAssignedPermissionsHandler: Array<Middleware> = [
+  validator((Schema) => {
+    return Schema.object({
+      id: Schema.number().integer(),
+    });
+  }),
+  async (context) => {
+    const result = await roleModel.getAssignedPermissions(context.mergedParams);
+    context.gateway?.sendJSON?.(result);
+  },
+];
+
+export const assignPermissionsHandler: Array<Middleware> = [
+  validator((Schema) => {
+    return Schema.object({
+      id: Schema.number().integer(),
+      permissionIds: Schema.array().items(Schema.number().integer()),
+    });
+  }),
+  async (context) => {
+    const result = await roleModel.assignPermissions(context.mergedParams);
+    context.gateway?.sendJSON?.(result);
+  },
+];
