@@ -30,7 +30,12 @@ export const getRoles = async () => {
 };
 
 export const getAvailableRoles = async () => {
-  const rows = await RbacRole.findAll({ attributes: ['id', 'name'], order: [['name', 'asc']] });
+  const rows = await RbacRole.findAll({
+    attributes: ['id', 'name'],
+    where: {
+      enabled: true,
+    },
+  });
   return _.map(rows, (row) => {
     return {
       id: row.id,

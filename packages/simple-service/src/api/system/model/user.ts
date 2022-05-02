@@ -146,6 +146,7 @@ export const createUser = async (params: CreateParams, i18n: I18nType) => {
         attributes: ['id'],
         where: {
           id: roleId,
+          enabled: true,
         },
         transaction,
       });
@@ -260,6 +261,17 @@ export const editUser = async (params: EditParams, i18n: I18nType) => {
       }
 
       if (roleId) {
+        const role = await RbacRole.findOne({
+          attributes: ['id'],
+          where: {
+            id: roleId,
+            enabled: true,
+          },
+          transaction,
+        });
+        if (!role) {
+          throw new LogicError('Role is not found.');
+        }
         ops.push(
           RbacUserRole.create(
             {
@@ -283,15 +295,32 @@ export const editUser = async (params: EditParams, i18n: I18nType) => {
   const ids = id as number[];
 
   await sequelize.transaction(async (transaction) => {
+    if (!ids.length) {
+      throw new LogicError(i18n.t('auth.notFoundUser'));
+    }
+
     const count = await User.count({
       where: {
         id: ids,
       },
       transaction,
     });
-
     if (ids.length !== count) {
       throw new LogicError(i18n.t('auth.notFoundUser'));
+    }
+
+    if (roleId) {
+      const role = await RbacRole.findOne({
+        attributes: ['id'],
+        where: {
+          id: roleId,
+          enabled: true,
+        },
+        transaction,
+      });
+      if (!role) {
+        throw new LogicError('Role is not found.');
+      }
     }
 
     await RbacUserRole.destroy({
@@ -302,15 +331,17 @@ export const editUser = async (params: EditParams, i18n: I18nType) => {
       transaction,
     });
 
-    const items = _.map(ids, (id) => ({
-      user_id: id,
-      app: config.appEnv,
-      role_id: roleId!,
-    }));
-
-    await RbacUserRole.bulkCreate(items, {
-      transaction,
-    });
+    if (roleId) {
+      const items = _.map(ids, (id) => ({
+        user_id: id,
+        app: config.appEnv,
+        role_id: roleId,
+      }));
+  
+      await RbacUserRole.bulkCreate(items, {
+        transaction,
+      });
+    }
   });
 
   return true;
