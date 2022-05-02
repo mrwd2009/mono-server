@@ -7,10 +7,19 @@ interface UserInfo {
   username: string;
 }
 
-const initialState: UserInfo = {
+interface Avatar {
+  loading: boolean;
+  url?: string;
+  base64?: string;
+}
+
+const initialState: UserInfo & { avatar: Avatar } = {
   permissions: [],
   user: '',
   username: '',
+  avatar: {
+    loading: false,
+  },
 };
 
 export const userInfoSlice = createSlice({
@@ -26,14 +35,21 @@ export const userInfoSlice = createSlice({
       state.user = '';
       state.username = '';
       state.permissions = [];
+      state.avatar = {
+        loading: false,
+      };
+    },
+    updateAvatar: (state, action: PayloadAction<Avatar>) => {
+      state.avatar = action.payload;
     },
   },
 });
 
-export const { updateUserInfo, clearUserInfo } = userInfoSlice.actions;
+export const { updateUserInfo, clearUserInfo, updateAvatar } = userInfoSlice.actions;
 
 export const selectUserInfo = (state: AppRootState) => state.userInfo;
 export const selectPermissions = (state: AppRootState) => state.userInfo.permissions;
+export const selectAvatar = (state: AppRootState) => state.userInfo.avatar;
 
 export const userInfoReducer = userInfoSlice.reducer;
 

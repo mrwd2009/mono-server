@@ -24,6 +24,7 @@ export const apiEndpoints = {
   },
   system: {
     info: '/system/info',
+    avatar: '/system/user/avatar',
     userList: '/system/user/list',
     addUser: '/system/user',
     editUser: '/system/user',

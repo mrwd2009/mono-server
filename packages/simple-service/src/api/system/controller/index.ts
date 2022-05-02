@@ -10,6 +10,11 @@ export const getInfoHandler: Middleware = async (context) => {
   context.gateway!.sendJSON!(info);
 };
 
+export const getUserAvatarHandler: Middleware = async (context) => {
+  const info = await systemModel.getUserAvatar(context.state);
+  context.gateway!.sendJSON!(info);
+};
+
 export const getUserListHandler: Array<Middleware> = [
   validatePagination({
     sorter: ['created_at', 'updated_at'],

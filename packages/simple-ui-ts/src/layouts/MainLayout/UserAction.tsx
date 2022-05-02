@@ -3,7 +3,7 @@ import { Card, Popover, Avatar, Button, Spin } from 'antd';
 import Icon, { CaretDownOutlined, LogoutOutlined, SettingOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../hooks';
-import { selectUserInfo } from '../../views/Auth/slices';
+import { selectUserInfo, selectAvatar } from '../../views/Auth/slices';
 import { useLogout } from '../../views/Auth/hooks';
 import { getRouteInfo } from '../../config/routes-info';
 import { ReactComponent as UserIcon } from '../../assets/images/user.svg';
@@ -11,6 +11,7 @@ import { ReactComponent as EnergyIcon } from '../../assets/images/green-energy.s
 
 const UserAction: FC = () => {
   const userInfo = useAppSelector(selectUserInfo);
+  const avatar = useAppSelector(selectAvatar);
   const { loading, handleLogout } = useLogout();
   const navigate = useNavigate();
   const [visible, setVisible] = useState(false);
@@ -42,6 +43,35 @@ const UserAction: FC = () => {
       &nbsp;Sign Out
     </span>,
   ];
+
+  let cardAvatar: any = null;
+  if (avatar.base64) {
+    cardAvatar = (
+      <div
+        className="app-ex-user-avatar"
+        style={{
+          backgroundImage: avatar.base64,
+        }}
+      />
+    );
+  } else if (avatar.url) {
+    cardAvatar = (
+      <div
+        className="app-ex-user-avatar"
+        style={{
+          backgroundImage: `url(${avatar.url})`,
+        }}
+      />
+    );
+  } else {
+    cardAvatar = (
+      <Avatar
+        size={56}
+        icon={<Icon component={EnergyIcon} />}
+      />
+    );
+  }
+
   const content = (
     <Spin spinning={loading}>
       <Card
@@ -53,18 +83,43 @@ const UserAction: FC = () => {
         <Card.Grid className="app-ex-user-action-grid">
           <Card.Meta
             title={userInfo.username}
-            avatar={
-              <Avatar
-                size={48}
-                icon={<Icon component={EnergyIcon} />}
-              />
-            }
+            avatar={cardAvatar}
             description={userInfo.user}
           />
         </Card.Grid>
       </Card>
     </Spin>
   );
+
+  let btn: any = null;
+  if (avatar.base64) {
+    btn = (
+      <div
+        className="app-ex-user-avatar clickable"
+        style={{
+          backgroundImage: avatar.base64,
+        }}
+      />
+    );
+  } else if (avatar.url) {
+    btn = (
+      <div
+        className="app-ex-user-avatar clickable"
+        style={{
+          backgroundImage: `url(${avatar.url})`,
+        }}
+      />
+    );
+  }  else {
+    btn = (
+      <Button
+        type="primary"
+        icon={<Icon component={UserIcon} />}
+        shape="circle"
+      />    
+    );
+  }
+  
   return (
     <Popover
       content={content}
@@ -77,11 +132,7 @@ const UserAction: FC = () => {
       onVisibleChange={setVisible}
     >
       <span className="app-ex-user-action">
-        <Button
-          type="primary"
-          icon={<Icon component={UserIcon} />}
-          shape="circle"
-        />
+        {btn}
         <CaretDownOutlined />
       </span>
     </Popover>

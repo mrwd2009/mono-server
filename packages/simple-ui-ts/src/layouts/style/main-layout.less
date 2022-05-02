@@ -51,7 +51,9 @@
   }
 
   &--header-extra {
+    display: flex;
     flex: none;
+    align-items: center;
   }
 
   &--body {
@@ -103,6 +105,36 @@
     font-weight: 500;
     font-size: @font-size-lg;
     line-height: ceil((@font-size-lg / 12) * 32px);
+  }
+}
+
+.app-ex-user-action {
+  display: flex;
+  align-items: center;
+
+  .ant-btn {
+    width: @app-ex-avatar-size;
+    height: @app-ex-avatar-size;
+
+    svg {
+      font-size: @app-ex-avatar-font-size;
+    }
+  }
+}
+
+.app-ex-user-avatar {
+  display: inline-block;
+  width: @app-ex-avatar-lg-size;
+  height: @app-ex-avatar-lg-size;
+  background-color: @app-ex-avatar-bg-color;
+  background-position: center;
+  background-size: contain;
+  border-radius: 50%;
+
+  &.clickable {
+    width: @app-ex-avatar-size;
+    height: @app-ex-avatar-size;
+    cursor: pointer;
   }
 }
 

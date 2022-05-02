@@ -6,7 +6,7 @@ import { usePermission } from '../hooks';
 import { getRouteInfoByPath, getRouteInfo } from '../config/routes-info';
 
 const RouteGuarder: FC = () => {
-  const { loading, loaded, fetchUserInfo } = useUserInfo();
+  const { loading, loaded, fetchUserInfo, fetchAvatar} = useUserInfo();
   const { hasPermission } = usePermission();
   const { pathname } = useLocation();
   const routeInfo = useMemo(() => {
@@ -15,7 +15,8 @@ const RouteGuarder: FC = () => {
 
   useEffect(() => {
     fetchUserInfo();
-  }, [fetchUserInfo]);
+    fetchAvatar();
+  }, [fetchUserInfo, fetchAvatar]);
 
   if (loading) {
     return (

@@ -8,6 +8,7 @@ const router = new Router({
 });
 
 router.get('/info', rbac.generalR, ctrl.getInfoHandler);
+router.get('/user/avatar', rbac.generalR, ctrl.getUserAvatarHandler);
 
 router.post('/user/list', rbac.adminR, ...ctrl.getUserListHandler);
 router.post('/user', rbac.adminW, ...ctrl.createUserHandler);

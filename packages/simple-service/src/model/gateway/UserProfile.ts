@@ -25,6 +25,7 @@ export class UserProfile extends Model<InferAttributes<UserProfile>, InferCreati
   declare user_id: number;
   declare display_name: CreationOptional<string>;
   declare avatar: CreationOptional<string>;
+  declare avatar_base64: CreationOptional<string>;
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;
   declare User?: NonAttribute<UserModel>;
@@ -41,6 +42,7 @@ export const initialize = (sequelize: Sequelize) => {
       user_id: DataTypes.INTEGER,
       display_name: DataTypes.STRING,
       avatar: DataTypes.STRING,
+      avatar_base64: DataTypes.STRING,
       created_at: DataTypes.DATE,
       updated_at: DataTypes.DATE,
     },
