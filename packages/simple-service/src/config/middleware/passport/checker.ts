@@ -32,8 +32,8 @@ export const canExtendSession = (context: DefaultContext) => {
   return true;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Checker = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any,
   token: string,
 ) => Promise<{ passed: boolean; entity?: { id: string | number; email: string }; afterChecker?: AfterChecker }>;

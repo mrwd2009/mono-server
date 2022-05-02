@@ -33,6 +33,7 @@ export const userInfoSlice = createSlice({
 export const { updateUserInfo, clearUserInfo } = userInfoSlice.actions;
 
 export const selectUserInfo = (state: AppRootState) => state.userInfo;
+export const selectPermissions = (state: AppRootState) => state.userInfo.permissions;
 
 export const userInfoReducer = userInfoSlice.reducer;
 

@@ -1,10 +1,17 @@
-import { FC, memo, useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { FC, memo, useEffect, useMemo } from 'react';
+import { Outlet, Navigate, useLocation } from 'react-router-dom';
 import { Skeleton } from 'antd';
 import useUserInfo from '../views/Auth/hooks/useUserInfo';
+import { usePermission } from '../hooks';
+import { getRouteInfoByPath, getRouteInfo } from '../config/routes-info';
 
 const RouteGuarder: FC = () => {
   const { loading, loaded, fetchUserInfo } = useUserInfo();
+  const { hasPermission } = usePermission();
+  const { pathname } = useLocation();
+  const routeInfo = useMemo(() => {
+    return getRouteInfoByPath(pathname);
+  }, [pathname])
 
   useEffect(() => {
     fetchUserInfo();
@@ -29,6 +36,12 @@ const RouteGuarder: FC = () => {
 
   if (!loaded) {
     return null;
+  }
+  
+  if (routeInfo?.permission) {
+    if (!hasPermission(routeInfo.permission)) {
+      return <Navigate to={getRouteInfo('403')!.path} replace />;
+    }
   }
 
   return <Outlet />;

@@ -1,6 +1,8 @@
 import { DefaultState } from 'koa';
+import _ from 'lodash';
 import appDBs from '../../../config/model/app';
 import config from '../../../config';
+import { rbac } from '../../../config/middleware'
 
 const {
   gateway: {
@@ -15,10 +17,20 @@ const getInfo = async (state: DefaultState) => {
       user_id: state.user.id,
     },
   });
+
+  const permissions: string[] = [];
+  const permissionIds = await rbac.getUserPermissions(state.user.id);
+  _.forEach(rbac.permissions, (val, key) => {
+    if (_.includes(permissionIds, val)) {
+      permissions.push(key);
+    }
+  });
+
   return {
     appEnv: config.appEnv,
     user: state.user.email,
     username: profile?.display_name,
+    permissions,
   };
 };
 

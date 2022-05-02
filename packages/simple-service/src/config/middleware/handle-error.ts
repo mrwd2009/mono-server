@@ -79,6 +79,17 @@ export const handleError: Middleware = async (context, next) => {
         };
         break;
       }
+      case 'ForbiddenError': {
+        context.status = 403;
+        context.body = {
+          meta: {
+            code: 403,
+            message: error.message,
+          },
+          data: null,
+        };
+        break;
+      }
       default: {
         context.status = 501;
         context.body = {

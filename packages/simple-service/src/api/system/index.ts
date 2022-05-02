@@ -1,33 +1,34 @@
 import Router from '@koa/router';
 import * as ctrl from './controller';
 import { registerRouter } from '../../config/router';
+import { rbac } from '../../config/middleware';
 
 const router = new Router({
   prefix: '/system',
 });
 
-router.get('/info', ctrl.getInfoHandler);
+router.get('/info', rbac.generalR, ctrl.getInfoHandler);
 
-router.post('/user/list', ...ctrl.getUserListHandler);
-router.post('/user', ...ctrl.createUserHandler);
-router.put('/user', ...ctrl.editUserHandler);
-router.delete('/user', ...ctrl.deleteUserHandler);
+router.post('/user/list', rbac.adminR, ...ctrl.getUserListHandler);
+router.post('/user', rbac.adminW, ...ctrl.createUserHandler);
+router.put('/user', rbac.adminW, ...ctrl.editUserHandler);
+router.delete('/user', rbac.adminW, ...ctrl.deleteUserHandler);
 
-router.post('/user/history/list', ...ctrl.getUserLoginHistoryListHandler);
+router.post('/user/history/list', rbac.advancedR, ...ctrl.getUserLoginHistoryListHandler);
 
-router.get('/permissions', ctrl.getPermissionsHandler);
-router.post('/permission', ...ctrl.createPermissionHandler);
-router.put('/permission', ...ctrl.updatePermissionHandler);
-router.put('/permission/reparent', ...ctrl.reparentPermissionHandler);
-router.delete('/permission', ...ctrl.deletePermissionHandler);
+router.get('/permissions', rbac.adminR, ctrl.getPermissionsHandler);
+router.post('/permission', rbac.adminW, ...ctrl.createPermissionHandler);
+router.put('/permission', rbac.adminW, ...ctrl.updatePermissionHandler);
+router.put('/permission/reparent', rbac.adminW, ...ctrl.reparentPermissionHandler);
+router.delete('/permission', rbac.adminW, ...ctrl.deletePermissionHandler);
 
-router.get('/roles', ctrl.getRolesHandler);
-router.get('/available-roles', ctrl.getAvailableRolesHandler);
-router.post('/role', ...ctrl.createRoleHandler);
-router.put('/role', ...ctrl.updateRoleHandler);
-router.put('/role/reparent', ...ctrl.reparentRoleHandler);
-router.delete('/role', ...ctrl.deleteRoleHandler);
-router.get('/role/assigned-permissions', ...ctrl.getAssignedPermissionsHandler);
-router.put('/role/assigned-permissions', ...ctrl.assignPermissionsHandler);
+router.get('/roles', rbac.adminR, ctrl.getRolesHandler);
+router.get('/available-roles', rbac.adminR, ctrl.getAvailableRolesHandler);
+router.post('/role', rbac.adminW, ...ctrl.createRoleHandler);
+router.put('/role', rbac.adminW, ...ctrl.updateRoleHandler);
+router.put('/role/reparent', rbac.adminW, ...ctrl.reparentRoleHandler);
+router.delete('/role', rbac.adminW, ...ctrl.deleteRoleHandler);
+router.get('/role/assigned-permissions', rbac.adminR, ...ctrl.getAssignedPermissionsHandler);
+router.put('/role/assigned-permissions', rbac.adminW, ...ctrl.assignPermissionsHandler);
 
 registerRouter(router);

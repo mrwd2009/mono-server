@@ -82,6 +82,7 @@ const checker: Checker = async (payload, token): Promise<CheckerResult> => {
       passed: true,
       entity: {
         id: user.id,
+        type: 'user',
         email: user.email,
       },
       afterChecker: async (context: DefaultContext) => {

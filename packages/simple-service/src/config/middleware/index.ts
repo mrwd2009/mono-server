@@ -11,8 +11,9 @@ import * as helmet from './helmet';
 import * as compress from './compress';
 import * as rateLimiter from './rate-limiter';
 import * as i18n from './i18n';
+import * as rbac from './rbac';
 
-export { bodyParser, passport, formatResponse, handleError, measure, mergedParams };
+export { bodyParser, passport, formatResponse, handleError, measure, mergedParams, rbac };
 
 export const initialize = async (app: Koa): Promise<void> => {
   await helmet.initialize(app);
@@ -25,6 +26,7 @@ export const initialize = async (app: Koa): Promise<void> => {
   await formatResponse.initialize(app);
   await handleError.initialize(app);
   await measure.initialize(app);
+  await rbac.initialize(app);
   await mergedParams.initialize(app);
   await i18n.initialize(app);
 };

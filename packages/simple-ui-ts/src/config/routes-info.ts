@@ -1,6 +1,8 @@
 import forEach from 'lodash/forEach';
 import isArray from 'lodash/isArray';
 
+type PermissionType = 'Admin.Read' | 'Admin.Write' | 'General.Read' | 'General.Write' | 'Advanced.Read' | 'Advanced.Write'; 
+
 export interface RouteInfo {
   title?: string;
   key: string;
@@ -8,6 +10,7 @@ export interface RouteInfo {
   menu: boolean;
   notSaveVisitedPage?: boolean;
   children?: RouteInfo[];
+  permission?: PermissionType;
 }
 
 // Software Quality Control:
@@ -206,17 +209,20 @@ export const routesInfo: RouteInfo[] = [
     key: 'monitoring',
     path: '/monitoring',
     menu: true,
+    permission: 'Admin.Read',
     children: [
       {
         title: 'Event',
         key: 'event',
         path: '/monitoring/event',
+        permission: 'Admin.Read',
         menu: true,
       },
       {
         title: 'Error',
         key: 'Error',
         path: '/monitoring/Error',
+        permission: 'Admin.Read',
         menu: true,
       },
     ],
@@ -225,36 +231,42 @@ export const routesInfo: RouteInfo[] = [
     title: 'System',
     key: 'system',
     path: '/system',
+    permission: 'Admin.Read',
     menu: true,
     children: [
       {
         title: 'Account',
         key: 'user',
         path: '/system/user',
+        permission: 'Admin.Read',
         menu: true,
       },
       {
         title: 'Login History',
         key: 'login-history',
         path: '/system/login-history',
+        permission: 'Advanced.Read',
         menu: true,
       },
       {
         title: 'Role',
         key: 'role',
         path: '/system/role',
+        permission: 'Admin.Read',
         menu: true,
       },
       {
         title: 'Permission',
         key: 'permission',
         path: '/system/permission',
+        permission: 'Admin.Read',
         menu: true,
       },
       {
         title: 'Setting',
         key: 'setting',
         path: '/system/setting',
+        permission: 'General.Read',
         menu: true,
       },
     ],
@@ -357,6 +369,7 @@ export interface RouteMenuInfo {
   title: string;
   key: string;
   path: string;
+  permission?: string;
   children?: RouteMenuInfo[];
 }
 
@@ -367,6 +380,7 @@ export const getRoutesMenu = (routes = routesInfo) => {
       title: routeInfo.title!,
       key: routeInfo.key,
       path: routeInfo.path,
+      permission: routeInfo.permission,
     };
     if (routeInfo.menu) {
       newRoutes.push(newRouteInfo);
