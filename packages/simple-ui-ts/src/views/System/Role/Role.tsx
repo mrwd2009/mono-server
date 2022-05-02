@@ -1,13 +1,7 @@
 import { FC, memo, useState, useMemo } from 'react';
 import forEach from 'lodash/forEach';
 import { Row, Col, Spin, Button, Tree, Card, Form, Radio, Typography, Input, Tooltip } from 'antd';
-import {
-  PlusOutlined,
-  TeamOutlined,
-  DeleteOutlined,
-  InfoCircleOutlined,
-  LockOutlined,
-} from '@ant-design/icons';
+import { PlusOutlined, TeamOutlined, DeleteOutlined, InfoCircleOutlined, LockOutlined } from '@ant-design/icons';
 import Panel from '../../../components/Panel';
 import Empty from '../../../components/Empty';
 import { useHookedModal } from '../../../components/HookedModal';
@@ -15,12 +9,7 @@ import ScrollShadow from '../../../components/ScrollShadow';
 import CreateRole from './CreateRole';
 import AssignPermission from './AssignPermission';
 import { showConfirm } from '../../../util';
-import {
-  useGetRoleListQuery,
-  useUpdateRoleMutation,
-  useReparentRoleMutation,
-  useDeleteRoleMutation,
-} from './services';
+import { useGetRoleListQuery, useUpdateRoleMutation, useReparentRoleMutation, useDeleteRoleMutation } from './services';
 
 const Detail: FC<{ detail: { key: number; enabled: boolean; name: string; description: string } }> = ({ detail }) => {
   const [editing, setEditing] = useState(false);

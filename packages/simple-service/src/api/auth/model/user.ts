@@ -41,10 +41,7 @@ type UserParams = {
 // because we support multiple app with one user database, we can't simply delete jwt token after login
 // what we need to do is to mark jwt token disabled.
 
-export const login = async (
-  params: UserParams,
-  i18n: I18nType,
-): Promise<{ token: string; reset: boolean }> => {
+export const login = async (params: UserParams, i18n: I18nType): Promise<{ token: string; reset: boolean }> => {
   const { email, password } = params;
   let locked = false;
   let userId: number;

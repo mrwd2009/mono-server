@@ -22,6 +22,7 @@ router.put('/permission/reparent', ...ctrl.reparentPermissionHandler);
 router.delete('/permission', ...ctrl.deletePermissionHandler);
 
 router.get('/roles', ctrl.getRolesHandler);
+router.get('/available-roles', ctrl.getAvailableRolesHandler);
 router.post('/role', ...ctrl.createRoleHandler);
 router.put('/role', ...ctrl.updateRoleHandler);
 router.put('/role/reparent', ...ctrl.reparentRoleHandler);

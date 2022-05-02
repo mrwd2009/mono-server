@@ -8,7 +8,7 @@ import {
   NonAttribute,
 } from '@sequelize/core';
 import lib from '../../lib';
-import { AppModels, UserProfileModel, UserTokenModel } from '../types';
+import { AppModels, UserProfileModel, UserTokenModel, RbacUserRoleModel } from '../types';
 
 declare module '../types' {
   interface AppModels {
@@ -28,6 +28,7 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   static associate = (models: AppModels) => {
     User.hasOne(models.UserProfile, { foreignKey: 'user_id', constraints: false });
     User.hasMany(models.UserToken, { foreignKey: 'user_id', constraints: false });
+    User.hasMany(models.RbacUserRole, { foreignKey: 'user_id', constraints: false });
   };
   declare id: CreationOptional<number>;
   declare email: string;
@@ -53,6 +54,7 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare updated_at: CreationOptional<Date | string>;
   declare UserProfile?: NonAttribute<UserProfileModel>;
   declare UserTokens?: NonAttribute<UserTokenModel[]>;
+  declare RbacUserRoles?: NonAttribute<RbacUserRoleModel[]>;
 }
 
 export const initialize = (sequelize: Sequelize) => {

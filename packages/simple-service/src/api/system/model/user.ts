@@ -1,14 +1,16 @@
 import zxcvbn from 'zxcvbn';
 import dayjs from 'dayjs';
+import _ from 'lodash';
 import { FormattedPageParams } from '../../../types';
 import appDBs from '../../../config/model/app';
 import { I18nType } from '../../../types';
 import { randomPassword } from '../../../lib/util/password';
-import { AuthError } from '../../../lib/error';
+import { LogicError } from '../../../lib/error';
+import config from '../../../config/config';
 
 const {
   gateway: {
-    models: { User, UserLoginHistory, UserProfile },
+    models: { User, UserLoginHistory, UserProfile, RbacUserRole, RbacRole },
     sequelize,
   },
 } = appDBs;
@@ -32,16 +34,60 @@ export const getUserList = async (params: FormattedPageParams) => {
       'created_at',
       'updated_at',
     ],
-    include: {
-      model: UserProfile,
-      attributes: ['display_name'],
-    },
+    include: [
+      {
+        attributes: ['display_name'],
+        model: UserProfile,
+      },
+      {
+        attributes: ['role_id'],
+        model: RbacUserRole,
+        where: {
+          app: config.appEnv,
+        },
+        required: false,
+      },
+    ],
     ...params,
+  });
+
+  const roleIds: number[] = [];
+  _.forEach(rows, (row) => {
+    const relatedRoles = row.RbacUserRoles;
+    if (relatedRoles?.length) {
+      roleIds.push(relatedRoles[0].role_id);
+    }
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const roleNameMap: any = {};
+  if (roleIds.length) {
+    const roles = await RbacRole.findAll({
+      attributes: ['id', 'name'],
+      where: {
+        id: roleIds,
+      },
+    });
+    _.forEach(roles, (role) => {
+      roleNameMap[role.id] = role.name;
+    });
+  }
+
+  const list = _.map(rows, (row) => {
+    const relatedRoles = row.RbacUserRoles;
+    let roleName = '';
+    if (relatedRoles?.length) {
+      roleName = roleNameMap[relatedRoles[0].role_id];
+    }
+    return {
+      ...row.toJSON(),
+      roleName,
+    };
   });
 
   return {
     total: count,
-    list: rows,
+    list,
   };
 };
 
@@ -49,12 +95,14 @@ interface CreateParams {
   email: string;
   displayName: string;
   password: string;
+  enabled: boolean;
+  roleId?: number;
 }
 export const createUser = async (params: CreateParams, i18n: I18nType) => {
-  const { email, displayName, password } = params;
+  const { email, displayName, password, enabled, roleId } = params;
 
   if (zxcvbn(password).score < 2) {
-    const error = new AuthError(i18n.t('auth.weekPassword', { password: randomPassword() }));
+    const error = new LogicError(i18n.t('auth.weekPassword', { password: randomPassword() }));
     error.public = true;
     throw error;
   }
@@ -68,13 +116,14 @@ export const createUser = async (params: CreateParams, i18n: I18nType) => {
       transaction,
     });
     if (oldUser) {
-      throw new AuthError(`User has already existed.`);
+      throw new LogicError(`User has already existed.`);
     }
 
     const user = await User.create(
       {
         email,
         password,
+        enabled,
         last_change_pass_at: dayjs.utc().format(),
       },
       {
@@ -91,46 +140,180 @@ export const createUser = async (params: CreateParams, i18n: I18nType) => {
         transaction,
       },
     );
+
+    if (roleId) {
+      const role = await RbacRole.findOne({
+        attributes: ['id'],
+        where: {
+          id: roleId,
+        },
+        transaction,
+      });
+      if (!role) {
+        throw new LogicError('Role is not found.');
+      }
+
+      await RbacUserRole.create(
+        {
+          user_id: user.id,
+          app: config.appEnv,
+          role_id: roleId,
+        },
+        {
+          transaction,
+        },
+      );
+    }
+
+    return true;
   });
 };
 
 interface EditParams {
-  id: number;
-  displayName: string;
-  password: string;
+  id: number | number[];
+  type: string;
+  enabled?: boolean;
+  roleId?: number;
+  displayName?: string;
+  password?: string;
 }
 export const editUser = async (params: EditParams, i18n: I18nType) => {
-  const { id, displayName, password } = params;
+  const { id, type, enabled, roleId, displayName, password } = params;
 
-  if (zxcvbn(password).score < 2) {
-    const error = new AuthError(i18n.t('auth.weekPassword', { password: randomPassword() }));
-    error.public = true;
-    throw error;
+  if (type === 'password') {
+    if (zxcvbn(password!).score < 2) {
+      const error = new LogicError(i18n.t('auth.weekPassword', { password: randomPassword() }));
+      error.public = true;
+      throw error;
+    }
+
+    await sequelize.transaction(async (transaction) => {
+      const user = await User.findOne({
+        attributes: ['id'],
+        where: {
+          id,
+        },
+        transaction,
+      });
+
+      if (!user) {
+        throw new LogicError(i18n.t('auth.notFoundUser'));
+      }
+
+      user.password = password!;
+      await user.save({ transaction });
+    });
+
+    return true;
   }
 
+  if (type === 'edit') {
+    await sequelize.transaction(async (transaction) => {
+      const user = await User.findOne({
+        attributes: ['id', 'enabled'],
+        where: {
+          id,
+        },
+        include: [
+          {
+            attributes: ['id', 'display_name'],
+            model: UserProfile,
+          },
+          {
+            attributes: ['id', 'role_id'],
+            model: RbacUserRole,
+            where: {
+              app: config.appEnv,
+            },
+            required: false,
+          },
+        ],
+        transaction,
+      });
+
+      if (!user) {
+        throw new LogicError(i18n.t('auth.notFoundUser'));
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const ops: any = [];
+      if (user.enabled !== enabled) {
+        user.enabled = enabled!;
+        ops.push(user.save({ transaction }));
+      }
+
+      const profile = user.UserProfile!;
+      if (profile.display_name !== displayName) {
+        profile.display_name = displayName!;
+        ops.push(profile.save({ transaction }));
+      }
+
+      const roles = user.RbacUserRoles!;
+      if (roles.length) {
+        await RbacUserRole.destroy({
+          where: {
+            user_id: user.id,
+            app: config.appEnv,
+          },
+          transaction,
+        });
+      }
+
+      if (roleId) {
+        ops.push(
+          RbacUserRole.create(
+            {
+              user_id: user.id,
+              app: config.appEnv,
+              role_id: roleId,
+            },
+            {
+              transaction,
+            },
+          ),
+        );
+      }
+
+      await Promise.all(ops);
+    });
+
+    return true;
+  }
+
+  const ids = id as number[];
+
   await sequelize.transaction(async (transaction) => {
-    const user = await User.findOne({
-      attributes: ['id'],
+    const count = await User.count({
       where: {
-        id,
-      },
-      include: {
-        attributes: ['id', 'display_name'],
-        model: UserProfile,
+        id: ids,
       },
       transaction,
     });
 
-    if (!user) {
-      throw new AuthError(i18n.t('auth.notFoundEmail'));
+    if (ids.length !== count) {
+      throw new LogicError(i18n.t('auth.notFoundUser'));
     }
 
-    user.password = password;
-    const profile = user.UserProfile!;
-    profile.display_name = displayName;
+    await RbacUserRole.destroy({
+      where: {
+        user_id: ids,
+        app: config.appEnv,
+      },
+      transaction,
+    });
 
-    await Promise.all([user.save({ transaction }), profile.save({ transaction })]);
+    const items = _.map(ids, (id) => ({
+      user_id: id,
+      app: config.appEnv,
+      role_id: roleId!,
+    }));
+
+    await RbacUserRole.bulkCreate(items, {
+      transaction,
+    });
   });
+
+  return true;
 };
 
 export const deleteUser = async (params: { id: number }, i18n: I18nType) => {
@@ -142,7 +325,7 @@ export const deleteUser = async (params: { id: number }, i18n: I18nType) => {
     },
   });
   if (!user) {
-    throw new AuthError(i18n.t('auth.notFoundEmail'));
+    throw new LogicError(i18n.t('auth.notFoundUser'));
   }
 
   await user.destroy();

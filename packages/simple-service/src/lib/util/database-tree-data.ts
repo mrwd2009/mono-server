@@ -250,7 +250,7 @@ export const getTreeData = (params: TreeDataParams) => {
     } else {
       parentMap.get(item.parent_id)?.children?.push(newItem);
     }
-    parentMap.set(item.id,newItem);
+    parentMap.set(item.id, newItem);
   });
 
   return {

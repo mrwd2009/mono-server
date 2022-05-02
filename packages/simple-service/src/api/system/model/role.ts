@@ -11,23 +11,31 @@ const {
 } = appDBs;
 
 export const getRoles = async () => {
-  return await sequelize.transaction(async (transaction) => {
-    const rows = await RbacRole.findAll({
-      transaction,
-    });
-    const items = _.map(rows, (row) => {
-      return {
-        id: row.id,
-        parent_id: row.parent_id,
-        name: row.name,
-        sequence_id: row.sequence_id,
-        data: {
-          description: row.description,
-          enabled: row.enabled,
-        },
-      };
-    });
-    return getTreeData({ items });
+  const rows = await RbacRole.findAll({
+    attributes: ['id', 'parent_id', 'name', 'sequence_id', 'description', 'enabled'],
+  });
+  const items = _.map(rows, (row) => {
+    return {
+      id: row.id,
+      parent_id: row.parent_id,
+      name: row.name,
+      sequence_id: row.sequence_id,
+      data: {
+        description: row.description,
+        enabled: row.enabled,
+      },
+    };
+  });
+  return getTreeData({ items });
+};
+
+export const getAvailableRoles = async () => {
+  const rows = await RbacRole.findAll({ attributes: ['id', 'name'], order: [['name', 'asc']] });
+  return _.map(rows, (row) => {
+    return {
+      id: row.id,
+      name: row.name,
+    };
   });
 };
 
@@ -62,11 +70,14 @@ interface UpdateRoleParams {
   description?: string;
 }
 export const updateRole = async (params: UpdateRoleParams) => {
-  const values = _.pickBy({
-    enabled: params.enabled,
-    name: params.name,
-    description: params.description,
-  }, val => val !== undefined);
+  const values = _.pickBy(
+    {
+      enabled: params.enabled,
+      name: params.name,
+      description: params.description,
+    },
+    (val) => val !== undefined,
+  );
   const [count] = await RbacRole.update(values, {
     where: {
       id: params.id,
@@ -105,18 +116,15 @@ export const deleteRole = async ({ id }: { id: number }) => {
 };
 
 export const getAssignedPermissions = async ({ id }: { id: number }) => {
-  const [
-    rows,
-    assignedList,
-  ] = await Promise.all([
+  const [rows, assignedList] = await Promise.all([
     RbacPermission.findAll({
-      attributes: ['id', 'parent_id', 'name', 'sequence_id', 'type']
+      attributes: ['id', 'parent_id', 'name', 'sequence_id', 'type'],
     }),
     RbacRolePermission.findAll({
       attributes: [[fn('distinct', col('permission_id')), 'p_id']],
       where: {
         role_id: id,
-      }
+      },
     }),
   ]);
   const items = _.map(rows, (row) => {
@@ -130,9 +138,7 @@ export const getAssignedPermissions = async ({ id }: { id: number }) => {
       },
     };
   });
-  const {
-    roots,
-  } = getTreeData({ items });
+  const { roots } = getTreeData({ items });
   const checkedKeys = _.map(assignedList, (item) => {
     return item.get('p_id');
   });
@@ -143,7 +149,7 @@ export const getAssignedPermissions = async ({ id }: { id: number }) => {
   };
 };
 
-export const assignPermissions = async ({ id, permissionIds }: { id: number, permissionIds: number[] }) => {
+export const assignPermissions = async ({ id, permissionIds }: { id: number; permissionIds: number[] }) => {
   await sequelize.transaction(async (transaction) => {
     const items = _.map(permissionIds, (pId) => {
       return {
@@ -164,4 +170,3 @@ export const assignPermissions = async ({ id, permissionIds }: { id: number, per
 
   return true;
 };
-

@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import useAxios from 'axios-hooks';
 import { showSuccess, showConfirm } from '../../../../util';
 import apiEndpoints from '../../../../config/api-endpoints';
@@ -20,9 +20,12 @@ const useUser = () => {
     };
   });
 
+  const [selectedKeys, setSelectedKeys] = useState<number[]>([]);
+
   const [{ loading }, deleteUser] = useAxios({ url: apiEndpoints.system.deleteUser, method: 'delete' });
 
   const refreshTable = useCallback(() => {
+    setSelectedKeys([]);
     refreshListRef.current?.();
   }, [refreshListRef]);
 
@@ -45,6 +48,8 @@ const useUser = () => {
   return {
     loading,
     table,
+    selectedKeys,
+    setSelectedKeys,
     refreshTable,
     handleDelete,
   };

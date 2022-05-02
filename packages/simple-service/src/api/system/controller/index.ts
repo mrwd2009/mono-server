@@ -28,6 +28,8 @@ export const createUserHandler: Array<Middleware> = [
     Schema.object({
       email: Schema.string().email().max(maxStrLen),
       displayName: Schema.string().max(maxStrLen),
+      enabled: Schema.boolean(),
+      roleId: Schema.number().integer().optional(),
       password: Schema.string().max(maxStrLen),
     }),
   ),
@@ -41,9 +43,12 @@ export const createUserHandler: Array<Middleware> = [
 export const editUserHandler: Array<Middleware> = [
   validator((Schema) =>
     Schema.object({
-      id: Schema.number().integer(),
-      displayName: Schema.string().max(maxStrLen),
-      password: Schema.string().max(maxStrLen),
+      id: Schema.alternatives().try(Schema.array().items(Schema.number().integer()), Schema.number().integer()),
+      type: Schema.string().valid('edit', 'password', 'assignRole'),
+      enabled: Schema.boolean().optional(),
+      roleId: Schema.number().integer().optional(),
+      displayName: Schema.string().max(maxStrLen).optional(),
+      password: Schema.string().max(maxStrLen).optional(),
     }),
   ),
   validateEmailDomains(),
@@ -142,6 +147,11 @@ export const deletePermissionHandler: Array<Middleware> = [
 
 export const getRolesHandler: Middleware = async (context) => {
   const result = await roleModel.getRoles();
+  context.gateway?.sendJSON?.(result);
+};
+
+export const getAvailableRolesHandler: Middleware = async (context) => {
+  const result = await roleModel.getAvailableRoles();
   context.gateway?.sendJSON?.(result);
 };
 

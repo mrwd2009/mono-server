@@ -10,24 +10,22 @@ const {
 } = appDBs;
 
 export const getPermissions = async () => {
-  return await sequelize.transaction(async (transaction) => {
-    const rows = await RbacPermission.findAll({
-      transaction,
-    });
-    const items = _.map(rows, (row) => {
-      return {
-        id: row.id,
-        parent_id: row.parent_id,
-        name: row.name,
-        sequence_id: row.sequence_id,
-        data: {
-          type: row.type,
-          description: row.description,
-        },
-      };
-    });
-    return getTreeData({ items });
+  const rows = await RbacPermission.findAll({
+    attributes: ['id', 'parent_id', 'name', 'sequence_id', 'type', 'description'],
   });
+  const items = _.map(rows, (row) => {
+    return {
+      id: row.id,
+      parent_id: row.parent_id,
+      name: row.name,
+      sequence_id: row.sequence_id,
+      data: {
+        type: row.type,
+        description: row.description,
+      },
+    };
+  });
+  return getTreeData({ items });
 };
 
 interface CreatePermissionParams {
