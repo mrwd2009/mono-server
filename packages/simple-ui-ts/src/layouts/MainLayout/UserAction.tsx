@@ -50,7 +50,7 @@ const UserAction: FC = () => {
       <div
         className="app-ex-user-avatar"
         style={{
-          backgroundImage: avatar.base64,
+          backgroundImage: `url('${avatar.base64}')`,
         }}
       />
     );
@@ -97,7 +97,7 @@ const UserAction: FC = () => {
       <div
         className="app-ex-user-avatar clickable"
         style={{
-          backgroundImage: avatar.base64,
+          backgroundImage: `url('${avatar.base64}')`,
         }}
       />
     );
