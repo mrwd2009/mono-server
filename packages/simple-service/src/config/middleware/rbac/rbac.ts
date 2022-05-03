@@ -8,20 +8,16 @@ import * as lib from '../../../lib';
 import permissions from './permissions';
 
 const {
-  gateway: {
-    sequelize,
-  },
+  gateway: { sequelize },
 } = appDBs;
 
 const {
   error: { ForbiddenError },
 } = lib;
 
-type PermissionKeys = keyof (typeof permissions);
+type PermissionKeys = keyof typeof permissions;
 
-export {
-  permissions,
-};
+export { permissions };
 
 export const getUserPermissions = async (id: number): Promise<number[]> => {
   const sql = `
@@ -81,7 +77,7 @@ export const checkPermission = (permissionKey: PermissionKeys): Middleware => {
     } else {
       throw new ForbiddenError('Invalid permission!');
     }
-  }
+  };
 };
 
 const adminR = checkPermission('Admin.Read');
@@ -91,14 +87,7 @@ const generalW = checkPermission('General.Write');
 const advancedR = checkPermission('Advanced.Read');
 const advancedW = checkPermission('Advanced.Write');
 
-export {
-  adminR,
-  adminW,
-  generalR,
-  generalW,
-  advancedR,
-  advancedW,
-};
+export { adminR, adminW, generalR, generalW, advancedR, advancedW };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const initialize = async (app: Koa): Promise<void> => {

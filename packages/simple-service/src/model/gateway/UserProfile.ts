@@ -24,8 +24,8 @@ export class UserProfile extends Model<InferAttributes<UserProfile>, InferCreati
   declare id: CreationOptional<number>;
   declare user_id: number;
   declare display_name: CreationOptional<string>;
-  declare avatar: CreationOptional<string>;
-  declare avatar_base64: CreationOptional<string>;
+  declare avatar: CreationOptional<string | null>;
+  declare avatar_base64: CreationOptional<string | null>;
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;
   declare User?: NonAttribute<UserModel>;

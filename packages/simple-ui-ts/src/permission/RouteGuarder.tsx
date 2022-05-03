@@ -6,12 +6,12 @@ import { usePermission } from '../hooks';
 import { getRouteInfoByPath, getRouteInfo } from '../config/routes-info';
 
 const RouteGuarder: FC = () => {
-  const { loading, loaded, fetchUserInfo, fetchAvatar} = useUserInfo();
+  const { loading, loaded, fetchUserInfo, fetchAvatar } = useUserInfo();
   const { hasPermission } = usePermission();
   const { pathname } = useLocation();
   const routeInfo = useMemo(() => {
     return getRouteInfoByPath(pathname);
-  }, [pathname])
+  }, [pathname]);
 
   useEffect(() => {
     fetchUserInfo();
@@ -38,10 +38,15 @@ const RouteGuarder: FC = () => {
   if (!loaded) {
     return null;
   }
-  
+
   if (routeInfo?.permission) {
     if (!hasPermission(routeInfo.permission)) {
-      return <Navigate to={getRouteInfo('403')!.path} replace />;
+      return (
+        <Navigate
+          to={getRouteInfo('403')!.path}
+          replace
+        />
+      );
     }
   }
 

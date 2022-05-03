@@ -1,7 +1,13 @@
 import forEach from 'lodash/forEach';
 import isArray from 'lodash/isArray';
 
-type PermissionType = 'Admin.Read' | 'Admin.Write' | 'General.Read' | 'General.Write' | 'Advanced.Read' | 'Advanced.Write'; 
+type PermissionType =
+  | 'Admin.Read'
+  | 'Admin.Write'
+  | 'General.Read'
+  | 'General.Write'
+  | 'Advanced.Read'
+  | 'Advanced.Write';
 
 export interface RouteInfo {
   title?: string;

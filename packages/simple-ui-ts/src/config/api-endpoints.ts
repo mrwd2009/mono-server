@@ -29,6 +29,7 @@ export const apiEndpoints = {
     addUser: '/system/user',
     editUser: '/system/user',
     deleteUser: '/system/user',
+    userProfile: '/system/user/profile',
     availableRoles: '/system/available-roles',
     userHistoryList: '/system/user/history/list',
     permissionList: '/system/permissions',

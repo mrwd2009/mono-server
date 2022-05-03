@@ -63,9 +63,9 @@ const ThemeSwitch: FC = () => {
     <Dropdown
       trigger={['click']}
       overlay={overlay}
-      getPopupContainer={(node) => {
-        return node.parentNode?.parentNode as HTMLElement;
-      }}
+      // getPopupContainer={(node) => {
+      //   return node.parentNode?.parentNode as HTMLElement;
+      // }}
     >
       <Button
         loading={loading}

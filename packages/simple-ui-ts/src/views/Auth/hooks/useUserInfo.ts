@@ -29,21 +29,22 @@ const useUserInfo = () => {
         loading: true,
       }),
     );
-    requestAvatar().then(({ data }) => {
-      dipatch(
-        updateAvatar({
-          ...data,
-          loading: false,
-        }),
-      );
-    })
-    .catch(() => {
-      dipatch(
-        updateAvatar({
-          loading: false,
-        }),
-      );
-    });
+    requestAvatar()
+      .then(({ data }) => {
+        dipatch(
+          updateAvatar({
+            ...data,
+            loading: false,
+          }),
+        );
+      })
+      .catch(() => {
+        dipatch(
+          updateAvatar({
+            loading: false,
+          }),
+        );
+      });
   }, [requestAvatar, dipatch]);
 
   return {

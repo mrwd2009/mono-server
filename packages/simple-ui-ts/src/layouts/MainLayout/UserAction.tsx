@@ -110,24 +110,24 @@ const UserAction: FC = () => {
         }}
       />
     );
-  }  else {
+  } else {
     btn = (
       <Button
         type="primary"
         icon={<Icon component={UserIcon} />}
         shape="circle"
-      />    
+      />
     );
   }
-  
+
   return (
     <Popover
       content={content}
       placement="bottomRight"
       trigger="click"
-      getPopupContainer={(node) => {
-        return node.parentNode?.parentNode as HTMLElement;
-      }}
+      // getPopupContainer={(node) => {
+      //   return node.parentNode?.parentNode as HTMLElement;
+      // }}
       visible={visible}
       onVisibleChange={setVisible}
     >

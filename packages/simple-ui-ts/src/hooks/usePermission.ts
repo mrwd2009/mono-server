@@ -6,12 +6,15 @@ import { selectPermissions } from '../views/Auth/slices';
 export const usePermission = () => {
   const permissions = useAppSelector(selectPermissions);
 
-  const hasPermission = useCallback((p: string) => {
-    if (process.env.NODE_ENV === 'development') {
-      return true;
-    }
-    return includes(permissions, p);
-  }, [permissions]);
+  const hasPermission = useCallback(
+    (p: string) => {
+      if (process.env.NODE_ENV === 'development') {
+        return true;
+      }
+      return includes(permissions, p);
+    },
+    [permissions],
+  );
 
   const isAdminR = useMemo(() => {
     return hasPermission('Admin.Read');
@@ -36,7 +39,6 @@ export const usePermission = () => {
   const isAdvancedW = useMemo(() => {
     return hasPermission('Advanced.Write');
   }, [hasPermission]);
-
 
   return {
     hasPermission,

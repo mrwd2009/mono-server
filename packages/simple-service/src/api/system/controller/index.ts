@@ -11,9 +11,25 @@ export const getInfoHandler: Middleware = async (context) => {
 };
 
 export const getUserAvatarHandler: Middleware = async (context) => {
-  const info = await systemModel.getUserAvatar(context.state);
+  const info = await userModel.getUserAvatar(context.state);
   context.gateway!.sendJSON!(info);
 };
+
+export const saveUserProfileHandler: Array<Middleware> = [
+  validator((Schema) =>
+    Schema.object({
+      photo: Schema.string()
+        .optional()
+        .allow(null)
+        .max(1024 * 1024 * 256),
+      displayName: Schema.string().max(maxStrLen),
+    }),
+  ),
+  async (context) => {
+    const info = await userModel.saveUserProfile(context.mergedParams, context.state.user.id);
+    context.gateway!.sendJSON!(info);
+  },
+];
 
 export const getUserListHandler: Array<Middleware> = [
   validatePagination({

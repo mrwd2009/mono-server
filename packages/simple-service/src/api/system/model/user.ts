@@ -1,11 +1,12 @@
 import zxcvbn from 'zxcvbn';
+import { DefaultState } from 'koa';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { FormattedPageParams } from '../../../types';
 import appDBs from '../../../config/model/app';
 import { I18nType } from '../../../types';
 import { randomPassword } from '../../../lib/util/password';
-import { LogicError } from '../../../lib/error';
+import { LogicError, DataError } from '../../../lib/error';
 import config from '../../../config/config';
 
 const {
@@ -337,7 +338,7 @@ export const editUser = async (params: EditParams, i18n: I18nType) => {
         app: config.appEnv,
         role_id: roleId,
       }));
-  
+
       await RbacUserRole.bulkCreate(items, {
         transaction,
       });
@@ -385,4 +386,50 @@ export const getUserLoginHistoryList = async (params: FormattedPageParams) => {
     total: count,
     list: rows,
   };
+};
+
+export const getUserAvatar = async (state: DefaultState) => {
+  const profile = await UserProfile.findOne({
+    attributes: ['avatar', 'avatar_base64'],
+    where: {
+      user_id: state.user.id,
+    },
+  });
+
+  if (!profile) {
+    throw new DataError('User is not found.');
+  }
+
+  return {
+    url: profile.avatar,
+    base64: profile.avatar_base64,
+  };
+};
+
+export const saveUserProfile = async (params: { photo?: null | string; displayName: string }, userId: number) => {
+  const { photo, displayName } = params;
+  const profile = await UserProfile.findOne({
+    attributes: ['id', 'display_name', 'avatar', 'avatar_base64'],
+    where: {
+      user_id: userId,
+    },
+  });
+
+  if (!profile) {
+    throw new DataError('User profile is not found.');
+  }
+
+  if (photo) {
+    profile.avatar = null;
+    profile.avatar_base64 = photo;
+  } else if (photo === null) {
+    profile.avatar = null;
+    profile.avatar_base64 = null;
+  }
+
+  profile.display_name = displayName;
+
+  await profile.save();
+
+  return true;
 };

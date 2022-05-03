@@ -2,8 +2,7 @@ import { DefaultState } from 'koa';
 import _ from 'lodash';
 import appDBs from '../../../config/model/app';
 import config from '../../../config';
-import { rbac } from '../../../config/middleware'
-import { DataError } from '../../../lib/error';
+import { rbac } from '../../../config/middleware';
 
 const {
   gateway: {
@@ -35,22 +34,4 @@ const getInfo = async (state: DefaultState) => {
   };
 };
 
-const getUserAvatar = async (state: DefaultState) => {
-  const profile = await UserProfile.findOne({
-    attributes: ['avatar', 'avatar_base64'],
-    where: {
-      user_id: state.user.id,
-    },
-  });
-
-  if (!profile) {
-    throw new DataError('User is not found.');
-  }
-
-  return {
-    url: profile.avatar,
-    base64: profile.avatar_base64,
-  };
-};
-
-export { getInfo, getUserAvatar };
+export { getInfo };
