@@ -1,21 +1,27 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { format } from 'winston';
+import { isEmpty } from 'lodash';
 import stringify from 'safe-stable-stringify';
+import querystring from 'query-string';
 import { TransformableInfo, FormatWrap } from 'logform';
 
 const { timestamp, combine, json } = format;
 
 export const errorReponse: FormatWrap = format((info: TransformableInfo): TransformableInfo | boolean => {
-  if (info.response instanceof Error) {
-    const error = info.response;
-    // JSON.stringify will cause error for circular structures.
-    info.response = stringify({
-      ...error,
-      message: error.message,
-      stack: error.stack,
-    });
-  } else {
-    info.response = (info.response && stringify(info.response)) || '';
-  }
+  const {
+    query,
+    body,
+    stack,
+    ...rest
+  } = (info.response || {}) as any;
+  delete info.response;
+  info.query = (query && querystring.stringify(query)) || '';
+  info.body = (body && stringify(body)) || '';
+  info.stack = stack || '';
+  info.remainedInfo = (!isEmpty(rest) && stringify(rest)) || '';
+  info.durationMs = info.durationMs || -1;
+  info.trackId = info.trackId || '';
+  info.user = info.user || 'ananymity';
   return info;
 });
 

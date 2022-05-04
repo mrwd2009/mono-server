@@ -6,7 +6,7 @@ import path from 'path';
 import net from 'net';
 import Transport, { TransportStreamOptions } from 'winston-transport';
 import { isWorker, worker } from 'cluster';
-import { noop } from 'lodash';
+import { noop, isEmpty } from 'lodash';
 import { Colorizer } from 'logform';
 import { LEVEL } from 'triple-beam';
 
@@ -110,17 +110,18 @@ export class EnhancedConsole extends Transport {
       if (info.user) {
         msg = `${msg}\nuser: ${color(info.user)}`;
       }
+      if (!isEmpty(info.query)) {
+        msg = `${msg}\nquery: ${color(info.query)}`;
+      }
+      if (!isEmpty(info.body)) {
+        msg = `${msg}\nbody: ${color(info.body)}`;
+      }
       msg = `${msg}\nmessage: ${color(info.message)}`;
-      if (info.response) {
-        const { message, stack, ...rest } = JSON.parse(info.response);
-        // it's an error object
-        if (message && stack) {
-          msg = `${msg}\nresponse.message: ${color(message)}\nresponse.stack: ${color(stack)}\nresponse(rest): ${color(
-            JSON.stringify(rest, null, 2),
-          )}`;
-        } else {
-          msg = `${msg}\nresponse: ${color(JSON.stringify(JSON.parse(info.response), null, 2))}`;
-        }
+      if (info.stack) {
+        msg = `${msg}\nstack: ${color(info.stack)}`;
+      }
+      if (info.remainedInfo) {
+        msg = `${msg}\nremainedInfo: ${color(JSON.stringify(JSON.parse(info.remainedInfo), null, 2))}`;
       }
       console[type](`${msg}\n`);
     };

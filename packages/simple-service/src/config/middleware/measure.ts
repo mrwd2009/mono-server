@@ -13,11 +13,12 @@ declare module 'koa' {
 export const measure: Middleware = async (context, next) => {
   const start = dayjs().valueOf();
   context.state.requestId = uuidV4();
-  const profileTag = `${context.state.requestId} ${context.method}:${context.originalUrl}`;
   let hasError = false;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let profiler: any = null;
   try {
     if (!config.isDev) {
-      logger.profile(profileTag);
+      profiler = logger.startTimer();
     }
     await next();
   } catch (error) {
@@ -44,14 +45,14 @@ export const measure: Middleware = async (context, next) => {
         url = `\x1b[38;2;82;196;26m${context.method} ${context.originalUrl} ${durationStr}\x1b[0m`;
       }
       console.info(`\x1b[38;2;0;204;204mResponse Time(${context.state.requestId}): \x1b[0m ${url}\n`);
-    } else {
-      // why we must add 'message' and 'level' fields, it's so stupid according to winston type.
-      logger.profile(profileTag, {
-        level: 'info',
-        message: profileTag,
-        user: context.state.user?.email || 'ananymity',
-      });
     }
+
+    profiler?.done({
+      level: 'info',
+      message: `${context.method}${context.originalUrl}`,
+      trackId: context.state.requestId,
+      user: context.state.user?.email || 'ananymity',
+    });
   }
 };
 
