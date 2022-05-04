@@ -146,8 +146,8 @@ const config = {
   logger: {
     rotateOptions: {
       fileDir: logFileDir,
-      maxSize: '30m',
-      maxFiles: '90d',
+      maxSize: '1024m',
+      maxFiles: '20d',
       logInfoFileName: envObj.WINSTON_LOG_FILENAME || `info-${nodeEnv}-%DATE%.log`,
       logErrorFileName: envObj.WINSTON_LOG_ERROR_FILENAME || `error-${nodeEnv}-%DATE%.log`,
       logExceptionFileName: envObj.WINSTON_LOG_EXCEPTION_FILENAME || `exception-${nodeEnv}-%DATE%.log`,
