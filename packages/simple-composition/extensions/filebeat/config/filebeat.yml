@@ -1,0 +1,32 @@
+## Filebeat configuration
+## https://github.com/elastic/beats/blob/master/deploy/docker/filebeat.docker.yml
+#
+
+filebeat.config:
+  modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+
+filebeat.inputs:
+  - type: log
+    recursive_glob.enabled: true
+    json.keys_under_root: true
+    json.add_error_key: true
+    paths:
+      - /apps/log/*.log
+
+setup.template.enabled: true
+output.elasticsearch:
+  hosts: ['http://elasticsearch:9200']
+  index: "simple-service-%{[agent.version]}"
+  username: elastic
+  password: ${ELASTIC_PASSWORD}
+
+setup.template.name: "simple-service"
+setup.template.pattern: "simple-service*"
+## HTTP endpoint for health checking
+## https://www.elastic.co/guide/en/beats/filebeat/current/http-endpoint.html
+#
+
+http.enabled: true
+http.host: 0.0.0.0

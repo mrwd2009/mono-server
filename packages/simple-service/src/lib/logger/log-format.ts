@@ -14,14 +14,16 @@ export const errorReponse: FormatWrap = format((info: TransformableInfo): Transf
     stack,
     ...rest
   } = (info.response || {}) as any;
-  delete info.response;
   info.query = (query && querystring.stringify(query)) || '';
   info.body = (body && stringify(body)) || '';
   info.stack = stack || '';
   info.remainedInfo = (!isEmpty(rest) && stringify(rest)) || '';
   info.durationMs = info.durationMs || -1;
   info.trackId = info.trackId || '';
-  info.user = info.user || 'ananymity';
+  info.logUser = info.user || 'ananymity';
+  // be careful to add new field in 'info', we use filebeat to collect log
+  delete info.response;
+  delete info.user;
   return info;
 });
 
