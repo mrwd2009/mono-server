@@ -64,3 +64,9 @@ Refer https://vsupalov.com/docker-arg-env-variable-guide/
 ## ELK Config
 
 Refer https://soulteary.com/2020/05/04/use-docker-to-build-elk-environment.html
+
+## Docker compose down
+`docker compose down -v`
+
+## Docker compose up
+`docker compose up`

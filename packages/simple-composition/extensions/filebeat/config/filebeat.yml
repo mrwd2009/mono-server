@@ -15,15 +15,18 @@ filebeat.inputs:
     paths:
       - /apps/log/*.log
 
-setup.template.enabled: true
+setup.template.enabled: false
+setup.template.overwrite: false
+setup.template.name: "simple-service"
+setup.template.pattern: "simple-service*"
+setup.ilm.enabled: false
+
 output.elasticsearch:
   hosts: ['http://elasticsearch:9200']
-  index: "simple-service-%{[agent.version]}"
+  index: "simple-service-%{[agent.version]}-%{+yyyy.MM.dd}"
   username: elastic
   password: ${ELASTIC_PASSWORD}
 
-setup.template.name: "simple-service"
-setup.template.pattern: "simple-service*"
 ## HTTP endpoint for health checking
 ## https://www.elastic.co/guide/en/beats/filebeat/current/http-endpoint.html
 #

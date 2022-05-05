@@ -80,6 +80,8 @@ for user in "${!users_passwords[@]}"; do
 		create_user "$user" "${users_passwords[$user]}" "${users_roles[$user]}"
 	fi
 done
-ensure_template "$user"
+
+ensure_template
+
 mkdir -p "$(dirname "${state_file}")"
 touch "$state_file"
