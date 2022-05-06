@@ -1,0 +1,31 @@
+{
+  "files": {
+    "main.js": "/static/js/main.3c103217.js",
+    "static/js/803.0e2daade.chunk.js": "/static/js/803.0e2daade.chunk.js",
+    "static/js/50.cd0fa04f.chunk.js": "/static/js/50.cd0fa04f.chunk.js",
+    "static/js/712.46faef2a.chunk.js": "/static/js/712.46faef2a.chunk.js",
+    "static/js/27.3c548f3e.chunk.js": "/static/js/27.3c548f3e.chunk.js",
+    "static/media/bg-2500.jpeg": "/static/media/bg-2500.0d7556843cff9382655f.jpeg",
+    "static/media/bg-1500.jpeg": "/static/media/bg-1500.a50c3f37532c021c64fa.jpeg",
+    "static/media/bg-1000.jpeg": "/static/media/bg-1000.a899f7eca8f26434b380.jpeg",
+    "static/media/bg-750.jpeg": "/static/media/bg-750.c30dcb417c38360b06c8.jpeg",
+    "static/media/bg-500.jpeg": "/static/media/bg-500.674de22850f1a68032bd.jpeg",
+    "index.html": "/index.html",
+    "static/media/green-energy.svg": "/static/media/green-energy.c39b8bf9a61c83f691cad39e6c50acb5.svg",
+    "static/media/contract.svg": "/static/media/contract.53c475bab63231daea9636b9b2123147.svg",
+    "static/media/empty.svg": "/static/media/empty.3844616341cfef8d93219510046b6c3c.svg",
+    "static/media/charge.svg": "/static/media/charge.d6013782791fc3636bae96a430e6c2ed.svg",
+    "static/media/group.svg": "/static/media/group.c311e9e66bdc2335b70130483df76fe4.svg",
+    "static/media/block.svg": "/static/media/block.ab0de8288d68b9ffccd09ea4e0390673.svg",
+    "static/media/user.svg": "/static/media/user.3ef7fbd1c0404b742bcde63b69f18a77.svg",
+    "static/media/line.svg": "/static/media/line.2808b20dd42cf0a8f0955842d6f37219.svg",
+    "static/media/sun.svg": "/static/media/sun.af1aa3887c0deadaaf2ecc93d9da5ab0.svg",
+    "static/media/os.svg": "/static/media/os.c4763e8599b5baff5838e651f2aa72fd.svg",
+    "static/media/moon.svg": "/static/media/moon.2204a73b9b7fbc5e0219e11f71bed29d.svg",
+    "static/media/collapse-right.svg": "/static/media/collapse-right.20b4aabb604bda5191c713ee904e74a2.svg",
+    "static/media/collapse-left.svg": "/static/media/collapse-left.264f6d60fd8cb198b559f6b4d50e6fd4.svg"
+  },
+  "entrypoints": [
+    "static/js/main.3c103217.js"
+  ]
+}
