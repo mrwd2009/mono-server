@@ -43,7 +43,7 @@
   "scripts": {
     "dev": "PORT=4200 craco start",
     "build": "craco build && gzip -k -r build",
-    "build-release": "npm run build && cp -r ./build/* ./release",
+    "build-release": "npm run build && rm -rf ./release/* && cp -r ./build/* ./release",
     "test": "craco test",
     "storybook": "start-storybook -p 5102 -s public",
     "build-storybook": "build-storybook -s public",

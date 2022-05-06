@@ -2,7 +2,7 @@ FROM nginx:1.21.6
 
 LABEL version=1.0.0
 LABEL email=wudi.link.me@gmail.com
-LABEL description="app ui"
+LABEL description="rule engine modeling ui"
 
 # configuration
 COPY server/nginx.conf.template /etc/nginx/templates/
@@ -14,7 +14,7 @@ COPY scripts/ /apps/bin
 RUN chmod +x /apps/bin/dumb-init
 # ADD will decompress *.gz, we can't use it for our static files
 # html/**/*
-COPY build/ /apps/html/app-ui
+COPY release/ /apps/html/app-ui
 
 EXPOSE 5200/tcp
 

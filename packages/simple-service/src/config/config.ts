@@ -23,10 +23,6 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   GATEWAY_DB_PASS?: string;
   GATEWAY_DB_HOST?: string;
   GATEWAY_DB_PORT?: string;
-  GITHUB_USERNAME?: string;
-  GITHUB_PASSWORD?: string;
-  DEPLOYMENT_ADMIN_HOST?: string;
-  DEPLOYMENT_CLIENT?: string;
   TEMP_FILE_DIR?: string;
   COOKIE_KEYS?: string;
   ALLOWED_DOMAINS?: string;
@@ -194,15 +190,6 @@ const config = {
     prometheusPort: parseInt(envObj.APP_PROMETHEUS_PORT || '4000'),
     promethuesPath: envObj.APP_PROMETHEUS_PATH || '/metrics',
     promethuesLabel: envObj.APP_PROMETHEUS_LABEL || 'app-gateway',
-  },
-  github: {
-    username: envObj.GITHUB_USERNAME || '',
-    password: envObj.GITHUB_PASSWORD || '',
-  },
-  deployment: {
-    adminHost: envObj.DEPLOYMENT_ADMIN_HOST || '',
-    isClient: envObj.DEPLOYMENT_CLIENT === 'true',
-    updateInternal: 10000,
   },
 };
 

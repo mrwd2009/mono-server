@@ -2,7 +2,7 @@ FROM node:16-alpine3.14
 
 LABEL version=1.0.0
 LABEL email=wudi.link.me@gmail.com
-LABEL description="app service"
+LABEL description="rule engine modeling ui api"
 
 ENV NODE_ENV=production
 ENV APP_ENV=dev
@@ -16,7 +16,7 @@ RUN chmod +x /apps/bin/dumb-init
 
 WORKDIR /apps/gateway/app-service
 
-COPY dist ./main
+COPY release ./main
 COPY ["package.json", "yarn.lock", "./"]
 
 RUN yarn install --production --frozen-lockfile --silent && yarn cache clean
