@@ -64,8 +64,8 @@ services:
       - --strict.perms=false
     volumes:
       - ./extensions/filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro,Z
-      - servicelog:/apps/log
-      - ../simple-service/log/winston/development/dev/info:/apps/log
+      #- rule-engine-modeling-ui/apps/gateway/log:/apps/gateway/log
+      - ../simple-service/log/winston/development:/apps/gateway/log
     environment:
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
     networks:
@@ -96,4 +96,4 @@ networks:
 volumes:
   setup:
   elasticsearch:
-  servicelog:
+  rule-engine-modeling-ui:

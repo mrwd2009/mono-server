@@ -185,10 +185,10 @@ function ensure_template {
 	local elasticsearch_host="${ELASTICSEARCH_HOST:-elasticsearch}"
 
 	local -a args=( '-s' '-D-' '-m15' '-w' '%{http_code}'
-		"http://${elasticsearch_host}:9200/_index_template/simple-service"
+		"http://${elasticsearch_host}:9200/_index_template/rule-engine-modeling-ui"
 		'-X' 'PUT'
 		'-H' 'Content-Type: application/json'
-		'-d' "{\"index_patterns\":[\"simple-service*\"],\"template\":{\"mappings\":{\"properties\":{\"message\":{\"type\":\"keyword\",\"ignore_above\":1024},\"body\":{\"type\":\"text\",\"norms\":false},\"durationMs\":{\"type\":\"long\"},\"level\":{\"type\":\"keyword\"},\"query\":{\"type\":\"text\",\"norms\":false},\"remainedInfo\":{\"type\":\"text\",\"norms\":false},\"stack\":{\"type\":\"text\",\"norms\":false},\"timestamp\":{\"type\":\"date\"},\"trackId\":{\"type\":\"keyword\",\"ignore_above\":1024},\"logUser\":{\"type\":\"keyword\",\"ignore_above\":1024}}}}}"
+		'-d' "{\"index_patterns\":[\"rule-engine-modeling-ui*\"],\"template\":{\"mappings\":{\"properties\":{\"message\":{\"type\":\"keyword\",\"ignore_above\":1024},\"body\":{\"type\":\"text\",\"norms\":false},\"exception\":{\"type\":\"boolean\"},\"durationMs\":{\"type\":\"long\"},\"level\":{\"type\":\"keyword\"},\"query\":{\"type\":\"text\",\"norms\":false},\"remainedInfo\":{\"type\":\"text\",\"norms\":false},\"stack\":{\"type\":\"text\",\"norms\":false},\"timestamp\":{\"type\":\"date\"},\"trackId\":{\"type\":\"keyword\",\"ignore_above\":1024},\"logUser\":{\"type\":\"keyword\",\"ignore_above\":1024}}}}}"
 		)
 
 	if [[ -n "${ELASTIC_PASSWORD:-}" ]]; then

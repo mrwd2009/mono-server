@@ -37,6 +37,8 @@ export const errorReponse: FormatWrap = format((info: TransformableInfo): Transf
     delete info.process;
     delete info.trace;
     delete info.date;
+  } else {
+    info.exception = false;
   }
   // be careful to add new field in 'info', we use filebeat to collect log
   delete info.response;

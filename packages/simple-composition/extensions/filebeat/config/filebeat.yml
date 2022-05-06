@@ -13,17 +13,18 @@ filebeat.inputs:
     json.keys_under_root: true
     json.add_error_key: true
     paths:
-      - /apps/log/*.log
+      - /apps/gateway/log/**/exception/*.log
+      - /apps/gateway/log/**/info/*.log
 
 setup.template.enabled: false
 setup.template.overwrite: false
-setup.template.name: "simple-service"
-setup.template.pattern: "simple-service*"
+setup.template.name: "rule-engine-modeling-ui"
+setup.template.pattern: "rule-engine-modeling-ui*"
 setup.ilm.enabled: false
 
 output.elasticsearch:
   hosts: ['http://elasticsearch:9200']
-  index: "simple-service-%{[agent.version]}-%{+yyyy.MM.dd}"
+  index: "rule-engine-modeling-ui-%{+yyyy.MM}"
   username: elastic
   password: ${ELASTIC_PASSWORD}
 
