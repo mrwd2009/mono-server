@@ -1,0 +1,1 @@
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.process=void 0;const process=async e=>{console.log(e)};exports.process=process,exports.default=exports.process;

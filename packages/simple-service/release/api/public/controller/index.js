@@ -1,0 +1,1 @@
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.healthCheckingCtrl=void 0;const healthCheckingCtrl=async e=>{e.gateway.sendJSON({status:200})};exports.healthCheckingCtrl=healthCheckingCtrl;

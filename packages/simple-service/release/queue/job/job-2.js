@@ -1,0 +1,1 @@
+"use strict";var __importDefault=this&&this.__importDefault||function(e){return e&&e.__esModule?e:{default:e}};Object.defineProperty(exports,"__esModule",{value:!0});const helper_1=require("../helper"),job_2_1=__importDefault(require("./processor/job-2")),queue=helper_1.job.getQueue("job-2");queue.process(job_2_1.default),exports.default=queue;

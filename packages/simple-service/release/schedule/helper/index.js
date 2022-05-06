@@ -1,0 +1,1 @@
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.getJobList=exports.registerJob=void 0;const jobList=[],registerJob=e=>{jobList.push(e)};exports.registerJob=registerJob;const getJobList=()=>jobList;exports.getJobList=getJobList;

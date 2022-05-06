@@ -1,0 +1,1 @@
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),require("dotenv/config"),require("./lib/logger/log-server-ipc");

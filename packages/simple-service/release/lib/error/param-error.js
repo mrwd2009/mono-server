@@ -1,0 +1,1 @@
+"use strict";var __importDefault=this&&this.__importDefault||function(r){return r&&r.__esModule?r:{default:r}};Object.defineProperty(exports,"__esModule",{value:!0});const gateway_error_1=__importDefault(require("./gateway-error"));class ParamError extends gateway_error_1.default{constructor(e){super(e);this.code="ParamError"}}exports.default=ParamError;

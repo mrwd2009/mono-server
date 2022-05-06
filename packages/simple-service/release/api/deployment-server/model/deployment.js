@@ -1,0 +1,21 @@
+"use strict";var __importDefault=this&&this.__importDefault||function(i){return i&&i.__esModule?i:{default:i}};Object.defineProperty(exports,"__esModule",{value:!0}),exports.getLogList=exports.getAgentList=exports.createAgent=exports.assignAgent=exports.getServiceAgentList=exports.getServiceList=exports.createService=void 0;const lodash_1=__importDefault(require("lodash")),core_1=require("@sequelize/core"),app_1=__importDefault(require("../../../config/model/app")),error_1=require("../../../lib/error"),{gateway:{sequelize,models}}=app_1.default,{SELECT}=core_1.QueryTypes,Service=models.Service,AgentService=models.AgentService,Agent=models.Agent,DeploymentLog=models.DeploymentLog,createService=async i=>(await Service.create(i),!0);exports.createService=createService;const getServiceList=async i=>{const{filter:e,sorter:t,pagination:{current:n,pageSize:a}}=i;let r=[];t&&(r=[[t.field,t.order]]);const s={};e&&(e.name&&(s.name={[core_1.Op.like]:`%${e.name}%`}),e.category&&(s.category=e.category),e.description&&(s.description={[core_1.Op.like]:`%${e.description}%`}));const{rows:c,count:d}=await Service.findAndCountAll({limit:a,offset:(n-1)*a,order:r,where:s});return{total:d,list:c}};exports.getServiceList=getServiceList;const getServiceAgentList=async i=>{const{pagination:{current:e,pageSize:t},service_id:n,direction:a}=i,r=t,s=(e-1)*t;let c="",d="";a==="left"?(c=`
+      select count(*) as count from agents
+      where id not in (
+        select agents.id from agents inner join agents_services on agent_id = agents.id
+        where service_id = :service_id
+      )
+    `,d=`
+    select id, name, ip from agents
+      where id not in (
+        select agents.id from agents inner join agents_services on agent_id = agents.id
+        where service_id = :service_id
+      )
+      limit :limit offset :offset
+    `):(c=`
+      select count(*) as count from agents inner join agents_services on agent_id = agents.id
+      where service_id = :service_id
+    `,d=`
+      select agents.id, name, ip from agents inner join agents_services on agent_id = agents.id
+      where service_id = :service_id
+      limit :limit offset :offset
+    `);const[o,g]=await Promise.all([sequelize.query(c,{type:SELECT,replacements:{service_id:n}}),sequelize.query(d,{replacements:{limit:r,offset:s,service_id:n},type:SELECT})]);return{total:o[0].count,list:g}};exports.getServiceAgentList=getServiceAgentList;const assignAgent=async i=>{const{serviceId:e,agentIds:t,action:n}=i;if(n==="add"){const r=lodash_1.default.map(t,s=>({service_id:e,agent_id:s,status:"ready"}));return await AgentService.bulkCreate(r),!0}if(await AgentService.count({where:{service_id:e,agent_id:t,status:"in progress"}})>0)throw new error_1.LogicError("Can't remove agent which in progress.");return await AgentService.destroy({where:{service_id:e,agent_id:t}}),!0};exports.assignAgent=assignAgent;const createAgent=async i=>{const{name:e,ip:t}=i,n=await Agent.findOne({where:{name:e}});return n?(await n.update({name:e,ip:t}),!0):(await Agent.create({name:e,ip:t}),!0)};exports.createAgent=createAgent;const getAgentList=async i=>{const{filter:e,sorter:t,pagination:{current:n,pageSize:a}}=i;let r=[];t&&(r=[[t.field,t.order]]);const s={};e&&(e.name&&(s.name={[core_1.Op.like]:`%${e.name}%`}),e.ip&&(s.ip={[core_1.Op.like]:`%${e.ip}%`}),e.status&&(s.status=e.status));const{rows:c,count:d}=await Agent.findAndCountAll({limit:a,offset:(n-1)*a,order:r,where:s});return{total:d,list:c}};exports.getAgentList=getAgentList;const getLogList=async i=>{const{filter:e,sorter:t,pagination:{current:n,pageSize:a}}=i;let r=[];t&&(r=[[t.field,t.order]]);const s={};e&&(e.agent_id&&(s.agent_id=e.agent_id),e.service_id&&(s.service_id=e.service_id),e.status&&(s.status=e.status));const{rows:c,count:d}=await DeploymentLog.findAndCountAll({attributes:["id","agent_id","service_id","status","created_at","updated_at"],limit:a,offset:(n-1)*a,order:r,where:s,include:[Agent,Service]});return{total:d,list:lodash_1.default.map(c,o=>({id:o.id,agent_id:o.agent_id,agent_name:o.Agent.name,service_id:o.service_id,service_name:o.Service.name,status:o.status,created_at:o.created_at,updated_at:o.updated_at}))}};exports.getLogList=getLogList;

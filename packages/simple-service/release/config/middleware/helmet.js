@@ -1,0 +1,1 @@
+"use strict";var __importDefault=this&&this.__importDefault||function(e){return e&&e.__esModule?e:{default:e}};Object.defineProperty(exports,"__esModule",{value:!0}),exports.initialize=void 0;const koa_helmet_1=__importDefault(require("koa-helmet")),initialize=async e=>{await e.use((0,koa_helmet_1.default)())};exports.initialize=initialize,exports.default=exports.initialize;

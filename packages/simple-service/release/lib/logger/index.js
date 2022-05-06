@@ -1,0 +1,1 @@
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0});const cluster_1=require("cluster");let logger;cluster_1.isWorker?logger=require("./worker").default:logger=require("./primary").default,exports.default=logger;

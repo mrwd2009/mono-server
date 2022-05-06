@@ -1,0 +1,8 @@
+"use strict";var __importDefault=this&&this.__importDefault||function(r){return r&&r.__esModule?r:{default:r}};Object.defineProperty(exports,"__esModule",{value:!0}),exports.BashRunner=void 0;const child_process_1=require("child_process"),crypto_1=require("crypto"),drop_1=__importDefault(require("lodash/drop")),trim_1=__importDefault(require("lodash/trim"));class BashRunner{constructor(){this.queue=[],this.boundary=(0,crypto_1.randomBytes)(16).toString("hex"),this.bash=(0,child_process_1.spawn)("bash"),this.creating=new Promise((i,t)=>{this.bash.on("error",n=>{t(n)}).on("spawn",()=>{i()})});let e="",s="";this.bash.stdout?.on("data",i=>{e+=i.toString();let t=e.indexOf(this.boundary);for(;t!==-1;){const n=(0,trim_1.default)(e.slice(0,t)),u=this.queue[0];this.queue=(0,drop_1.default)(this.queue),u[1](n),e=e.slice(t+this.boundary.length),t=e.indexOf(this.boundary)}}),this.bash.stderr?.on("data",i=>{s+=i.toString();let t=s.indexOf(this.boundary);for(;t!==-1;){const n=(0,trim_1.default)(s.slice(0,t)),u=this.queue[0];this.queue=(0,drop_1.default)(this.queue),u[2](n),s=s.slice(t+this.boundary.length),t=s.indexOf(this.boundary)}})}async exec(e){return this.creating&&(await this.creating,this.creating=null),await new Promise((s,i)=>{this.queue.push([e,s,i]),this.bash.stdin?.write(`${e}
+retVal=$?
+if [ $retVal -ne 0 ]; then
+echo ${this.boundary} >&2
+else
+echo ${this.boundary}
+fi
+`)})}close(){this.bash.kill()}}exports.BashRunner=BashRunner;
