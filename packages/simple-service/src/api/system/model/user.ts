@@ -73,9 +73,7 @@ export const getUserList = async (params: FormattedPageParams) => {
       roleNameMap[role.id] = role.name;
     });
   }
-  setTimeout(() => {
-    (undefined as any).test = 2;
-  }, 200);
+
   const list = _.map(rows, (row) => {
     const relatedRoles = row.RbacUserRoles;
     let roleName = '';
