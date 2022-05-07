@@ -17,9 +17,7 @@ export const measure: Middleware = async (context, next) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let profiler: any = null;
   try {
-    if (!config.isDev) {
-      profiler = logger.startTimer();
-    }
+    profiler = logger.startTimer();
     await next();
   } catch (error) {
     hasError = true;

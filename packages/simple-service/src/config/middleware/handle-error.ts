@@ -10,6 +10,7 @@ const {
 } = lib;
 
 export const handleError: Middleware = async (context, next) => {
+  const start = (new Date()).getTime();
   try {
     await next();
   } catch (err) {
@@ -33,16 +34,16 @@ export const handleError: Middleware = async (context, next) => {
         }
         console.error(`\x1b[38;2;255;77;79m${error.stack}\x1b[0m\n`);
       }
-    } else {
-      // log error in production mode.
-      if (!_.isEmpty(context.query)) {
-        error.query = context.query;
-      }
-      if (!_.isEmpty(context.request.body)) {
-        error.body = context.request.body;
-      }
-      logger.error(error.message, { response: error, trackId, user: context.state.user?.email || 'ananymity' });
     }
+
+    if (!_.isEmpty(context.query)) {
+      error.query = context.query;
+    }
+    if (!_.isEmpty(context.request.body)) {
+      error.body = context.request.body;
+    }
+    const durationMs = (new Date()).getTime() - start;
+    logger.error(error.message, { response: error, durationMs, trackId, user: context.state.user?.email || 'ananymity' });
 
     switch (error.code) {
       case 'AuthError': {
