@@ -64,8 +64,7 @@ services:
       - --strict.perms=false
     volumes:
       - ./extensions/filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro,Z
-      - rule_engine_modeling_api_log:/apps/gateway/log
-      #- ../simple-service/log/winston/development:/apps/gateway/log
+      - ../simple-service/log/winston/development:/apps/gateway/log
     environment:
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:?required}
     networks:
@@ -73,55 +72,12 @@ services:
     depends_on:
       - elasticsearch
 
-  modeling_ui:
-    build:
-      context: ../simple-ui-ts/
-    volumes:
-      - rule_engine_modeling_ui_log:/apps/logs/nginx
-    ports:
-      - "${MODELING_UI_PORT:-5200}:5200"
-    environment:
-      APP_SERVICE_DOMAIN: modeling_api:${MODELING_API_PORT:-5700}
-    networks:
-      - elk
-
-  modeling_api:
-    build:
-      context: ../simple-service/
-    volumes:
-      - rule_engine_modeling_api_log:/apps/gateway/log
-      - rule_engine_modeling_api_temp:/apps/gateway/temp
-    environment:
-      APP_ENV: ${MODELING_API_APP_ENV:-dev}
-      JWT_SECRET: ${MODELING_API_JWT_SECRET:?required}
-      JWT_EXPIRED_HOUR: ${MODELING_API_JWT_EXPIRED_HOUR:-3}
-      MAIN_REDIS_URL: ${MODELING_API_MAIN_REDIS_URL:-redis://redis_server:6379}
-      QUEUE_REDIS_URL: ${MODELING_API_QUEUE_REDIS_URL:-redis://redis_server:6379}
-      WINSTON_LOG_DIR: ${MODELING_API_WINSTON_LOG_DIR:-/apps/gateway/log}
-      MAIN_DB_USER: ${MODELING_API_MAIN_DB_USER:?required}
-      MAIN_DB_PASS: ${MODELING_API_MAIN_DB_PASS:?required}
-      MAIN_DB_HOST: ${MODELING_API_MAIN_DB_HOST:?required}
-      GATEWAY_DB_USER: ${MODELING_API_GATEWAY_DB_USER:?required}
-      GATEWAY_DB_PASS: ${MODELING_API_GATEWAY_DB_PASS:?required}
-      GATEWAY_DB_HOST: ${MODELING_API_GATEWAY_DB_HOST:?required}
-      TEMP_FILE_DIR: ${MODELING_API_TEMP_FILE_DIR:-/apps/gateway/temp}
-      COOKIE_KEYS: ${MODELING_API_COOKIE_KEYS:?required}
-      ALLOWED_DOMAINS: ${MODELING_API_ALLOWED_DOMAINS:?required}
-      APP_VALID_EMAIL_DOMAINS: ${MODELING_API_VALID_EMAIL_DOMAINS:?required}
-      APP_TRACE_LOGIN: ${MODELING_API_APP_TRACE_LOGIN:-true}
-      APP_CHECK_EXPIRED_PASS: ${MODELING_API_CHECK_EXPIRED_PASS:-false}
-      APP_PROMETHEUS_PORT: ${MODELING_API_PROMETHEUS_PORT:-4000}
-      APP_PROMETHEUS_PATH: ${MODELING_API_PROMETHEUS_PATH:-/metrics}
-      APP_PROMETHEUS_LABEL: ${MODELING_API_PROMETHEUS_LABEL:-modeling-api}
-      APP_SESSION_AUTO_EXTEND: ${MODELING_API_SESSION_AUTO_EXTEND:-true}
-      APP_SESSION_RESET_HOUR: ${MODELING_API_SESSION_RESET_HOUR:-1}
-    networks:
-      - elk
-
   redis_server:
     image: redis:7.0.0
     volumes:
       - rule_engine_modeling_redis:/data
+    ports:
+      - "6379:6379"
     networks:
       - elk
 
@@ -168,7 +124,7 @@ services:
     networks:
       - elk
     depends_on:
-      - elasticsearch\
+      - elasticsearch
 
   etcd:
     build:
@@ -188,8 +144,6 @@ networks:
 volumes:
   setup:
   elasticsearch:
-  rule_engine_modeling_api_log:
-  rule_engine_modeling_ui_log:
   rule_engine_modeling_api_temp:
   rule_engine_modeling_grafana:
   rule_engine_modeling_redis:

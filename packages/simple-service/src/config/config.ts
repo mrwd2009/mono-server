@@ -189,7 +189,7 @@ const config = {
   monitor: {
     prometheusPort: parseInt(envObj.APP_PROMETHEUS_PORT || '4000'),
     promethuesPath: envObj.APP_PROMETHEUS_PATH || '/metrics',
-    promethuesLabel: envObj.APP_PROMETHEUS_LABEL || 'app-gateway',
+    promethuesLabel: envObj.APP_PROMETHEUS_LABEL || 'modeling-api',
   },
 };
 

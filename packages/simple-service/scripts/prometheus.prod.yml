@@ -1,7 +1,7 @@
 global:
   scrape_interval: 5s
 scrape_configs:
-  - job_name: "modeling-api-development-dev-app"
+  - job_name: modeling-api-production-dev-app
     metrics_path: /metrics
     static_configs:
-      - targets: ["192.168.1.4:4000"]
+      - targets: ["modeling_api:4000"]
