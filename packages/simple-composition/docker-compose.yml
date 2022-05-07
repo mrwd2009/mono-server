@@ -115,6 +115,7 @@ services:
       APP_PROMETHEUS_LABEL: ${MODELING_API_PROMETHEUS_LABEL:-modeling-api}
       APP_SESSION_AUTO_EXTEND: ${MODELING_API_SESSION_AUTO_EXTEND:-true}
       APP_SESSION_RESET_HOUR: ${MODELING_API_SESSION_RESET_HOUR:-1}
+      APP_ETCD_URL: ${MODELING_API_ETCD_URL:-http://etcd:2380}
     networks:
       - elk
 
@@ -173,9 +174,6 @@ services:
   etcd:
     build:
       context: etcd/
-    ports:
-      - 2379:2379
-      - 2380:2380
     volumes:
       - rule_engine_modeling_etcd_data:/etcd-data
     networks:

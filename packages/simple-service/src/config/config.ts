@@ -36,6 +36,7 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   APP_SESSION_AUTO_EXTEND?: string;
   APP_SESSION_IGNORED_ROUTE?: string;
   APP_SESSION_RESET_HOUR?: string;
+  APP_ETCD_URL?: string;
 };
 
 const envObj: GatewayENV = process.env;
@@ -138,6 +139,9 @@ const config = {
       prefix: `${commonPrefix}-main-`,
       expired: 3600,
     },
+  },
+  etcd: {
+    url: envObj.APP_ETCD_URL || 'http://localhost:2380',
   },
   logger: {
     rotateOptions: {
