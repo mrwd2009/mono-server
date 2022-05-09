@@ -2,12 +2,17 @@
 import axios, { AxiosError } from 'axios';
 import { BackendError } from '../../lib/error';
 
+declare module 'axios' {
+  export interface AxiosRequestConfig {
+    raw?: boolean; // whether process response automatically
+  }
+}
+
 export const initialize = async (): Promise<void> => {
   axios.defaults.timeout = 60000 * 3;
-  axios.defaults.headers.common['Content-Type'] = 'application/json';
   axios.interceptors.response.use(
     (response) => {
-      const config: any = response.config;
+      const config = response.config;
       // custom config field to return response object.
       if (config.raw) {
         return response;

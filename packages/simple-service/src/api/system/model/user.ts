@@ -1,5 +1,4 @@
 import zxcvbn from 'zxcvbn';
-import { DefaultState } from 'koa';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { FormattedPageParams } from '../../../types';
@@ -11,7 +10,7 @@ import config from '../../../config/config';
 
 const {
   gateway: {
-    models: { User, UserLoginHistory, UserProfile, RbacUserRole, RbacRole },
+    models: { User, UserLoginHistory, UserProfile, RbacUserRole, RbacRole, OAuth2User },
     sequelize,
   },
 } = appDBs;
@@ -380,6 +379,11 @@ export const getUserLoginHistoryList = async (params: FormattedPageParams) => {
       'created_at',
     ],
     ...params,
+    where: {
+      ...params.where,
+      node_env: config.nodeEnv,
+      app_env: config.appEnv,
+    },
   });
 
   return {
@@ -388,22 +392,40 @@ export const getUserLoginHistoryList = async (params: FormattedPageParams) => {
   };
 };
 
-export const getUserAvatar = async (state: DefaultState) => {
-  const profile = await UserProfile.findOne({
-    attributes: ['avatar', 'avatar_base64'],
-    where: {
-      user_id: state.user.id,
-    },
-  });
+export const getUserAvatar = async (user: { id: number, type: string }) => {
+  const avatar: {
+    url?: string;
+    base64?: string;
+  } = {};
 
-  if (!profile) {
-    throw new DataError('User is not found.');
+  if (user.type === 'user') {
+    const profile = await UserProfile.findOne({
+      attributes: ['avatar', 'avatar_base64'],
+      where: {
+        user_id: user.id,
+      },
+    });
+  
+    if (!profile) {
+      throw new DataError('User is not found.');
+    }
+    avatar.url = profile.avatar!;
+    avatar.base64 = profile.avatar_base64!;
+  } else if (user.type === 'oauth2') {
+    const oauth2User = await OAuth2User.findOne({
+      attributes: ['picture'],
+      where: {
+        id: user.id,
+      },
+    });
+  
+    if (!oauth2User) {
+      throw new DataError('User is not found.');
+    }
+    avatar.url = oauth2User.picture!;
   }
 
-  return {
-    url: profile.avatar,
-    base64: profile.avatar_base64,
-  };
+  return avatar;
 };
 
 export const saveUserProfile = async (params: { photo?: null | string; displayName: string }, userId: number) => {

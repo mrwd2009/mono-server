@@ -3,6 +3,7 @@ import { RateLimiterRedis, RateLimiterMemory, RateLimiterAbstract, RateLimiterRe
 import { v4 as uuidV4 } from 'uuid';
 import { mainRedis } from '../../lib/redis';
 import config from '../config';
+import { getCookieOptions } from '../../lib/util/cookie';
 
 const { rateLimiter: opts } = config;
 
@@ -58,11 +59,11 @@ const rateLimiter = (): Middleware => {
         fromCookie = true;
       } else {
         // add id to track api call
-        ctx.cookies.set(opts.cookieKey, uuidV4(), {
+        ctx.cookies.set(opts.cookieKey, uuidV4(), getCookieOptions({
           httpOnly: true,
           maxAge: opts.cookieExpiredDay * 24 * 3600 * 1000,
           signed: true,
-        });
+        }));
       }
       const info = await getLimiter(fromCookie).consume(uuid);
       updateLimitHeader(info, ctx);

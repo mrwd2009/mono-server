@@ -18,4 +18,7 @@ router.post('/login', ...ctrl.loginHandler);
 // router.get('/confirm', ...ctrl.confirmUserHandler);
 router.get('/logout', jwtAuth, ctrl.logoutHandler);
 
+router.get('/oauth2/authorize', ctrl.oauth2AuthorizeHandler)
+router.get('/oauth2/callback', ctrl.oauth2CallbackHandler);
+
 registerPublicRouter(router);

@@ -8,14 +8,12 @@ import { gatewayJwt } from '../../../lib/util';
 
 interface TokenParams {
   id: number;
-  type: 'user';
+  type: 'user' | 'oauth2';
   transaction: Transaction;
   UserToken: UserTokenModelDef;
 }
 export const createJwtToken = async (params: TokenParams): Promise<string> => {
-  return await (
-    await gatewayJwt.createToken(params)
-  ).token;
+  return (await gatewayJwt.createToken(params)).token;
 };
 
 interface VerifyParams {

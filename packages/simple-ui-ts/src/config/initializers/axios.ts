@@ -21,7 +21,6 @@ const loginPath = getRouteInfo('login')!.path;
 assign(axios.defaults, {
   baseURL,
   withCredentials: true,
-  headers: { 'Content-Type': 'application/json' },
   timeout: 120000,
   raw: false,
   useAxiosHook: false,

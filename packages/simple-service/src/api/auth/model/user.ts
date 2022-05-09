@@ -18,7 +18,7 @@ const {
 } = lib;
 const {
   gateway: {
-    models: { User, UserProfile, UserLoginHistory, UserToken },
+    models: { User, UserProfile, UserLoginHistory, UserToken, OAuth2UserToken },
     sequelize,
   },
 } = appDBs;
@@ -125,13 +125,13 @@ export const login = async (params: UserParams, i18n: I18nType): Promise<{ token
         user.unlock_token = lockToken;
         locked = true;
         userId = user.id;
-        trackLogin('Locked');
+        await trackLogin('Locked');
       }
       await user.save({ transaction });
       return null;
     }
 
-    trackLogin();
+    await trackLogin();
 
     let reset = false;
     if (config.auth.checkExpiredPass) {
@@ -411,31 +411,41 @@ export const confirmUser = async (params: { token: string }, i18n: I18nType) => 
   return true;
 };
 
-export const logoutUser = async (userId: number, token: string, i18n: I18nType) => {
+export const logoutUser = async (params: { id: number, type: string }, token: string, i18n: I18nType) => {
   await sequelize.transaction(async (transaction) => {
-    const user = await User.findOne({
-      attributes: ['id', 'latest_sign_in_token'],
-      where: {
-        id: userId,
-      },
-      transaction,
-    });
-
-    if (!user) {
-      throw new DataError(i18n.t('auth.notFoundUser'));
+    if (params.type === 'user') {
+      const user = await User.findOne({
+        attributes: ['id', 'latest_sign_in_token'],
+        where: {
+          id: params.id,
+        },
+        transaction,
+      });
+  
+      if (!user) {
+        throw new DataError(i18n.t('auth.notFoundUser'));
+      }
+  
+      await UserToken.destroy({
+        where: {
+          user_id: user.id,
+          signature: getJwtTokenSignature(token),
+        },
+        transaction,
+      });
+  
+      if (user.latest_sign_in_token === token) {
+        user.latest_sign_in_token = null;
+      }
+      await user.save({ transaction });
+    } else if (params.type === 'oauth2') {
+      await OAuth2UserToken.destroy({
+        where: {
+          user_id: params.id,
+          signature: getJwtTokenSignature(token),
+        },
+        transaction,
+      });
     }
-
-    await UserToken.destroy({
-      where: {
-        user_id: user.id,
-        signature: getJwtTokenSignature(token),
-      },
-      transaction,
-    });
-
-    if (user.latest_sign_in_token === token) {
-      user.latest_sign_in_token = null;
-    }
-    await user.save({ transaction });
   });
 };

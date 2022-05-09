@@ -37,6 +37,13 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   APP_SESSION_IGNORED_ROUTE?: string;
   APP_SESSION_RESET_HOUR?: string;
   APP_ETCD_URL?: string;
+  APP_ENABLE_LOCALHOST_SSL?: string;
+  APP_OAUTH2_KEY?: string;
+  APP_OAUTH2_SECRET?: string;
+  APP_OAUTH2_LOGIN_URL?: string;
+  APP_OAUTH2_TOKEN_URL?: string;
+  APP_OAUTH2_CALLBCK_URL?: string;
+  APP_OAUTH2_USER_INFO_URL?: string;
 };
 
 const envObj: GatewayENV = process.env;
@@ -81,6 +88,7 @@ const config = {
   nodeEnv,
   appEnv,
   isDev,
+  enableDevSSL: envObj.APP_ENABLE_LOCALHOST_SSL === 'true',
   traceKnownErrorInDev: isDev ? envObj.TRACE_KNOWN_ERROR_IN_DEV === 'true' : false,
   cookie: {
     keys: cookieKeys,
@@ -109,6 +117,15 @@ const config = {
     audience: 'gmail.com',
     secret: envObj.JWT_SECRET,
     expireHour: parseInt(envObj.JWT_EXPIRED_HOUR || '3', 10),
+  },
+  oauth2: {
+    loginUrl: envObj.APP_OAUTH2_LOGIN_URL!,
+    tokenUrl: envObj.APP_OAUTH2_TOKEN_URL!,
+    callbackUrl: envObj.APP_OAUTH2_CALLBCK_URL!,
+    userInfoUrl: envObj.APP_OAUTH2_USER_INFO_URL!,
+    homeUrl: envObj.APP_OAUTH2_HOME_URL!,
+    consumerKey: envObj.APP_OAUTH2_KEY!,
+    consumerSecret: envObj.APP_OAUTH2_SECRET!,
   },
   cors: {
     allowedDomain: envObj.ALLOWED_DOMAINS ? envObj.ALLOWED_DOMAINS.split(',') : [],

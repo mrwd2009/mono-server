@@ -5,6 +5,7 @@ import { Strategy, ExtractJwt, StrategyOptions, VerifyCallbackWithRequest, JwtFr
 import config from '../../config';
 import { AuthError } from '../../../lib/error';
 import './gateway-checker';
+import './oauth2-checker';
 import { executeCheckers, checkerMiddleware, AfterChecker } from './checker';
 
 declare module 'koa' {

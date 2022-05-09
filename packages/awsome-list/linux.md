@@ -28,3 +28,14 @@ https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/SSL-on-amazon-linux-2.html
 ### Trigger single by keyboard
 `Ctrl+D (^D)` means end of file.\
 `Ctrl+C` tells the terminal to send a SIGINT to the current foreground process
+
+### Create SSL certificate for local test
+
+```
+ openssl genrsa -des3 -passout pass:password1 -out cert.pass.key 2048 && \
+    openssl rsa -passin pass:password1 -in cert.pass.key -out cert.key && \
+    rm cert.pass.key && \
+    openssl req -new -key cert.key -out cert.csr \
+        -subj "/C=US/ST=California/L=San Francisco/O=Example/OU=Example/CN=example.com" && \
+    openssl x509 -req -days 365 -in cert.csr -signkey cert.key -out cert.crt
+```

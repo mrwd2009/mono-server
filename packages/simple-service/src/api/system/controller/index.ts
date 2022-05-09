@@ -6,12 +6,12 @@ import { validator, validatePagination, validateEmailDomains } from '../../../mi
 const maxStrLen = config.auth.maxStrLen;
 
 export const getInfoHandler: Middleware = async (context) => {
-  const info = await systemModel.getInfo(context.state);
+  const info = await systemModel.getInfo(context.state.user, context.getRbacPermissions!);
   context.gateway!.sendJSON!(info);
 };
 
 export const getUserAvatarHandler: Middleware = async (context) => {
-  const info = await userModel.getUserAvatar(context.state);
+  const info = await userModel.getUserAvatar(context.state.user);
   context.gateway!.sendJSON!(info);
 };
 

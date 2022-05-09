@@ -8,7 +8,7 @@ import { GatewayError, DataError } from '../error';
 
 interface TokenParams {
   id: number;
-  type: 'user';
+  type: 'user' | 'oauth2';
   UserToken: UserTokenModelDef;
   transaction?: Transaction;
   expireHour?: number;

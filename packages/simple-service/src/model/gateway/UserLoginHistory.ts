@@ -22,6 +22,7 @@ export class UserLoginHistory extends Model<
   declare id: CreationOptional<number>;
   declare node_env: CreationOptional<string>;
   declare app_env: CreationOptional<string>;
+  declare sso_env: CreationOptional<string>;
   declare email: CreationOptional<string>;
   declare ip: CreationOptional<string>;
   declare user_agent: CreationOptional<string>;
@@ -45,6 +46,7 @@ export const initialize = (sequelize: Sequelize) => {
       },
       node_env: DataTypes.INTEGER,
       app_env: DataTypes.STRING,
+      sso_env: DataTypes.STRING,
       email: DataTypes.STRING,
       ip: DataTypes.STRING,
       user_agent: DataTypes.STRING,

@@ -1,6 +1,8 @@
 import Koa from 'koa';
 import Tokens, { Options } from 'csrf';
 import { Middleware } from 'koa';
+import { getCookieOptions } from '../../lib/util/cookie';
+import config from '../config';
 /**
  * This middleware is used to check csrf token received from client and generate new csrf token.
  * We use cookie to store csrf secret which is used to compare with received one.
@@ -33,7 +35,10 @@ const createCSRFMiddleware = (options: Options = {}): Middleware => {
       let secret = ctx.cookies.get(opts.csrfSecretCookieKey, { signed: true });
       if (!secret) {
         secret = tokens.secretSync();
-        ctx.cookies.set(opts.csrfSecretCookieKey, secret, { httpOnly: true, signed: true });
+        ctx.cookies.set(opts.csrfSecretCookieKey, secret, getCookieOptions({
+          httpOnly: true,
+          signed: true,
+        }));
       }
       return tokens.create(secret!);
     };

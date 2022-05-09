@@ -4,20 +4,20 @@ import { AuthError } from '../../../lib/error';
 import util from '../../../lib/util';
 const {
   gateway: {
-    models: { User, UserToken },
+    models: { OAuth2User, OAuth2UserToken },
   },
 } = appDBs;
 import { Checker, registerChecker, CheckerResult, extendSession } from './checker';
 
 const checker: Checker = async (payload, token): Promise<CheckerResult> => {
-  if (payload?.type === 'user') {
-    const user = await User.findOne({
+  if (payload?.type === 'oauth2') {
+    const user = await OAuth2User.findOne({
       attributes: ['id', 'email'],
       where: {
         id: payload.sub,
       },
       include: {
-        model: UserToken,
+        model: OAuth2UserToken,
         attributes: ['id', 'expired_at'],
         where: {
           user_id: payload.sub,
@@ -27,19 +27,19 @@ const checker: Checker = async (payload, token): Promise<CheckerResult> => {
       },
     });
 
-    if (!user || !user.UserTokens?.length) {
+    if (!user || !user.OAuth2UserTokens?.length) {
       throw new AuthError('Invalid or expired token.');
     }
-    const tokenObj = user.UserTokens[0];
+    const tokenObj = user.OAuth2UserTokens[0];
     return {
       passed: true,
       entity: {
         id: user.id,
-        type: 'user',
+        type: 'oauth2',
         email: user.email,
       },
       afterChecker: async (context: DefaultContext) => {
-        await extendSession(context, tokenObj, UserToken);
+        await extendSession(context, tokenObj, OAuth2UserToken);
       },
     };
   }

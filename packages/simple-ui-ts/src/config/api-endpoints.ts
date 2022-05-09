@@ -9,7 +9,7 @@ if (NODE_ENV === 'production') {
 } else {
   const DEV_API_PORT = process.env.REACT_APP_DEV_API_PORT || '4100';
   const DEV_API_SCHEME = process.env.REACT_APP_DEV_API_SCHEME || 'http://';
-  baseURL = `${DEV_API_SCHEME}localhost:${DEV_API_PORT}/api/`;
+  baseURL = `${DEV_API_SCHEME}localhost:${DEV_API_PORT}/api`;
 }
 
 export { baseURL };
@@ -21,6 +21,7 @@ export const apiEndpoints = {
     register: '/auth/register',
     forgotPassword: '/auth/forgot-password',
     resetPassword: '/auth/reset-password',
+    salesforceAuthorize: '/auth/oauth2/authorize',
   },
   system: {
     info: '/system/info',

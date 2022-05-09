@@ -1,6 +1,17 @@
 import { Middleware, DefaultContext } from 'koa';
 import _ from 'lodash';
+import dayjs from 'dayjs';
+import appDBs from '../../model/app';
 import config from '../../config';
+import { UserTokenModel, UserTokenModelDef } from '../../../model/types';
+import { AuthError } from '../../../lib/error';
+import { gatewayJwt } from '../../../lib/util';
+import { getCookieOptions } from '../../../lib/util/cookie';
+const {
+  gateway: {
+    sequelize,
+  },
+} = appDBs;
 
 export type AfterChecker = (context: DefaultContext) => Promise<void>;
 
@@ -31,6 +42,67 @@ export const canExtendSession = (context: DefaultContext) => {
 
   return true;
 };
+
+const extendToken = async (tokenId: number, UserToken: UserTokenModelDef) => {
+  return await sequelize.transaction(async (transaction) => {
+    const tokenRecord = await UserToken.findOne({
+      attributes: ['id', 'user_id', 'child_token_id'],
+      where: {
+        id: tokenId,
+      },
+      transaction,
+      lock: transaction.LOCK.UPDATE,
+    });
+    if (!tokenRecord) {
+      throw new AuthError('Invalid token.');
+    }
+
+    if (tokenRecord.child_token_id) {
+      const createdRecord = await UserToken.findOne({
+        attributes: ['id', 'token'],
+        where: {
+          id: tokenRecord.child_token_id,
+        },
+        transaction,
+      });
+      if (!createdRecord) {
+        throw new AuthError('Invalid token.');
+      }
+      return createdRecord.token;
+    }
+
+    const newTokenRecord = await gatewayJwt.createToken({
+      id: tokenRecord.user_id,
+      type: 'user',
+      transaction,
+      UserToken,
+    });
+
+    newTokenRecord.parent_token_id = tokenRecord.id;
+    tokenRecord.child_token_id = newTokenRecord.id;
+
+    await Promise.all([tokenRecord.save({ transaction }), newTokenRecord.save({ transaction })]);
+
+    return newTokenRecord.token;
+  });
+};
+
+export const extendSession = async (context: DefaultContext, tokenObj: UserTokenModel, UserToken: UserTokenModelDef) => {
+  if (!canExtendSession(context)) {
+    return;
+  }
+
+  const extendDate = dayjs(tokenObj.expired_at).subtract(config.auth.session.restHour, 'hour');
+  const currentDate = dayjs();
+  if (currentDate.isAfter(extendDate)) {
+    const newToken = await extendToken(tokenObj.id, UserToken);
+    context.cookies.set(config.jwt.cookieKey, newToken, getCookieOptions({
+      httpOnly: true,
+      maxAge: config.jwt.expireHour * 3600 * 1000,
+      signed: true,
+    }));
+  }
+}
 
 export type Checker = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

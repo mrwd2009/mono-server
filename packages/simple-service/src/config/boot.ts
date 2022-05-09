@@ -1,5 +1,8 @@
 import Koa from 'koa';
 import http from 'http';
+import https from 'https';
+import path from 'path';
+import fs from 'fs';
 import initializer from './initializer';
 import middleware from './middleware';
 import dispatch from './dispatch';
@@ -27,13 +30,24 @@ const setCookieKeys = async (app: Koa) => {
 
 const listen = async (app: Koa, port: number | string) => {
   const initStep = new Promise<Error | boolean>((resolve, reject) => {
-    const server = http.createServer(app.callback()).listen(port, () => {
+    let server: http.Server | https.Server;
+
+    if (config.enableDevSSL) {
+      server = https.createServer({
+        key: fs.readFileSync(path.join(__dirname, '..', '..', 'localhost', 'ssl', 'cert.key'), { encoding: 'utf-8' }),
+        cert: fs.readFileSync(path.join(__dirname, '..', '..', 'localhost', 'ssl', 'cert.crt'), { encoding: 'utf-8' }),
+      }, app.callback());
+    } else {
+      server = http.createServer(app.callback());
+    }
+
+    server.listen(port, () => {
       if (config.isDev) {
         console.log('\u001b[38;5;28m--------------------- API Serivce ---------------------\u001b[0m');
         console.log('The http endpoints are as following.\n');
-        console.log(`\u001b[30;1mLocal:\u001b[0m            http://localhost:\u001b[30;1m${port}\u001b[0m/`);
+        console.log(`\u001b[30;1mLocal:\u001b[0m            http${config.enableDevSSL ? 's' : ''}://localhost:\u001b[30;1m${port}\u001b[0m/`);
         console.log(
-          `\u001b[30;1mOn Your Network:\u001b[0m  http://${ip.getLocalIPs()[0]}:\u001b[30;1m${port}\u001b[0m/`,
+          `\u001b[30;1mOn Your Network:\u001b[0m  http${config.enableDevSSL ? 's' : ''}://${ip.getLocalIPs()[0]}:\u001b[30;1m${port}\u001b[0m/`,
         );
         console.log('\n');
         resolve(true);

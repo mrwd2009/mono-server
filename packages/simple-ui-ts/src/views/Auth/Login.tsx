@@ -1,8 +1,10 @@
 import { FC, memo } from 'react';
 import { Link } from 'react-router-dom';
 import { Form, Input, Button, Divider, Typography, Checkbox } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import Icon, { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
+import { baseURL, apiEndpoints } from '../../config/api-endpoints';
+import { ReactComponent as SalesforceIcon } from '../../assets/images/salesforce.svg';
 import { getRouteInfo } from '../../config/routes-info';
 import AuthLayout from '../../layouts/AuthLayout';
 import brand from '../../assets/images/brand.png';
@@ -123,6 +125,9 @@ const Login: FC = () => {
             className="app-ex-divider-sm"
             dashed
           />
+          <Form.Item>
+            <Button block htmlType="button" href={`${baseURL}${apiEndpoints.auth.salesforceAuthorize}`} icon={<Icon component={SalesforceIcon} />}>Sign In with Salesforce</Button>
+          </Form.Item>
           <Form.Item>
             <Link
               to={fogotRoute!.path}

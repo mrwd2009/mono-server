@@ -1,6 +1,7 @@
 import { Middleware } from '@koa/router';
-import { userModel } from '../model';
+import { userModel, oauth2Model } from '../model';
 import config from '../../../config';
+import { getCookieOptions } from '../../../lib/util/cookie';
 import { validator, validateEmailDomains, showConfusedError } from '../../../middleware';
 import { getJwtTokenFromReq } from '../../../lib/util/common';
 
@@ -42,11 +43,11 @@ export const loginHandler: Array<Middleware> = [
       });
     }
 
-    context.cookies.set(config.jwt.cookieKey, token, {
+    context.cookies.set(config.jwt.cookieKey, token, getCookieOptions({
       httpOnly: true,
       maxAge: config.jwt.expireHour * 3600 * 1000,
       signed: true,
-    });
+    }));
     context.gateway!.sendJSON!({ reset: false });
   },
 ];
@@ -137,9 +138,34 @@ export const confirmUserHandler: Array<Middleware> = [
 export const logoutHandler: Middleware = async (context) => {
   const token = getJwtTokenFromReq(context.req);
   context.skipSessionExtend = true;
-  await userModel.logoutUser(context.state.user.id, token, context.i18n);
-  context.cookies.set(config.jwt.cookieKey, '', { signed: true });
+  await userModel.logoutUser(context.state.user, token, context.i18n);
+
+  context.cookies.set(config.jwt.cookieKey, '', getCookieOptions({
+    signed: true
+  }));
   context.body = {
     success: true,
   };
+};
+
+export const oauth2AuthorizeHandler : Middleware = async (context) => {
+  const url = await oauth2Model.getLoginUrl();
+  context.redirect(url);
+};
+
+export const oauth2CallbackHandler: Middleware = async (context) => {
+  const token = await oauth2Model.oauth2Callback({
+    ip: context.ip,
+    userAgent: context.headers['user-agent'],
+    referer: context.headers['referer'],
+    origin: context.headers['origin'],
+    code: context.mergedParams?.code,
+  });
+
+  context.cookies.set(config.jwt.cookieKey, token, getCookieOptions({
+    httpOnly: true,
+    maxAge: config.jwt.expireHour * 3600 * 1000,
+    signed: true,
+  }));
+  context.redirect(config.oauth2.homeUrl);
 };
