@@ -59,11 +59,15 @@ const rateLimiter = (): Middleware => {
         fromCookie = true;
       } else {
         // add id to track api call
-        ctx.cookies.set(opts.cookieKey, uuidV4(), getCookieOptions({
-          httpOnly: true,
-          maxAge: opts.cookieExpiredDay * 24 * 3600 * 1000,
-          signed: true,
-        }));
+        ctx.cookies.set(
+          opts.cookieKey,
+          uuidV4(),
+          getCookieOptions({
+            httpOnly: true,
+            maxAge: opts.cookieExpiredDay * 24 * 3600 * 1000,
+            signed: true,
+          }),
+        );
       }
       const info = await getLimiter(fromCookie).consume(uuid);
       updateLimitHeader(info, ctx);

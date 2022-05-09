@@ -17,7 +17,6 @@ declare module '../types' {
   type OAuth2UserModelDef = typeof OAuth2User;
 }
 
-
 class OAuth2User extends Model<InferAttributes<OAuth2User>, InferCreationAttributes<OAuth2User>> {
   static associate = (models: AppModels) => {
     OAuth2User.hasMany(models.OAuth2UserToken, { foreignKey: 'user_id', constraints: false });
@@ -33,6 +32,7 @@ class OAuth2User extends Model<InferAttributes<OAuth2User>, InferCreationAttribu
   declare refresh_token: CreationOptional<string | null>;
   declare token_info: CreationOptional<string | null>;
   declare user_info: CreationOptional<string | null>;
+  declare enabled: CreationOptional<boolean>;
   declare created_at: CreationOptional<Date | string>;
   declare updated_at: CreationOptional<Date | string>;
   declare OAuth2UserTokens?: NonAttribute<OAuth2UserTokenModel[]>;
@@ -56,6 +56,7 @@ export const initialize = (sequelize: Sequelize) => {
       refresh_token: DataTypes.STRING,
       token_info: DataTypes.STRING,
       user_info: DataTypes.STRING,
+      enabled: DataTypes.BOOLEAN,
       created_at: DataTypes.DATE,
       updated_at: DataTypes.DATE,
     },

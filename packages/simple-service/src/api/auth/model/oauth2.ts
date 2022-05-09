@@ -3,9 +3,10 @@ import dayjs from 'dayjs';
 import { Op } from '@sequelize/core';
 import { URLSearchParams } from 'url';
 import axios from 'axios';
-import config from "../../../config/config";
+import config from '../../../config/config';
 import appDBs from '../../../config/model/app';
 import { userHelper } from '../helper';
+import { AuthError } from '../../../lib/error';
 
 const {
   gateway: {
@@ -39,18 +40,11 @@ export const oauth2Callback = async (params: OAuth2CallbackParams) => {
     redirect_uri: config.oauth2.callbackUrl,
   });
 
-  const {
-    data: token_info,
-  } = await axios.post(config.oauth2.tokenUrl, postData, { raw: true });
+  const { data: token_info } = await axios.post(config.oauth2.tokenUrl, postData, { raw: true });
 
-  const {
-    access_token,
-    token_type,
-  } = token_info;
+  const { access_token, token_type } = token_info;
 
-  const {
-    data: user_info,
-  } = await axios.get(config.oauth2.userInfoUrl, {
+  const { data: user_info } = await axios.get(config.oauth2.userInfoUrl, {
     headers: {
       Authorization: `${token_type} ${access_token}`,
     },
@@ -65,31 +59,40 @@ export const oauth2Callback = async (params: OAuth2CallbackParams) => {
       transaction,
     });
     if (!user) {
-      user = await OAuth2User.create({
-        email: user_info.email,
-        name: user_info.name,
-        sub: user_info.sub,
-        picture: user_info.picture,
-        access_token,
-        token_type,
-        token_info: JSON.stringify(token_info),
-        user_info: JSON.stringify(user_info),
-      }, {
-        transaction,
-      });
+      user = await OAuth2User.create(
+        {
+          email: user_info.email,
+          name: user_info.name,
+          sub: user_info.sub,
+          picture: user_info.picture,
+          access_token,
+          token_type,
+          token_info: JSON.stringify(token_info),
+          user_info: JSON.stringify(user_info),
+        },
+        {
+          transaction,
+        },
+      );
     } else {
-      await user.update({
-        email: user_info.email,
-        name: user_info.name,
-        sub: user_info.sub,
-        picture: user_info.picture,
-        access_token,
-        token_type,
-        token_info: JSON.stringify(token_info),
-        user_info: JSON.stringify(user_info),
-      }, {
-        transaction,
-      });
+      if (!user.enabled) {
+        throw new AuthError('Your account has been frozen, please contact administrator.');
+      }
+      await user.update(
+        {
+          email: user_info.email,
+          name: user_info.name,
+          sub: user_info.sub,
+          picture: user_info.picture,
+          access_token,
+          token_type,
+          token_info: JSON.stringify(token_info),
+          user_info: JSON.stringify(user_info),
+        },
+        {
+          transaction,
+        },
+      );
 
       await OAuth2UserToken.destroy({
         where: {

@@ -8,9 +8,7 @@ import { AuthError } from '../../../lib/error';
 import { gatewayJwt } from '../../../lib/util';
 import { getCookieOptions } from '../../../lib/util/cookie';
 const {
-  gateway: {
-    sequelize,
-  },
+  gateway: { sequelize },
 } = appDBs;
 
 export type AfterChecker = (context: DefaultContext) => Promise<void>;
@@ -87,7 +85,11 @@ const extendToken = async (tokenId: number, UserToken: UserTokenModelDef) => {
   });
 };
 
-export const extendSession = async (context: DefaultContext, tokenObj: UserTokenModel, UserToken: UserTokenModelDef) => {
+export const extendSession = async (
+  context: DefaultContext,
+  tokenObj: UserTokenModel,
+  UserToken: UserTokenModelDef,
+) => {
   if (!canExtendSession(context)) {
     return;
   }
@@ -96,13 +98,17 @@ export const extendSession = async (context: DefaultContext, tokenObj: UserToken
   const currentDate = dayjs();
   if (currentDate.isAfter(extendDate)) {
     const newToken = await extendToken(tokenObj.id, UserToken);
-    context.cookies.set(config.jwt.cookieKey, newToken, getCookieOptions({
-      httpOnly: true,
-      maxAge: config.jwt.expireHour * 3600 * 1000,
-      signed: true,
-    }));
+    context.cookies.set(
+      config.jwt.cookieKey,
+      newToken,
+      getCookieOptions({
+        httpOnly: true,
+        maxAge: config.jwt.expireHour * 3600 * 1000,
+        signed: true,
+      }),
+    );
   }
-}
+};
 
 export type Checker = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

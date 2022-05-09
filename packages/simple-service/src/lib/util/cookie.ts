@@ -1,4 +1,4 @@
-import config from "../../config/config";
+import config from '../../config/config';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getCookieOptions = (options: any) => {

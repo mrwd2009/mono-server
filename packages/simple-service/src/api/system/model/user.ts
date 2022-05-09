@@ -392,7 +392,7 @@ export const getUserLoginHistoryList = async (params: FormattedPageParams) => {
   };
 };
 
-export const getUserAvatar = async (user: { id: number, type: string }) => {
+export const getUserAvatar = async (user: { id: number; type: string }) => {
   const avatar: {
     url?: string;
     base64?: string;
@@ -405,7 +405,7 @@ export const getUserAvatar = async (user: { id: number, type: string }) => {
         user_id: user.id,
       },
     });
-  
+
     if (!profile) {
       throw new DataError('User is not found.');
     }
@@ -418,7 +418,7 @@ export const getUserAvatar = async (user: { id: number, type: string }) => {
         id: user.id,
       },
     });
-  
+
     if (!oauth2User) {
       throw new DataError('User is not found.');
     }

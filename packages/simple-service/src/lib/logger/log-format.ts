@@ -8,12 +8,7 @@ import { TransformableInfo, FormatWrap } from 'logform';
 const { timestamp, combine, json } = format;
 
 export const errorReponse: FormatWrap = format((info: TransformableInfo): TransformableInfo | boolean => {
-  const {
-    query,
-    body,
-    stack,
-    ...rest
-  } = (info.response || {}) as any;
+  const { query, body, stack, ...rest } = (info.response || {}) as any;
   info.query = (query && querystring.stringify(query)) || '';
   info.body = (body && stringify(body)) || '';
   info.stack = stack || '';

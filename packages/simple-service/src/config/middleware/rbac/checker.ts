@@ -40,7 +40,7 @@ const getPermissionsMethodMap: any = {};
 
 export const registerGetPermissionsMethod = (type: string, method: (id: number) => Promise<Array<number>>) => {
   getPermissionsMethodMap[type] = method;
-}
+};
 
 export const checkerMiddleware: Middleware = async (context, next) => {
   context.getRbacPermissions = async (): Promise<Array<number>> => {

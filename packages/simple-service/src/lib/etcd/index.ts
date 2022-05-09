@@ -1,9 +1,9 @@
-import { getMainEtcd } from "./main";
+import { getMainEtcd } from './main';
 
 const etcd = {
   get mainEtcd() {
     return getMainEtcd();
-  }
+  },
 };
 
 export default etcd;

@@ -411,7 +411,7 @@ export const confirmUser = async (params: { token: string }, i18n: I18nType) => 
   return true;
 };
 
-export const logoutUser = async (params: { id: number, type: string }, token: string, i18n: I18nType) => {
+export const logoutUser = async (params: { id: number; type: string }, token: string, i18n: I18nType) => {
   await sequelize.transaction(async (transaction) => {
     if (params.type === 'user') {
       const user = await User.findOne({
@@ -421,11 +421,11 @@ export const logoutUser = async (params: { id: number, type: string }, token: st
         },
         transaction,
       });
-  
+
       if (!user) {
         throw new DataError(i18n.t('auth.notFoundUser'));
       }
-  
+
       await UserToken.destroy({
         where: {
           user_id: user.id,
@@ -433,7 +433,7 @@ export const logoutUser = async (params: { id: number, type: string }, token: st
         },
         transaction,
       });
-  
+
       if (user.latest_sign_in_token === token) {
         user.latest_sign_in_token = null;
       }

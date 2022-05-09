@@ -6,11 +6,8 @@ import config from '../../config';
 import { Checker, registerChecker, CheckerResult, registerGetPermissionsMethod } from './checker';
 
 const {
-  gateway: {
-    sequelize,
-  },
+  gateway: { sequelize },
 } = appDBs;
-
 
 export const getUserPermissions = async (id: number): Promise<number[]> => {
   const sql = `

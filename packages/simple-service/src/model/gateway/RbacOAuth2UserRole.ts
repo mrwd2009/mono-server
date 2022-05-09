@@ -15,7 +15,10 @@ declare module '../types' {
   type RbacOAuth2UserRoleModelDef = typeof RbacOAuth2UserRole;
 }
 
-export class RbacOAuth2UserRole extends Model<InferAttributes<RbacOAuth2UserRole>, InferCreationAttributes<RbacOAuth2UserRole>> {
+export class RbacOAuth2UserRole extends Model<
+  InferAttributes<RbacOAuth2UserRole>,
+  InferCreationAttributes<RbacOAuth2UserRole>
+> {
   declare id: CreationOptional<number>;
   declare user_id: number;
   declare app: string;

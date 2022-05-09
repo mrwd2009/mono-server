@@ -43,11 +43,15 @@ export const loginHandler: Array<Middleware> = [
       });
     }
 
-    context.cookies.set(config.jwt.cookieKey, token, getCookieOptions({
-      httpOnly: true,
-      maxAge: config.jwt.expireHour * 3600 * 1000,
-      signed: true,
-    }));
+    context.cookies.set(
+      config.jwt.cookieKey,
+      token,
+      getCookieOptions({
+        httpOnly: true,
+        maxAge: config.jwt.expireHour * 3600 * 1000,
+        signed: true,
+      }),
+    );
     context.gateway!.sendJSON!({ reset: false });
   },
 ];
@@ -140,15 +144,19 @@ export const logoutHandler: Middleware = async (context) => {
   context.skipSessionExtend = true;
   await userModel.logoutUser(context.state.user, token, context.i18n);
 
-  context.cookies.set(config.jwt.cookieKey, '', getCookieOptions({
-    signed: true
-  }));
+  context.cookies.set(
+    config.jwt.cookieKey,
+    '',
+    getCookieOptions({
+      signed: true,
+    }),
+  );
   context.body = {
     success: true,
   };
 };
 
-export const oauth2AuthorizeHandler : Middleware = async (context) => {
+export const oauth2AuthorizeHandler: Middleware = async (context) => {
   const url = await oauth2Model.getLoginUrl();
   context.redirect(url);
 };
@@ -162,10 +170,14 @@ export const oauth2CallbackHandler: Middleware = async (context) => {
     code: context.mergedParams?.code,
   });
 
-  context.cookies.set(config.jwt.cookieKey, token, getCookieOptions({
-    httpOnly: true,
-    maxAge: config.jwt.expireHour * 3600 * 1000,
-    signed: true,
-  }));
+  context.cookies.set(
+    config.jwt.cookieKey,
+    token,
+    getCookieOptions({
+      httpOnly: true,
+      maxAge: config.jwt.expireHour * 3600 * 1000,
+      signed: true,
+    }),
+  );
   context.redirect(config.oauth2.homeUrl);
 };

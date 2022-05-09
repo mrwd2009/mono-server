@@ -126,7 +126,14 @@ const Login: FC = () => {
             dashed
           />
           <Form.Item>
-            <Button block htmlType="button" href={`${baseURL}${apiEndpoints.auth.salesforceAuthorize}`} icon={<Icon component={SalesforceIcon} />}>Sign In with Salesforce</Button>
+            <Button
+              block
+              htmlType="button"
+              href={`${baseURL}${apiEndpoints.auth.salesforceAuthorize}`}
+              icon={<Icon component={SalesforceIcon} />}
+            >
+              Sign In with Salesforce
+            </Button>
           </Form.Item>
           <Form.Item>
             <Link

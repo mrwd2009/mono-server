@@ -10,7 +10,7 @@ const {
 } = lib;
 
 export const handleError: Middleware = async (context, next) => {
-  const start = (new Date()).getTime();
+  const start = new Date().getTime();
   try {
     await next();
   } catch (err) {
@@ -42,8 +42,13 @@ export const handleError: Middleware = async (context, next) => {
     if (!_.isEmpty(context.request.body)) {
       error.body = context.request.body;
     }
-    const durationMs = (new Date()).getTime() - start;
-    logger.error(error.message, { response: error, durationMs, trackId, user: context.state.user?.email || 'ananymity' });
+    const durationMs = new Date().getTime() - start;
+    logger.error(error.message, {
+      response: error,
+      durationMs,
+      trackId,
+      user: context.state.user?.email || 'ananymity',
+    });
 
     switch (error.code) {
       case 'AuthError': {

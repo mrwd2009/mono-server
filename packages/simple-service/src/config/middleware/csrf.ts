@@ -35,10 +35,14 @@ const createCSRFMiddleware = (options: Options = {}): Middleware => {
       let secret = ctx.cookies.get(opts.csrfSecretCookieKey, { signed: true });
       if (!secret) {
         secret = tokens.secretSync();
-        ctx.cookies.set(opts.csrfSecretCookieKey, secret, getCookieOptions({
-          httpOnly: true,
-          signed: true,
-        }));
+        ctx.cookies.set(
+          opts.csrfSecretCookieKey,
+          secret,
+          getCookieOptions({
+            httpOnly: true,
+            signed: true,
+          }),
+        );
       }
       return tokens.create(secret!);
     };

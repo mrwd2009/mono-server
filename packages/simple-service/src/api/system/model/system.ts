@@ -9,12 +9,15 @@ const {
   },
 } = appDBs;
 
-const getInfo = async (user: { id: number, email: string, type: string }, getPermissions: () => Promise<Array<number>>) => {
+const getInfo = async (
+  user: { id: number; email: string; type: string },
+  getPermissions: () => Promise<Array<number>>,
+) => {
   const info: {
     appEnv: string;
     user?: string;
     username?: string;
-    permissions?: string[],
+    permissions?: string[];
   } = {
     appEnv: config.appEnv,
     user: user.email,
@@ -33,7 +36,7 @@ const getInfo = async (user: { id: number, email: string, type: string }, getPer
       attributes: ['name'],
       where: {
         id: user.id,
-      }
+      },
     });
     info.username = oauth2User!.name!;
   }
