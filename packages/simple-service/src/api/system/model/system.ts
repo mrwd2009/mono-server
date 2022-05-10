@@ -17,6 +17,7 @@ const getInfo = async (
     appEnv: string;
     user?: string;
     username?: string;
+    profileEditable?: boolean;
     permissions?: string[];
   } = {
     appEnv: config.appEnv,
@@ -31,6 +32,7 @@ const getInfo = async (
       },
     });
     info.username = profile?.display_name;
+    info.profileEditable = true;
   } else if (user.type === 'oauth2') {
     const oauth2User = await OAuth2User.findOne({
       attributes: ['name'],
@@ -39,6 +41,7 @@ const getInfo = async (
       },
     });
     info.username = oauth2User!.name!;
+    info.profileEditable = false;
   }
 
   const permissions: string[] = [];

@@ -7,6 +7,7 @@ import { showError } from '../../../../util';
 const useUserProfile = () => {
   const { fetchAvatar } = useUserInfo();
   const [loading, setLoading] = useState(false);
+  const [editing, setEditing] = useState(false);
   const [{ loading: saveLoading }, save] = useAxios({ url: apiEndpoints.system.userProfile, method: 'PUT' });
   const saveProfile = useCallback(
     async (values) => {
@@ -31,6 +32,7 @@ const useUserProfile = () => {
             photo,
           },
         });
+        setEditing(false);
         fetchAvatar();
       } finally {
         setLoading(false);
@@ -41,6 +43,8 @@ const useUserProfile = () => {
 
   return {
     loading: loading || saveLoading,
+    editing,
+    setEditing,
     saveProfile,
   };
 };

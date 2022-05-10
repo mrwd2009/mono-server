@@ -10,7 +10,7 @@ import config from '../../../config/config';
 
 const {
   gateway: {
-    models: { User, UserLoginHistory, UserProfile, RbacUserRole, RbacRole, OAuth2User },
+    models: { User, UserLoginHistory, UserProfile, RbacUserRole, RbacRole, OAuth2User, UserToken },
     sequelize,
   },
 } = appDBs;
@@ -240,6 +240,21 @@ export const editUser = async (params: EditParams, i18n: I18nType) => {
       const ops: any = [];
       if (user.enabled !== enabled) {
         user.enabled = enabled!;
+        if (!user.enabled) {
+          ops.push(
+            UserToken.update(
+              {
+                status: 'disabled',
+              },
+              {
+                where: {
+                  user_id: user.id,
+                },
+                transaction,
+              },
+            ),
+          );
+        }
         ops.push(user.save({ transaction }));
       }
 
@@ -428,12 +443,16 @@ export const getUserAvatar = async (user: { id: number; type: string }) => {
   return avatar;
 };
 
-export const saveUserProfile = async (params: { photo?: null | string; displayName: string }, userId: number) => {
+export const saveUserProfile = async (params: { photo?: null | string; displayName: string }, user: { id: number, type: string }) => {
+  if (user.type !== 'user') {
+    throw new LogicError('Modification on profile is not supported on current account type.');
+  }
+
   const { photo, displayName } = params;
   const profile = await UserProfile.findOne({
     attributes: ['id', 'display_name', 'avatar', 'avatar_base64'],
     where: {
-      user_id: userId,
+      user_id: user.id,
     },
   });
 

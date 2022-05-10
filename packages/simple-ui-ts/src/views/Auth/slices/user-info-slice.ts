@@ -5,6 +5,7 @@ interface UserInfo {
   permissions: string[];
   user: string;
   username: string;
+  profileEditable: boolean;
 }
 
 interface Avatar {
@@ -17,6 +18,7 @@ const initialState: UserInfo & { avatar: Avatar } = {
   permissions: [],
   user: '',
   username: '',
+  profileEditable: false,
   avatar: {
     loading: false,
   },
@@ -30,11 +32,13 @@ export const userInfoSlice = createSlice({
       state.user = action.payload.user;
       state.username = action.payload.username;
       state.permissions = action.payload.permissions;
+      state.profileEditable = action.payload.profileEditable;
     },
     clearUserInfo: (state) => {
       state.user = '';
       state.username = '';
       state.permissions = [];
+      state.profileEditable = false;
       state.avatar = {
         loading: false,
       };

@@ -44,6 +44,8 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   APP_OAUTH2_TOKEN_URL?: string;
   APP_OAUTH2_CALLBCK_URL?: string;
   APP_OAUTH2_USER_INFO_URL?: string;
+  APP_OAUTH2_UI_HOME_URL?: string;
+  APP_OAUTH2_UI_LOGIN_URL?: string;
 };
 
 const envObj: GatewayENV = process.env;
@@ -123,7 +125,8 @@ const config = {
     tokenUrl: envObj.APP_OAUTH2_TOKEN_URL!,
     callbackUrl: envObj.APP_OAUTH2_CALLBCK_URL!,
     userInfoUrl: envObj.APP_OAUTH2_USER_INFO_URL!,
-    homeUrl: envObj.APP_OAUTH2_HOME_URL!,
+    uiHomeUrl: envObj.APP_OAUTH2_UI_HOME_URL!,
+    uiLoginUrl: envObj.APP_OAUTH2_UI_LOGIN_URL!,
     consumerKey: envObj.APP_OAUTH2_KEY!,
     consumerSecret: envObj.APP_OAUTH2_SECRET!,
   },

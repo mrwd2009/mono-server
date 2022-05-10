@@ -162,13 +162,22 @@ export const oauth2AuthorizeHandler: Middleware = async (context) => {
 };
 
 export const oauth2CallbackHandler: Middleware = async (context) => {
-  const token = await oauth2Model.oauth2Callback({
-    ip: context.ip,
-    userAgent: context.headers['user-agent'],
-    referer: context.headers['referer'],
-    origin: context.headers['origin'],
-    code: context.mergedParams?.code,
-  });
+  let token = '';
+  try {
+    token = await oauth2Model.oauth2Callback({
+      ip: context.ip,
+      userAgent: context.headers['user-agent'],
+      referer: context.headers['referer'],
+      origin: context.headers['origin'],
+      code: context.mergedParams?.code,
+    });
+  } catch (error) {
+    if ((error as { code: string }).code === 'AuthError') {
+      context.redirect(`${config.oauth2.uiLoginUrl}?error=${encodeURIComponent((error as { message: string }).message)}`);
+      return;
+    }
+    throw error;
+  }
 
   context.cookies.set(
     config.jwt.cookieKey,
@@ -179,5 +188,5 @@ export const oauth2CallbackHandler: Middleware = async (context) => {
       signed: true,
     }),
   );
-  context.redirect(config.oauth2.homeUrl);
+  context.redirect(config.oauth2.uiHomeUrl);
 };

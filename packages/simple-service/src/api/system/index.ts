@@ -7,8 +7,8 @@ const router = new Router({
   prefix: '/system',
 });
 
-router.get('/info', rbac.generalR, ctrl.getInfoHandler);
-router.get('/user/avatar', rbac.generalR, ctrl.getUserAvatarHandler);
+router.get('/info', ctrl.getInfoHandler);
+router.get('/user/avatar', ctrl.getUserAvatarHandler);
 router.put('/user/profile', rbac.generalW, ...ctrl.saveUserProfileHandler);
 
 router.post('/user/list', rbac.adminR, ...ctrl.getUserListHandler);

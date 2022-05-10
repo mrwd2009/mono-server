@@ -120,6 +120,8 @@ export const oauth2Callback = async (params: OAuth2CallbackParams) => {
       );
     }
 
+    // todo add mapping logic between salesforce profile and modeling UI role
+
     const token = await userHelper.createJwtToken({
       id: user.id,
       type: 'oauth2',

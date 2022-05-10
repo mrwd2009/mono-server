@@ -1,5 +1,6 @@
 import { FC, memo } from 'react';
 import { Link } from 'react-router-dom';
+import { getRouteInfo } from '../../config/routes-info';
 
 const Forbidden: FC = () => {
   return (
@@ -13,6 +14,15 @@ const Forbidden: FC = () => {
           className="route-link"
         >
           Return to homepage
+        </Link>
+        <span className="p-1">
+          or
+        </span>
+        <Link
+          to={getRouteInfo('login')!.path}
+          className="route-link"
+        >
+          Log in again
         </Link>
       </p>
     </div>

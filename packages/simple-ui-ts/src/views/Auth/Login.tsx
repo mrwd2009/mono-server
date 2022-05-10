@@ -1,9 +1,10 @@
-import { FC, memo } from 'react';
-import { Link } from 'react-router-dom';
+import { FC, memo, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Form, Input, Button, Divider, Typography, Checkbox } from 'antd';
 import Icon, { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { baseURL, apiEndpoints } from '../../config/api-endpoints';
+import { showError } from '../../util';
 import { ReactComponent as SalesforceIcon } from '../../assets/images/salesforce.svg';
 import { getRouteInfo } from '../../config/routes-info';
 import AuthLayout from '../../layouts/AuthLayout';
@@ -19,6 +20,16 @@ const Login: FC = () => {
   const { loading, handleLogin } = useLogin();
   const { t: gT } = useTranslation();
   const { t } = useTranslation('translation', { keyPrefix: 'auth' });
+
+  const [searchParams] = useSearchParams();
+  const error = searchParams.get('error');
+  useEffect(() => {
+    // this is used to display error occurred in SSO flow.
+    if (error) {
+      showError(error);
+    }
+  }, [error]);
+
   const [form] = useForm();
   return (
     <AuthLayout

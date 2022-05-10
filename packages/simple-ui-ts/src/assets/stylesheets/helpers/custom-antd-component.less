@@ -62,3 +62,22 @@ body .ant-collapse-arrow {
 .ant-divider.app-ex-divider-sm {
   margin: 16px 0;
 }
+
+.app-ex-editable-form {
+  .ant-form-item-control {
+    &:hover {
+      .ant-typography-edit {
+        opacity: 1;
+      }
+    }
+
+    .ant-typography-edit {
+      opacity: 0.6;
+      transition: opacity @animation-duration-fast @ease-in-out;
+    }
+  }
+}
+
+.ant-upload-list-picture-card.app-ex-no-hover .ant-upload-list-item-info::before {
+  background-color: rgba(0, 0, 0, 0);
+}

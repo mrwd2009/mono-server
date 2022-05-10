@@ -17,6 +17,7 @@ const useUserInfo = () => {
           user: result.user,
           username: result.username,
           permissions: result.permissions,
+          profileEditable: result.profileEditable,
         }),
       );
       setLoaded(true);

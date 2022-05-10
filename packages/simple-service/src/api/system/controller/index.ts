@@ -26,7 +26,7 @@ export const saveUserProfileHandler: Array<Middleware> = [
     }),
   ),
   async (context) => {
-    const info = await userModel.saveUserProfile(context.mergedParams, context.state.user.id);
+    const info = await userModel.saveUserProfile(context.mergedParams, context.state.user);
     context.gateway!.sendJSON!(info);
   },
 ];

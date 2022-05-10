@@ -88,6 +88,7 @@ const Detail: FC<{ detail: { key: number; enabled: boolean; name: string; descri
     <Card style={{ width: 320 }}>
       <Form
         key="info"
+        className="app-ex-editable-form"
         layout="horizontal"
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
