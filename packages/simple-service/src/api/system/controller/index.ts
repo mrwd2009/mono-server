@@ -1,5 +1,5 @@
 import { Middleware } from '@koa/router';
-import { systemModel, userModel, roleModel, permissionModel } from '../model';
+import { systemModel, userModel, roleModel, permissionModel, oauth2UserModel } from '../model';
 import config from '../../../config';
 import { validator, validatePagination, validateEmailDomains } from '../../../middleware';
 
@@ -36,6 +36,7 @@ export const getUserListHandler: Array<Middleware> = [
     sorter: ['created_at', 'updated_at'],
     format: {
       like: ['email'],
+      in: ['enabled'],
     },
   }),
   async (context) => {
@@ -255,5 +256,35 @@ export const assignPermissionsHandler: Array<Middleware> = [
   async (context) => {
     const result = await roleModel.assignPermissions(context.mergedParams);
     context.gateway?.sendJSON?.(result);
+  },
+];
+
+export const getOAuth2UserListHandler: Array<Middleware> = [
+  validatePagination({
+    sorter: ['created_at', 'updated_at'],
+    format: {
+      like: ['email'],
+      in: ['enabled'],
+    },
+  }),
+  async (context) => {
+    const result = await oauth2UserModel.getOAuth2UserList(context.validatorFormattedData);
+    context.gateway?.sendJSON?.(result);
+  },
+];
+
+export const editOAuth2UserHandler: Array<Middleware> = [
+  validator((Schema) =>
+    Schema.object({
+      id: Schema.alternatives().try(Schema.array().items(Schema.number().integer()), Schema.number().integer()),
+      type: Schema.string().valid('edit', 'assignRole'),
+      enabled: Schema.boolean().optional(),
+      roleId: Schema.number().integer().optional(),
+    }),
+  ),
+  validateEmailDomains(),
+  async (context) => {
+    await oauth2UserModel.editOAuth2User(context.mergedParams, context.i18n);
+    context.gateway!.sendJSON!({ done: true });
   },
 ];

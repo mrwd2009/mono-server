@@ -114,17 +114,6 @@ export const getFileterDropdown = ({ cFilterType, cFilterOptions = [], title }: 
         <Row gutter={8}>
           <Col span={12}>
             <Button
-              type="primary"
-              size="small"
-              block
-              icon={<SearchOutlined />}
-              onClick={() => confirm()}
-            >
-              Search
-            </Button>
-          </Col>
-          <Col span={12}>
-            <Button
               size="small"
               block
               onClick={() => {
@@ -132,6 +121,17 @@ export const getFileterDropdown = ({ cFilterType, cFilterOptions = [], title }: 
               }}
             >
               Reset
+            </Button>
+          </Col>
+          <Col span={12}>
+            <Button
+              type="primary"
+              size="small"
+              block
+              icon={<SearchOutlined />}
+              onClick={() => confirm()}
+            >
+              Search
             </Button>
           </Col>
         </Row>

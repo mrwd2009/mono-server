@@ -8,7 +8,7 @@ const getColumns = (): TableColumnsType<any> => {
   return [
     { title: 'Email', dataIndex: 'email', cFilterType: 'text' },
     // { title: 'Reset Password Sent At', dataIndex: 'reset_password_sent_at', cDataType: 'datetime' },
-    // { title: 'Confirmed At', dataIndex: 'confirmed_at', cDataType: 'datetime' },
+    { title: 'SSO Type', dataIndex: 'sso_env' },
     { title: 'Sign In IP', dataIndex: 'ip' },
     { title: 'User Agent', dataIndex: 'user_agent', cDataType: 'lgText' },
     { title: 'Website', dataIndex: 'referer', cDataType: 'lgText' },

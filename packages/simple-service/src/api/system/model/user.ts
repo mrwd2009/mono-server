@@ -373,7 +373,7 @@ export const deleteUser = async (params: { id: number }, i18n: I18nType) => {
   if (!user) {
     throw new LogicError(i18n.t('auth.notFoundUser'));
   }
-
+  // the tokens and roles will be deleted by database cascade
   await user.destroy();
 };
 
@@ -383,6 +383,7 @@ export const getUserLoginHistoryList = async (params: FormattedPageParams) => {
       'id',
       'node_env',
       'app_env',
+      'sso_env',
       'email',
       'ip',
       'user_agent',

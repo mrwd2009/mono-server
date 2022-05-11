@@ -18,7 +18,7 @@ import {
 
 const getColumns = (userFormModal: any, handleDelete: any): TableColumnsType<any> => {
   return [
-    { title: 'Name', dataIndex: ['UserProfile', 'display_name'] },
+    { title: 'Full Name', dataIndex: ['UserProfile', 'display_name'] },
     { title: 'Email', dataIndex: 'email', cFilterType: 'text' },
     { title: 'Role', dataIndex: 'roleName' },
     // { title: 'Reset Password Sent At', dataIndex: 'reset_password_sent_at', cDataType: 'datetime' },
@@ -33,6 +33,16 @@ const getColumns = (userFormModal: any, handleDelete: any): TableColumnsType<any
     {
       title: ' Status',
       dataIndex: 'enabled',
+      filters: [
+        {
+          text: 'Activated',
+          value: 1,
+        },
+        {
+          text: 'Deactivated',
+          value: 0,
+        },
+      ],
       render: (enabled) => {
         if (enabled) {
           return (

@@ -16,6 +16,9 @@ router.post('/user', rbac.adminW, ...ctrl.createUserHandler);
 router.put('/user', rbac.adminW, ...ctrl.editUserHandler);
 router.delete('/user', rbac.adminW, ...ctrl.deleteUserHandler);
 
+router.post('/oauth2-user/list', rbac.adminR, ...ctrl.getOAuth2UserListHandler);
+router.put('/oauth2-user', rbac.adminW, ...ctrl.editOAuth2UserHandler);
+
 router.post('/user/history/list', rbac.advancedR, ...ctrl.getUserLoginHistoryListHandler);
 
 router.get('/permissions', rbac.adminR, ctrl.getPermissionsHandler);

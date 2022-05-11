@@ -31,6 +31,8 @@ export const apiEndpoints = {
     editUser: '/system/user',
     deleteUser: '/system/user',
     userProfile: '/system/user/profile',
+    oauth2UserList: '/system/oauth2-user/list',
+    editOAuth2User: '/system/oauth2-user',
     availableRoles: '/system/available-roles',
     userHistoryList: '/system/user/history/list',
     permissionList: '/system/permissions',

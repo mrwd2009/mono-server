@@ -11,6 +11,7 @@ interface Options {
   format?: {
     like?: Array<string>;
     equal?: Array<string>;
+    in?: Array<string>;
   };
 }
 export const validatePagination = (options: Options = {}): Middleware => {
@@ -40,14 +41,25 @@ export const validatePagination = (options: Options = {}): Middleware => {
     const where: WhereOptions = {};
     if (filter) {
       _.forEach(options.format.like, (field) => {
-        where[field] = {
-          [Op.like]: `%${filter[field]}%`,
-        };
+        if (filter[field]) {
+          where[field] = {
+            [Op.like]: `%${filter[field]}%`,
+          };
+        }
       });
       _.forEach(options.format.equal, (field) => {
-        where[field] = {
-          [Op.eq]: `%${filter[field]}%`,
-        };
+        if (filter[field]) {
+          where[field] = {
+            [Op.eq]: filter[field],
+          };
+        }
+      });
+      _.forEach(options.format.in, (field) => {
+        if (filter[field]) {
+          where[field] = {
+            [Op.in]: filter[field],
+          };
+        }
       });
     }
 

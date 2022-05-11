@@ -39,3 +39,14 @@ https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/SSL-on-amazon-linux-2.html
         -subj "/C=US/ST=California/L=San Francisco/O=Example/OU=Example/CN=example.com" && \
     openssl x509 -req -days 365 -in cert.csr -signkey cert.key -out cert.crt
 ```
+
+### Look up ip of domain
+
+```
+nslookup database-1.xxxxx.us-west-1.rds.amazonaws.com
+```
+
+### Test rds connection
+```
+nc -zv database-1.xxxxx.us-west-1.rds.amazonaws.com 3306
+```

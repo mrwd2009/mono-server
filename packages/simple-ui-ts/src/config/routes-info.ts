@@ -248,6 +248,13 @@ export const routesInfo: RouteInfo[] = [
         menu: true,
       },
       {
+        title: 'Salesforce Account',
+        key: 'oauth2-user',
+        path: '/system/oauth2-user',
+        permission: 'Admin.Read',
+        menu: true,
+      },
+      {
         title: 'Login History',
         key: 'login-history',
         path: '/system/login-history',
