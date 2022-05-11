@@ -20,6 +20,13 @@ export interface CheckerResult {
   afterChecker?: AfterChecker;
 }
 
+export interface CachedUser {
+  id?: number;
+  email?: string;
+  tokenId?: number;
+  tokenExpiredAt?: string;
+}
+
 export const canExtendSession = (context: DefaultContext) => {
   if (!config.auth.session.autoExtend) {
     return false;
@@ -87,15 +94,15 @@ const extendToken = async (tokenId: number, UserToken: UserTokenModelDef) => {
 
 export const extendSession = async (
   context: DefaultContext,
-  tokenObj: UserTokenModel,
+  tokenObj: { id: number, expiredAt: string },
   UserToken: UserTokenModelDef,
 ) => {
   if (!canExtendSession(context)) {
     return;
   }
 
-  const extendDate = dayjs(tokenObj.expired_at).subtract(config.auth.session.restHour, 'hour');
-  const currentDate = dayjs();
+  const extendDate = dayjs.utc(tokenObj.expiredAt).subtract(config.auth.session.restHour, 'hour');
+  const currentDate = dayjs.utc();
   if (currentDate.isAfter(extendDate)) {
     const newToken = await extendToken(tokenObj.id, UserToken);
     context.cookies.set(

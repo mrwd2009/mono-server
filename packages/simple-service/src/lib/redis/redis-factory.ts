@@ -20,9 +20,7 @@ export class RedisFactory {
 
   constructor(private url: string, private prefix: string, private expired: number) {
     // gracefully close redis client.
-    registerCleanupHandler(async () => {
-      await this.close();
-    });
+    registerCleanupHandler(this.handleSignalClose);
   }
 
   // for special purpose, otherwise use instance methods directly.
@@ -37,7 +35,7 @@ export class RedisFactory {
   }
 
   async get(key: string): Promise<string> {
-    if (config.isDev) {
+    if (!config.systemCache.enabled) {
       throw new DataError('Value is not found(development).');
     }
     const client = this.getClient();
@@ -49,7 +47,7 @@ export class RedisFactory {
   }
 
   async set(key: string, data: string, expired: number = this.expired): Promise<void> {
-    if (config.isDev) {
+    if (!config.systemCache.enabled) {
       return;
     }
     const client = this.getClient();
@@ -58,7 +56,7 @@ export class RedisFactory {
   }
 
   async del(key: string): Promise<void> {
-    if (config.isDev) {
+    if (!config.systemCache.enabled) {
       return;
     }
     const client = this.getClient();
@@ -66,7 +64,7 @@ export class RedisFactory {
   }
 
   async getMemoizedData(provider: MemoizedDataProvider, expired: number = this.expired): Promise<MemoizedData> {
-    if (config.isDev) {
+    if (!config.systemCache.enabled) {
       // always return a new value from db or other source
       return {
         get: provider.value,

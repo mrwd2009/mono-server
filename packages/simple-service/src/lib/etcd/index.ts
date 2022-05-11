@@ -1,9 +1,3 @@
-import { getMainEtcd } from './main';
+import mainEtcd from './main';
 
-const etcd = {
-  get mainEtcd() {
-    return getMainEtcd();
-  },
-};
-
-export default etcd;
+export { mainEtcd };

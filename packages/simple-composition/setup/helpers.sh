@@ -188,7 +188,7 @@ function ensure_template {
 		"http://${elasticsearch_host}:9200/_index_template/rule-engine-modeling-ui"
 		'-X' 'PUT'
 		'-H' 'Content-Type: application/json'
-		'-d' "{\"index_patterns\":[\"rule-engine-modeling-ui*\"],\"template\":{\"mappings\":{\"properties\":{\"message\":{\"type\":\"keyword\",\"ignore_above\":1024},\"body\":{\"type\":\"text\",\"norms\":false},\"exception\":{\"type\":\"boolean\"},\"durationMs\":{\"type\":\"long\"},\"level\":{\"type\":\"keyword\"},\"query\":{\"type\":\"text\",\"norms\":false},\"remainedInfo\":{\"type\":\"text\",\"norms\":false},\"stack\":{\"type\":\"text\",\"norms\":false},\"timestamp\":{\"type\":\"date\"},\"trackId\":{\"type\":\"keyword\",\"ignore_above\":1024},\"logUser\":{\"type\":\"keyword\",\"ignore_above\":1024}}}}}"
+		'-d' "{\"index_patterns\":[\"rule-engine-modeling-ui*\"],\"template\":{\"mappings\":{\"properties\":{\"message\":{\"type\":\"keyword\",\"ignore_above\":1024},\"body\":{\"type\":\"text\",\"norms\":false},\"exception\":{\"type\":\"boolean\"},\"durationMs\":{\"type\":\"long\"},\"level\":{\"type\":\"keyword\"},\"query\":{\"type\":\"text\",\"norms\":false},\"remainedInfo\":{\"type\":\"text\",\"norms\":false},\"stack\":{\"type\":\"text\",\"norms\":false},\"timestamp\":{\"type\":\"date\"},\"trackId\":{\"type\":\"keyword\",\"ignore_above\":1024},\"appEnv\":{\"type\":\"keyword\",\"ignore_above\":1024},\"nodeEnv\":{\"type\":\"keyword\",\"ignore_above\":1024},\"logUser\":{\"type\":\"keyword\",\"ignore_above\":1024}}}}}"
 		)
 
 	if [[ -n "${ELASTIC_PASSWORD:-}" ]]; then

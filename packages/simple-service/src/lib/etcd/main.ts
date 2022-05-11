@@ -1,17 +1,10 @@
-import { Etcd3 } from 'etcd3';
 import config from '../../config/config';
+import EtcdFactory from './etcd-factory';
 
 const {
   etcd: { url },
 } = config;
 
-let main: Etcd3 | null = null;
-const getMainEtcd = () => {
-  if (main) {
-    return main;
-  }
-  main = new Etcd3({ hosts: url });
-  return main;
-};
+const main = new EtcdFactory(url);
 
-export { getMainEtcd };
+export default main;;

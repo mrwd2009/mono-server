@@ -3,6 +3,7 @@ import { QueryTypes } from '@sequelize/core';
 import appDBs from '../../model/app';
 import permissions from './permissions';
 import config from '../../config';
+import { mainRedis } from '../../../lib/redis';
 import { Checker, registerChecker, CheckerResult, registerGetPermissionsMethod } from './checker';
 
 const {
@@ -52,7 +53,15 @@ const checker: Checker = async (payload, permissionKey): Promise<CheckerResult> 
   if (payload.type === 'oauth2') {
     const permissionId = permissions[permissionKey];
     if (permissionId) {
-      const permissionIds = await getUserPermissions(payload.id);
+      const cacheKey = `rbac-${payload.type}-${payload.id}`;
+      let permissionIds: number[] = [];
+      try {
+        const pStr = await mainRedis.get(cacheKey);
+        permissionIds = JSON.parse(pStr);
+      } catch {
+        permissionIds = await getUserPermissions(payload.id);
+        await mainRedis.set(cacheKey, JSON.stringify(permissionIds), config.systemCache.passportExpired);
+      }
       if (_.includes(permissionIds, permissionId)) {
         return {
           passed: true,

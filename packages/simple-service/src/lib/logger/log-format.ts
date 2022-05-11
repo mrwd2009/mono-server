@@ -3,6 +3,7 @@ import { format } from 'winston';
 import { isEmpty } from 'lodash';
 import stringify from 'safe-stable-stringify';
 import querystring from 'query-string';
+import config from '../../config/config';
 import { TransformableInfo, FormatWrap } from 'logform';
 
 const { timestamp, combine, json } = format;
@@ -16,6 +17,8 @@ export const errorReponse: FormatWrap = format((info: TransformableInfo): Transf
   info.durationMs = info.durationMs || -1;
   info.trackId = info.trackId || '';
   info.logUser = info.user || 'ananymity';
+  info.nodeEnv = config.nodeEnv;
+  info.appEnv = config.appEnv;
 
   if (info.exception) {
     info.stack = info.message;

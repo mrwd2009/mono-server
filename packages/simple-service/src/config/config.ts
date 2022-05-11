@@ -46,6 +46,7 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   APP_OAUTH2_USER_INFO_URL?: string;
   APP_OAUTH2_UI_HOME_URL?: string;
   APP_OAUTH2_UI_LOGIN_URL?: string;
+  APP_ENABLE_CACHE?: string;
 };
 
 const envObj: GatewayENV = process.env;
@@ -84,6 +85,14 @@ const tempFileDir = path.join(envObj.TEMP_FILE_DIR || path.join(__dirname, '..',
 if (!fs.existsSync(tempFileDir)) {
   // create temp directory automatically
   fs.mkdirSync(tempFileDir, { recursive: true });
+}
+
+// determine to enable cache in system
+let enableCache = false;
+if (envObj.APP_ENABLE_CACHE) {
+  enableCache = envObj.APP_ENABLE_CACHE === 'true';
+} else {
+  enableCache = !isDev;
 }
 
 const config = {
@@ -153,6 +162,11 @@ const config = {
       duration: 60, // second
     },
   },
+  systemCache: {
+    enabled: enableCache,
+    passportExpired: 600,
+  },
+  enableCache,
   redis: {
     main: {
       url: envObj.MAIN_REDIS_URL || defaultRedisUrl,
