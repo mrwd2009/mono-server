@@ -3,7 +3,7 @@ import _ from 'lodash';
 import dayjs from 'dayjs';
 import appDBs from '../../model/app';
 import config from '../../config';
-import { UserTokenModel, UserTokenModelDef } from '../../../model/types';
+import { UserTokenModelDef } from '../../../model/types';
 import { AuthError } from '../../../lib/error';
 import { gatewayJwt } from '../../../lib/util';
 import { getCookieOptions } from '../../../lib/util/cookie';

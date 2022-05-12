@@ -80,30 +80,38 @@ const getColumns = (userFormModal: any, handleDelete: any): TableColumnsType<any
           displayName: row.UserProfile.display_name,
           roleId: row.RbacUserRoles[0]?.role_id,
         };
+        const items = [
+          {
+            key: 'delete',
+            icon: <DeleteOutlined />,
+            label: 'Delete',
+          },
+          {
+            key: 'edit',
+            icon: <EditOutlined />,
+            label: 'Edit',
+          },
+          {
+            key: 'password',
+            icon: <LockOutlined />,
+            label: 'Password',
+          },
+        ];
         const overlay = (
-          <Menu>
-            <Menu.Item
-              key="delete"
-              icon={<DeleteOutlined />}
-              onClick={() => handleDelete(row.id)}
-            >
-              Delete
-            </Menu.Item>
-            <Menu.Item
-              key="edit"
-              icon={<EditOutlined />}
-              onClick={() => userFormModal.changeVisible(true, data)}
-            >
-              Edit
-            </Menu.Item>
-            <Menu.Item
-              key="password"
-              icon={<LockOutlined />}
-              onClick={() => userFormModal.changeVisible(true, { ...data, type: 'password' })}
-            >
-              Password
-            </Menu.Item>
-          </Menu>
+          <Menu
+            items={items}
+            onClick={(info) => {
+              if (info.key === 'delete') {
+                return handleDelete(row.id);
+              }
+              if (info.key === 'edit') {
+                return userFormModal.changeVisible(true, data);
+              }
+              if (info.key === 'password') {
+                return userFormModal.changeVisible(true, { ...data, type: 'password' });
+              }
+            }}
+          />
         );
 
         return (

@@ -17,9 +17,13 @@ const Setting: FC = () => {
             mode="inline"
             selectedKeys={[selectedKey]}
             onClick={(e) => setSelectedKey(e.key)}
-          >
-            <Menu.Item key="user-profile">User Profile</Menu.Item>
-          </Menu>
+            items={[
+              {
+                key: 'user-profile',
+                label: 'User Profile'
+              }
+            ]}
+          />
         </Col>
         <Col flex="auto">{content}</Col>
       </Row>

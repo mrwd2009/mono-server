@@ -1,36 +1,35 @@
 import { FC, memo } from 'react';
 import { Menu } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
-import map from 'lodash/map';
+import forEach from 'lodash/forEach';
 import { getRoutesMenu, RouteMenuInfo } from '../../config/routes-info';
 import { useAppSelector, usePermission } from '../../hooks';
 import { selectDarkMode } from '../../store/slices';
 
-const { Item, SubMenu } = Menu;
 const menuList = getRoutesMenu();
 
 const getMenuItems = (list: RouteMenuInfo[], hasP: (p: string) => boolean) => {
-  return map(list, (item) => {
+  let items: any = [];
+  forEach(list, (item) => {
     if (item.permission && !hasP(item.permission)) {
-      return null;
+      return;
     }
     if (item.children?.length) {
-      return (
-        <SubMenu
-          key={item.path}
-          title={item.title}
-          popupClassName="app-ex-system-sub-menu"
-        >
-          {getMenuItems(item.children, hasP)}
-        </SubMenu>
-      );
+      items.push({
+        key: item.path,
+        label: item.title,
+        popupClassName: 'app-ex-system-sub-menu',
+        children: getMenuItems(item.children, hasP),
+      });
+      return;
     }
-    return (
-      <Item key={item.path}>
-        <Link to={item.path}>{item.title}</Link>
-      </Item>
-    );
+    items.push({
+      key: item.path,
+      label: <Link to={item.path}>{item.title}</Link>,
+    });
   });
+
+  return items;
 };
 
 const SystemMenu: FC = () => {
@@ -45,12 +44,8 @@ const SystemMenu: FC = () => {
       selectedKeys={[location.pathname]}
       triggerSubMenuAction="click"
       theme={isDark ? 'dark' : 'light'}
-      // getPopupContainer={(node) => {
-      //   return node.parentNode?.parentNode as HTMLElement;
-      // }}
-    >
-      {getMenuItems(menuList, hasPermission)}
-    </Menu>
+      items={getMenuItems(menuList, hasPermission)}
+    />
   );
 };
 

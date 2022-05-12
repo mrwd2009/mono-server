@@ -68,16 +68,22 @@ const getColumns = (userFormModal: any): TableColumnsType<any> => {
           name: row.name,
           roleId: row.RbacOAuth2UserRoles[0]?.role_id,
         };
+        const items = [
+          {
+            key: 'edit',
+            icon: <EditOutlined />,
+            label: 'Edit',
+          },
+        ];
         const overlay = (
-          <Menu>
-            <Menu.Item
-              key="edit"
-              icon={<EditOutlined />}
-              onClick={() => userFormModal.changeVisible(true, data)}
-            >
-              Edit
-            </Menu.Item>
-          </Menu>
+          <Menu
+            items={items}
+            onClick={(info) => {
+              if (info.key === 'edit') {
+                return userFormModal.changeVisible(true, data);
+              }
+            }}
+          />
         );
 
         return (

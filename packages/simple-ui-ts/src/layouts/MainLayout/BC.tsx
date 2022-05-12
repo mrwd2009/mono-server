@@ -14,9 +14,13 @@ const BC: FC = () => {
     <Menu
       selectedKeys={[lang]}
       onClick={({ key }) => fetchLang(key)}
-    >
-      <Menu.Item key="en-US">English (US)</Menu.Item>
-    </Menu>
+      items={[
+        {
+          key: 'en-US',
+          label: 'English (US)'
+        }
+      ]}
+    />
   );
 
   return (

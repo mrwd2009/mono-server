@@ -37,26 +37,24 @@ const ThemeSwitch: FC = () => {
       onClick={({ key }) => {
         fetchTheme(key);
       }}
-    >
-      <Menu.Item
-        key="auto"
-        icon={iconMap.auto}
-      >
-        Auto
-      </Menu.Item>
-      <Menu.Item
-        key="default"
-        icon={iconMap.default}
-      >
-        Light
-      </Menu.Item>
-      <Menu.Item
-        key="dark"
-        icon={iconMap.dark}
-      >
-        Dark
-      </Menu.Item>
-    </Menu>
+      items={[
+        {
+          key: 'auto',
+          icon: iconMap.auto,
+          label: 'Auto',
+        },
+        {
+          key: 'default',
+          icon: iconMap.default,
+          label: 'Light',
+        },
+        {
+          key: 'dark',
+          icon: iconMap.dark,
+          label: 'Dark',
+        }
+      ]}
+    />
   );
 
   return (
