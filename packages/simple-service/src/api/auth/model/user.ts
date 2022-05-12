@@ -168,9 +168,9 @@ export const login = async (params: UserParams, i18n: I18nType): Promise<{ token
   });
 
   if (!result) {
-    if (locked && !config.isDev) {
+    if (locked && config.auth.enableEmailService) {
       // must be placed outside transaction
-      await job.enqueue('auth-lock-email', { userId: userId!, origin: params.origin });
+      await job.enqueue('auth-lock-email', { name: 'Locking Account Email', type: 'Job', userId: userId!, userType: 'user', parameter: { origin: params.origin} });
     }
     logger.error(`Incorrect password(${password}) of User(${email}).`);
     throw new AuthError(i18n.t('auth.errorPassword'));
@@ -243,8 +243,8 @@ export const register = async (params: RegisterParams, i18n: I18nType) => {
   });
 
   // must be placed outside transaction
-  if (!config.isDev) {
-    await job.enqueue('auth-confirmation-email', { userId: userId!, origin });
+  if (config.auth.enableEmailService) {
+    await job.enqueue('auth-confirmation-email', { name: 'Register Account Email', type: 'Job', userId: userId!, userType: 'user', parameter: { origin }});
   }
 
   return true;
@@ -255,7 +255,6 @@ export const forgotPassword = async ({ email, origin }: { email: string; origin?
   await sequelize.transaction(async (transaction) => {
     let user = await User.findOne({ where: { email }, transaction });
     if (!user) {
-      logger.error(`User(${email}) is not found.`);
       throw new AuthError(i18n.t('auth.notFoundEmail', { email }));
     }
     userId = user.id;
@@ -283,8 +282,8 @@ export const forgotPassword = async ({ email, origin }: { email: string; origin?
   });
 
   // must be placed outside transaction
-  if (!config.isDev) {
-    await job.enqueue('auth-forgot-email', { userId: userId!, origin });
+  if (config.auth.enableEmailService) {
+    await job.enqueue('auth-forgot-email', { name: 'Forgot Password Email', type: 'Job', userId: userId!, userType: 'user', parameter: { origin } });
   }
 };
 

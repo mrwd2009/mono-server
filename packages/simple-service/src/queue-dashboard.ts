@@ -2,6 +2,7 @@ import 'dotenv/config';
 import Koa from 'koa';
 import http from 'http';
 import config from './config/config';
+import depsInit from './config/initializer';
 import { ip } from './lib/util';
 import { initialize as dashboardInit } from './queue/dashboard';
 import { initialize as initMonitor } from './lib/monitor/prometheus';
@@ -10,6 +11,7 @@ const port = process.env.QUEUE_DASHBOARD_PORT ? parseInt(process.env.QUEUE_DASHB
 
 const initialize = async () => {
   const app = new Koa();
+  await depsInit();
   await dashboardInit(app);
   app.use((context) => {
     context.redirect(config.queue.dashboard.basePath);
@@ -30,7 +32,10 @@ const initialize = async () => {
     .on('error', (error: Error) => {
       console.error(error);
     });
-  await initMonitor('queue-dashboard');
+  
+  if (!config.isDev) {
+    await initMonitor('queue-dashboard');
+  }
   // gracefully close server
   registerCleanupHandler(async () => {
     await new Promise((resolve, reject) => {

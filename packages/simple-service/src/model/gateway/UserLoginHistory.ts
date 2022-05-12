@@ -44,7 +44,7 @@ export const initialize = (sequelize: Sequelize) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      node_env: DataTypes.INTEGER,
+      node_env: DataTypes.STRING,
       app_env: DataTypes.STRING,
       sso_env: DataTypes.STRING,
       email: DataTypes.STRING,

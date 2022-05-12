@@ -1,5 +1,6 @@
 import fs from 'fs';
 import net, { Socket } from 'net';
+import depsInit from '../../config/initializer';
 import config from '../../config/config';
 import { initialize as initMonitor } from '../../lib/monitor/prometheus';
 import { pureLogger } from './primary';
@@ -13,7 +14,12 @@ const initialize = async () => {
   if (!ipc.enabled) {
     return;
   }
-  await initMonitor('log');
+  await depsInit();
+
+  if (!config.isDev) {
+    await initMonitor('log');
+  }
+  
   if (fs.existsSync(ipc.path)) {
     fs.unlinkSync(ipc.path);
   }

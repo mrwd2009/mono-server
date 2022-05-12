@@ -47,6 +47,8 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   APP_OAUTH2_UI_HOME_URL?: string;
   APP_OAUTH2_UI_LOGIN_URL?: string;
   APP_ENABLE_CACHE?: string;
+  APP_ENABLE_AUTH_EMAIL?: string;
+  APP_QUEUE_ENV?: string;
 };
 
 const envObj: GatewayENV = process.env;
@@ -64,7 +66,8 @@ if (_.find(appConfigFiles, (item) => item.includes(appEnv))) {
 }
 
 const defaultRedisUrl = 'redis://localhost:6379';
-const commonPrefix = `simple-service-${nodeEnv}-${appEnv}`;
+const appPrefix = `simple-service-${nodeEnv}`;
+const commonPrefix = `${appPrefix}-${appEnv}`;
 
 // where to store winston log
 const logFileDir = path.join(
@@ -95,6 +98,14 @@ if (envObj.APP_ENABLE_CACHE) {
   enableCache = !isDev;
 }
 
+// whether enable email service
+let enableAuthEmail = false;
+if (envObj.APP_ENABLE_AUTH_EMAIL) {
+  enableAuthEmail = envObj.APP_ENABLE_AUTH_EMAIL === 'true';
+} else {
+  enableAuthEmail = !isDev;
+}
+
 const config = {
   nodeEnv,
   appEnv,
@@ -107,6 +118,7 @@ const config = {
   auth: {
     traceLogin: envObj.APP_TRACE_LOGIN === 'true',
     checkExpiredPass: envObj.APP_CHECK_EXPIRED_PASS === 'true',
+    enableEmailService: enableAuthEmail,
     maxStrLen: 50, // email, password, display name
     passwordResetCycle: 180, //days
     failedAttemptCount: 5,
@@ -170,7 +182,7 @@ const config = {
   redis: {
     main: {
       url: envObj.MAIN_REDIS_URL || defaultRedisUrl,
-      prefix: `${commonPrefix}-main-`,
+      prefix: `${envObj.APP_QUEUE_ENV || appPrefix}-main-`,
       expired: 3600,
     },
   },
@@ -218,7 +230,7 @@ const config = {
       url: envObj.QUEUE_REDIS_URL || defaultRedisUrl,
     },
     options: {
-      prefix: `${commonPrefix}-queue-`,
+      prefix: `${appPrefix}-queue`,
     },
     dashboard: {
       basePath: '/dashboard',

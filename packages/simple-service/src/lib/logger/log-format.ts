@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { format } from 'winston';
 import { isEmpty } from 'lodash';
+import { v4 as uuidV4 } from 'uuid';
 import stringify from 'safe-stable-stringify';
 import querystring from 'query-string';
 import config from '../../config/config';
@@ -15,7 +16,7 @@ export const errorReponse: FormatWrap = format((info: TransformableInfo): Transf
   info.stack = stack || '';
   info.remainedInfo = (!isEmpty(rest) && stringify(rest)) || '';
   info.durationMs = info.durationMs || -1;
-  info.trackId = info.trackId || '';
+  info.trackId = info.trackId || uuidV4();
   info.logUser = info.user || 'ananymity';
   info.nodeEnv = config.nodeEnv;
   info.appEnv = config.appEnv;

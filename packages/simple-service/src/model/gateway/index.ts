@@ -12,5 +12,7 @@ import './RbacRole';
 import './RbacRolePermission';
 import './RbacUserRole';
 import './OAuth2UserToken';
-import './Oauth2User';
+import './OAuth2User';
 import './RbacOAuth2UserRole';
+import './UIFile';
+import './UITask';
