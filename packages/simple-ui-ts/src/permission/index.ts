@@ -1,5 +1,6 @@
 import RouteGuarder from './RouteGuarder';
+import RouteRedirector from './RouteRedirector';
 
-export { RouteGuarder };
+export { RouteGuarder, RouteRedirector };
 
 export default RouteGuarder;

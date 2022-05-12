@@ -1,11 +1,11 @@
 import { FC, memo } from 'react';
-import { useRoutes, RouteObject, Navigate } from 'react-router-dom';
+import { useRoutes, RouteObject } from 'react-router-dom';
 import { getRouteInfo } from './config/routes-info';
 import { Login, Register, ForgotPassword, ResetPassword } from './views/Auth';
 import ErrorPageLayout from './layouts/ErrorPageLayout';
 import { NotFound, Forbidden } from './views/ErrorPage';
 import MainLayout from './layouts/MainLayout';
-import { RouteGuarder } from './permission';
+import { RouteGuarder, RouteRedirector } from './permission';
 import { Contract } from './views/Contract';
 import { Setting, User, LoginHistory, Permission, Role, OAuth2User } from './views/System';
 import { Dashboard } from './views/Debug';
@@ -37,12 +37,7 @@ const routes: RouteObject[] = [
         children: [
           {
             path: '/',
-            element: (
-              <Navigate
-                to={defaultPath}
-                replace
-              />
-            ),
+            element: <RouteRedirector />,
           },
           {
             path: defaultPath,
