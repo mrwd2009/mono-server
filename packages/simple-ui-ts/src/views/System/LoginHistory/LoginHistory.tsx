@@ -1,5 +1,6 @@
 import { FC, memo, useEffect } from 'react';
-import { TableColumnsType } from 'antd';
+import { TableColumnsType, Button, Row, Tooltip } from 'antd';
+import { ReloadOutlined } from '@ant-design/icons';
 import Panel from '../../../components/Panel';
 import ServerTable from '../../../components/ServerTable';
 import { useLoginHistory } from './hooks';
@@ -33,6 +34,11 @@ const LoginHistory: FC = () => {
 
   return (
     <Panel title="Login History">
+      <Row justify="end" className="mb-2">
+        <Tooltip title="Refresh">
+          <Button loading={table.loading} type="text" size="small" icon={<ReloadOutlined />} onClick={() => refreshListRef.current?.()} />
+        </Tooltip>
+      </Row>
       <ServerTable
         columns={getColumns()}
         table={table}

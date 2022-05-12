@@ -1,5 +1,6 @@
 import { FC, memo, useEffect } from 'react';
-import { TableColumnsType, Tag, Button, Spin, Menu, Dropdown } from 'antd';
+import { TableColumnsType, Tag, Button, Spin, Menu, Dropdown, Tooltip } from 'antd';
+import { ReloadOutlined } from '@ant-design/icons';
 import Panel from '../../../components/Panel';
 import ServerTable from '../../../components/ServerTable';
 import { useHookedModal } from '../../../components/HookedModal';
@@ -159,6 +160,15 @@ const User: FC = () => {
           >
             Assign Role
           </Button>
+          <Tooltip title="Refresh">
+            <Button
+              loading={table.loading}
+              type="text"
+              size="small"
+              icon={<ReloadOutlined />}
+              onClick={() => refreshTable()}
+            />
+          </Tooltip>
         </div>
         <ServerTable
           columns={getColumns(userFormModal, handleDelete)}

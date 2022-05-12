@@ -25,7 +25,9 @@ const Setting: FC = () => {
             ]}
           />
         </Col>
-        <Col flex="auto">{content}</Col>
+        <Col flex="auto">
+          {content}
+        </Col>
       </Row>
     </Panel>
   );

@@ -8,6 +8,7 @@ import {
   LockOutlined,
   DeleteOutlined,
   InfoCircleOutlined,
+  ReloadOutlined,
 } from '@ant-design/icons';
 import Panel from '../../../components/Panel';
 import Empty from '../../../components/Empty';
@@ -142,7 +143,7 @@ const Detail: FC<{ detail: { key: number; type: string; name: string; descriptio
 };
 
 const Permission: FC = () => {
-  const { isLoading, data } = useGetPermissionListQuery();
+  const { isLoading, data, refetch } = useGetPermissionListQuery();
   const [deletePermission] = useDeletePermissionMutation();
   const [reparentPermission] = useReparentPermissionMutation();
   const [selectedKeys, setSelectedKeys] = useState<Array<number>>([]);
@@ -206,6 +207,7 @@ const Permission: FC = () => {
             <Row justify="end">
               <Col flex="none">
                 <Button
+                  size="small"
                   disabled={selected?.type === 'permission'}
                   type="primary"
                   className="mr-2"
@@ -219,6 +221,8 @@ const Permission: FC = () => {
               </Col>
               <Col flex="none">
                 <Button
+                  size="small"
+                  className="mr-2"
                   disabled={!selected}
                   danger
                   icon={<DeleteOutlined />}
@@ -234,6 +238,17 @@ const Permission: FC = () => {
                 >
                   Delete
                 </Button>
+              </Col>
+              <Col flex="none">
+                <Tooltip title="Refresh">
+                  <Button
+                    loading={isLoading}
+                    type="text"
+                    size="small"
+                    icon={<ReloadOutlined />}
+                    onClick={() => refetch()}
+                  />
+                </Tooltip>
               </Col>
             </Row>
           </Col>

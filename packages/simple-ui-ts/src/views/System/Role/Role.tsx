@@ -1,7 +1,7 @@
 import { FC, memo, useState, useMemo } from 'react';
 import forEach from 'lodash/forEach';
 import { Row, Col, Spin, Button, Tree, Card, Form, Radio, Typography, Input, Tooltip } from 'antd';
-import { PlusOutlined, TeamOutlined, DeleteOutlined, InfoCircleOutlined, LockOutlined } from '@ant-design/icons';
+import { PlusOutlined, TeamOutlined, DeleteOutlined, InfoCircleOutlined, LockOutlined, ReloadOutlined } from '@ant-design/icons';
 import Panel from '../../../components/Panel';
 import Empty from '../../../components/Empty';
 import { useHookedModal } from '../../../components/HookedModal';
@@ -124,7 +124,7 @@ const Detail: FC<{ detail: { key: number; enabled: boolean; name: string; descri
 };
 
 const Role: FC = () => {
-  const { isLoading, data } = useGetRoleListQuery();
+  const { isLoading, data, refetch } = useGetRoleListQuery();
   const [deleteRole] = useDeleteRoleMutation();
   const [reparentRole] = useReparentRoleMutation();
   const [selectedKeys, setSelectedKeys] = useState<Array<number>>([]);
@@ -187,6 +187,7 @@ const Role: FC = () => {
               <Col flex="none">
                 <Button
                   type="primary"
+                  size="small"
                   className="mr-2"
                   icon={<PlusOutlined />}
                   onClick={() => {
@@ -198,6 +199,7 @@ const Role: FC = () => {
               </Col>
               <Col flex="none">
                 <Button
+                  size="small"
                   disabled={!selected}
                   className="mr-2"
                   icon={<LockOutlined />}
@@ -210,6 +212,8 @@ const Role: FC = () => {
               </Col>
               <Col flex="none">
                 <Button
+                  size="small"
+                  className="mr-2"
                   disabled={!selected}
                   danger
                   icon={<DeleteOutlined />}
@@ -225,6 +229,17 @@ const Role: FC = () => {
                 >
                   Delete
                 </Button>
+              </Col>
+              <Col flex="none">
+                <Tooltip title="Refresh">
+                  <Button
+                    loading={isLoading}
+                    type="text"
+                    size="small"
+                    icon={<ReloadOutlined />}
+                    onClick={() => refetch()}
+                  />
+                </Tooltip>
               </Col>
             </Row>
           </Col>

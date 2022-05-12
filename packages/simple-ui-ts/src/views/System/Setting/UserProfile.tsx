@@ -137,7 +137,7 @@ const UserProfile: FC = () => {
               className="mb-0"
               editable={editable}
             >
-              <div className="ant-upload-list ant-upload-list-picture-card d-inline app-ex-no-hover">
+              <div className="ant-upload-list ant-upload-list-picture-card d-inline-block  app-ex-no-hover">
                 <div className="ant-upload-list-picture-card-container m-0">
                   <div className="ant-upload-list-item ant-upload-list-item-done ant-upload-list-item-list-type-picture-card">
                     <div className="ant-upload-list-item-info">
