@@ -49,6 +49,12 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   APP_ENABLE_CACHE?: string;
   APP_ENABLE_AUTH_EMAIL?: string;
   APP_QUEUE_ENV?: string;
+  APP_GMAIL_USER?: string;
+  APP_GMAIL_CLIENT_ID?: string;
+  APP_GMAIL_CLIENT_SECRET?: string;
+  APP_GMAIL_REFRESH_TOKEN?: string;
+  APP_EMAIL_TYPE?: string;
+  APP_ENABLE_EMAIL?: string;
 };
 
 const envObj: GatewayENV = process.env;
@@ -178,7 +184,16 @@ const config = {
     enabled: enableCache,
     passportExpired: 600,
   },
-  enableCache,
+  email: {
+    type: envObj.APP_EMAIL_TYPE || 'gmail',
+    enabled: envObj.APP_ENABLE_EMAIL === 'true',
+    gmail: {
+      user: envObj.APP_GMAIL_USER!,
+      clientId: envObj.APP_GMAIL_CLIENT_ID!,
+      clientSecret: envObj.APP_GMAIL_CLIENT_SECRET!,
+      refreshToken: envObj.APP_GMAIL_REFRESH_TOKEN!,
+    },
+  },
   redis: {
     main: {
       url: envObj.MAIN_REDIS_URL || defaultRedisUrl,

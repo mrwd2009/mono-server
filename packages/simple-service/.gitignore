@@ -37,3 +37,6 @@ coverage
 .env.local
 
 .history
+
+temp
+private

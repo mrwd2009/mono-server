@@ -19,18 +19,6 @@ export class EtcdFactory {
     return this.client;
   }
 
-  // async get(key: string): Promise<string> {
-  //   if (!config.enableCache) {
-  //     throw new DataError('Value is not found(development).');
-  //   }
-  //   const client = this.getClient();
-  //   const val = await client.get(key);
-  //   if (val === null) {
-  //     throw new DataError('Value is not found.');
-  //   }
-  //   return val;
-  // }
-
   handleSignalClose = async () => {
     if (this.client) {
       this.client.close();
