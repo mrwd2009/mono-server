@@ -38,17 +38,27 @@ export const initialize = (sequelize: Sequelize) => {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
+        field: '__pk_userprofile'
       },
-      user_id: DataTypes.INTEGER,
+      user_id: {
+        type: DataTypes.INTEGER,
+        field: '_fk_user',
+      },
       display_name: DataTypes.STRING,
       avatar: DataTypes.STRING,
       avatar_base64: DataTypes.STRING,
-      created_at: DataTypes.DATE,
-      updated_at: DataTypes.DATE,
+      created_at: {
+        type: DataTypes.DATE,
+        field: 'creation_date',
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        field: 'last_modified_date',
+      },
     },
     {
       sequelize,
-      tableName: 'user_profiles',
+      tableName: 'userprofile',
       modelName: 'UserProfile',
       timestamps: false,
     },

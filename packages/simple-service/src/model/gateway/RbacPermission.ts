@@ -33,18 +33,28 @@ export const initialize = (sequelize: Sequelize) => {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
+        field: '__pk_rbacpermission',
       },
-      parent_id: DataTypes.INTEGER,
+      parent_id: {
+        type: DataTypes.INTEGER,
+        field: '_fk_rbacpermission_parent',
+      },
       type: DataTypes.STRING, // 'category', 'permission'
       name: DataTypes.STRING,
       sequence_id: DataTypes.STRING,
       description: DataTypes.STRING,
-      created_at: DataTypes.DATE,
-      updated_at: DataTypes.DATE,
+      created_at: {
+        type: DataTypes.DATE,
+        field: 'creation_date',
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        field: 'last_modified_date',
+      },
     },
     {
       sequelize,
-      tableName: 'rbac_permissions',
+      tableName: 'rbacpermission',
       modelName: 'RbacPermission',
       timestamps: false,
     },

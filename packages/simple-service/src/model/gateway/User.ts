@@ -64,6 +64,7 @@ export const initialize = (sequelize: Sequelize) => {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
+        field: '__pk_user',
       },
       email: DataTypes.STRING,
       password: DataTypes.STRING,
@@ -84,12 +85,18 @@ export const initialize = (sequelize: Sequelize) => {
       unlock_token: DataTypes.STRING,
       last_change_pass_at: DataTypes.DATE,
       enabled: DataTypes.BOOLEAN,
-      created_at: DataTypes.DATE,
-      updated_at: DataTypes.DATE,
+      created_at: {
+        type: DataTypes.DATE,
+        field: 'creation_date',
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        field: 'last_modified_date',
+      },
     },
     {
       sequelize,
-      tableName: 'users',
+      tableName: 'user',
       modelName: 'User',
       timestamps: false,
       hooks: {

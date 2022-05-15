@@ -33,15 +33,28 @@ export const initialize = (sequelize: Sequelize) => {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
+        field: '__pk_rbacrolepermission',
       },
-      role_id: DataTypes.INTEGER,
-      permission_id: DataTypes.INTEGER,
-      created_at: DataTypes.DATE,
-      updated_at: DataTypes.DATE,
+      role_id: {
+        type: DataTypes.INTEGER,
+        field: '_fk_rbacrole',
+      },
+      permission_id: {
+        type: DataTypes.INTEGER,
+        field: '_fk_rbacpermission',
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        field: 'creation_date',
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        field: 'last_modified_date',
+      },
     },
     {
       sequelize,
-      tableName: 'rbac_roles_permissions',
+      tableName: 'rbacrolepermission',
       modelName: 'RbacRolePermission',
       timestamps: false,
     },

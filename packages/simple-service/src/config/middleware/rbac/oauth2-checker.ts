@@ -12,8 +12,8 @@ const {
 
 export const getUserPermissions = async (id: number): Promise<number[]> => {
   const sql = `
-    select rbac_roles.id, sequence_id from rbac_roles inner join rbac_oauth2_users_roles on rbac_roles.id = rbac_oauth2_users_roles.role_id
-    where rbac_oauth2_users_roles.app = :appEnv and user_id = :userId and enabled = 1
+    select rbacrole.__pk_rbacrole, sequence_id from rbacrole inner join rbacoauth2userrole on rbacrole.__pk_rbacrole = rbacoauth2userrole._fk_rbacrole
+    where rbacoauth2userrole.app = :appEnv and _fk_oauth2user = :userId and enabled = 1
   `;
   const roles = await sequelize.query<{ sequence_id: string }>(sql, {
     type: QueryTypes.SELECT,
@@ -33,9 +33,9 @@ export const getUserPermissions = async (id: number): Promise<number[]> => {
     replacements[`sequenceId${i}`] = `${role.sequence_id}%`;
   });
   const permissionSql = `
-    select rbac_permissions.id from rbac_permissions inner join rbac_roles_permissions on rbac_permissions.id = permission_id
-    where role_id in (
-      select id from rbac_roles where ${queryStr}
+    select rbacpermission.__pk_rbacpermission from rbacpermission inner join rbacrolepermission on rbacpermission.__pk_rbacpermission = _fk_rbacpermission
+    where _fk_rbacrole in (
+      select __pk_rbacrole from rbacrole where ${queryStr}
     )
   `;
 
