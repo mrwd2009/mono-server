@@ -5,30 +5,29 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import apiEndpoints from '../../../config/api-endpoints';
 import { getRouteInfo } from '../../../config/routes-info';
 
-const useResetPassword = () => {
+const useConfirmAccount = () => {
   const navigate = useNavigate();
-  const [{ loading }, request] = useAxios({ url: apiEndpoints.auth.resetPassword, showError: true, method: 'post' });
+  const [{ loading }, request] = useAxios({ url: apiEndpoints.auth.confirmAccount, showError: true, method: 'post' });
   const { t } = useTranslation();
   const [searchParam] = useSearchParams();
   const token = searchParam.get('token');
 
-  const handleResetPassword = useCallback(
-    (params) => {
+  const handleConfirmAccount = useCallback(
+    () => {
       request({
         data: {
-          ...params,
           token,
         },
       }).then(() => {
-        navigate(`${getRouteInfo('login')!.path}?success=${encodeURIComponent(t('auth.resetSuccess'))}`);
+        navigate(`${getRouteInfo('login')!.path}?success=${encodeURIComponent(t('auth.confirmSuccess'))}`);
       });
     },
     [navigate, request, t, token],
   );
   return {
     loading,
-    handleResetPassword,
+    handleConfirmAccount,
   };
 };
 
-export default useResetPassword;
+export default useConfirmAccount;

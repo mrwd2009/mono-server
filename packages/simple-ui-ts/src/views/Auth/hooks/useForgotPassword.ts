@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import apiEndpoints from '../../../config/api-endpoints';
 import { getRouteInfo } from '../../../config/routes-info';
-import { showSuccess } from '../../../util';
 
 const useForgotPassword = () => {
   const navigate = useNavigate();
@@ -16,8 +15,7 @@ const useForgotPassword = () => {
       request({
         data: params,
       }).then(() => {
-        showSuccess(t('auth.sendEmailSuccess'));
-        navigate(getRouteInfo('login')!.path);
+        navigate(`${getRouteInfo('login')!.path}?success=${encodeURIComponent(t('auth.sendEmailSuccess'))}`);
       });
     },
     [navigate, request, t],

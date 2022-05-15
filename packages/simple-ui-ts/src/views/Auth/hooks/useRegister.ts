@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import apiEndpoints from '../../../config/api-endpoints';
 import { getRouteInfo } from '../../../config/routes-info';
-import { showSuccess } from '../../../util';
 
 const useRegister = () => {
   const navigate = useNavigate();
@@ -15,8 +14,7 @@ const useRegister = () => {
       request({
         data: params,
       }).then(() => {
-        showSuccess(t('auth.sendEmailSuccess'));
-        navigate(getRouteInfo('login')!.path);
+        navigate(`${getRouteInfo('login')!.path}?success=${encodeURIComponent(t('auth.sendEmailSuccess'))}`);
       });
     },
     [navigate, request, t],

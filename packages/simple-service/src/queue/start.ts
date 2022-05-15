@@ -8,7 +8,7 @@ const initialize = async () => {
   await initializer();
 
   if (config.isDev) {
-    // await initMonitor('queue');
+    await initMonitor('queue');
     require('./job');
     return;
   }

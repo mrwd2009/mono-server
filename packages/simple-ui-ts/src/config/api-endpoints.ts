@@ -21,6 +21,8 @@ export const apiEndpoints = {
     register: '/auth/register',
     forgotPassword: '/auth/forgot-password',
     resetPassword: '/auth/reset-password',
+    confirmAccount: '/auth/confirm',
+    unlockAccount: '/auth/unlock',
     salesforceAuthorize: '/auth/oauth2/authorize',
   },
   system: {

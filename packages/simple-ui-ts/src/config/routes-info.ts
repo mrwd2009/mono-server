@@ -309,6 +309,18 @@ export const routesInfo: RouteInfo[] = [
     notSaveVisitedPage: true,
   },
   {
+    key: 'confirm-account',
+    path: '/confirm-account',
+    menu: false,
+    notSaveVisitedPage: true,
+  },
+  {
+    key: 'unlock-account',
+    path: '/unlock-account',
+    menu: false,
+    notSaveVisitedPage: true,
+  },
+  {
     key: '403',
     path: '/403',
     menu: false,

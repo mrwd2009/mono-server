@@ -2,16 +2,14 @@ import { createBullBoard } from '@bull-board/api';
 import { BullAdapter } from '@bull-board/api/bullAdapter';
 import { KoaAdapter } from '@bull-board/koa';
 import Koa from 'koa';
-import * as job from './job';
+import { getQueue } from './helper/job';
 import config from '../config/config';
 
 const getQueues = () => {
   return [
-    new BullAdapter(job.job1),
-    new BullAdapter(job.job2),
-    new BullAdapter(job.authForgotEmail),
-    new BullAdapter(job.authConfirmationEmail),
-    new BullAdapter(job.authLockEmail),
+    new BullAdapter(getQueue('auth-forgot-email')),
+    new BullAdapter(getQueue('auth-confirmation-email')),
+    new BullAdapter(getQueue('auth-lock-email')),
   ];
 };
 

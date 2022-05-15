@@ -16,10 +16,8 @@ const initialize = async () => {
   }
   await depsInit();
 
-  if (!config.isDev) {
-    await initMonitor('log');
-  }
-  
+  await initMonitor('log');
+
   if (fs.existsSync(ipc.path)) {
     fs.unlinkSync(ipc.path);
   }

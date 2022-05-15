@@ -9,15 +9,18 @@ let transporter: Transporter;
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 let initialize = async () => {};
 
+const loadEmailService = (moduleName: string) => {
+  return async () => {
+    await require(moduleName).initialize();
+    transporter = require(moduleName).default.transporter;
+  };
+};
+
 if (config.email.enabled) {
   if (config.email.type === 'gmail') {
-    initialize = async () => {
-      await require('./gmail').initialize();
-      transporter = require('./gmail').default.transporter;
-    };
+    initialize = loadEmailService('./gmail');
   }
 }
-
 const checkServiceStatus = () => {
   if (!config.email.enabled) {
     throw new Error('Email service is not enabled.');
@@ -50,7 +53,7 @@ export const sendConfirmAccountEmail = async (params: ConfirmParams) => {
   checkServiceStatus();
   const msg = {
     to: params.email,
-    subject: 'Confirm CEFX Account',
+    subject: 'Confirm CFEX Account',
     html: confirmTemplate({
       token_url: params.token_url,
       home_url: params.home_url,
@@ -60,6 +63,7 @@ export const sendConfirmAccountEmail = async (params: ConfirmParams) => {
   }
   await transporter.sendMail(msg);
 };
+export type SendConfirmAccountEmailFn = typeof sendConfirmAccountEmail;
 
 const forgotTemplate = template(fs.readFileSync(path.join(__dirname, 'template', 'forgot-password.html'), { encoding: 'utf-8' }));
 interface ForgotPasswordParams {
@@ -70,7 +74,7 @@ export const sendForgotPasswordEmail = async (params: ForgotPasswordParams) => {
   checkServiceStatus();
   const msg = {
     to: params.email,
-    subject: 'Reset CEFX Account Password',
+    subject: 'Reset CFEX Account Password',
     html: forgotTemplate({
       token_url: params.token_url,
       year: (new Date()).getUTCFullYear(),
@@ -78,6 +82,7 @@ export const sendForgotPasswordEmail = async (params: ForgotPasswordParams) => {
   }
   await transporter.sendMail(msg);
 };
+export type SendForgotPasswordEmailFn = typeof sendForgotPasswordEmail;
 
 const lockTemplate = template(fs.readFileSync(path.join(__dirname, 'template', 'lock-account.html'), { encoding: 'utf-8' }));
 interface LockAccountParams {
@@ -88,7 +93,7 @@ export const sendLockAccountEmail = async (params: LockAccountParams) => {
   checkServiceStatus();
   const msg = {
     to: params.email,
-    subject: 'Unlock CEFX Account',
+    subject: 'Unlock CFEX Account',
     html: lockTemplate({
       token_url: params.token_url,
       year: (new Date()).getUTCFullYear(),
@@ -96,6 +101,7 @@ export const sendLockAccountEmail = async (params: LockAccountParams) => {
   }
   await transporter.sendMail(msg);
 };
+export type SendLockAccountEmailFn = typeof sendLockAccountEmail;
 
 export {
   initialize,

@@ -33,9 +33,7 @@ const initialize = async () => {
       console.error(error);
     });
   
-  if (!config.isDev) {
-    await initMonitor('queue-dashboard');
-  }
+  await initMonitor('queue-dashboard');
   // gracefully close server
   registerCleanupHandler(async () => {
     await new Promise((resolve, reject) => {

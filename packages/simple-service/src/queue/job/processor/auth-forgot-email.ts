@@ -1,16 +1,21 @@
 import type { Job } from 'bull';
 import type { Logger } from 'winston';
 import type { UITaskModelDef } from '../../../model/types';
+import type { SendForgotPasswordEmailFn } from '../../../lib/email';
 
 interface Dependencies {
   logger: Logger;
-  UITask: UITaskModelDef,
+  UITask: UITaskModelDef;
+  sendForgotPasswordEmail: SendForgotPasswordEmailFn;
+  forgotPasswordPath: string;
 }
 
 export const process = async (dependencies: Dependencies, job: Job): Promise<void> => {
   const {
     logger,
     UITask,
+    sendForgotPasswordEmail,
+    forgotPasswordPath,
   } = dependencies;
   const id: number = job.data.id;
   const task = await UITask.findOne({
@@ -24,7 +29,15 @@ export const process = async (dependencies: Dependencies, job: Job): Promise<voi
   }
 
   try {
-    console.log(`task id is ${task?.__pk_uitask}`);
+    const {
+      origin,
+      token,
+      email,
+    } = JSON.parse(task.parameter);
+    await sendForgotPasswordEmail({
+      email,
+      token_url: `${origin}${forgotPasswordPath}?token=${encodeURIComponent(token)}`,
+    });
     await task.update({
       status: 'Succeeded',
       percentage: 10000
@@ -39,6 +52,7 @@ export const process = async (dependencies: Dependencies, job: Job): Promise<voi
       error: err.stack,
       status: 'Failed',
     });
+    throw error;
   }
 };
 

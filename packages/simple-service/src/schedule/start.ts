@@ -1,7 +1,6 @@
 import Schedule from 'node-schedule';
 import _ from 'lodash';
 import depsInit from '../config/initializer';
-import config from '../config/config';
 import { getJobList } from './helper';
 import { initialize as initMonitor } from '../lib/monitor/prometheus';
 import './job';
@@ -14,9 +13,7 @@ const initialize = async () => {
       return job(Schedule);
     }),
   );
-  if (!config.isDev) {
-    await initMonitor('schedule');
-  }
+  await initMonitor('schedule');
 };
 
 initialize();

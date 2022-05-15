@@ -1,7 +1,7 @@
 import { FC, memo } from 'react';
 import { useRoutes, RouteObject } from 'react-router-dom';
 import { getRouteInfo } from './config/routes-info';
-import { Login, Register, ForgotPassword, ResetPassword } from './views/Auth';
+import { Login, Register, ForgotPassword, ResetPassword, ConfirmAccount, UnlockAccount } from './views/Auth';
 import ErrorPageLayout from './layouts/ErrorPageLayout';
 import { NotFound, Forbidden } from './views/ErrorPage';
 import MainLayout from './layouts/MainLayout';
@@ -28,6 +28,14 @@ const routes: RouteObject[] = [
   {
     path: getRouteInfo('reset-password')!.path,
     element: <ResetPassword />,
+  },
+  {
+    path: getRouteInfo('confirm-account')!.path,
+    element: <ConfirmAccount />,
+  },
+  {
+    path: getRouteInfo('unlock-account')!.path,
+    element: <UnlockAccount />,
   },
   {
     element: <RouteGuarder />,

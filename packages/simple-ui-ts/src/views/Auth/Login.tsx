@@ -4,7 +4,7 @@ import { Form, Input, Button, Divider, Typography, Checkbox } from 'antd';
 import Icon, { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { baseURL, apiEndpoints } from '../../config/api-endpoints';
-import { showError } from '../../util';
+import { showError, showSuccess } from '../../util';
 import { ReactComponent as SalesforceIcon } from '../../assets/images/salesforce.svg';
 import { getRouteInfo } from '../../config/routes-info';
 import AuthLayout from '../../layouts/AuthLayout';
@@ -29,6 +29,16 @@ const Login: FC = () => {
       showError(error);
     }
   }, [error]);
+
+  const successInfo = searchParams.get('success');
+  useEffect(() => {
+    // this is used to display successful feedback from confirming account, resetting password.
+    if (successInfo) {
+      setTimeout(() => {
+        showSuccess(successInfo);
+      });
+    }
+  }, [successInfo]);
 
   const [form] = useForm();
   return (

@@ -45,6 +45,7 @@ export const login = async (params: UserParams, i18n: I18nType): Promise<{ token
   const { email, password } = params;
   let locked = false;
   let userId: number;
+  let lockTokenStr: string;
   const result = await sequelize.transaction(async (transaction) => {
     let user = await User.findOne({ where: { email }, transaction });
     if (!user) {
@@ -121,6 +122,7 @@ export const login = async (params: UserParams, i18n: I18nType): Promise<{ token
       user.failed_attempts += 1;
       if (user.failed_attempts >= config.auth.failedAttemptCount) {
         const lockToken = await getToken();
+        lockTokenStr = lockToken;
         user.locked_at = dayjs.utc().format();
         user.unlock_token = lockToken;
         locked = true;
@@ -170,7 +172,7 @@ export const login = async (params: UserParams, i18n: I18nType): Promise<{ token
   if (!result) {
     if (locked && config.auth.enableEmailService) {
       // must be placed outside transaction
-      await job.enqueue('auth-lock-email', { name: 'Locking Account Email', type: 'Job', userId: userId!, userType: 'user', parameter: { origin: params.origin} });
+      await job.enqueue('auth-lock-email', { name: 'Locking Account Email', type: 'Job', userId: userId!, userType: 'user', parameter: { origin: params.origin, token: lockTokenStr!, email } });
     }
     logger.error(`Incorrect password(${password}) of User(${email}).`);
     throw new AuthError(i18n.t('auth.errorPassword'));
@@ -196,6 +198,7 @@ export const register = async (params: RegisterParams, i18n: I18nType) => {
   }
 
   let userId: number;
+  let tokenStr: string;
   await sequelize.transaction(async (transaction) => {
     const oldUser = await User.findOne({
       where: {
@@ -225,6 +228,7 @@ export const register = async (params: RegisterParams, i18n: I18nType) => {
       transaction,
       UserToken,
     });
+    tokenStr = token;
     user.confirmation_token = token;
 
     userId = user.id;
@@ -244,7 +248,7 @@ export const register = async (params: RegisterParams, i18n: I18nType) => {
 
   // must be placed outside transaction
   if (config.auth.enableEmailService) {
-    await job.enqueue('auth-confirmation-email', { name: 'Register Account Email', type: 'Job', userId: userId!, userType: 'user', parameter: { origin }});
+    await job.enqueue('auth-confirmation-email', { name: 'Register Account Email', type: 'Job', userId: userId!, userType: 'user', parameter: { origin, token: tokenStr!, email }});
   }
 
   return true;
@@ -252,6 +256,7 @@ export const register = async (params: RegisterParams, i18n: I18nType) => {
 
 export const forgotPassword = async ({ email, origin }: { email: string; origin?: string }, i18n: I18nType) => {
   let userId: number;
+  let tokenStr: string;
   await sequelize.transaction(async (transaction) => {
     let user = await User.findOne({ where: { email }, transaction });
     if (!user) {
@@ -270,7 +275,7 @@ export const forgotPassword = async ({ email, origin }: { email: string; origin?
       transaction,
       UserToken,
     });
-
+    tokenStr = token;
     await user.update(
       {
         reset_password_token: token,
@@ -283,7 +288,7 @@ export const forgotPassword = async ({ email, origin }: { email: string; origin?
 
   // must be placed outside transaction
   if (config.auth.enableEmailService) {
-    await job.enqueue('auth-forgot-email', { name: 'Forgot Password Email', type: 'Job', userId: userId!, userType: 'user', parameter: { origin } });
+    await job.enqueue('auth-forgot-email', { name: 'Forgotten Password Email', type: 'Job', userId: userId!, userType: 'user', parameter: { origin, token: tokenStr!, email } });
   }
 };
 
@@ -307,11 +312,15 @@ export const resetPassword = async (params: ResetParams, i18n: I18nType) => {
     }
 
     if (user.reset_password_token !== params.token) {
-      throw new DataError(i18n.t('auth.invalidToken'));
+      const error = new DataError(i18n.t('auth.invalidToken'));
+      error.public = true;
+      throw error;
     }
 
     if (await util.password.isPasswordEqual(params.password, user.password)) {
-      throw new LogicError(i18n.t('auth.notSupportSamePassword'));
+      const error = new LogicError(i18n.t('auth.notSupportSamePassword'));
+      error.public = true;
+      throw error;
     }
 
     if (user.reset_password_token) {
@@ -350,7 +359,9 @@ export const unlockUser = async (params: { token: string }, i18n: I18nType) => {
     }
 
     if (user.unlock_token !== params.token) {
-      throw new DataError(i18n.t('auth.invalidToken'));
+      const error = new DataError(i18n.t('auth.invalidToken'));
+      error.public = true;
+      throw error;
     }
 
     if (user.unlock_token) {
@@ -388,7 +399,9 @@ export const confirmUser = async (params: { token: string }, i18n: I18nType) => 
     }
 
     if (user.confirmation_token !== params.token) {
-      throw new DataError(i18n.t('auth.invalidToken'));
+      const error = new DataError(i18n.t('auth.invalidToken'));
+      error.public = true;
+      throw error;
     }
 
     if (user.confirmation_token) {

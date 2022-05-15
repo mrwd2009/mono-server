@@ -55,6 +55,10 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   APP_GMAIL_REFRESH_TOKEN?: string;
   APP_EMAIL_TYPE?: string;
   APP_ENABLE_EMAIL?: string;
+  APP_AUTH_FORGOT_PASSWORD_PATH?: string;
+  APP_AUTH_CONFIRM_ACCOUNT_PATH?: string;
+  APP_AUTH_UNLOCK_ACCOUNT_PATH?: string;
+  APP_AUTH_HOME_PATH?: string;
 };
 
 const envObj: GatewayENV = process.env;
@@ -138,6 +142,12 @@ const config = {
       autoExtend: envObj.APP_SESSION_AUTO_EXTEND === 'true',
       ignoredRoute: envObj.APP_SESSION_IGNORED_ROUTE || 'auto-refresh',
       restHour: parseInt(envObj.APP_SESSION_RESET_HOUR || '1', 10),
+    },
+    pathInfo: {
+      forgotPassword: envObj.APP_AUTH_FORGOT_PASSWORD_PATH || '/reset-password',
+      confirmAccount: envObj.APP_AUTH_CONFIRM_ACCOUNT_PATH || '/confirm-account',
+      unlockAccount: envObj.APP_AUTH_UNLOCK_ACCOUNT_PATH || '/unlock-account',
+      home: envObj.APP_AUTH_HOME_PATH || '',
     },
   },
   jwt: {
