@@ -43,11 +43,11 @@ export const initialize = (sequelize: Sequelize) => {
       },
       parent_token_id: {
         type: DataTypes.INTEGER,
-        field: '_fk_usertoken_parent',
+        field: '_fk_oauth2usertoken_parent',
       },
       child_token_id: {
         type: DataTypes.INTEGER,
-        field: '_fk_usertoken_child',
+        field: '_fk_oauth2usertoken_child',
       },
       signature: DataTypes.STRING,
       token: DataTypes.STRING,
