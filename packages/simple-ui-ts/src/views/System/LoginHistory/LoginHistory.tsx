@@ -1,8 +1,8 @@
 import { FC, memo, useEffect } from 'react';
-import { TableColumnsType, Button, Row, Tooltip } from 'antd';
+import { TableColumnsType, Button, Row, Tooltip, Col, Space } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
 import Panel from '../../../components/Panel';
-import ServerTable from '../../../components/ServerTable';
+import { useColumnSetting, ColumnSetting, ServerTable} from '../../../components/ServerTable';
 import { useLoginHistory } from './hooks';
 
 const getColumns = (): TableColumnsType<any> => {
@@ -26,6 +26,10 @@ const LoginHistory: FC = () => {
     table,
     table: { refreshListRef },
   } = useLoginHistory();
+  const {
+    tableColumns,
+    setting,
+  } = useColumnSetting('system-login-history', 'v1', getColumns());
 
   useEffect(() => {
     refreshListRef.current?.();
@@ -35,12 +39,17 @@ const LoginHistory: FC = () => {
   return (
     <Panel title="Login History">
       <Row justify="end" className="mb-2">
-        <Tooltip title="Refresh">
-          <Button loading={table.loading} type="text" size="small" icon={<ReloadOutlined />} onClick={() => refreshListRef.current?.()} />
-        </Tooltip>
+        <Col flex="none" style={{ height: 24 }}>
+          <Space align="start">
+            <Tooltip title="Refresh">
+              <Button loading={table.loading} type="text" size="small" icon={<ReloadOutlined />} onClick={() => refreshListRef.current?.()} />
+            </Tooltip>
+            <ColumnSetting setting={setting} />
+          </Space>
+        </Col>
       </Row>
       <ServerTable
-        columns={getColumns()}
+        columns={tableColumns}
         table={table}
       />
     </Panel>

@@ -1,5 +1,5 @@
 import { FC, memo, useEffect } from 'react';
-import { TableColumnsType, Tag, Button, Menu, Dropdown, Tooltip } from 'antd';
+import { TableColumnsType, Tag, Button, Menu, Dropdown, Tooltip, Row, Col, Space } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
 import {
   CheckCircleOutlined,
@@ -9,7 +9,7 @@ import {
   DownOutlined,
 } from '@ant-design/icons';
 import Panel from '../../../components/Panel';
-import ServerTable from '../../../components/ServerTable';
+import { useColumnSetting, ColumnSetting, ServerTable} from '../../../components/ServerTable';
 import { useHookedModal } from '../../../components/HookedModal';
 import OAuth2UserForm from './OAuth2UserForm';
 import { useOAuth2User } from './hooks';
@@ -104,6 +104,10 @@ const getColumns = (userFormModal: any): TableColumnsType<any> => {
 const OAuth2User: FC = () => {
   const { table, selectedKeys, setSelectedKeys, refreshTable } = useOAuth2User();
   const userFormModal = useHookedModal();
+  const {
+    tableColumns,
+    setting,
+  } = useColumnSetting('system-oauth2-user', 'v1', getColumns(userFormModal));
 
   useEffect(() => {
     refreshTable();
@@ -112,28 +116,32 @@ const OAuth2User: FC = () => {
 
   return (
     <Panel title="Salesforce Account List">
-      <div className="table-action">
-        <Button
-          disabled={!selectedKeys.length}
-          size="small"
-          className="mr-2"
-          icon={<TeamOutlined />}
-          onClick={() => userFormModal.changeVisible(true, { type: 'assignRole', id: selectedKeys })}
-        >
-          Assign Role
-        </Button>
-        <Tooltip title="Refresh">
-          <Button
-            loading={table.loading}
-            type="text"
-            size="small"
-            icon={<ReloadOutlined />}
-            onClick={() => refreshTable()}
-          />
-        </Tooltip>
-      </div>
+      <Row justify="end" className="mb-2">
+        <Col flex="none"  style={{ height: 24 }}>
+          <Space align="start">
+            <Button
+              disabled={!selectedKeys.length}
+              size="small"
+              icon={<TeamOutlined />}
+              onClick={() => userFormModal.changeVisible(true, { type: 'assignRole', id: selectedKeys })}
+            >
+              Assign Role
+            </Button>
+            <Tooltip title="Refresh">
+              <Button
+                loading={table.loading}
+                type="text"
+                size="small"
+                icon={<ReloadOutlined />}
+                onClick={() => refreshTable()}
+              />
+            </Tooltip>
+            <ColumnSetting setting={setting} />
+          </Space>
+        </Col>
+      </Row>
       <ServerTable
-        columns={getColumns(userFormModal)}
+        columns={tableColumns}
         table={table}
         rowSelection={{
           selectedRowKeys: selectedKeys,

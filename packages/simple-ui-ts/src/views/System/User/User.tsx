@@ -1,8 +1,8 @@
 import { FC, memo, useEffect } from 'react';
-import { TableColumnsType, Tag, Button, Spin, Menu, Dropdown, Tooltip } from 'antd';
+import { TableColumnsType, Tag, Button, Spin, Menu, Dropdown, Tooltip, Row, Col, Space } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
 import Panel from '../../../components/Panel';
-import ServerTable from '../../../components/ServerTable';
+import { useColumnSetting, ColumnSetting, ServerTable} from '../../../components/ServerTable';
 import { useHookedModal } from '../../../components/HookedModal';
 import UserForm from './UserForm';
 import { useUser } from './hooks';
@@ -133,6 +133,11 @@ const User: FC = () => {
   const { loading, table, selectedKeys, setSelectedKeys, refreshTable, handleDelete } = useUser();
   const userFormModal = useHookedModal();
 
+  const {
+    tableColumns,
+    setting,
+  } = useColumnSetting('system-user', 'v1', getColumns(userFormModal, handleDelete));
+
   useEffect(() => {
     refreshTable();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -141,37 +146,40 @@ const User: FC = () => {
   return (
     <Panel title="Account List">
       <Spin spinning={loading}>
-        <div className="table-action">
-          <Button
-            type="primary"
-            className="mr-2"
-            size="small"
-            icon={<PlusOutlined />}
-            onClick={() => userFormModal.changeVisible(true, { type: 'add' })}
-          >
-            Add
-          </Button>
-          <Button
-            disabled={!selectedKeys.length}
-            size="small"
-            className="mr-2"
-            icon={<TeamOutlined />}
-            onClick={() => userFormModal.changeVisible(true, { type: 'assignRole', id: selectedKeys })}
-          >
-            Assign Role
-          </Button>
-          <Tooltip title="Refresh">
-            <Button
-              loading={table.loading}
-              type="text"
-              size="small"
-              icon={<ReloadOutlined />}
-              onClick={() => refreshTable()}
-            />
-          </Tooltip>
-        </div>
+        <Row justify="end" className="mb-2">
+          <Col flex="none" style={{ height: 24 }}>
+            <Space align="start">
+              <Button
+                type="primary"
+                size="small"
+                icon={<PlusOutlined />}
+                onClick={() => userFormModal.changeVisible(true, { type: 'add' })}
+              >
+                Add
+              </Button>
+              <Button
+                disabled={!selectedKeys.length}
+                size="small"
+                icon={<TeamOutlined />}
+                onClick={() => userFormModal.changeVisible(true, { type: 'assignRole', id: selectedKeys })}
+              >
+                Assign Role
+              </Button>
+              <Tooltip title="Refresh">
+                <Button
+                  loading={table.loading}
+                  type="text"
+                  size="small"
+                  icon={<ReloadOutlined />}
+                  onClick={() => refreshTable()}
+                />
+              </Tooltip>
+              <ColumnSetting setting={setting} />
+            </Space>
+          </Col>
+        </Row>
         <ServerTable
-          columns={getColumns(userFormModal, handleDelete)}
+          columns={tableColumns}
           table={table}
           rowSelection={{
             selectedRowKeys: selectedKeys,

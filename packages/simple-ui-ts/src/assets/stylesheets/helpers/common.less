@@ -24,3 +24,15 @@
 .border-right-dash {
   border-right: 1px dash @border-color-base;
 }
+
+.border-light {
+  border: 1px solid @border-color-split;
+}
+
+.hoverable-item {
+  transition: background @animation-duration-slow ease;
+
+  &:hover {
+    background: @select-item-active-bg;
+  }
+}
