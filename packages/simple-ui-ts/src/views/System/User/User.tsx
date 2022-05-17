@@ -70,7 +70,7 @@ const getColumns = (userFormModal: any, handleDelete: any): TableColumnsType<any
     {
       title: '',
       key: 'action',
-      width: 30,
+      width: 80,
       fixed: 'right',
       render: (row: any) => {
         const data = {
@@ -181,11 +181,15 @@ const User: FC = () => {
         <ServerTable
           columns={tableColumns}
           table={table}
+          resizableCol
           rowSelection={{
             selectedRowKeys: selectedKeys,
             onChange: (keys) => {
               setSelectedKeys(keys as number[]);
             },
+          }}
+          scroll={{
+            y: 500
           }}
         />
         <UserForm

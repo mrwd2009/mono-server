@@ -13,8 +13,8 @@
 .server-table {
   .ant-table .ant-table-selection-col,
   .ant-table-small .ant-table-selection-column {
-    width: 10px;
-    min-width: 10px;
+    width: 28px;
+    min-width: 28px;
   }
 
   .ant-btn.ant-btn-sm.btn-only-icon {
@@ -29,5 +29,68 @@
   .server-table-header-input {
     display: block;
     width: 180px;
+  }
+}
+
+.resize-col-server-table {
+  .ant-table table > thead > tr > th.has-drag-icon {
+    padding-right: 16px;
+  }
+
+  // .ant-table-header {
+  //   table {
+  //     width: auto;
+  //     min-width: 100%;
+  //   }
+  // }
+
+  // .ant-table-body {
+  //   table {
+  //     width: auto;
+  //     min-width: 100%;
+  //   }
+  // }
+
+  .drag-icon {
+    position: absolute;
+    top: 50%;
+    right: 2px;
+    z-index: 1;
+    color: @table-header-icon-color;
+    transform: translateY(-50%);
+    cursor: col-resize;
+    transition: color @animation-duration-slow ease;
+
+    > div {
+      display: inline-block;
+    }
+
+    .anticon {
+      cursor: col-resize;
+    }
+
+    &:hover {
+      color: @primary-color;
+    }
+  }
+}
+
+.app-ex-server-table-dragging-icon {
+  position: relative;
+  display: inline-block;
+  color: @primary-color;
+}
+
+.app-ex-server-table-resizer-h-indicator {
+  position: absolute;
+  display: inline-block;
+  width: 0;
+  border-right: 1px solid @primary-color;
+}
+
+.virtual-rate-table {
+  th, td {
+    white-space: nowrap;
+    word-break: keep-all;
   }
 }
