@@ -72,7 +72,11 @@ const ColumnList: FC<Pick<Setting, 'cols' | 'onColPositionChange' | 'onColVisibl
   return (
     <DndContext
       collisionDetection={closestCenter}
-      onDragEnd={event => onColPositionChange({ activeId: event.active.id, overId: event.over!.id })}
+      onDragEnd={event => {
+        if (event.over) {
+          onColPositionChange({ activeId: event.active.id, overId: event.over.id });
+        }
+      }}
     >
       <SortableContext
         strategy={verticalListSortingStrategy}
