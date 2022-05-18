@@ -60,7 +60,6 @@ const LoginHistory: FC = () => {
       <ServerTable
         columns={tableColumns}
         table={table}
-        resizableCol
       />
     </Panel>
   );

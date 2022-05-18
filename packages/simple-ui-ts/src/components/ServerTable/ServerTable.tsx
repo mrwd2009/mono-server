@@ -1,6 +1,6 @@
 import { memo, useMemo, useState, FC, createContext, useContext, useCallback, useRef } from 'react';
 import dayjs from 'dayjs';
-import { Table, TableProps, Input, Popover, InputNumber, AutoComplete, Select, Row, Col, Button } from 'antd';
+import { Table, TableProps, Input, Popover, InputNumber, AutoComplete, Select, Row, Col, Button, DatePicker } from 'antd';
 import Icon, { SearchOutlined } from '@ant-design/icons';
 import map from 'lodash/map';
 import forEach from 'lodash/forEach';
@@ -16,7 +16,7 @@ import { ReactComponent as DragVIcon } from '../../assets/images/direction/drag-
 declare module 'antd/lib/table/interface' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface ColumnType<RecordType> {
-    cFilterType?: 'text' | 'number' | 'select' | 'autoComplete';
+    cFilterType?: 'text' | 'number' | 'select' | 'autoComplete' | 'dateRange';
     cDataType?: 'datetime' | 'lgText';
     cFilterOptions?: Array<{ label: string; value: string | number } | number | string>;
     minWidth?: number;
@@ -173,6 +173,14 @@ export const getFileterDropdown = ({ cFilterType, cFilterOptions = [], title }: 
         <AutoComplete
           {...inputProps}
           options={getOptions()}
+        />
+      );
+    } else if (cFilterType === 'dateRange') {
+      inputEle = (
+        <DatePicker.RangePicker
+          className="mb-2 server-table-header-datepicker"
+          onChange={inputProps.onChange}
+          value={selectedKeys[0] || null}
         />
       );
     }
