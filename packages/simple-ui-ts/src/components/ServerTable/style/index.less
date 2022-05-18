@@ -118,10 +118,62 @@
   }
 }
 
+@table-border: @border-width-base @border-style-base @table-border-color;
+
 .virtual-rate-table {
-  th,
-  td {
+  th, td {
     white-space: nowrap;
     word-break: keep-all;
+  }
+
+  .virtual-rate-table-td {
+    &.right {
+      text-align: right;
+    }
+  }
+  
+  .ant-table-bordered > .ant-table-container {
+    .virtual-rate-table-body {
+      .virtual-rate-table-td:not(.virtual-rate-table-last-col) {
+        border-right: @table-border;
+      }
+
+      .virtual-rate-table-td:not(.virtual-rate-table-last-row) {
+        border-bottom: @table-border;
+      }
+    }
+    border-right: @table-border;
+    border-bottom: @table-border;
+  }
+
+  .virtual-rate-table-body {
+    .virtual-rate-table-td {
+      padding: @table-padding-vertical-sm @table-padding-horizontal-sm;
+      overflow: hidden;
+      font-size: @table-font-size-sm;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      word-break: keep-all;
+    }
+  }
+
+  .virtual-rate-table-edit-cell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .anticon {
+      margin-left: 4px;
+      color: @primary-color;
+    }
+  }
+
+  .virtual-rate-table-editing-cell {
+    display: flex;
+    align-items: center;
+
+    .anticon {
+      color: @primary-color;
+    }
   }
 }

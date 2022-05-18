@@ -1,15 +1,19 @@
-import { memo, useMemo, useState, FC, createContext, useContext, useCallback, useRef } from 'react';
+import { memo, useMemo, useState, FC, createContext, useContext, useCallback, useRef, useEffect } from 'react';
 import dayjs from 'dayjs';
-import { Table, TableProps, Input, Popover, InputNumber, AutoComplete, Select, Row, Col, Button, DatePicker } from 'antd';
-import Icon, { SearchOutlined } from '@ant-design/icons';
+import { Table, TableProps, Input, Popover, InputNumber, AutoComplete, Select, Row, Col, Button, DatePicker, Tooltip } from 'antd';
+import Icon, { SearchOutlined, EditOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { VariableSizeGrid as Grid } from 'react-window';
+import ResizeObserver from 'rc-resize-observer';
 import map from 'lodash/map';
 import forEach from 'lodash/forEach';
 import isObject from 'lodash/isObject';
 import isArray from 'lodash/isArray';
 import isString from 'lodash/isString';
+import debounce from 'lodash/debounce';
 import { DndContext, useDraggable, DragOverlay } from '@dnd-kit/core';
 import { restrictToHorizontalAxis, restrictToWindowEdges, restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import LRU from 'zrender/lib/core/LRU';
+import Empty from '../Empty';
 import { constants } from '../../config';
 import { ReactComponent as DragVIcon } from '../../assets/images/direction/drag-vertical.svg';
 
@@ -20,6 +24,7 @@ declare module 'antd/lib/table/interface' {
     cDataType?: 'datetime' | 'lgText';
     cFilterOptions?: Array<{ label: string; value: string | number } | number | string>;
     minWidth?: number;
+    cEditable?: boolean;
   }
 }
 
@@ -361,7 +366,7 @@ const DraggableHeightIcon: FC<any> = ({ dragging, onHeight }) => {
   );
 };
 
-const ResizeTable: FC<any> = ({ children, ...rest }) => {
+const ResizeTable: FC<any> = ({ resizeTabletype = 'table', children, ...rest }) => {
   const { left, hovered } = useContext(DraggingContext);
   const { height, updateHeight } = useContext(TableHeightContext);
   const [dragging, setDragging] = useState(false);
@@ -388,7 +393,13 @@ const ResizeTable: FC<any> = ({ children, ...rest }) => {
 
   return (
     <>
-      <table {...rest}>{children}</table>
+      {
+        resizeTabletype === 'table' ? (
+          <table {...rest}>{children}</table>
+        ) : (
+          children
+        )
+      }
       {hovered && (
         <div
           style={{ top: 0, height: '100%', left }}
@@ -519,7 +530,140 @@ interface ServerTableProps extends TableProps<any> {
   showLoading?: boolean;
   resizableCol?: boolean;
   resizableTableId?: string;
+  virtualList?: boolean;
+  virtualRowHeight?: number;
+  onVirtualCellEdit?: (val: any, row: any, dataIndex: any, rowIndex: number) => void;
 }
+
+const EditableCell: FC<any> = ({ value, onChange }) => {
+  const [editing, setEditing] = useState(false);
+  const [input, setInput] = useState(value);
+  useEffect(() => {
+    if (editing) {
+      setInput(value);
+    }
+  }, [editing, value]);
+  const save = () => {
+    if (input !== value) {
+      onChange(input);
+    }
+  };
+  if (editing) {
+    return (
+      <div className="virtual-rate-table-editing-cell">
+        <Input
+          size="small"
+          autoFocus
+          value={input}
+          onChange={(event) => setInput(event.target.value)}
+          // onBlur={() => {
+          //   setEditing(false);
+          //   save();
+          // }}
+          onKeyDown={(event) => {
+            //Escape
+            if (event.keyCode === 27) {
+              setEditing(false);
+              // prevent other effect like modal in outside.
+              event.stopPropagation();
+            } else if (event.keyCode === 13) {
+              // Enter
+              setEditing(false);
+              save();
+            }
+          }}
+        />
+        <Tooltip title="Cancel">
+          <CloseOutlined onClick={() => setEditing(false)} style={{ margin: '0 2px'}} />
+        </Tooltip>
+        <Tooltip title="Save">
+          <CheckOutlined
+            onClick={() => {
+              setEditing(false);
+              save();
+            }}
+          />
+        </Tooltip>
+      </div>
+    );
+  }
+  return (
+    <div className="virtual-rate-table-edit-cell">
+      <div className="text-truncate">
+        {value}
+      </div>
+      <EditOutlined onClick={() => setEditing(true)} />
+    </div>
+  );
+};
+
+const renderBody = (rawData: any, { scrollbarSize, ref, onScroll }: any, { newColumns, connected, rowHeight, gridRef, scrollY, tableWidth, onEdit } : any) => {
+  if (!rawData.length) {
+    return <Empty size="small" />;
+  }
+  const lastColIndex = newColumns.length - 1;
+  const lastRowIndex = rawData.length - 1;
+  ref.current = connected;
+  const totalHeight = rowHeight * rawData.length;
+  return (
+    <ResizeTable resizeTabletype="virtual">
+      <Grid
+        ref={gridRef}
+        className="virtual-rate-table-body"
+        columnCount={newColumns.length}
+        columnWidth={(index) => {
+          const width = newColumns[index].width;
+          if (totalHeight > scrollY && index === lastColIndex) {
+            return width - scrollbarSize - 1;
+          }
+          return width;
+        }}
+        height={scrollY}
+        rowCount={rawData.length}
+        rowHeight={() => rowHeight}
+        width={tableWidth}
+        onScroll={({ scrollLeft }) => onScroll({ scrollLeft })}
+      >
+        {
+          ({ columnIndex, rowIndex, style }) => {
+            let cell;
+            const dIndex = newColumns[columnIndex].dataIndex;
+            const row = rawData[rowIndex];
+            if (newColumns[columnIndex].render) {
+              cell = newColumns[columnIndex].render(dIndex ? row[dIndex] : row, row, columnIndex);
+            } else {
+              cell = row[dIndex];
+            }
+            let className = 'virtual-rate-table-td ';
+            // let changed = false;
+            if (columnIndex === lastColIndex) {
+              className += ' virtual-rate-table-last-col ';
+              if (newColumns[columnIndex].align === 'right') {
+                className += ' right ';
+              }
+              if (row.changed) {
+                className += ' changed ';
+                // changed = true;
+              }
+            }
+            if (rowIndex === lastRowIndex) {
+              className += ' virtual-rate-table-last-row ';
+            }
+            return (
+              <div
+                className={className}
+                style={style}
+              >
+                {/* {changed && <Tooltip title="Edited value"><span className="changed-mark" /></Tooltip>} */}
+                {newColumns[columnIndex].cEditable ? <EditableCell value={cell} onChange={(newVal: any) => onEdit?.(newVal, row, dIndex, rowIndex)} /> : cell}
+              </div>
+            );
+          }
+        }
+      </Grid>
+    </ResizeTable>
+  );
+};
 
 let ServerTable = ({
   table,
@@ -530,7 +674,10 @@ let ServerTable = ({
   pagination = {},
   showLoading = true,
   resizableCol = false,
+  virtualList = false,
+  virtualRowHeight = 31,
   resizableTableId = '',
+  onVirtualCellEdit,
   ...rest
 }: ServerTableProps) => {
   // in order to create a unique id
@@ -563,24 +710,28 @@ let ServerTable = ({
     [uniqueResizableId],
   );
 
+  const getColWidthInfo = useCallback((col: any) => {
+    let width = col.width;
+    let minWidth = col.minWidth;
+    if (!minWidth) {
+      if (isString(col.title)) {
+        // it's better to calculate by real size.
+        minWidth = getColWidth(col.title) + 42;
+      } else {
+        minWidth = 80;
+      }
+    }
+    return {
+      width: width || minWidth,
+      minWidth,
+    };
+  }, []);
+
   const [columnWidthInfo, setColumnWidthInfo] = useState(() => {
     let info: any = {};
     forEach(columns, (col) => {
       const headerId = getHeaderId(col);
-      let width = col.width;
-      let minWidth = col.minWidth;
-      if (!minWidth) {
-        if (isString(col.title)) {
-          // it's better to calculate by real size.
-          minWidth = getColWidth(col.title) + 42;
-        } else {
-          minWidth = 80;
-        }
-      }
-      info[headerId] = {
-        width: width || minWidth,
-        minWidth,
-      };
+      info[headerId] = getColWidthInfo(col);
     });
     return info;
   });
@@ -594,6 +745,9 @@ let ServerTable = ({
       if (resizableCol) {
         const headerId = getHeaderId(col);
         colDef.ellipsis = true;
+        if (!columnWidthInfo[headerId]) {
+          columnWidthInfo[headerId] = getColWidthInfo(col);
+        }
         colDef.width = columnWidthInfo[headerId].width;
         colDef.onHeaderCell = (headerCol: any) => {
           return {
@@ -655,9 +809,82 @@ let ServerTable = ({
       hasFixedCol: _hasFixedCol,
       newColumns: _newColumns,
     };
-  }, [columns, sorter, rawPostData, resizableCol, columnWidthInfo, getHeaderId]);
+  }, [columns, sorter, rawPostData, resizableCol, columnWidthInfo, getHeaderId, getColWidthInfo]);
 
-  let components;
+  const [tableWidth, _setTableWidth] = useState(0);
+  const gridRef = useRef(null);
+  const [connected] = useState(() => {
+    const obj = {};
+    Object.defineProperty(obj, 'scrollLeft', {
+      get: () => null,
+      set: (scrollLeft) => {
+        if (gridRef.current) {
+          (gridRef.current as any).scrollTo({
+            scrollLeft,
+          });
+        }
+      },
+    });
+    return obj;
+  });
+
+  const setTableWidth = useMemo(() => debounce((width: number) => {
+    _setTableWidth(width);
+  }, 300, { leading: true, trailing: true }), []);
+
+  useEffect(() => {
+    // clear timer after unmounting
+    return () => {
+      setTableWidth.cancel();
+    };
+  }, [setTableWidth]);
+
+  const rawTotal = useMemo(() => {
+    if (!resizableCol) {
+      return 0;
+    }
+    let total = 0;
+    let cols = map(newColumns, (col) => {
+      let width = col.width;
+      total += width;
+      return {
+        rawCol: col,
+        width,
+      };
+    });
+    if (total <= tableWidth) {
+      let ac = 0;
+      forEach(cols, (col, index) => {
+        let width = col.width;
+        if (index === cols.length - 1) {
+          // 1px to disable scroll
+          width = tableWidth - ac - 1;
+        } else {
+          width = Math.round(width / total * tableWidth);
+        }
+        ac += width;
+        const headerId = getHeaderId(col.rawCol);
+        col.rawCol.width = width;
+        columnWidthInfo[headerId].width = width;
+      });
+    }
+    return total;
+  }, [newColumns, tableWidth, resizableCol, columnWidthInfo, getHeaderId]);
+
+  useEffect(() => {
+    if (!virtualList || !resizableCol) {
+      return;
+    }
+    if (gridRef.current) {
+      (gridRef.current as any).resetAfterIndices({
+        columnIndex: 0,
+        shouldForceUpdate: true,
+      });
+    }
+    // perhaps tableWidth is not changed, but rawTotal is changed.
+  }, [tableWidth, rawTotal, virtualList, resizableCol]);
+
+  let components: any;
   if (resizableCol) {
     scroll.y = tableHeight;
     let x = 0;
@@ -675,6 +902,28 @@ let ServerTable = ({
         cell: ResizeHeaderCell,
       },
     };
+
+    if (virtualList) {
+      className += ' virtual-rate-table ';
+      let virtualHeight = scroll.y;
+      if (list.length === 0) {
+        // for empty placeholder
+        virtualHeight = 70;
+      } else if (list.length * virtualRowHeight < virtualHeight) {
+        virtualHeight = list.length * virtualRowHeight;
+      }
+      components.body = (rawData: any, bodyConf: any) => {
+        return renderBody(rawData, bodyConf, {
+          newColumns,
+          connected,
+          rowHeight: virtualRowHeight,
+          gridRef,
+          scrollY: virtualHeight,
+          tableWidth,
+          onEdit: onVirtualCellEdit,
+        });
+      }
+    }
   } else {
     if (!scroll.x && !scroll.y && !hasFixedCol) {
       // show scrollbar if table width is larger than container
@@ -722,9 +971,11 @@ let ServerTable = ({
 
   if (resizableCol) {
     return (
-      <ResizeWrapper uniqueResizableId={uniqueResizableId}>
-        <TableHeightContext.Provider value={heightContextVal}>{tableEl}</TableHeightContext.Provider>
-      </ResizeWrapper>
+      <ResizeObserver onResize={({ width }) => setTableWidth(width)}>
+        <ResizeWrapper uniqueResizableId={uniqueResizableId}>
+          <TableHeightContext.Provider value={heightContextVal}>{tableEl}</TableHeightContext.Provider>
+        </ResizeWrapper>
+      </ResizeObserver>
     );
   }
 

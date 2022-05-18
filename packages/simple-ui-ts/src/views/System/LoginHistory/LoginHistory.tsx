@@ -7,7 +7,7 @@ import { useLoginHistory } from './hooks';
 
 const getColumns = (): TableColumnsType<any> => {
   return [
-    { title: 'Email', dataIndex: 'email', cFilterType: 'text' },
+    { title: 'Email', dataIndex: 'email', cFilterType: 'text', cEditable: true },
     // { title: 'Reset Password Sent At', dataIndex: 'reset_password_sent_at', cDataType: 'datetime' },
     { title: 'SSO Type', dataIndex: 'sso_env' },
     { title: 'Sign In IP', dataIndex: 'ip' },
@@ -60,6 +60,8 @@ const LoginHistory: FC = () => {
       <ServerTable
         columns={tableColumns}
         table={table}
+        resizableCol
+        virtualList
       />
     </Panel>
   );

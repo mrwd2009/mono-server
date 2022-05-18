@@ -25,7 +25,7 @@ const getColumns = (userFormModal: any, handleDelete: any): TableColumnsType<any
     // { title: 'Reset Password Sent At', dataIndex: 'reset_password_sent_at', cDataType: 'datetime' },
     // { title: 'Confirmed At', dataIndex: 'confirmed_at', cDataType: 'datetime' },
     { title: 'Sign In Count', dataIndex: 'sign_in_count', align: 'right' },
-    { title: 'Current Sign In At', dataIndex: 'current_sign_in_at', cDataType: 'datetime', cFilterType: 'dateRange' },
+    { title: 'Current Sign In At', dataIndex: 'current_sign_in_at', cDataType: 'datetime' },
     { title: 'Last Sign In At', dataIndex: 'last_sign_in_at', cDataType: 'datetime' },
     { title: 'Current Sign In IP', dataIndex: 'current_sign_in_ip' },
     { title: 'Last Sign In IP', dataIndex: 'last_sign_in_ip' },
