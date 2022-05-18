@@ -1,15 +1,9 @@
 import { FC, memo, useEffect } from 'react';
 import { TableColumnsType, Tag, Button, Menu, Dropdown, Tooltip, Row, Col, Space } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
-import {
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  EditOutlined,
-  TeamOutlined,
-  DownOutlined,
-} from '@ant-design/icons';
+import { CheckCircleOutlined, CloseCircleOutlined, EditOutlined, TeamOutlined, DownOutlined } from '@ant-design/icons';
 import Panel from '../../../components/Panel';
-import { useColumnSetting, ColumnSetting, ServerTable} from '../../../components/ServerTable';
+import { useColumnSetting, ColumnSetting, ServerTable } from '../../../components/ServerTable';
 import { useHookedModal } from '../../../components/HookedModal';
 import OAuth2UserForm from './OAuth2UserForm';
 import { useOAuth2User } from './hooks';
@@ -104,10 +98,7 @@ const getColumns = (userFormModal: any): TableColumnsType<any> => {
 const OAuth2User: FC = () => {
   const { table, selectedKeys, setSelectedKeys, refreshTable } = useOAuth2User();
   const userFormModal = useHookedModal();
-  const {
-    tableColumns,
-    setting,
-  } = useColumnSetting('system-oauth2-user', 'v1', getColumns(userFormModal));
+  const { tableColumns, setting } = useColumnSetting('system-oauth2-user', 'v1', getColumns(userFormModal));
 
   useEffect(() => {
     refreshTable();
@@ -116,8 +107,14 @@ const OAuth2User: FC = () => {
 
   return (
     <Panel title="Salesforce Account List">
-      <Row justify="end" className="mb-2">
-        <Col flex="none"  style={{ height: 24 }}>
+      <Row
+        justify="end"
+        className="mb-2"
+      >
+        <Col
+          flex="none"
+          style={{ height: 24 }}
+        >
           <Space align="start">
             <Button
               disabled={!selectedKeys.length}

@@ -15,9 +15,7 @@ const Forbidden: FC = () => {
         >
           Return to homepage
         </Link>
-        <span className="p-1">
-          or
-        </span>
+        <span className="p-1">or</span>
         <Link
           to={getRouteInfo('login')!.path}
           className="route-link"

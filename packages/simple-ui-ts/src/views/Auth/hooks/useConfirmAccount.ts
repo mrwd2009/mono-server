@@ -12,18 +12,15 @@ const useConfirmAccount = () => {
   const [searchParam] = useSearchParams();
   const token = searchParam.get('token');
 
-  const handleConfirmAccount = useCallback(
-    () => {
-      request({
-        data: {
-          token,
-        },
-      }).then(() => {
-        navigate(`${getRouteInfo('login')!.path}?success=${encodeURIComponent(t('auth.confirmSuccess'))}`);
-      });
-    },
-    [navigate, request, t, token],
-  );
+  const handleConfirmAccount = useCallback(() => {
+    request({
+      data: {
+        token,
+      },
+    }).then(() => {
+      navigate(`${getRouteInfo('login')!.path}?success=${encodeURIComponent(t('auth.confirmSuccess'))}`);
+    });
+  }, [navigate, request, t, token]);
   return {
     loading,
     handleConfirmAccount,

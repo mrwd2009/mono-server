@@ -12,18 +12,15 @@ const useUnlockAccount = () => {
   const [searchParam] = useSearchParams();
   const token = searchParam.get('token');
 
-  const handleUnlockAccount = useCallback(
-    () => {
-      request({
-        data: {
-          token,
-        },
-      }).then(() => {
-        navigate(`${getRouteInfo('login')!.path}?success=${encodeURIComponent(t('auth.unlockSuccess'))}`);
-      });
-    },
-    [navigate, request, t, token],
-  );
+  const handleUnlockAccount = useCallback(() => {
+    request({
+      data: {
+        token,
+      },
+    }).then(() => {
+      navigate(`${getRouteInfo('login')!.path}?success=${encodeURIComponent(t('auth.unlockSuccess'))}`);
+    });
+  }, [navigate, request, t, token]);
   return {
     loading,
     handleUnlockAccount,

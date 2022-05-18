@@ -24,24 +24,26 @@ const useColumnSetting = (uniqueSavedKey: string, version: string, columns: any)
       let saved = localStorage.getItem(uniqueSavedKey);
       if (saved && startsWith(saved, version)) {
         saved = saved.substring(version.length);
-        return compact(map(saved.split(','), (item) => {
-          const [colKey, visible] = item.split('|');
-          const def = find(columns, (col) => {
-            return toKey(col.dataIndex) === colKey;
-          });
-          if (def) {
-            return {
-              title: def.title,
-              key: colKey,
-              visible: visible !== '0',
-              fixed: !!def.fixed,
-            };
-          }
-          return null;
-        }));
+        return compact(
+          map(saved.split(','), (item) => {
+            const [colKey, visible] = item.split('|');
+            const def = find(columns, (col) => {
+              return toKey(col.dataIndex) === colKey;
+            });
+            if (def) {
+              return {
+                title: def.title,
+                key: colKey,
+                visible: visible !== '0',
+                fixed: !!def.fixed,
+              };
+            }
+            return null;
+          }),
+        );
       }
     }
-    return map(columns, col => ({
+    return map(columns, (col) => ({
       title: col.title,
       key: toKey(col.dataIndex),
       visible: true,
@@ -49,53 +51,71 @@ const useColumnSetting = (uniqueSavedKey: string, version: string, columns: any)
     }));
   });
 
-  const onColPositionChange = useCallback(({ activeId, overId }: { activeId: string, overId: string }) => {
-    if (activeId === overId) {
-      return;
-    }
-    const activeIndex = findIndex(cols, { key: activeId });
-    const overIndex = findIndex(cols, { key: overId });
-    const newCols = arrayMove(cols, activeIndex, overIndex);
-    setCols(newCols);
-    if (localStorage) {
-      localStorage.setItem(uniqueSavedKey, `${version}${map(newCols, col => `${col.key}|${+col.visible}`).join(',')}`);
-    }
-  }, [cols, uniqueSavedKey, version]);
+  const onColPositionChange = useCallback(
+    ({ activeId, overId }: { activeId: string; overId: string }) => {
+      if (activeId === overId) {
+        return;
+      }
+      const activeIndex = findIndex(cols, { key: activeId });
+      const overIndex = findIndex(cols, { key: overId });
+      const newCols = arrayMove(cols, activeIndex, overIndex);
+      setCols(newCols);
+      if (localStorage) {
+        localStorage.setItem(
+          uniqueSavedKey,
+          `${version}${map(newCols, (col) => `${col.key}|${+col.visible}`).join(',')}`,
+        );
+      }
+    },
+    [cols, uniqueSavedKey, version],
+  );
 
-  const onColVisibleChange = useCallback(({ id, visible}: { id: string, visible: boolean }) => {
-    const index = findIndex(cols, { key: id });
-    const newCols = [...cols];
-    newCols[index] = {
-      ...newCols[index],
-      visible,
-    };
-    setCols(newCols);
-    if (localStorage) {
-      localStorage.setItem(uniqueSavedKey, `${version}${map(newCols, col => `${col.key}|${+col.visible}`).join(',')}`);
-    }
-  }, [cols, uniqueSavedKey, version]);;
+  const onColVisibleChange = useCallback(
+    ({ id, visible }: { id: string; visible: boolean }) => {
+      const index = findIndex(cols, { key: id });
+      const newCols = [...cols];
+      newCols[index] = {
+        ...newCols[index],
+        visible,
+      };
+      setCols(newCols);
+      if (localStorage) {
+        localStorage.setItem(
+          uniqueSavedKey,
+          `${version}${map(newCols, (col) => `${col.key}|${+col.visible}`).join(',')}`,
+        );
+      }
+    },
+    [cols, uniqueSavedKey, version],
+  );
 
-  const onCheckAll = useCallback((checked: boolean) => {
-    let newCols = [];
-    if (checked) {
-      newCols = map(cols, col => ({
-        ...col,
-        visible: true,
-      }));
-    } else {
-      newCols = map(cols, col => ({
-        ...col,
-        visible: false,
-      }));
-    }
-    setCols(newCols);
-    if (localStorage) {
-      localStorage.setItem(uniqueSavedKey, `${version}${map(newCols, col => `${col.key}|${+col.visible}`).join(',')}`);
-    }
-  }, [cols, uniqueSavedKey, version]);
+  const onCheckAll = useCallback(
+    (checked: boolean) => {
+      let newCols = [];
+      if (checked) {
+        newCols = map(cols, (col) => ({
+          ...col,
+          visible: true,
+        }));
+      } else {
+        newCols = map(cols, (col) => ({
+          ...col,
+          visible: false,
+        }));
+      }
+      setCols(newCols);
+      if (localStorage) {
+        localStorage.setItem(
+          uniqueSavedKey,
+          `${version}${map(newCols, (col) => `${col.key}|${+col.visible}`).join(',')}`,
+        );
+      }
+    },
+    [cols, uniqueSavedKey, version],
+  );
 
   const onReset = useCallback(() => {
-    const newCols = map(columns, col => ({
+    const newCols = map(columns, (col) => ({
       title: col.title,
       key: toKey(col.dataIndex),
       visible: true,
@@ -103,23 +123,28 @@ const useColumnSetting = (uniqueSavedKey: string, version: string, columns: any)
     }));
     setCols(newCols);
     if (localStorage) {
-      localStorage.setItem(uniqueSavedKey, `${version}${map(newCols, col => `${col.key}|${+col.visible}`).join(',')}`);
+      localStorage.setItem(
+        uniqueSavedKey,
+        `${version}${map(newCols, (col) => `${col.key}|${+col.visible}`).join(',')}`,
+      );
     }
   }, [columns, uniqueSavedKey, version]);
 
   const allChecked = useMemo(() => {
-    return every(cols, col => col.visible);
+    return every(cols, (col) => col.visible);
   }, [cols]);
 
   const tableColumns = useMemo(() => {
-    return compact(map(cols, (col) => {
-      if (!col.visible) {
-        return null;
-      }
-      return find(columns, (rawCol) => {
-        return toKey(rawCol.dataIndex) === col.key;
-      });
-    }))
+    return compact(
+      map(cols, (col) => {
+        if (!col.visible) {
+          return null;
+        }
+        return find(columns, (rawCol) => {
+          return toKey(rawCol.dataIndex) === col.key;
+        });
+      }),
+    );
   }, [columns, cols]);
 
   const setting = useMemo(() => {
@@ -130,7 +155,7 @@ const useColumnSetting = (uniqueSavedKey: string, version: string, columns: any)
       onColVisibleChange,
       onCheckAll,
       onReset,
-    }
+    };
   }, [cols, allChecked, onColPositionChange, onColVisibleChange, onCheckAll, onReset]);
 
   return {

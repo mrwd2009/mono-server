@@ -14,7 +14,7 @@ const ConfirmAccount: FC = () => {
   const { t } = useTranslation('translation', { keyPrefix: 'auth' });
   useEffect(() => {
     handleConfirmAccount();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <AuthLayout

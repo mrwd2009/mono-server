@@ -17,8 +17,8 @@ const BC: FC = () => {
       items={[
         {
           key: 'en-US',
-          label: 'English (US)'
-        }
+          label: 'English (US)',
+        },
       ]}
     />
   );

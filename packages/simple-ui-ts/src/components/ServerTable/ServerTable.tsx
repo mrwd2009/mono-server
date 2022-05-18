@@ -1,4 +1,4 @@
-import { memo, useMemo, useState, FC, createContext, useContext, useCallback } from 'react';
+import { memo, useMemo, useState, FC, createContext, useContext, useCallback, useRef } from 'react';
 import dayjs from 'dayjs';
 import { Table, TableProps, Input, Popover, InputNumber, AutoComplete, Select, Row, Col, Button } from 'antd';
 import Icon, { SearchOutlined } from '@ant-design/icons';
@@ -8,8 +8,7 @@ import isObject from 'lodash/isObject';
 import isArray from 'lodash/isArray';
 import isString from 'lodash/isString';
 import { DndContext, useDraggable, DragOverlay } from '@dnd-kit/core';
-import { restrictToHorizontalAxis, restrictToWindowEdges } from  '@dnd-kit/modifiers';
-import { CSS } from '@dnd-kit/utilities';
+import { restrictToHorizontalAxis, restrictToWindowEdges, restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import LRU from 'zrender/lib/core/LRU';
 import { constants } from '../../config';
 import { ReactComponent as DragVIcon } from '../../assets/images/direction/drag-vertical.svg';
@@ -25,7 +24,7 @@ declare module 'antd/lib/table/interface' {
 }
 
 let cache: any = null;
-let measureDiv : any= null;
+let measureDiv: any = null;
 let thEle: any = null;
 let tdEle: any = null;
 
@@ -54,7 +53,7 @@ const getColWidth = (text: any, isTitle = true) => {
     `;
     document.body.appendChild(measureDiv);
     thEle = measureDiv.querySelector('.ant-table-cell');
-    tdEle = measureDiv.querySelector('.virtual-rate-table-td')
+    tdEle = measureDiv.querySelector('.virtual-rate-table-td');
   }
   if (isTitle) {
     const key = `h_${text}`;
@@ -209,12 +208,22 @@ export const getFileterDropdown = ({ cFilterType, cFilterOptions = [], title }: 
   };
 };
 
+const TableHeightContext = createContext<{
+  height: number;
+  updateHeight?: (h: number) => void;
+}>({
+  height: 420,
+  updateHeight: (h) => {},
+});
+
 const DraggingContext = createContext<{
-  hovered: boolean,
-  height: number,
-  left: number,
-  width: number,
-  updateDraggedInfo?: (params: { hovered: boolean, height?: number, left?: number, width?: number }) => void,
+  hovered: boolean;
+  height: number;
+  left: number;
+  width: number;
+  uniqueResizableId?: string;
+  dragging?: boolean;
+  updateDraggedInfo?: (params: { hovered: boolean; height?: number; left?: number; width?: number }) => void;
 }>({
   hovered: false,
   height: 0,
@@ -237,24 +246,24 @@ const getParentNode = (current: any, condition: (node: HTMLElement) => boolean):
 };
 
 const DraggableIcon: FC<any> = ({ headerId, widthInfo, updateColumnWidthInfo }) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-  } = useDraggable({
+  const { attributes, listeners, setNodeRef } = useDraggable({
     id: headerId,
     data: {
       widthInfo,
       updateColumnWidthInfo,
     },
   });
-  const {
-    updateDraggedInfo,
-  } = useContext(DraggingContext);
+  const { updateDraggedInfo, dragging } = useContext(DraggingContext);
   return (
     <span
       className="drag-icon"
       onMouseEnter={(event) => {
+        if (dragging) {
+          updateDraggedInfo!({
+            hovered: true,
+          });
+          return;
+        }
         const tableEl = getParentNode(event.target, (node) => {
           return node.classList.contains('ant-table');
         });
@@ -283,26 +292,27 @@ const DraggableIcon: FC<any> = ({ headerId, widthInfo, updateColumnWidthInfo }) 
         {...attributes}
         ref={setNodeRef}
       >
-        <Icon
-          component={DragVIcon}
-        />
+        <Icon component={DragVIcon} />
       </div>
     </span>
   );
 };
 
-const ResizeHeaderCell: FC<any> = ({children, ...rest}) => {
+const ResizeHeaderCell: FC<any> = ({ children, ...rest }) => {
   let dragIcon = null;
   if (!rest.className) {
     rest.className = '';
   }
   if (rest.appExResizable && !rest.appExResizable.fixed) {
     rest.className += ' has-drag-icon ';
-    const {
-      widthInfo,
-      updateColumnWidthInfo,
-    } = rest.appExResizable;
-    dragIcon = <DraggableIcon headerId={rest.appExResizable.headerId} widthInfo={widthInfo} updateColumnWidthInfo={updateColumnWidthInfo} />;
+    const { widthInfo, updateColumnWidthInfo } = rest.appExResizable;
+    dragIcon = (
+      <DraggableIcon
+        headerId={rest.appExResizable.headerId}
+        widthInfo={widthInfo}
+        updateColumnWidthInfo={updateColumnWidthInfo}
+      />
+    );
   }
   delete rest.appExResizable;
   return (
@@ -313,19 +323,109 @@ const ResizeHeaderCell: FC<any> = ({children, ...rest}) => {
   );
 };
 
-const ResizeTable: FC<any> = ({children, ...rest}) => {
+const DraggableHeightIcon: FC<any> = ({ dragging, onHeight }) => {
+  const { uniqueResizableId } = useContext(DraggingContext);
+  const { attributes, listeners, setNodeRef } = useDraggable({
+    id: `${uniqueResizableId}_h_indicator`,
+  });
+  return (
+    <div
+      className="app-ex-server-table-resizer"
+      {...listeners}
+      {...attributes}
+      ref={setNodeRef}
+      onMouseEnter={(event) => {
+        if (dragging) {
+          return;
+        }
+        const tableEl = getParentNode(event.target, (node) => {
+          return node.classList.contains('ant-table');
+        });
+        const parentPos = tableEl!.getBoundingClientRect();
+        const theadEle = tableEl?.querySelector('thead');
+        const theadPos = theadEle!.getBoundingClientRect();
+        onHeight(parentPos.height - theadPos.height);
+      }}
+    >
+      <div className="v-indicator" />
+      <Icon component={DragVIcon} />
+    </div>
+  );
+};
+
+const ResizeTable: FC<any> = ({ children, ...rest }) => {
   const { left, hovered } = useContext(DraggingContext);
+  const { height, updateHeight } = useContext(TableHeightContext);
+  const [dragging, setDragging] = useState(false);
+  const [currentHeight, setCurrentHeight] = useState(height);
+  const yRef = useRef(0);
+
+  const restrictTableHeight = (params: any) => {
+    if (!params.active) {
+      return params.transform;
+    }
+
+    let y = params.transform?.y;
+    if (y !== null) {
+      if (currentHeight + y < 100) {
+        y = 100 - currentHeight;
+      }
+    }
+    yRef.current = y;
+    return {
+      ...params.transform,
+      y,
+    };
+  };
+
   return (
     <>
-      <table {...rest}>
-        {children}
-      </table>
-      { hovered && <div style={{ top: 0, height: '100%', left }} className="app-ex-server-table-resizer-h-indicator" /> }
+      <table {...rest}>{children}</table>
+      {hovered && (
+        <div
+          style={{ top: 0, height: '100%', left }}
+          className="app-ex-server-table-resizer-h-indicator"
+        />
+      )}
+      <DndContext
+        autoScroll={false}
+        onDragStart={() => setDragging(true)}
+        onDragEnd={(event) => {
+          // it seems event.delta.y considered window.scrollY
+          let y = yRef.current;
+          let newHeight = y + currentHeight;
+          if (y !== null) {
+            if (currentHeight + y < 100) {
+              newHeight = 100;
+            }
+          }
+          updateHeight!(newHeight);
+          setDragging(false);
+        }}
+        onDragCancel={() => setDragging(false)}
+        modifiers={[restrictToVerticalAxis]}
+      >
+        <DraggableHeightIcon
+          dragging={dragging}
+          onHeight={(h: number) => setCurrentHeight(h)}
+        />
+        <DragOverlay
+          dropAnimation={null}
+          modifiers={[restrictToWindowEdges, restrictTableHeight]}
+        >
+          {dragging ? (
+            <div className="app-ex-server-table-resizer hover">
+              <div className="v-indicator" />
+              <Icon component={DragVIcon} />
+            </div>
+          ) : null}
+        </DragOverlay>
+      </DndContext>
     </>
   );
 };
 
-const ResizeWrapper: FC<any> = ({ children }) => {
+const ResizeWrapper: FC<any> = ({ children, uniqueResizableId }) => {
   const [dragging, setDragging] = useState(false);
   const [draggedInfo, setDraggedInfo] = useState({
     hovered: false,
@@ -339,14 +439,17 @@ const ResizeWrapper: FC<any> = ({ children }) => {
       height: draggedInfo.height,
       left: draggedInfo.left,
       width: draggedInfo.width,
-      updateDraggedInfo: (params: { hovered: boolean, height?: number, left?: number, width?: number }) => {
+      dragging,
+      uniqueResizableId,
+      updateDraggedInfo: (params: { hovered: boolean; height?: number; left?: number; width?: number }) => {
         setDraggedInfo({
           ...draggedInfo,
           ...params,
         });
       },
-    }
-  }, [draggedInfo]);
+    };
+  }, [draggedInfo, dragging, uniqueResizableId]);
+  const xRef = useRef(0);
 
   const restrictColumnWidth = (params: any) => {
     if (!params.active) {
@@ -358,6 +461,7 @@ const ResizeWrapper: FC<any> = ({ children }) => {
     if (x !== null && x < -remainedX) {
       x = -remainedX;
     }
+    xRef.current = x;
     return {
       ...params.transform,
       x,
@@ -371,12 +475,10 @@ const ResizeWrapper: FC<any> = ({ children }) => {
         if (!event.active.data.current) {
           return;
         }
-        const {
-          widthInfo,
-          updateColumnWidthInfo,
-        } = event.active.data.current;
+        const { widthInfo, updateColumnWidthInfo } = event.active.data.current;
         const remainedX = draggedInfo.width - widthInfo.minWidth;
-        const newWidth = draggedInfo.width + Math.max(-remainedX, event.delta.x);
+        // it seems event.delta.x considered window.scrollX
+        const newWidth = draggedInfo.width + Math.max(-remainedX, xRef.current);
         updateColumnWidthInfo(newWidth);
         setDragging(false);
       }}
@@ -389,12 +491,13 @@ const ResizeWrapper: FC<any> = ({ children }) => {
           dropAnimation={null}
           modifiers={[restrictToWindowEdges, restrictColumnWidth]}
         >
-          { dragging ? (
+          {dragging ? (
             <div className="app-ex-server-table-dragging-icon">
-              <Icon
-                component={DragVIcon}
-              />
-              <div style={{ top: -4, height: draggedInfo.height, right: -4 }} className="app-ex-server-table-resizer-h-indicator"></div>
+              <Icon component={DragVIcon} />
+              <div
+                style={{ top: -4, height: draggedInfo.height, right: -1.5 }}
+                className="app-ex-server-table-resizer-h-indicator"
+              ></div>
             </div>
           ) : null}
         </DragOverlay>
@@ -430,9 +533,27 @@ let ServerTable = ({
     return `${new Date().getTime()}`;
   });
 
-  const getHeaderId = useCallback((col: any) => {
-    return `${uniqueResizableId}_${isArray(col.dataIndex) ? col.dataIndex.join('_') : `${col.dataIndex}`}`;
-  }, [uniqueResizableId]);
+  const [tableHeight, setTableHeight] = useState(() => {
+    if (scroll.y) {
+      return scroll.y as number;
+    }
+    return 420;
+  });
+  const heightContextVal = useMemo(() => {
+    return {
+      height: tableHeight,
+      updateHeight: (h: number) => {
+        setTableHeight(h);
+      },
+    };
+  }, [tableHeight]);
+
+  const getHeaderId = useCallback(
+    (col: any) => {
+      return `${uniqueResizableId}_${isArray(col.dataIndex) ? col.dataIndex.join('_') : `${col.dataIndex}`}`;
+    },
+    [uniqueResizableId],
+  );
 
   const [columnWidthInfo, setColumnWidthInfo] = useState(() => {
     let info: any = {};
@@ -443,7 +564,7 @@ let ServerTable = ({
       if (!minWidth) {
         if (isString(col.title)) {
           // it's better to calculate by real size.
-          minWidth = getColWidth(col.title) + 34;
+          minWidth = getColWidth(col.title) + 42;
         } else {
           minWidth = 80;
         }
@@ -480,7 +601,7 @@ let ServerTable = ({
                     width: Math.round(newWidth),
                   },
                 });
-              }
+              },
             },
           };
         };
@@ -514,8 +635,10 @@ let ServerTable = ({
       if (colDef.cDataType === 'datetime') {
         colDef.render = (val: any) => val && dayjs(val).format(constants.dateFormat);
       } else if (colDef.cDataType === 'lgText') {
-        colDef.width = 100;
-        colDef.render = lgText(colDef.title);
+        if (!resizableCol) {
+          colDef.width = 100;
+          colDef.render = lgText(colDef.title);
+        }
       }
 
       return colDef;
@@ -528,9 +651,7 @@ let ServerTable = ({
 
   let components;
   if (resizableCol) {
-    if (!scroll.y) {
-      scroll.y = 420;
-    }
+    scroll.y = tableHeight;
     let x = 0;
     forEach(columnWidthInfo, (info) => {
       x += info.width;
@@ -544,14 +665,14 @@ let ServerTable = ({
       table: ResizeTable,
       header: {
         cell: ResizeHeaderCell,
-      }
-    }
+      },
+    };
   } else {
     if (!scroll.x && !scroll.y && !hasFixedCol) {
       // show scrollbar if table width is larger than container
       className += ' overflow-server-table ';
     }
-  
+
     if (scroll.y == null && hasFixedCol) {
       // we can only make horizontal scroll function work as expected when y is not set
       className += ' scroll-v-server-table ';
@@ -593,8 +714,8 @@ let ServerTable = ({
 
   if (resizableCol) {
     return (
-      <ResizeWrapper>
-        {tableEl}
+      <ResizeWrapper uniqueResizableId={uniqueResizableId}>
+        <TableHeightContext.Provider value={heightContextVal}>{tableEl}</TableHeightContext.Provider>
       </ResizeWrapper>
     );
   }

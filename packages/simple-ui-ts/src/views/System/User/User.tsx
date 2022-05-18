@@ -2,7 +2,7 @@ import { FC, memo, useEffect } from 'react';
 import { TableColumnsType, Tag, Button, Spin, Menu, Dropdown, Tooltip, Row, Col, Space } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
 import Panel from '../../../components/Panel';
-import { useColumnSetting, ColumnSetting, ServerTable} from '../../../components/ServerTable';
+import { useColumnSetting, ColumnSetting, ServerTable } from '../../../components/ServerTable';
 import { useHookedModal } from '../../../components/HookedModal';
 import UserForm from './UserForm';
 import { useUser } from './hooks';
@@ -133,10 +133,7 @@ const User: FC = () => {
   const { loading, table, selectedKeys, setSelectedKeys, refreshTable, handleDelete } = useUser();
   const userFormModal = useHookedModal();
 
-  const {
-    tableColumns,
-    setting,
-  } = useColumnSetting('system-user', 'v1', getColumns(userFormModal, handleDelete));
+  const { tableColumns, setting } = useColumnSetting('system-user', 'v1', getColumns(userFormModal, handleDelete));
 
   useEffect(() => {
     refreshTable();
@@ -146,8 +143,14 @@ const User: FC = () => {
   return (
     <Panel title="Account List">
       <Spin spinning={loading}>
-        <Row justify="end" className="mb-2">
-          <Col flex="none" style={{ height: 24 }}>
+        <Row
+          justify="end"
+          className="mb-2"
+        >
+          <Col
+            flex="none"
+            style={{ height: 24 }}
+          >
             <Space align="start">
               <Button
                 type="primary"
@@ -189,7 +192,7 @@ const User: FC = () => {
             },
           }}
           scroll={{
-            y: 500
+            y: 500,
           }}
         />
         <UserForm

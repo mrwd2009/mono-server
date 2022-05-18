@@ -20,14 +20,12 @@ const Setting: FC = () => {
             items={[
               {
                 key: 'user-profile',
-                label: 'User Profile'
-              }
+                label: 'User Profile',
+              },
             ]}
           />
         </Col>
-        <Col flex="auto">
-          {content}
-        </Col>
+        <Col flex="auto">{content}</Col>
       </Row>
     </Panel>
   );

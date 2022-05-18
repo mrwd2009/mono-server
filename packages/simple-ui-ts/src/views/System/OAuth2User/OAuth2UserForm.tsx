@@ -101,14 +101,10 @@ const OAuth2UserForm: FC<Props> = ({ hookedModal, onSubmitted }) => {
     >
       {type === 'edit' && (
         <>
-          <Form.Item
-            label={t('fullName')}
-          >
+          <Form.Item label={t('fullName')}>
             <span className="ant-form-text">{name}</span>
           </Form.Item>
-          <Form.Item
-            label={t('email')}
-          >
+          <Form.Item label={t('email')}>
             <span className="ant-form-text">{email}</span>
           </Form.Item>
           {enabledEle}

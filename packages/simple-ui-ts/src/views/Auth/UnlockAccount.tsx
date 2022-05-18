@@ -14,7 +14,7 @@ const UnlockAccount: FC = () => {
   const { t } = useTranslation('translation', { keyPrefix: 'auth' });
   useEffect(() => {
     handleUnlockAccount();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <AuthLayout

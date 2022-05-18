@@ -50,3 +50,8 @@ nslookup database-1.xxxxx.us-west-1.rds.amazonaws.com
 ```
 nc -zv database-1.xxxxx.us-west-1.rds.amazonaws.com 3306
 ```
+
+### Zip encrypted
+```
+zip -er ensrc.zip src
+```

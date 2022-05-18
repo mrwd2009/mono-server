@@ -52,7 +52,7 @@ const ThemeSwitch: FC = () => {
           key: 'dark',
           icon: iconMap.dark,
           label: 'Dark',
-        }
+        },
       ]}
     />
   );
