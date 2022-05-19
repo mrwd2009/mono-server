@@ -6,11 +6,20 @@ import { Row, Col, Checkbox, Button, Tooltip, Popover } from 'antd';
 import { HolderOutlined, SettingOutlined } from '@ant-design/icons';
 import map from 'lodash/map';
 
+
+declare module 'antd/lib/table/interface' {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface ColumnType<RecordType> {
+    cSwitchable?: boolean;
+  }
+}
+
 interface ColDef {
   title: string;
   key: string;
   visible: boolean;
   fixed: boolean;
+  cSwitchable: boolean;
 }
 
 type OnColPositionChangeFn = (params: { activeId: string; overId: string }) => void;
@@ -46,11 +55,11 @@ const ColumnItem: FC<{ col: ColDef; onColVisibleChange: OnColVisibleChangeFn }> 
     <Row
       wrap={false}
       gutter={[8, 8]}
-      ref={col.fixed ? null : setNodeRef}
-      style={col.fixed ? {} : style}
+      ref={setNodeRef}
+      style={style}
       className={`hoverable-item ${isDragging ? 'border-light' : ''}`}
     >
-      <Col flex="none">{col.fixed ? <HolderOutlined className="invisible" /> : <DraggableHandle id={col.key} />}</Col>
+      <Col flex="none"><DraggableHandle id={col.key} /></Col>
       <Col flex="auto">
         <Checkbox
           checked={col.visible}
@@ -82,6 +91,9 @@ const ColumnList: FC<Pick<Setting, 'cols' | 'onColPositionChange' | 'onColVisibl
         items={map(cols, 'key')}
       >
         {map(cols, (col) => {
+          if (col.fixed || !col.cSwitchable) {
+            return null;
+          }
           return (
             <ColumnItem
               key={col.key}

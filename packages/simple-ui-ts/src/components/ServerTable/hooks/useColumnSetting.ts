@@ -36,6 +36,7 @@ const useColumnSetting = (uniqueSavedKey: string, version: string, columns: any)
                 key: colKey,
                 visible: visible !== '0',
                 fixed: !!def.fixed,
+                cSwitchable: def.cSwitchable !== false,
               };
             }
             return null;
@@ -48,6 +49,7 @@ const useColumnSetting = (uniqueSavedKey: string, version: string, columns: any)
       key: toKey(col.dataIndex),
       visible: true,
       fixed: !!col.fixed,
+      cSwitchable: col.cSwitchable !== false,
     }));
   });
 
@@ -93,15 +95,25 @@ const useColumnSetting = (uniqueSavedKey: string, version: string, columns: any)
     (checked: boolean) => {
       let newCols = [];
       if (checked) {
-        newCols = map(cols, (col) => ({
-          ...col,
-          visible: true,
-        }));
+        newCols = map(cols, (col) => {
+          if (col.fixed || !col.cSwitchable) {
+            return col;
+          }
+          return {
+            ...col,
+            visible: true,
+          };
+        });
       } else {
-        newCols = map(cols, (col) => ({
-          ...col,
-          visible: false,
-        }));
+        newCols = map(cols, (col) => {
+          if (col.fixed || !col.cSwitchable) {
+            return col;
+          }
+          return {
+            ...col,
+            visible: false,
+          }
+        });
       }
       setCols(newCols);
       if (localStorage) {
@@ -120,6 +132,7 @@ const useColumnSetting = (uniqueSavedKey: string, version: string, columns: any)
       key: toKey(col.dataIndex),
       visible: true,
       fixed: !!col.fixed,
+      cSwitchable: col.cSwitchable !== false,
     }));
     setCols(newCols);
     if (localStorage) {
@@ -131,7 +144,7 @@ const useColumnSetting = (uniqueSavedKey: string, version: string, columns: any)
   }, [columns, uniqueSavedKey, version]);
 
   const allChecked = useMemo(() => {
-    return every(cols, (col) => col.visible);
+    return every(cols, (col) => col.visible || col.fixed || !col.cSwitchable);
   }, [cols]);
 
   const tableColumns = useMemo(() => {
