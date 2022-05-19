@@ -27,7 +27,6 @@ const LoginHistory: FC = () => {
     table: { refreshListRef },
   } = useLoginHistory();
   const { tableColumns, setting } = useColumnSetting('system-login-history', 'v1', getColumns());
-
   useEffect(() => {
     refreshListRef.current?.();
     // eslint-disable-next-line react-hooks/exhaustive-deps

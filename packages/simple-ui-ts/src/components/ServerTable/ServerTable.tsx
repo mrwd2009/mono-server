@@ -639,15 +639,18 @@ const renderBody = (rawData: any, { scrollbarSize, ref, onScroll }: any, { newCo
             }
             let className = 'virtual-rate-table-td ';
             // let changed = false;
+            const align = newColumns[columnIndex].align;
+            if (align === 'right') {
+              className += ' right ';
+            } else if (align === 'center') {
+              className += ' center ';
+            }
+            if (row.changed) {
+              className += ' changed ';
+              // changed = true;
+            }
             if (columnIndex === lastColIndex) {
               className += ' virtual-rate-table-last-col ';
-              if (newColumns[columnIndex].align === 'right') {
-                className += ' right ';
-              }
-              if (row.changed) {
-                className += ' changed ';
-                // changed = true;
-              }
             }
             if (rowIndex === lastRowIndex) {
               className += ' virtual-rate-table-last-row ';
@@ -868,9 +871,14 @@ let ServerTable = ({
       });
       forEach(changeableCols, (col, index) => {
         let width = col.width;
-        if (index === cols.length - 1) {
-          // 1px to disable scroll
-          width = newTableWidth - ac - 1;
+        if (index === changeableCols.length - 1) {
+          if (!virtualList) {
+            // 1px to avoid scroll in table element
+            // because virtual list doesn't use table element, we can't reduce 1px
+            width = newTableWidth - ac - 1;
+          } else {
+            width = newTableWidth - ac;
+          }
         } else {
           width = Math.round(width / total * newTableWidth);
         }
@@ -881,8 +889,9 @@ let ServerTable = ({
       });
     }
     return total;
-  }, [newColumns, tableWidth, resizableCol, columnWidthInfo, getHeaderId]);
+  }, [newColumns, tableWidth, resizableCol, virtualList, columnWidthInfo, getHeaderId]);
 
+  const columnLen = newColumns.length;
   useEffect(() => {
     if (!virtualList || !resizableCol) {
       return;
@@ -892,15 +901,20 @@ let ServerTable = ({
         columnIndex: 0,
         shouldForceUpdate: true,
       });
+      const bodyEl = (gridRef.current as any)._outerRef;
+      if (bodyEl) {
+        const headEl = bodyEl.parentNode.querySelector('.ant-table-header');
+        headEl.scrollLeft = bodyEl.scrollLeft;
+      }
     }
     // perhaps tableWidth is not changed, but rawTotal is changed.
-  }, [tableWidth, rawTotal, virtualList, resizableCol]);
+  }, [tableWidth, rawTotal, columnLen, columnWidthInfo, virtualList, resizableCol]);
 
   let components: any;
   if (resizableCol) {
     scroll.y = tableHeight;
     let x = 0;
-    forEach(columnWidthInfo, (info) => {
+    forEach(newColumns, (info) => {
       x += info.width;
     });
     if (rest.rowSelection) {
@@ -963,7 +977,6 @@ let ServerTable = ({
   if (!pageProps.showSizeChanger) {
     pageProps.hideOnSinglePage = true;
   }
-
   const tableEl = (
     <Table
       className={`server-table nowrap-table ${className}`}
