@@ -1,6 +1,5 @@
 import { PureComponent, Fragment } from 'react';
 import { Input } from 'antd';
-import Icon from '@ant-design/icons';
 import debounceFn from 'lodash/debounce';
 import identity from 'lodash/identity';
 import filter from 'lodash/filter';
@@ -9,20 +8,6 @@ import toLower from 'lodash/toLower';
 import { FixedSizeList } from 'react-window';
 import EllipsisTooltip from '../EllipsisTooltip';
 import ScrollShadow from '../ScrollShadow';
-import { ReactComponent as ContractImg } from '../../assets/images/contract/contract.svg';
-import { ReactComponent as GroupImg } from '../../assets/images/contract/group.svg';
-import { ReactComponent as LineImg } from '../../assets/images/contract/line.svg';
-import { ReactComponent as ChargeImg } from '../../assets/images/contract/charge.svg';
-
-const imgMap: Record<string, any> = {
-  'component-contract': ContractImg,
-  'component-subcontract': GroupImg,
-  'component-reroute': LineImg,
-  'component-charge': ChargeImg,
-  'contract-root': ContractImg,
-  subcontract: GroupImg,
-  charge: ChargeImg,
-};
 
 const { Search } = Input;
 
