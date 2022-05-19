@@ -5,6 +5,7 @@ import Icon, { SearchOutlined, EditOutlined, CheckOutlined, CloseOutlined } from
 import { VariableSizeGrid as Grid } from 'react-window';
 import ResizeObserver from 'rc-resize-observer';
 import map from 'lodash/map';
+import filter from 'lodash/filter';
 import forEach from 'lodash/forEach';
 import isObject from 'lodash/isObject';
 import isArray from 'lodash/isArray';
@@ -25,6 +26,8 @@ declare module 'antd/lib/table/interface' {
     cFilterOptions?: Array<{ label: string; value: string | number } | number | string>;
     minWidth?: number;
     cEditable?: boolean;
+    cResizable?: boolean;
+    cFixedWidth?: boolean;
   }
 }
 
@@ -316,7 +319,7 @@ const ResizeHeaderCell: FC<any> = ({ children, ...rest }) => {
   if (!rest.className) {
     rest.className = '';
   }
-  if (rest.appExResizable && !rest.appExResizable.fixed) {
+  if (rest.appExResizable && !rest.appExResizable.fixed && rest.appExResizable.cResizable) {
     rest.className += ' has-drag-icon ';
     const { widthInfo, updateColumnWidthInfo } = rest.appExResizable;
     dragIcon = (
@@ -754,6 +757,7 @@ let ServerTable = ({
             appExResizable: {
               headerId,
               fixed: colDef.fixed,
+              cResizable: colDef.cResizable !== false,
               widthInfo: columnWidthInfo[headerId],
               updateColumnWidthInfo: (newWidth: number) => {
                 setColumnWidthInfo({
@@ -854,13 +858,21 @@ let ServerTable = ({
     });
     if (total <= tableWidth) {
       let ac = 0;
-      forEach(cols, (col, index) => {
+      let newTableWidth = tableWidth;
+      const changeableCols = filter(cols, (col) => {
+        if (col.rawCol.cFixedWidth) {
+          newTableWidth -= col.width;
+          return false;
+        }
+        return true;
+      });
+      forEach(changeableCols, (col, index) => {
         let width = col.width;
         if (index === cols.length - 1) {
           // 1px to disable scroll
-          width = tableWidth - ac - 1;
+          width = newTableWidth - ac - 1;
         } else {
-          width = Math.round(width / total * tableWidth);
+          width = Math.round(width / total * newTableWidth);
         }
         ac += width;
         const headerId = getHeaderId(col.rawCol);
