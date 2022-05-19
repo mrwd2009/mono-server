@@ -26,3 +26,8 @@ CREATE USER 'username'@'%' IDENTIFIED BY 'password';
 
 GRANT ALL PRIVILEGES ON database_name.* TO 'database_user'@'%';
 ```
+
+### Import sql file
+```
+mysql -u username -p database_name < file.sql
+```

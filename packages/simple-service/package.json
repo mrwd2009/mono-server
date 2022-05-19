@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "build": "rm -rf ./dist/* && tsc -p tsconfig.build.json && npm run minify ",
+    "build": "rm -rf ./dist/* && tsc -p tsconfig.build.json && mkdir ./dist/lib/email/template && cp ./src/lib/email/template/*.html ./dist/lib/email/template && npm run minify ",
     "build-release": "npm run build && rm -rf ./release/* && cp -r ./dist/* ./release",
     "prettier": "prettier --write --ignore-unknown ./src",
     "pretty-quick": "pretty-quick --staged",
