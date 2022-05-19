@@ -197,7 +197,7 @@ class DraggableList extends PureComponent<Props, State> {
           style={style}
         >
           <div {...liProps}>
-            <span className={iconClass}>{imgMap[item.type] && <Icon component={imgMap[item.type]} />}</span>
+            <span className={iconClass} />
             <EllipsisTooltip className="contract-draggable-list__label">{item.label}</EllipsisTooltip>
             {timeLabel}
           </div>

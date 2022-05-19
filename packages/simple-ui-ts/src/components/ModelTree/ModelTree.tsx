@@ -19,9 +19,9 @@ import forEach from 'lodash/forEach';
 import slice from 'lodash/slice';
 import maxBy from 'lodash/maxBy';
 import util from '../../util';
-import { ReactComponent as ContractImg } from '../../assets/images/contract/contract.svg';
-import { ReactComponent as GroupImg } from '../../assets/images/contract/group.svg';
-import { ReactComponent as ChargeImg } from '../../assets/images/contract/charge.svg';
+import contractImage from '../../assets/images/contract/Component-Blue.png';
+import subcontractImage from '../../assets/images/contract/Component-Green.png';
+import chargeImage from '../../assets/images/contract/Component-Orange.png';
 
 const { Item } = Menu;
 
@@ -190,21 +190,19 @@ class ModelTree extends PureComponent<Props, any> {
       reroute: 'reroute',
       charge: 'charge',
     };
-    const contractImg = uniqueId('model-tree-contract');
-    const groupImg = uniqueId('model-tree-group-group');
-    const chargeImg = uniqueId('model-tree-group-charge');
+
     // image path for all node types.
     this.imageMap = {
-      root: contractImg,
-      subContract: groupImg,
-      charge: chargeImg,
-      pccRoot: contractImg,
-      pccSubContractRoot: groupImg,
-      pccChargeRoot: chargeImg,
-      umcRoot: contractImg,
-      umcSubContractRoot: groupImg,
-      umcChargeRoot: chargeImg,
-      rule: chargeImg,
+      root: contractImage,
+      subContract: subcontractImage,
+      charge: chargeImage,
+      pccRoot: contractImage,
+      pccSubContractRoot: subcontractImage,
+      pccChargeRoot: chargeImage,
+      umcRoot: contractImage,
+      umcSubContractRoot: subcontractImage,
+      umcChargeRoot: chargeImage,
+      rule: chargeImage,
     };
     // current component used size information.
     this.sizeMap = {
@@ -912,13 +910,12 @@ class ModelTree extends PureComponent<Props, any> {
     const { imageClipID } = this.defsIDMap;
     const { image, borderRadius } = this.sizeMap;
     // clipPath, in order to add border radius for image.
-    svg
-      .append('defs')
+    svg.append('defs')
       .append('clipPath')
       .attr('id', imageClipID)
       .append('rect')
-      .attr('x', 0)
-      .attr('y', 0)
+      .attr('x', image.x)
+      .attr('y', image.y)
       .attr('width', image.width)
       .attr('height', image.height)
       .attr('rx', borderRadius)
@@ -1348,13 +1345,21 @@ class ModelTree extends PureComponent<Props, any> {
       .attr('height', nodeSize.height);
 
     enterNodes
-      .append('use')
+      .append('image')
       .classed(nodeImageClass, true)
       .attr('width', imageSize.width)
       .attr('height', imageSize.height)
       .attr('x', imageSize.x)
       .attr('y', imageSize.y)
       .attr('clip-path', `url(#${imageClipID})`);
+    // enterNodes
+    //   .append('use')
+    //   .classed(nodeImageClass, true)
+    //   .attr('width', imageSize.width)
+    //   .attr('height', imageSize.height)
+    //   .attr('x', imageSize.x)
+    //   .attr('y', imageSize.y)
+    //   .attr('clip-path', `url(#${imageClipID})`);
     enterNodes.append('text').attr('x', textSize.x).attr('y', textSize.y).classed(nodeTextClass, true);
     // optimization for tree, if tree don't have reroute node.
     if (hasRerouteNode) {
@@ -1386,9 +1391,8 @@ class ModelTree extends PureComponent<Props, any> {
     mergedNodes.select('rect');
     mergedNodes.select('circle');
 
-    mergedNodes
-      .select('use')
-      .attr('href', (node: any) => (this.imageMap[node.data.type] ? `#${this.imageMap[node.data.type]}` : null));
+    mergedNodes.select('image')
+      .attr('xlink:href', (node: any) => (this.imageMap[node.data.type] || null));
 
     mergedNodes
       .select('text')
@@ -1645,11 +1649,6 @@ class ModelTree extends PureComponent<Props, any> {
           ref={this.svgRef}
           {...svgProps}
         >
-          <defs>
-            <ContractImg id={this.imageMap.root} />
-            <GroupImg id={this.imageMap.subContract} />
-            <ChargeImg id={this.imageMap.charge} />
-          </defs>
         </svg>
       </Tooltip>
     );

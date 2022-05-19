@@ -13,22 +13,22 @@ const template = [
   {
     key: 'contract',
     type: 'component-contract',
-    label: 'Root',
+    label: 'CONTRACT',
   },
   {
     key: 'subcontract',
     type: 'component-subcontract',
-    label: 'Group',
-  },
-  {
-    key: 'reroute',
-    type: 'component-reroute',
-    label: 'Line',
+    label: 'SUBCONTRACT',
   },
   {
     key: 'charge',
     type: 'component-charge',
-    label: 'Charge',
+    label: 'CHARGE',
+  },
+  {
+    key: 'reroute',
+    type: 'component-reroute',
+    label: 'LINE',
   },
 ];
 
@@ -68,7 +68,7 @@ const ContractList: FC = () => {
       onTabChange={setSelectedKey}
       tabList={[
         { tab: 'Overview', key: 'overview' },
-        { tab: 'Saved Node', key: 'saved' },
+        { tab: 'Reusable Part', key: 'saved' },
       ]}
     >
       <Spin spinning={loading}>
@@ -101,7 +101,7 @@ const ContractList: FC = () => {
               <Collapse.Panel
                 header={
                   <span className="text-nowrap">
-                    Contract List&nbsp;
+                    Saved Contract&nbsp;
                     <Tooltip title="All contracts in system">
                       <QuestionCircleOutlined />
                     </Tooltip>
