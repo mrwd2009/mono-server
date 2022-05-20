@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { unstable_batchedUpdates } from 'react-dom';
 import forEach from 'lodash/forEach';
 import isArray from 'lodash/isArray';
@@ -162,6 +162,16 @@ export const useServerTable = (inputOptions: () => ServerTableOption) => {
         });
     };
   });
+
+  // cancel pending request after component is destroyed
+  useEffect(() => {
+    return () => {
+      if (cancelTokenRef.current) {
+        cancelTokenRef.current.cancel();
+        cancelTokenRef.current = null;
+      }
+    };
+  }, []);
 
   const fetchList = useCallback(
     (params) => {
