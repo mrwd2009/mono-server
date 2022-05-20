@@ -19,9 +19,9 @@ import forEach from 'lodash/forEach';
 import slice from 'lodash/slice';
 import maxBy from 'lodash/maxBy';
 import util from '../../util';
-import contractImage from '../../assets/images/contract/Component-Blue.png';
-import subcontractImage from '../../assets/images/contract/Component-Green.png';
-import chargeImage from '../../assets/images/contract/Component-Orange.png';
+import contractImage from '../../assets/images/contract/contract.svg';
+import subcontractImage from '../../assets/images/contract/group.svg';
+import chargeImage from '../../assets/images/contract/charge.svg';
 
 const { Item } = Menu;
 

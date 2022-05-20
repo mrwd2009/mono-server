@@ -13,22 +13,22 @@ const template = [
   {
     key: 'contract',
     type: 'component-contract',
-    label: 'CONTRACT',
+    label: 'Contract',
   },
   {
     key: 'subcontract',
     type: 'component-subcontract',
-    label: 'SUBCONTRACT',
+    label: 'Subcontract',
   },
   {
     key: 'charge',
     type: 'component-charge',
-    label: 'CHARGE',
+    label: 'Charge',
   },
   {
     key: 'reroute',
     type: 'component-reroute',
-    label: 'LINE',
+    label: 'Line',
   },
 ];
 

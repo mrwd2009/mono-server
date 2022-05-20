@@ -1,6 +1,6 @@
 import { FC, memo } from 'react';
 import { Spin, Button, Select, Tag, Space, Tooltip, Tabs } from 'antd';
-import { PlusOutlined, CloseOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import Icon, { PlusOutlined, CloseOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import map from 'lodash/map';
 import Panel from '../../components/Panel';
 import Empty from '../../components/Empty';
@@ -10,6 +10,7 @@ import { useHookedModal } from '../../components/HookedModal';
 import InsertExternalNode from './InsertExternalNode';
 import InsertInternalNode from './InsertInternalNode';
 import { useAppSelector } from '../../hooks';
+import { ReactComponent as ContractImg } from '../../assets/images/contract/contract.svg';
 import {
   selectContractTree,
   selectSelectedId,
@@ -79,7 +80,7 @@ const TreeContent = memo(({ tree, versionInfo, fetchContractNode }: TreeContentP
       if (data.source.type === 'Component') {
         const tData = data.target.data;
         if (data.source.data === 'contract' || tData.type === 'charge') {
-          showError('Invalid Operation.');
+          showWarning('Invalid Operation.');
           return;
         }
         if (data.source.data === 'reroute') {
@@ -91,11 +92,29 @@ const TreeContent = memo(({ tree, versionInfo, fetchContractNode }: TreeContentP
           });
           return;
         }
-        insertExternalModal.changeVisible(true, {
-          type: data.source.data,
-          sourceType: 'instance',
-          parent: data.target.data.id,
-        });
+        if (data.source.data === 'subcontract') {
+          createContractNode({
+            name: 'Subcontract',
+            type: data.source.data,
+            sourceType: 'instance',
+            parent: data.target.data.id,
+          });
+          return;
+        }
+        if (data.source.data === 'charge') {
+          createContractNode({
+            name: 'Charge',
+            type: data.source.data,
+            sourceType: 'instance',
+            parent: data.target.data.id,
+          });
+          return;
+        }
+        // insertExternalModal.changeVisible(true, {
+        //   type: data.source.data,
+        //   sourceType: 'instance',
+        //   parent: data.target.data.id,
+        // });
         return;
       }
 
@@ -213,6 +232,7 @@ const ContractTree: FC = () => {
   const selectedVersion = useAppSelector(selectSelectedVersion);
   const currentVersionInfo = useAppSelector(selectCurrentVersionInfo);
   const insertExternalModal = useHookedModal();
+  const { loading: createContractLoading, createContractNode } = useInsertInternalNode();
 
   if (!tree) {
     const handleDrop = (data: any) => {
@@ -221,36 +241,54 @@ const ContractTree: FC = () => {
         try {
           const data = JSON.parse(str);
           if (data.type === 'Component' && data.data === 'contract') {
-            insertExternalModal.changeVisible(true, {
+            // insertExternalModal.changeVisible(true, {
+            //   type: 'contract',
+            //   sourceType: 'instance',
+            // });
+            createContractNode({
+              name: 'Contract',
               type: 'contract',
               sourceType: 'instance',
             });
+          } else {
+            showWarning('Invalid operation.')
           }
         } catch (error) {}
       }
     };
     return (
-      <Panel>
-        <Empty
-          onDrop={handleDrop}
-          className="mt-24"
-          description="You can drag root component over here or click button to create a new contract."
-        >
-          <Button
-            type="primary"
-            shape="round"
-            icon={<PlusOutlined />}
-            onClick={() => {
-              insertExternalModal.changeVisible(true, {
-                type: 'contract',
-                sourceType: 'instance',
-              });
-            }}
+      <Panel
+        title={
+          <span>
+            No contract selected&nbsp;
+            <Tooltip title="Drag contract component to create a new contract.">
+              <QuestionCircleOutlined />
+            </Tooltip>
+          </span>
+        }
+      >
+        <Spin spinning={createContractLoading}>
+          <Empty
+            style={{ height: 600 }}
+            onDrop={handleDrop}
+            noStyle
           >
-            New Contract
-          </Button>
-          <InsertExternalNode hookedModal={insertExternalModal} />
-        </Empty>
+            {/* <Button
+              type="primary"
+              shape="round"
+              icon={<PlusOutlined />}
+              onClick={() => {
+                insertExternalModal.changeVisible(true, {
+                  type: 'contract',
+                  sourceType: 'instance',
+                });
+              }}
+            >
+              New Contract
+            </Button> */}
+            <InsertExternalNode hookedModal={insertExternalModal} />
+          </Empty>
+        </Spin>
       </Panel>
     );
   }
