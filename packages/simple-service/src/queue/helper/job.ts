@@ -6,11 +6,7 @@ import { DataError } from '../../lib/error';
 import config from '../../config/config';
 const {
   gateway: {
-    models: {
-      User,
-      OAuth2User,
-      UITask,
-    },
+    models: { User, OAuth2User, UITask },
   },
 } = appDB;
 
@@ -31,9 +27,9 @@ interface Payload {
   description?: string;
   type: 'Job' | 'File';
   userId?: number;
-  userType?: 'user' | 'oauth2',
-  parameter?: any,
-  [key: string]: any,
+  userType?: 'user' | 'oauth2';
+  parameter?: any;
+  [key: string]: any;
 }
 
 export const enqueue = async (name: JobName, payload: Payload, jobOptions?: JobOptions): Promise<Job> => {
@@ -68,8 +64,11 @@ export const enqueue = async (name: JobName, payload: Payload, jobOptions?: JobO
     }
   }
   const task = await UITask.create(record);
-  return await queue.add({ id: task.__pk_uitask }, {
-    removeOnComplete: true,
-    ...jobOptions,
-  });
+  return await queue.add(
+    { id: task.__pk_uitask },
+    {
+      removeOnComplete: true,
+      ...jobOptions,
+    },
+  );
 };

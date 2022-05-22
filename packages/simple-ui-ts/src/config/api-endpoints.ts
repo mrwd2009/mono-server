@@ -49,6 +49,7 @@ export const apiEndpoints = {
     reparentRole: '/system/role/reparent',
     assignedPermissionList: '/system/role/assigned-permissions',
     assignPermissions: '/system/role/assigned-permissions',
+    log: '/system/log',
   },
   contract: {
     list: '/contract/list',

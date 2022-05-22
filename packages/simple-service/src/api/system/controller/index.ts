@@ -1,5 +1,5 @@
 import { Middleware } from '@koa/router';
-import { systemModel, userModel, roleModel, permissionModel, oauth2UserModel } from '../model';
+import { systemModel, userModel, roleModel, permissionModel, oauth2UserModel, logModel } from '../model';
 import config from '../../../config';
 import { validator, validatePagination, validateEmailDomains } from '../../../middleware';
 
@@ -286,5 +286,33 @@ export const editOAuth2UserHandler: Array<Middleware> = [
   async (context) => {
     await oauth2UserModel.editOAuth2User(context.mergedParams, context.i18n);
     context.gateway!.sendJSON!({ done: true });
+  },
+];
+
+export const getLogsHandler: Array<Middleware> = [
+  validator((Schema) =>
+    Schema.object({
+      filter: Schema.object({
+        type: Schema.string().valid('exception', 'error', 'info', 'queue'),
+        search: Schema.string().max(200).allow('').optional(),
+        trackId: Schema.string().max(40).optional(),
+        message: Schema.string().max(100).optional(),
+        durationMs: Schema.array().items(Schema.number(), null).length(2).optional(),
+        timestamp: Schema.array().items(Schema.date().iso(), null).length(2).optional(),
+        logUser: Schema.string().max(50).optional(),
+      }),
+      pagination: Schema.object({
+        current: Schema.number().integer().min(1),
+        pageSize: Schema.number().integer().min(1).max(100),
+      }),
+      sorter: Schema.object({
+        field: Schema.string().valid('timestamp'),
+        order: Schema.string().valid('ASC', 'DESC'),
+      }).optional(),
+    }),
+  ),
+  async (context) => {
+    const result = await logModel.getLogs(context.mergedParams);
+    context.gateway!.sendJSON!(result);
   },
 ];

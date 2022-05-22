@@ -7,19 +7,19 @@ import { sendConfirmAccountEmail } from '../../lib/email';
 
 const {
   gateway: {
-    models: {
-      UITask,
-    },
+    models: { UITask },
   },
 } = appDB;
 
 const queue = job.getQueue('auth-confirmation-email');
-queue.process(authConfirmationEmail.bind(null, {
-  logger,
-  UITask,
-  sendConfirmAccountEmail,
-  confirmAccountPath: config.auth.pathInfo.confirmAccount,
-  homePath: config.auth.pathInfo.home,
-}));
+queue.process(
+  authConfirmationEmail.bind(null, {
+    logger,
+    UITask,
+    sendConfirmAccountEmail,
+    confirmAccountPath: config.auth.pathInfo.confirmAccount,
+    homePath: config.auth.pathInfo.home,
+  }),
+);
 
 export default queue;

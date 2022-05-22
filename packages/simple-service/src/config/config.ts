@@ -59,6 +59,10 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   APP_AUTH_CONFIRM_ACCOUNT_PATH?: string;
   APP_AUTH_UNLOCK_ACCOUNT_PATH?: string;
   APP_AUTH_HOME_PATH?: string;
+  APP_ELASTIC_HOST?: string;
+  APP_ELASTIC_USERNAME?: string;
+  APP_ELASTIC_PASSWORD?: string;
+  APP_ELASTIC_LOG_TEMPLATE?: string;
 };
 
 const envObj: GatewayENV = process.env;
@@ -212,9 +216,21 @@ const config = {
     },
   },
   etcd: {
-    url: envObj.APP_ETCD_URL || 'http://localhost:2380',
+    main: {
+      url: envObj.APP_ETCD_URL || 'http://localhost:2380',
+    },
+  },
+  elastic: {
+    main: {
+      host: envObj.APP_ELASTIC_HOST!,
+      username: envObj.APP_ELASTIC_USERNAME!,
+      password: envObj.APP_ELASTIC_PASSWORD!,
+    },
   },
   logger: {
+    elastic: {
+      templateName: envObj.APP_ELASTIC_LOG_TEMPLATE || 'rule-engine-modeling-ui',
+    },
     rotateOptions: {
       fileDir: logFileDir,
       maxSize: '1024m',

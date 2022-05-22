@@ -444,7 +444,10 @@ export const getUserAvatar = async (user: { id: number; type: string }) => {
   return avatar;
 };
 
-export const saveUserProfile = async (params: { photo?: null | string; displayName: string }, user: { id: number, type: string }) => {
+export const saveUserProfile = async (
+  params: { photo?: null | string; displayName: string },
+  user: { id: number; type: string },
+) => {
   if (user.type !== 'user') {
     throw new LogicError('Modification on profile is not supported on current account type.');
   }

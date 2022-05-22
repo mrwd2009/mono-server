@@ -26,7 +26,7 @@ const useRowSelection = (columns: TableColumnsType<any>, list: any, rowKey = 'id
               }
             }}
           />
-        )
+        );
       },
       dataIndex: '__checkbox_col__',
       width: 28,
@@ -42,7 +42,7 @@ const useRowSelection = (columns: TableColumnsType<any>, list: any, rowKey = 'id
           <Checkbox
             checked={checked}
             onChange={(event) => {
-              const newIds = filter(selectedRowKeys, key => key !== id);
+              const newIds = filter(selectedRowKeys, (key) => key !== id);
               if (event.target.checked) {
                 newIds.push(id);
                 setSelectedRowKeys(newIds);
@@ -52,8 +52,8 @@ const useRowSelection = (columns: TableColumnsType<any>, list: any, rowKey = 'id
             }}
           />
         );
-      }
-    }
+      },
+    };
   }, [list, rowKey, selectedRowKeys]);
 
   const tableColumns = useMemo(() => {

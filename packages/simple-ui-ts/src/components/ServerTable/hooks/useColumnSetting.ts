@@ -112,7 +112,7 @@ const useColumnSetting = (uniqueSavedKey: string, version: string, columns: any)
           return {
             ...col,
             visible: false,
-          }
+          };
         });
       }
       setCols(newCols);

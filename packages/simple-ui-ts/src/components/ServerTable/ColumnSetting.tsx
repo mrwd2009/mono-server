@@ -6,7 +6,6 @@ import { Row, Col, Checkbox, Button, Tooltip, Popover } from 'antd';
 import { HolderOutlined, SettingOutlined } from '@ant-design/icons';
 import map from 'lodash/map';
 
-
 declare module 'antd/lib/table/interface' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface ColumnType<RecordType> {
@@ -59,7 +58,9 @@ const ColumnItem: FC<{ col: ColDef; onColVisibleChange: OnColVisibleChangeFn }> 
       style={style}
       className={`hoverable-item ${isDragging ? 'border-light' : ''}`}
     >
-      <Col flex="none"><DraggableHandle id={col.key} /></Col>
+      <Col flex="none">
+        <DraggableHandle id={col.key} />
+      </Col>
       <Col flex="auto">
         <Checkbox
           checked={col.visible}

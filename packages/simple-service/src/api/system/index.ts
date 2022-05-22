@@ -36,4 +36,6 @@ router.delete('/role', rbac.adminW, ...ctrl.deleteRoleHandler);
 router.get('/role/assigned-permissions', rbac.adminR, ...ctrl.getAssignedPermissionsHandler);
 router.put('/role/assigned-permissions', rbac.adminW, ...ctrl.assignPermissionsHandler);
 
+router.post('/log', rbac.adminR, ...ctrl.getLogsHandler);
+
 registerRouter(router);

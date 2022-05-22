@@ -7,18 +7,18 @@ import { sendForgotPasswordEmail } from '../../lib/email';
 
 const {
   gateway: {
-    models: {
-      UITask,
-    },
+    models: { UITask },
   },
 } = appDB;
 
 const queue = job.getQueue('auth-forgot-email');
-queue.process(authForgotEmail.bind(null, {
-  logger,
-  UITask,
-  sendForgotPasswordEmail,
-  forgotPasswordPath: config.auth.pathInfo.forgotPassword
-}));
+queue.process(
+  authForgotEmail.bind(null, {
+    logger,
+    UITask,
+    sendForgotPasswordEmail,
+    forgotPasswordPath: config.auth.pathInfo.forgotPassword,
+  }),
+);
 
 export default queue;

@@ -910,7 +910,8 @@ class ModelTree extends PureComponent<Props, any> {
     const { imageClipID } = this.defsIDMap;
     const { image, borderRadius } = this.sizeMap;
     // clipPath, in order to add border radius for image.
-    svg.append('defs')
+    svg
+      .append('defs')
       .append('clipPath')
       .attr('id', imageClipID)
       .append('rect')
@@ -1391,8 +1392,7 @@ class ModelTree extends PureComponent<Props, any> {
     mergedNodes.select('rect');
     mergedNodes.select('circle');
 
-    mergedNodes.select('image')
-      .attr('xlink:href', (node: any) => (this.imageMap[node.data.type] || null));
+    mergedNodes.select('image').attr('xlink:href', (node: any) => this.imageMap[node.data.type] || null);
 
     mergedNodes
       .select('text')
@@ -1648,8 +1648,7 @@ class ModelTree extends PureComponent<Props, any> {
           height={height}
           ref={this.svgRef}
           {...svgProps}
-        >
-        </svg>
+        ></svg>
       </Tooltip>
     );
 

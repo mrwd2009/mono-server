@@ -1,6 +1,19 @@
 import { memo, useMemo, useState, FC, createContext, useContext, useCallback, useRef, useEffect } from 'react';
 import dayjs from 'dayjs';
-import { Table, TableProps, Input, Popover, InputNumber, AutoComplete, Select, Row, Col, Button, DatePicker, Tooltip } from 'antd';
+import {
+  Table,
+  TableProps,
+  Input,
+  Popover,
+  InputNumber,
+  AutoComplete,
+  Select,
+  Row,
+  Col,
+  Button,
+  DatePicker,
+  Tooltip,
+} from 'antd';
 import Icon, { SearchOutlined, EditOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { VariableSizeGrid as Grid } from 'react-window';
 import ResizeObserver from 'rc-resize-observer';
@@ -17,11 +30,12 @@ import LRU from 'zrender/lib/core/LRU';
 import Empty from '../Empty';
 import { constants } from '../../config';
 import { ReactComponent as DragVIcon } from '../../assets/images/direction/drag-vertical.svg';
+import NumberRange from '../NumberRange';
 
 declare module 'antd/lib/table/interface' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface ColumnType<RecordType> {
-    cFilterType?: 'text' | 'number' | 'select' | 'autoComplete' | 'dateRange';
+    cFilterType?: 'text' | 'number' | 'select' | 'autoComplete' | 'dateRange' | 'numberRange';
     cDataType?: 'datetime' | 'lgText';
     cFilterOptions?: Array<{ label: string; value: string | number } | number | string>;
     minWidth?: number;
@@ -186,7 +200,15 @@ export const getFileterDropdown = ({ cFilterType, cFilterOptions = [], title }: 
     } else if (cFilterType === 'dateRange') {
       inputEle = (
         <DatePicker.RangePicker
-          className="mb-2 server-table-header-datepicker"
+          className="mb-2 server-table-header-range"
+          onChange={inputProps.onChange}
+          value={selectedKeys[0] || null}
+        />
+      );
+    } else if (cFilterType === 'numberRange') {
+      inputEle = (
+        <NumberRange
+          className="mb-2 server-table-header-range"
           onChange={inputProps.onChange}
           value={selectedKeys[0] || null}
         />
@@ -383,8 +405,8 @@ const ResizeTable: FC<any> = ({ resizeTabletype = 'table', children, ...rest }) 
 
     let y = params.transform?.y;
     if (y !== null) {
-      if (currentHeight + y < 100) {
-        y = 100 - currentHeight;
+      if (currentHeight + y < 40) {
+        y = 40 - currentHeight;
       }
     }
     yRef.current = y;
@@ -396,13 +418,7 @@ const ResizeTable: FC<any> = ({ resizeTabletype = 'table', children, ...rest }) 
 
   return (
     <>
-      {
-        resizeTabletype === 'table' ? (
-          <table {...rest}>{children}</table>
-        ) : (
-          children
-        )
-      }
+      {resizeTabletype === 'table' ? <table {...rest}>{children}</table> : children}
       {hovered && (
         <div
           style={{ top: 0, height: '100%', left }}
@@ -417,8 +433,8 @@ const ResizeTable: FC<any> = ({ resizeTabletype = 'table', children, ...rest }) 
           let y = yRef.current;
           let newHeight = y + currentHeight;
           if (y !== null) {
-            if (currentHeight + y < 100) {
-              newHeight = 100;
+            if (currentHeight + y < 40) {
+              newHeight = 40;
             }
           }
           updateHeight!(newHeight);
@@ -577,7 +593,10 @@ const EditableCell: FC<any> = ({ value, onChange }) => {
           }}
         />
         <Tooltip title="Cancel">
-          <CloseOutlined onClick={() => setEditing(false)} style={{ margin: '0 2px'}} />
+          <CloseOutlined
+            onClick={() => setEditing(false)}
+            style={{ margin: '0 2px' }}
+          />
         </Tooltip>
         <Tooltip title="Save">
           <CheckOutlined
@@ -592,15 +611,17 @@ const EditableCell: FC<any> = ({ value, onChange }) => {
   }
   return (
     <div className="virtual-rate-table-edit-cell">
-      <div className="text-truncate">
-        {value}
-      </div>
+      <div className="text-truncate">{value}</div>
       <EditOutlined onClick={() => setEditing(true)} />
     </div>
   );
 };
 
-const renderBody = (rawData: any, { scrollbarSize, ref, onScroll }: any, { newColumns, connected, rowHeight, gridRef, scrollY, tableWidth, onEdit } : any) => {
+const renderBody = (
+  rawData: any,
+  { scrollbarSize, ref, onScroll }: any,
+  { newColumns, connected, rowHeight, gridRef, scrollY, tableWidth, onEdit }: any,
+) => {
   if (!rawData.length) {
     return <Empty size="small" />;
   }
@@ -627,45 +648,50 @@ const renderBody = (rawData: any, { scrollbarSize, ref, onScroll }: any, { newCo
         width={tableWidth}
         onScroll={({ scrollLeft }) => onScroll({ scrollLeft })}
       >
-        {
-          ({ columnIndex, rowIndex, style }) => {
-            let cell;
-            const dIndex = newColumns[columnIndex].dataIndex;
-            const row = rawData[rowIndex];
-            if (newColumns[columnIndex].render) {
-              cell = newColumns[columnIndex].render(dIndex ? row[dIndex] : row, row, columnIndex);
-            } else {
-              cell = row[dIndex];
-            }
-            let className = 'virtual-rate-table-td ';
-            // let changed = false;
-            const align = newColumns[columnIndex].align;
-            if (align === 'right') {
-              className += ' right ';
-            } else if (align === 'center') {
-              className += ' center ';
-            }
-            if (row.changed) {
-              className += ' changed ';
-              // changed = true;
-            }
-            if (columnIndex === lastColIndex) {
-              className += ' virtual-rate-table-last-col ';
-            }
-            if (rowIndex === lastRowIndex) {
-              className += ' virtual-rate-table-last-row ';
-            }
-            return (
-              <div
-                className={className}
-                style={style}
-              >
-                {/* {changed && <Tooltip title="Edited value"><span className="changed-mark" /></Tooltip>} */}
-                {newColumns[columnIndex].cEditable ? <EditableCell value={cell} onChange={(newVal: any) => onEdit?.(newVal, row, dIndex, rowIndex)} /> : cell}
-              </div>
-            );
+        {({ columnIndex, rowIndex, style }) => {
+          let cell;
+          const dIndex = newColumns[columnIndex].dataIndex;
+          const row = rawData[rowIndex];
+          if (newColumns[columnIndex].render) {
+            cell = newColumns[columnIndex].render(dIndex ? row[dIndex] : row, row, columnIndex);
+          } else {
+            cell = row[dIndex];
           }
-        }
+          let className = 'virtual-rate-table-td ';
+          // let changed = false;
+          const align = newColumns[columnIndex].align;
+          if (align === 'right') {
+            className += ' right ';
+          } else if (align === 'center') {
+            className += ' center ';
+          }
+          if (row.changed) {
+            className += ' changed ';
+            // changed = true;
+          }
+          if (columnIndex === lastColIndex) {
+            className += ' virtual-rate-table-last-col ';
+          }
+          if (rowIndex === lastRowIndex) {
+            className += ' virtual-rate-table-last-row ';
+          }
+          return (
+            <div
+              className={className}
+              style={style}
+            >
+              {/* {changed && <Tooltip title="Edited value"><span className="changed-mark" /></Tooltip>} */}
+              {newColumns[columnIndex].cEditable ? (
+                <EditableCell
+                  value={cell}
+                  onChange={(newVal: any) => onEdit?.(newVal, row, dIndex, rowIndex)}
+                />
+              ) : (
+                cell
+              )}
+            </div>
+          );
+        }}
       </Grid>
     </ResizeTable>
   );
@@ -835,9 +861,17 @@ let ServerTable = ({
     return obj;
   });
 
-  const setTableWidth = useMemo(() => debounce((width: number) => {
-    _setTableWidth(width);
-  }, 300, { leading: true, trailing: true }), []);
+  const setTableWidth = useMemo(
+    () =>
+      debounce(
+        (width: number) => {
+          _setTableWidth(width);
+        },
+        300,
+        { leading: true, trailing: true },
+      ),
+    [],
+  );
 
   useEffect(() => {
     // clear timer after unmounting
@@ -880,7 +914,7 @@ let ServerTable = ({
             width = newTableWidth - ac;
           }
         } else {
-          width = Math.round(width / total * newTableWidth);
+          width = Math.round((width / total) * newTableWidth);
         }
         ac += width;
         const headerId = getHeaderId(col.rawCol);
@@ -948,7 +982,7 @@ let ServerTable = ({
           tableWidth,
           onEdit: onVirtualCellEdit,
         });
-      }
+      };
     }
   } else {
     if (!scroll.x && !scroll.y && !hasFixedCol) {

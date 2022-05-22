@@ -251,7 +251,7 @@ const ContractTree: FC = () => {
               sourceType: 'instance',
             });
           } else {
-            showWarning('Invalid operation.')
+            showWarning('Invalid operation.');
           }
         } catch (error) {}
       }

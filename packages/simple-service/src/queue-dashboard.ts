@@ -32,7 +32,7 @@ const initialize = async () => {
     .on('error', (error: Error) => {
       console.error(error);
     });
-  
+
   await initMonitor('queue-dashboard');
   // gracefully close server
   registerCleanupHandler(async () => {

@@ -94,7 +94,7 @@ const extendToken = async (tokenId: number, UserToken: UserTokenModelDef) => {
 
 export const extendSession = async (
   context: DefaultContext,
-  tokenObj: { id: number, expiredAt: string },
+  tokenObj: { id: number; expiredAt: string },
   UserToken: UserTokenModelDef,
 ) => {
   if (!canExtendSession(context)) {

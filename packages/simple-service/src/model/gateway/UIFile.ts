@@ -17,10 +17,7 @@ declare module '../types' {
   type UIFileModelDef = typeof UIFile;
 }
 
-export class UIFile extends Model<
-  InferAttributes<UIFile>,
-  InferCreationAttributes<UIFile>
-> {
+export class UIFile extends Model<InferAttributes<UIFile>, InferCreationAttributes<UIFile>> {
   static associate = (models: AppModels) => {
     UIFile.belongsTo(models.UITask, { foreignKey: '_fk_uifile', constraints: false });
   };

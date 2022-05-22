@@ -11,12 +11,7 @@ interface Dependencies {
 }
 
 export const process = async (dependencies: Dependencies, job: Job): Promise<void> => {
-  const {
-    logger,
-    UITask,
-    sendForgotPasswordEmail,
-    forgotPasswordPath,
-  } = dependencies;
+  const { logger, UITask, sendForgotPasswordEmail, forgotPasswordPath } = dependencies;
   const id: number = job.data.id;
   const task = await UITask.findOne({
     where: {
@@ -29,24 +24,20 @@ export const process = async (dependencies: Dependencies, job: Job): Promise<voi
   }
 
   try {
-    const {
-      origin,
-      token,
-      email,
-    } = JSON.parse(task.parameter);
+    const { origin, token, email } = JSON.parse(task.parameter);
     await sendForgotPasswordEmail({
       email,
       token_url: `${origin}${forgotPasswordPath}?token=${encodeURIComponent(token)}`,
     });
     await task.update({
       status: 'Succeeded',
-      percentage: 10000
+      percentage: 10000,
     });
   } catch (error) {
-    const err = (error as Error);
+    const err = error as Error;
     logger.error(err.message, {
       response: err,
-      user: task.user_email || 'queue@cfex.com'
+      user: task.user_email || 'queue@cfex.com',
     });
     await task.update({
       error: err.stack,

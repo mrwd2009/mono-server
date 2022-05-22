@@ -17,10 +17,7 @@ declare module '../types' {
   type UITaskModelDef = typeof UITask;
 }
 
-export class UITask extends Model<
-  InferAttributes<UITask>,
-  InferCreationAttributes<UITask>
-> {
+export class UITask extends Model<InferAttributes<UITask>, InferCreationAttributes<UITask>> {
   static associate = (models: AppModels) => {
     UITask.hasOne(models.UIFile, { foreignKey: '_fk_uifile', constraints: false });
   };

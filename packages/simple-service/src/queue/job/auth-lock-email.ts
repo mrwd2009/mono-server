@@ -7,18 +7,18 @@ import { sendLockAccountEmail } from '../../lib/email';
 
 const {
   gateway: {
-    models: {
-      UITask,
-    },
+    models: { UITask },
   },
 } = appDB;
 
 const queue = job.getQueue('auth-lock-email');
-queue.process(authLockEmail.bind(null, {
-  logger,
-  UITask,
-  sendLockAccountEmail,
-  unlockAccountPath: config.auth.pathInfo.unlockAccount
-}));
+queue.process(
+  authLockEmail.bind(null, {
+    logger,
+    UITask,
+    sendLockAccountEmail,
+    unlockAccountPath: config.auth.pathInfo.unlockAccount,
+  }),
+);
 
 export default queue;

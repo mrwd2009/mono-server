@@ -4,6 +4,7 @@ import forEach from 'lodash/forEach';
 import isArray from 'lodash/isArray';
 import identity from 'lodash/identity';
 import includes from 'lodash/includes';
+import merge from 'lodash/merge';
 import axios from 'axios';
 import { useMounted } from '../../../hooks/useMounted';
 import { useFilterPanel } from '../../FilterPanel/hooks/useFilterPanel';
@@ -28,13 +29,14 @@ export interface ServerTableOption {
       field: string;
       order: 'ASC' | 'DESC';
     };
+    stripFilterArray?: boolean;
     beforeRequest?: (data: PostParams) => any | false;
     afterRequest?: (data: any) => { total: number; list: Array<any> };
   };
   [key: string]: any;
 }
 
-type RefreshListFunc = (data?: { keepPage?: boolean; background?: boolean }) => void;
+type RefreshListFunc = (data?: { keepPage?: boolean; background?: boolean; search?: any }) => void;
 
 // If inputOptions is a heavy computation, please send a function
 export const useServerTable = (inputOptions: () => ServerTableOption) => {
@@ -66,13 +68,21 @@ export const useServerTable = (inputOptions: () => ServerTableOption) => {
   const refreshListRef = useRef<RefreshListFunc>();
   const [_fetchList] = useState(() => {
     return ({ currentSearch, currentSorter, currentPage, currentPageSize, background = false }: any) => {
-      const { url, method = 'post', beforeRequest = identity, afterRequest = identity } = (tableOption || {}) as any;
+      const {
+        url,
+        method = 'post',
+        stripFilterArray = false,
+        beforeRequest = identity,
+        afterRequest = identity,
+      } = (tableOption || {}) as any;
       let postParams: any = {
         pagination: {
           current: currentPage,
           pageSize: currentPageSize,
         },
       };
+
+      let copiedFilter: any;
       forEach(currentSearch, (val, key) => {
         if (val == null) {
           return;
@@ -86,7 +96,14 @@ export const useServerTable = (inputOptions: () => ServerTableOption) => {
         if (!postParams.filter) {
           postParams.filter = {};
         }
+        if (!copiedFilter) {
+          copiedFilter = {};
+        }
         postParams.filter[key] = val;
+        copiedFilter[key] = val;
+        if (isArray(val) && val.length === 1 && stripFilterArray) {
+          copiedFilter[key] = val[0];
+        }
       });
       if (currentSorter.order) {
         postParams.sorter = {
@@ -94,7 +111,9 @@ export const useServerTable = (inputOptions: () => ServerTableOption) => {
           order: currentSorter.order === 'ascend' ? 'ASC' : 'DESC',
         };
       }
-      const data = beforeRequest(postParams);
+      let data = merge({}, postParams, { filter: copiedFilter });
+      data = beforeRequest(data);
+
       if (data === false) {
         // cancel request
         return;

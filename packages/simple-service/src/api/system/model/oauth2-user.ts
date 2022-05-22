@@ -14,15 +14,7 @@ const {
 
 export const getOAuth2UserList = async (params: FormattedPageParams) => {
   const { rows, count } = await OAuth2User.findAndCountAll({
-    attributes: [
-      'id',
-      'email',
-      'name',
-      'sub',
-      'enabled',
-      'created_at',
-      'updated_at',
-    ],
+    attributes: ['id', 'email', 'name', 'sub', 'enabled', 'created_at', 'updated_at'],
     include: [
       {
         attributes: ['role_id'],
@@ -130,7 +122,6 @@ export const editOAuth2User = async (params: EditParams, i18n: I18nType) => {
         }
         ops.push(user.save({ transaction }));
       }
-
 
       const roles = user.RbacOAuth2UserRoles!;
       if (roles.length) {

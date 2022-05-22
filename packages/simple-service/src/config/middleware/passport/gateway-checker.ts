@@ -35,7 +35,7 @@ const checker: Checker = async (payload, token): Promise<CheckerResult> => {
           },
         },
       });
-  
+
       if (!userRecord || !userRecord.UserTokens?.length) {
         throw new AuthError('Invalid or expired token.');
       }
@@ -54,10 +54,14 @@ const checker: Checker = async (payload, token): Promise<CheckerResult> => {
         email: user.email,
       },
       afterChecker: async (context: DefaultContext) => {
-        await extendSession(context, {
-          id: user.tokenId!,
-          expiredAt: user.tokenExpiredAt!,
-        }, UserToken);
+        await extendSession(
+          context,
+          {
+            id: user.tokenId!,
+            expiredAt: user.tokenExpiredAt!,
+          },
+          UserToken,
+        );
       },
     };
   }

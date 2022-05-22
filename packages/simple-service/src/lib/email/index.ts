@@ -36,14 +36,16 @@ interface Message {
   subject: string;
   text?: string;
   html?: string;
-};
+}
 
 export const send = async (msg: Message) => {
   checkServiceStatus();
   await transporter.sendMail(msg);
 };
 
-const confirmTemplate = template(fs.readFileSync(path.join(__dirname, 'template', 'confirm-account.html'), { encoding: 'utf-8' }));
+const confirmTemplate = template(
+  fs.readFileSync(path.join(__dirname, 'template', 'confirm-account.html'), { encoding: 'utf-8' }),
+);
 interface ConfirmParams {
   token_url: string;
   home_url: string;
@@ -58,14 +60,16 @@ export const sendConfirmAccountEmail = async (params: ConfirmParams) => {
       token_url: params.token_url,
       home_url: params.home_url,
       email: params.email,
-      year: (new Date()).getUTCFullYear(),
+      year: new Date().getUTCFullYear(),
     }),
-  }
+  };
   await transporter.sendMail(msg);
 };
 export type SendConfirmAccountEmailFn = typeof sendConfirmAccountEmail;
 
-const forgotTemplate = template(fs.readFileSync(path.join(__dirname, 'template', 'forgot-password.html'), { encoding: 'utf-8' }));
+const forgotTemplate = template(
+  fs.readFileSync(path.join(__dirname, 'template', 'forgot-password.html'), { encoding: 'utf-8' }),
+);
 interface ForgotPasswordParams {
   token_url: string;
   email: string;
@@ -77,14 +81,16 @@ export const sendForgotPasswordEmail = async (params: ForgotPasswordParams) => {
     subject: 'Reset CFEX Account Password',
     html: forgotTemplate({
       token_url: params.token_url,
-      year: (new Date()).getUTCFullYear(),
+      year: new Date().getUTCFullYear(),
     }),
-  }
+  };
   await transporter.sendMail(msg);
 };
 export type SendForgotPasswordEmailFn = typeof sendForgotPasswordEmail;
 
-const lockTemplate = template(fs.readFileSync(path.join(__dirname, 'template', 'lock-account.html'), { encoding: 'utf-8' }));
+const lockTemplate = template(
+  fs.readFileSync(path.join(__dirname, 'template', 'lock-account.html'), { encoding: 'utf-8' }),
+);
 interface LockAccountParams {
   token_url: string;
   email: string;
@@ -96,13 +102,11 @@ export const sendLockAccountEmail = async (params: LockAccountParams) => {
     subject: 'Unlock CFEX Account',
     html: lockTemplate({
       token_url: params.token_url,
-      year: (new Date()).getUTCFullYear(),
+      year: new Date().getUTCFullYear(),
     }),
-  }
+  };
   await transporter.sendMail(msg);
 };
 export type SendLockAccountEmailFn = typeof sendLockAccountEmail;
 
-export {
-  initialize,
-};
+export { initialize };

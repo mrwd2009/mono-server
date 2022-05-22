@@ -38,7 +38,7 @@ export const initialize = (sequelize: Sequelize) => {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        field: '__pk_userprofile'
+        field: '__pk_userprofile',
       },
       user_id: {
         type: DataTypes.INTEGER,

@@ -64,6 +64,7 @@ services:
       - --strict.perms=false
     volumes:
       - ./extensions/filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro,Z
+      - ./extensions/filebeat/config/docker-entrypoint:/usr/local/bin/docker-entrypoint
       - ../simple-service/log/winston/development:/apps/gateway/log
     environment:
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:?required}

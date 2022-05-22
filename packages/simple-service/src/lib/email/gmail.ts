@@ -2,7 +2,7 @@ import nodemailer, { Transporter } from 'nodemailer';
 import config from '../../config/config';
 
 const email: {
-  transporter?: Transporter,
+  transporter?: Transporter;
 } = {};
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -27,11 +27,9 @@ if (config.email.enabled) {
       },
     });
     email.transporter = transporter;
-  }
+  };
 }
 
-export {
-  initialize,
-};
+export { initialize };
 
 export default email;

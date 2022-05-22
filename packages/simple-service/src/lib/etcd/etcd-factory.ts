@@ -1,12 +1,11 @@
 import { Etcd3 } from 'etcd3';
 import { registerCleanupHandler, removeCleanupHandler } from '../signal/handler';
 
-
 export class EtcdFactory {
   private client: Etcd3 | undefined;
 
   constructor(private url: string) {
-    // gracefully close redis client.
+    // gracefully close client.
     registerCleanupHandler(this.handleSignalClose);
   }
 

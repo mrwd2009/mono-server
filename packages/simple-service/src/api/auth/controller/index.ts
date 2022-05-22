@@ -173,7 +173,9 @@ export const oauth2CallbackHandler: Middleware = async (context) => {
     });
   } catch (error) {
     if ((error as { code: string }).code === 'AuthError') {
-      context.redirect(`${config.oauth2.uiLoginUrl}?error=${encodeURIComponent((error as { message: string }).message)}`);
+      context.redirect(
+        `${config.oauth2.uiLoginUrl}?error=${encodeURIComponent((error as { message: string }).message)}`,
+      );
       return;
     }
     throw error;

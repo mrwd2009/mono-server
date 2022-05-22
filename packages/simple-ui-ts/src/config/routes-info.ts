@@ -211,29 +211,6 @@ export const routesInfo: RouteInfo[] = [
     ],
   },
   {
-    title: 'Monitoring',
-    key: 'monitoring',
-    path: '/monitoring',
-    menu: true,
-    permission: 'Admin.Read',
-    children: [
-      {
-        title: 'Event',
-        key: 'event',
-        path: '/monitoring/event',
-        permission: 'Admin.Read',
-        menu: true,
-      },
-      {
-        title: 'Error',
-        key: 'Error',
-        path: '/monitoring/Error',
-        permission: 'Admin.Read',
-        menu: true,
-      },
-    ],
-  },
-  {
     title: 'System',
     key: 'system',
     path: '/system',
@@ -274,6 +251,43 @@ export const routesInfo: RouteInfo[] = [
         path: '/system/permission',
         permission: 'Admin.Read',
         menu: true,
+      },
+      {
+        title: 'Log',
+        key: 'log',
+        path: '/system/log',
+        permission: 'Admin.Read',
+        menu: true,
+        children: [
+          {
+            title: 'Access Log',
+            key: 'access',
+            path: '/system/log/access',
+            permission: 'Admin.Read',
+            menu: true,
+          },
+          {
+            title: 'Error Log',
+            key: 'error',
+            path: '/system/log/error',
+            permission: 'Admin.Read',
+            menu: true,
+          },
+          {
+            title: 'Crashed Log',
+            key: 'crashed',
+            path: '/system/log/crashed',
+            permission: 'Admin.Read',
+            menu: true,
+          },
+          {
+            title: 'Queue Log',
+            key: 'queue',
+            path: '/system/log/queue',
+            permission: 'Admin.Read',
+            menu: true,
+          },
+        ],
       },
       {
         title: 'Setting',

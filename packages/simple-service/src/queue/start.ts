@@ -31,7 +31,7 @@ const initialize = async () => {
   for (let i = 0; i < size; i++) {
     createWorker();
   }
-  
+
   cluster.on('exit', (worker, code, signal) => {
     logger.error(`Queue(exit): worker(${worker.process.pid}) died with code(${code}) and signal(${signal})`);
     createWorker();
