@@ -64,6 +64,7 @@ services:
       - --strict.perms=false
     volumes:
       - ./extensions/filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro,Z
+      - ./extensions/filebeat/config/docker-entrypoint:/usr/local/bin/docker-entrypoint
       - rule_engine_modeling_api_log:/apps/gateway/log
       #- ../simple-service/log/winston/development:/apps/gateway/log
     environment:

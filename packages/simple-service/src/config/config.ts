@@ -4,25 +4,33 @@ import _ from 'lodash';
 import { GatewayEnvConfig } from '../types';
 
 export type GatewayENV = NodeJS.ProcessEnv & {
+  APP_ENV?: string;
   JWT_SECRET?: string;
   JWT_EXPIRED_HOUR?: string;
   TRACE_KNOWN_ERROR_IN_DEV?: string;
   MAIN_REDIS_URL?: string;
+  QUEUE_REDIS_URL?: string;
+  QUEUE_MODE?: string;
   ENABLE_APP_LOG_IPC?: string;
   WINSTON_LOG_DIR?: string;
   WINSTON_LOG_FILENAME?: string;
   WINSTON_LOG_ERROR_FILENAME?: string;
   WINSTON_LOG_EXCEPTION_FILENAME?: string;
-  APP_ENV?: string;
-  MAIN_DB_USER?: string;
-  MAIN_DB_PASS?: string;
-  MAIN_DB_HOST?: string;
-  MAIN_DB_PORT?: string;
-  QUEUE_REDIS_URL?: string;
-  GATEWAY_DB_USER?: string;
-  GATEWAY_DB_PASS?: string;
+  MODEL_DB_USERNAME?: string;
+  MODEL_DB_PASSWORD?: string;
+  MODEL_DB_HOST?: string;
+  MODEL_DB_PORT?: string;
+  MODEL_DB_DATABASE?: string;
+  GLOBAL_DB_USERNAME?: string;
+  GLOBAL_DB_PASSWORD?: string;
+  GLOBAL_DB_HOST?: string;
+  GLOBAL_DB_PORT?: string;
+  GLOBAL_DB_DATABASE?: string;
+  GATEWAY_DB_USERNAME?: string;
+  GATEWAY_DB_PASSWORD?: string;
   GATEWAY_DB_HOST?: string;
   GATEWAY_DB_PORT?: string;
+  GATEWAY_DB_DATABASE?: string;
   TEMP_FILE_DIR?: string;
   COOKIE_KEYS?: string;
   ALLOWED_DOMAINS?: string;
@@ -211,7 +219,7 @@ const config = {
   redis: {
     main: {
       url: envObj.MAIN_REDIS_URL || defaultRedisUrl,
-      prefix: `${envObj.APP_QUEUE_ENV || appPrefix}-main-`,
+      prefix: `${appPrefix}-main-`,
       expired: 3600,
     },
   },
@@ -253,25 +261,35 @@ const config = {
       min: 0,
       idle: 10000,
     },
-    main: {
-      username: envObj.MAIN_DB_USER!,
-      password: envObj.MAIN_DB_PASS!,
-      host: envObj.MAIN_DB_HOST!,
-      port: envObj.MAIN_DB_PORT!,
+    model: {
+      username: envObj.MODEL_DB_USERNAME!,
+      password: envObj.MODEL_DB_PASSWORD!,
+      host: envObj.MODEL_DB_HOST!,
+      port: envObj.MODEL_DB_PORT!,
+      database: envObj.MODEL_DB_DATABASE || 'model_dev',
+    },
+    global: {
+      username: envObj.GLOBAL_DB_USERNAME!,
+      password: envObj.GLOBAL_DB_PASSWORD!,
+      host: envObj.GLOBAL_DB_HOST!,
+      port: envObj.GLOBAL_DB_PORT!,
+      database: envObj.GLOBAL_DB_DATABASE || 'model_global',
     },
     gateway: {
-      username: envObj.GATEWAY_DB_USER!,
-      password: envObj.GATEWAY_DB_PASS!,
+      username: envObj.GATEWAY_DB_USERNAME!,
+      password: envObj.GATEWAY_DB_PASSWORD!,
       host: envObj.GATEWAY_DB_HOST!,
       port: envObj.GATEWAY_DB_PORT!,
+      database: envObj.GATEWAY_DB_DATABASE || 'model_global',
     },
   },
   queue: {
+    mode: envObj.QUEUE_MODE || 'SINGLE_PROCESS_MODE',
     redis: {
       url: envObj.QUEUE_REDIS_URL || defaultRedisUrl,
     },
     options: {
-      prefix: `${appPrefix}-queue`,
+      prefix: `${envObj.APP_QUEUE_ENV || appPrefix}-queue`,
     },
     dashboard: {
       basePath: '/dashboard',

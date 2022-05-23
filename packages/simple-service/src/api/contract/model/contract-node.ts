@@ -4,11 +4,11 @@ import { commonListHelper } from '../helper';
 import { DataError, LogicError } from '../../../lib/error';
 
 const {
-  matrix: {
+  model: {
     models: { ContractBody, ContractRoot },
     sequelize,
   },
-  main: {
+  global: {
     models: { ChargeType },
   },
 } = appDB;

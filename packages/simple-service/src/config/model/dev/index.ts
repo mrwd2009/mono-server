@@ -1,9 +1,9 @@
-import main from './main';
+import global from './global';
 import gateway from './gateway';
-import matrix from './matrix';
+import model from './model';
 
 export default {
-  main,
+  global,
   gateway,
-  matrix,
+  model,
 };

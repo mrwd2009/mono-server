@@ -3,7 +3,7 @@ import appDB from '../../../config/model/app';
 import { contractTreeHelper } from '../helper';
 
 const {
-  matrix: {
+  model: {
     models: { ContractBody, ContractRoot },
     sequelize,
   },

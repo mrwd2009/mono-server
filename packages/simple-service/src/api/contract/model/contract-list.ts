@@ -4,7 +4,7 @@ import appDB from '../../../config/model/app';
 import { ContractBodyModel } from '../../../model/types';
 
 const {
-  matrix: {
+  model: {
     sequelize,
     models: { ContractBody },
   },

@@ -1,5 +1,5 @@
 import cluster, { fork, isWorker } from 'cluster';
-import { cpus } from 'os';
+import { cpus, setPriority, constants } from 'os';
 import config from '../config/config';
 import initializer from '../config/initializer';
 import { initialize as initMonitor } from '../lib/monitor/prometheus';
@@ -12,10 +12,18 @@ const initialize = async () => {
     require('./job');
     return;
   }
+  
+  if (config.queue.mode === 'SINGLE_PROCESS_MODE') {
+    setPriority(constants.priority.PRIORITY_BELOW_NORMAL);
+    await initMonitor('queue');
+    require('./job');
+    return;
+  }
 
   await initMonitor('queue', true);
 
   if (isWorker) {
+    setPriority(constants.priority.PRIORITY_BELOW_NORMAL);
     require('./job');
     return;
   }
