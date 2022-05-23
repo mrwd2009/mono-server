@@ -11,6 +11,7 @@ export type GatewayENV = NodeJS.ProcessEnv & {
   MAIN_REDIS_URL?: string;
   QUEUE_REDIS_URL?: string;
   QUEUE_MODE?: string;
+  QUEUE_WORKERS?: string;
   ENABLE_APP_LOG_IPC?: string;
   WINSTON_LOG_DIR?: string;
   WINSTON_LOG_FILENAME?: string;
@@ -285,6 +286,7 @@ const config = {
   },
   queue: {
     mode: envObj.QUEUE_MODE || 'SINGLE_PROCESS_MODE',
+    workers: parseInt(envObj.QUEUE_WORKERS || '0'),
     redis: {
       url: envObj.QUEUE_REDIS_URL || defaultRedisUrl,
     },

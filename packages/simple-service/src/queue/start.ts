@@ -29,7 +29,7 @@ const initialize = async () => {
   }
 
   const logger = require('../lib/logger').default;
-  const size = process.env.QUEUE_WORKERS || cpus().length;
+  const size = config.queue.workers || cpus().length;
   const createWorker = () => {
     fork().on('error', (error) => {
       logger.error(error.message, { response: error });
