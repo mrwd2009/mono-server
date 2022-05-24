@@ -70,3 +70,15 @@ Refer https://soulteary.com/2020/05/04/use-docker-to-build-elk-environment.html
 
 ## Docker compose up
 `docker compose up`
+
+## Change bridge network to connect public ip
+```
+sysctl net.ipv4.conf.all.forwarding=1
+
+sudo iptables -P FORWARD ACCEPT
+
+
+# Mac OS
+Replace ip with gateway.docker.internal
+
+```
