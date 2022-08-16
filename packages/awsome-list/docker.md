@@ -1,3 +1,10 @@
+## docker deamon
+```
+systemctl enable docker.service
+systemctl start docker.service
+systemctl status docker.service
+```
+
 ## nginx
 
 ```
