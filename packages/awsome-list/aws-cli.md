@@ -87,6 +87,8 @@ kubectl config set-context \
 --cluster=<CLUSTER_NAME> \
 --user=<USER_NAME>
 
+kubectl config set-context --current --namespace demo
+
 # Shows which is the active context
 kubectl config current-context
 
