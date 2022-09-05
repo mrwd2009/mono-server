@@ -1,0 +1,13 @@
+/** SNOWPACK INJECT STYLE: @patternfly/react-styles/css/components/TabContent/tab-content.css */
+function __snowpack__injectStyle(css) {
+  const headEl = document.head || document.getElementsByTagName('head')[0];
+  const styleEl = document.createElement('style');
+  styleEl.type = 'text/css';
+  if (styleEl.styleSheet) {
+    styleEl.styleSheet.cssText = css;
+  } else {
+    styleEl.appendChild(document.createTextNode(css));
+  }
+  headEl.appendChild(styleEl);
+}
+__snowpack__injectStyle(".pf-c-tab-content {\n  --pf-c-tab-content__body--PaddingTop: 0;\n  --pf-c-tab-content__body--PaddingRight: 0;\n  --pf-c-tab-content__body--PaddingBottom: 0;\n  --pf-c-tab-content__body--PaddingLeft: 0;\n  --pf-c-tab-content__body--m-padding--PaddingTop: var(--pf-global--spacer--md);\n  --pf-c-tab-content__body--m-padding--PaddingRight: var(--pf-global--spacer--md);\n  --pf-c-tab-content__body--m-padding--PaddingBottom: var(--pf-global--spacer--md);\n  --pf-c-tab-content__body--m-padding--PaddingLeft: var(--pf-global--spacer--md);\n  --pf-c-tab-content__body--m-padding--xl--PaddingTop: var(--pf-global--spacer--lg);\n  --pf-c-tab-content__body--m-padding--xl--PaddingRight: var(--pf-global--spacer--lg);\n  --pf-c-tab-content__body--m-padding--xl--PaddingBottom: var(--pf-global--spacer--lg);\n  --pf-c-tab-content__body--m-padding--xl--PaddingLeft: var(--pf-global--spacer--lg);\n  --pf-c-tab-content--m-light-300: var(--pf-global--BackgroundColor--light-300);\n}\n@media screen and (min-width: 1200px) {\n  .pf-c-tab-content {\n    --pf-c-tab-content__body--m-padding--PaddingTop: var(--pf-c-tab-content__body--m-padding--xl--PaddingTop);\n    --pf-c-tab-content__body--m-padding--PaddingRight: var(--pf-c-tab-content__body--m-padding--xl--PaddingRight);\n    --pf-c-tab-content__body--m-padding--PaddingBottom: var(--pf-c-tab-content__body--m-padding--xl--PaddingBottom);\n    --pf-c-tab-content__body--m-padding--PaddingLeft: var(--pf-c-tab-content__body--m-padding--xl--PaddingLeft);\n  }\n}\n.pf-c-tab-content.pf-m-light-300 {\n  background-color: var(--pf-c-tab-content--m-light-300);\n}\n\n.pf-c-tab-content__body {\n  padding: var(--pf-c-tab-content__body--PaddingTop) var(--pf-c-tab-content__body--PaddingRight) var(--pf-c-tab-content__body--PaddingBottom) var(--pf-c-tab-content__body--PaddingLeft);\n}\n.pf-c-tab-content__body.pf-m-padding {\n  --pf-c-tab-content__body--PaddingTop: var(--pf-c-tab-content__body--m-padding--PaddingTop);\n  --pf-c-tab-content__body--PaddingRight: var(--pf-c-tab-content__body--m-padding--PaddingRight);\n  --pf-c-tab-content__body--PaddingBottom: var(--pf-c-tab-content__body--m-padding--PaddingBottom);\n  --pf-c-tab-content__body--PaddingLeft: var(--pf-c-tab-content__body--m-padding--PaddingLeft);\n}");

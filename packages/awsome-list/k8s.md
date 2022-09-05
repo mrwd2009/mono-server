@@ -101,3 +101,7 @@ helm uninstall  modeling-tool-ui
 
 helm install  modeling-tool-ui ./modeling-ui
 ```
+
+### Volume node affinity conflict
+
+https://pet2cattle.com/2022/04/volume-affinity-conflict

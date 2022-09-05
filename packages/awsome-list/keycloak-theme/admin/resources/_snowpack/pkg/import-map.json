@@ -1,0 +1,31 @@
+{
+  "imports": {
+    "@keycloak/keycloak-admin-client": "./@keycloak/keycloak-admin-client.js",
+    "@keycloak/keycloak-admin-client/lib/defs/policyRepresentation": "./@keycloak/keycloak-admin-client/lib/defs/policyRepresentation.js",
+    "@keycloak/keycloak-admin-client/lib/defs/requiredActionProviderRepresentation": "./@keycloak/keycloak-admin-client/lib/defs/requiredActionProviderRepresentation.js",
+    "@patternfly/react-code-editor": "./@patternfly/react-code-editor.js",
+    "@patternfly/react-core": "./@patternfly/react-core.js",
+    "@patternfly/react-core/dist/esm/components": "./@patternfly/react-core/dist/esm/components.js",
+    "@patternfly/react-icons": "./@patternfly/react-icons.js",
+    "@patternfly/react-styles/css/components/DataList/data-list": "./@patternfly/react-styles/css/components/DataList/data-list.js",
+    "@patternfly/react-styles/css/components/Table/table": "./@patternfly/react-styles/css/components/Table/table.js",
+    "@patternfly/react-table": "./@patternfly/react-table.js",
+    "axios": "./axios.js",
+    "dagre": "./dagre.js",
+    "file-saver": "./file-saver.js",
+    "flat": "./flat.js",
+    "i18next": "./i18next.js",
+    "i18next-http-backend": "./i18next-http-backend.js",
+    "keycloak-js": "./keycloak-js.js",
+    "lodash-es": "./lodash-es.js",
+    "react": "./react.js",
+    "react-dom": "./react-dom.js",
+    "react-error-boundary": "./react-error-boundary.js",
+    "react-flow-renderer": "./react-flow-renderer.js",
+    "react-hook-form": "./react-hook-form.js",
+    "react-i18next": "./react-i18next.js",
+    "react-router": "./react-router.js",
+    "react-router-dom": "./react-router-dom.js",
+    "use-react-router-breadcrumbs": "./use-react-router-breadcrumbs.js"
+  }
+}
