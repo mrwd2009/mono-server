@@ -1,3 +1,10 @@
+## Install docker
+```
+yum install docker
+systemctl enable docker.service
+systemctl start docker.service
+systemctl status docker.service
+```
 ## docker deamon
 ```
 systemctl enable docker.service

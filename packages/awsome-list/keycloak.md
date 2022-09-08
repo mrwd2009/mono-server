@@ -15,7 +15,7 @@ Realm Admin URL: http://localhost:8080/admin/{realm-name}/console
 Account URL: http://localhost:8080/realms/myrealm/account
 
 # Get auth url info
-curl -X GET http://localhost:8180/realms/myrealm/.well-known/uma2-configuration
+curl -X GET http://localhost:8180/realms/myrealm/.well-known/openid-configuration
 
 ```
 
@@ -30,4 +30,23 @@ https://wildfly-security.github.io/wildfly-elytron/blog/galleon-cli-keycloak/
 ### Create theme jar
 ```
 jar cf cfex-user-center.jar META-INF theme
+```
+
+### Set default theme
+```
+kc.sh start --spi-theme-default=custom-theme --spi-theme-welcome-theme=custom-theme
+```
+
+### Setup cluster
+cache_stack kubernetes
+https://github.com/keycloak/keycloak/discussions/10210
+
+### Setup gmail app password
+https://support.google.com/accounts/answer/185833?hl=en
+
+### Helm installation
+```
+helm install modeling-user-center -f ./modeling-user-center/.env.values.yaml  ./modeling-user-center
+
+helm upgrade modeling-user-center -f ./modeling-user-center/.env.values.yaml  ./modeling-user-center
 ```
