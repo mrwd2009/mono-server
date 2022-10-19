@@ -19,3 +19,8 @@ https://github.com/kubernetes/ingress-nginx/tree/main/charts/ingress-nginx#aws-l
 ```
 helm uninstall modeling-nginx-ingress
 ```
+
+### Nginx rate limit
+Reference https://chenyongjun.vip/articles/81
+
+https://serverfault.com/questions/487463/nginx-rate-limiting-with-x-forwarded-for-header

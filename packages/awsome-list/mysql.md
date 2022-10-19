@@ -31,3 +31,12 @@ GRANT ALL PRIVILEGES ON database_name.* TO 'database_user'@'%';
 ```
 mysql -u username -p database_name < file.sql
 ```
+
+### Get database size
+```
+SELECT table_name AS "Table",
+ROUND(((data_length + index_length) / 1024 / 1024), 2) AS "Size (MB)"
+FROM information_schema.TABLES
+WHERE table_schema = "cfex_user_center"
+ORDER BY (data_length + index_length) DESC;
+```

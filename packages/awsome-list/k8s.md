@@ -35,6 +35,8 @@ helm install local-etcd --set auth.rbac.create=false bitnami/etcd
 # test connection
 kubectl run local-etcd-client --restart='Never' --image docker.io/bitnami/etcd:3.5.4-debian-11-r22 --env ETCDCTL_ENDPOINTS="local-etcd.modeling-tool.svc.cluster.local:2379" --namespace modeling-tool --command -- sleep infinity
 
+kubectl exec -it local-etcd-client -- bash
+
 kubectl exec --namespace modeling-tool -it local-etcd-client -- bash
     etcdctl  put /message Hello
     etcdctl  get /message
@@ -105,3 +107,18 @@ helm install  modeling-tool-ui ./modeling-ui
 ### Volume node affinity conflict
 
 https://pet2cattle.com/2022/04/volume-affinity-conflict
+
+### Create sealed secret
+```
+kubeseal --cert https://modeling-secret.playground.cfexcloud.com/v1/cert.pem secret.yaml -o yaml --scope cluster-wide < .env.secret.yaml > sealed-secret.yaml
+```
+
+
+### Enter pod
+```
+kubectl get pods -n modeling
+kubectl exec -it modeling-tool-test-modeling-api-65594f768b-chvcd -n modeling -c modeling-api-log-filebeat  -- bash
+```
+
+### Ingress port number targetPort
+Reference https://stackoverflow.com/questions/49829452/why-ingress-serviceport-can-be-port-and-targetport-of-service

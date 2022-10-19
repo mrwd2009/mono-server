@@ -55,3 +55,37 @@ nc -zv database-1.xxxxx.us-west-1.rds.amazonaws.com 3306
 ```
 zip -er ensrc.zip src
 ```
+
+### Generage rsa keys
+Reference https://www.digicert.com/kb/ssl-support/openssl-quick-reference-guide.htm
+```
+# get private key
+openssl genrsa -out yourdomain.key 2048
+
+# display private key info
+openssl rsa -text -in yourdomain.key -noout
+# to pem format
+private wudi$ openssl rsa -in modeling.key -text > modeling.pem
+
+# get public key
+openssl rsa -in yourdomain.key -pubout -out yourdomain_public.key
+```
+
+### Generate ecdsa keys
+Reference https://www.scottbrady91.com/openssl/creating-elliptical-curve-keys-using-openssl
+```
+# find your curve
+openssl ecparam -list_curves
+
+# generate a private key for a curve
+openssl ecparam -name prime256v1 -genkey -noout -out ecdsa-private.pem
+
+# generate corresponding public key
+openssl ec -in ecdsa-private.pem -pubout -out ecdsa-public.pem
+
+# optional: create a self-signed certificate
+openssl req -new -x509 -key private-key.pem -out cert.pem -days 360
+
+# optional: convert pem to pfx
+openssl pkcs12 -export -inkey private-key.pem -in cert.pem -out cert.pfx
+```

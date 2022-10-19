@@ -62,3 +62,13 @@ datasources:
 
 ### Docker compose for prometheus and grafana
 Reference: https://github.com/coder-society/nodejs-application-monitoring-with-prometheus-and-grafana
+
+### Config k8s service
+Reference https://medium.com/data-reply-it-datatech/using-a-headless-service-to-expose-replicas-for-prometheus-scraping-543194594e0
+
+```
+nslookup -type=SRV _monitor._tcp.modeling-tool-test-modeling-api-headless
+```
+
+### Fix helm permission error
+Reference https://github.com/prometheus-operator/prometheus-operator/issues/541
