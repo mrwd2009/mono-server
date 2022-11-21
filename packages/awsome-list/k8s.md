@@ -111,6 +111,10 @@ https://pet2cattle.com/2022/04/volume-affinity-conflict
 ### Create sealed secret
 ```
 kubeseal --cert https://modeling-secret.playground.cfexcloud.com/v1/cert.pem secret.yaml -o yaml --scope cluster-wide < .env.secret.yaml > sealed-secret.yaml
+
+kubeseal --cert https://sealed-secrets.dev.cfexcloud.com/v1/cert.pem -o yaml --scope cluster-wide < .env.dev.secret.yaml > sealed-secret.yaml
+
+kubeseal --cert https://sealed-secrets.dev.cfexcloud.com/v1/cert.pem -o yaml --scope cluster-wide < .env.secret.yaml > sealed-secret.yaml
 ```
 
 

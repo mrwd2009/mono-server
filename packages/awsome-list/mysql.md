@@ -40,3 +40,26 @@ FROM information_schema.TABLES
 WHERE table_schema = "cfex_user_center"
 ORDER BY (data_length + index_length) DESC;
 ```
+
+### Show and delete permissions
+```
+show grants for mtui;
+
+revoke all on model_dev.* from 'mtui'@'%';
+revoke all on model_dev_gateway.* from 'mtui'@'%';
+
+```
+
+### Record executed sql
+```
+SET global general_log = 1;
+SET global log_output = 'table';
+
+
+SELECT
+    *
+FROM
+    mysql.general_log;
+    
+SET global general_log = 0;
+```
