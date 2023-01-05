@@ -22,8 +22,8 @@ metrics:
 replicaCount: 3
 
 extraConfiguration: |
-  management.disable_basic_auth = false
   auth_backends.1=rabbit_auth_backend_oauth2
+  auth_backends.2=internal
   management.oauth_enabled=true
   management.oauth_client_id=modeling-tool-queue
   management.oauth_client_secret=xxx

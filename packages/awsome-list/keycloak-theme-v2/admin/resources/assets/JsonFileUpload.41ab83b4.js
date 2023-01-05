@@ -1,0 +1,1 @@
+import{F as s}from"./FileUploadForm.9e6f7b27.js";import{j as e}from"./index.0cb2e516.js";import{L as i}from"./CodeEditor.16ebafa0.js";const p=({onChange:o,...n})=>{const a=r=>{try{o(JSON.parse(r))}catch{o({}),console.warn("Invalid json, ignoring value using {}")}};return e(s,{...n,language:i.json,extension:".json",onChange:a})};export{p as J};

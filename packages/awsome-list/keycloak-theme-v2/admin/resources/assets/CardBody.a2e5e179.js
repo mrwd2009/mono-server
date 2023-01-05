@@ -1,0 +1,1 @@
+import{_ as i,j as d,q as t}from"./index.0cb2e516.js";import{s as o}from"./Card.32e78d5f.js";const c=s=>{var{children:e=null,className:r="",component:a="div",isFilled:n=!0}=s,l=i(s,["children","className","component","isFilled"]);return d(a,{...Object.assign({className:t(o.cardBody,!n&&o.modifiers.noFill,r)},l),children:e})};c.displayName="CardBody";export{c as C};

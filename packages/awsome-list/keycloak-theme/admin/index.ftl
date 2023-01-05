@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link id="favicon" rel="icon" href="${resourceUrl}/favicon.ico"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Web site to manage keycloak"><title>CFEX Account Administration Console</title><style>.container,
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link id="favicon" rel="icon" href="${resourceUrl}/favicon.ico"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Web site to manage CFEX account"><title>CFEX Account Administration Console</title><style>.container,
     .container-fluid,
     #load-container {
       padding: 0;

@@ -27,6 +27,11 @@ https://stackoverflow.com/questions/70922622/using-keycloak-adapter-with-wildfly
 https://wildfly-security.github.io/wildfly-elytron/blog/galleon-cli-keycloak/
 ```
 
+### Admin UI
+```
+admin ui from org.keycloak.keycloak-admin-ui-20.0.2.jar
+```
+
 ### Create theme jar
 ```
 jar cf cfex-user-center.jar META-INF theme
