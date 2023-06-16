@@ -63,3 +63,12 @@ FROM
     
 SET global general_log = 0;
 ```
+
+### Change timezone
+```
+SELECT @@global.time_zone;
+SET GLOBAL time_zone = 'SYSTEM';
+
+
+SET GLOBAL time_zone = '-00:00';
+```

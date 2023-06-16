@@ -57,6 +57,10 @@ zip -er ensrc.zip src
 ```
 
 ### Generage rsa keys
+https://www.cnblogs.com/cocoajin/p/10510574.html
+
+https://polarssl.org/kb/cryptography/asn1-key-structures-in-der-and-pem/
+
 Reference https://www.digicert.com/kb/ssl-support/openssl-quick-reference-guide.htm
 ```
 # get private key
@@ -66,6 +70,9 @@ openssl genrsa -out yourdomain.key 2048
 openssl rsa -text -in yourdomain.key -noout
 # to pem format
 private wudi$ openssl rsa -in modeling.key -text > modeling.pem
+
+# PKCS1 =》 PKCS8
+openssl pkcs8 -topk8 -inform PEM -in private.key -outform pem -nocrypt -out pkcs8.key
 
 # get public key
 openssl rsa -in yourdomain.key -pubout -out yourdomain_public.key
